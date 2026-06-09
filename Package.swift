@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "DeveloperChatbot",
     platforms: [
-        .macOS(.v14)
+        .macOS("15.0")
     ],
     products: [
         .executable(name: "DeveloperChatbot", targets: ["DeveloperChatbot"])

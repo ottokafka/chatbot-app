@@ -1,4 +1,5 @@
 import SwiftUI
+import Translation
 
 struct ContentView: View {
     @StateObject private var viewModel = ChatViewModel()
@@ -202,6 +203,8 @@ struct ContentView: View {
 struct MessageRow: View {
     let message: Message
     
+    @State private var englishTranslation: String = ""
+    
     var isUser: Bool { message.role == "user" }
     
     var body: some View {
@@ -222,23 +225,57 @@ struct MessageRow: View {
                 }
                 
                 // Content Bubble
-                Text(message.content)
-                    .font(.system(.body, design: .monospaced))
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 10)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(isUser ? Color.blue.opacity(0.15) : Color(nsColor: .controlBackgroundColor))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(isUser ? Color.blue.opacity(0.4) : Color.gray.opacity(0.2), lineWidth: 1)
-                            )
-                    )
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(message.content)
+                        .font(.system(.body, design: .monospaced))
+                    
+                    if message.content.containsChineseCharacters, let pinyin = message.content.toPinyin() {
+                        Divider()
+                            .padding(.top, 2)
+                        Text(pinyin)
+                            .font(.system(.subheadline, design: .monospaced))
+                            .foregroundColor(.secondary)
+                            .italic()
+                        
+                        if !englishTranslation.isEmpty {
+                            Divider()
+                                .padding(.top, 2)
+                            Text(englishTranslation)
+                                .font(.system(.subheadline, design: .monospaced))
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(isUser ? Color.blue.opacity(0.15) : Color(nsColor: .controlBackgroundColor))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(isUser ? Color.blue.opacity(0.4) : Color.gray.opacity(0.2), lineWidth: 1)
+                        )
+                )
                     .foregroundColor(.primary)
                     .textSelection(.enabled)
             }
             
             if !isUser { Spacer() }
+        }
+        .translationTask(
+            source: Locale.Language(identifier: "zh-Hans"),
+            target: Locale.Language(identifier: "en")
+        ) { session in
+            do {
+                if message.content.containsChineseCharacters {
+                    let response = try await session.translate(message.content)
+                    await MainActor.run {
+                        self.englishTranslation = response.targetText
+                    }
+                }
+            } catch {
+                print("Translation failed: \(error)")
+            }
         }
     }
 }
@@ -418,7 +455,7 @@ struct SettingsView: View {
     @Environment(\.dismiss) var dismiss
     
     let voiceOptions = [
-        "af_heart", "af_bella", "af_nicole", "af_sarah", "am_adam", "am_michael", "bf_emma", "bf_isabella", "bm_george", "bm_lewis"
+        "zf_001", "zm_009", "af_heart", "af_bella", "af_nicole", "af_sarah", "am_adam", "am_michael", "bf_emma", "bf_isabella", "bm_george", "bm_lewis"
     ]
     
     var body: some View {

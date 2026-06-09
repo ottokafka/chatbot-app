@@ -1,6 +1,6 @@
 import Foundation
 
-class WebSocketManager: NSObject, URLSessionWebSocketDelegate {
+final class WebSocketManager: NSObject, URLSessionWebSocketDelegate, @unchecked Sendable {
     private var webSocketTask: URLSessionWebSocketTask?
     private var session: URLSession?
     private let urlString: String
