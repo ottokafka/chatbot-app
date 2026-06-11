@@ -5,8 +5,13 @@ struct ContentView: View {
     @StateObject private var viewModel = ChatViewModel()
     @State private var textInput = ""
     @State private var isShowingSettings = false
+    @State private var isShowingPromptModal = false
+    @State private var isShowingEndpointModal = false
     @State private var isLogsExpanded = true
     @State private var logsHeight: CGFloat = 160
+    
+    @State private var isPromptHovered = false
+    @State private var isEndpointsHovered = false
     
     var body: some View {
         NavigationSplitView {
@@ -72,6 +77,67 @@ struct ContentView: View {
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
                         }
+                        
+                        Spacer()
+                        
+                        // Centered Buttons Group
+                        HStack(spacing: 12) {
+                            // Context Switcher Pill Button (Click #1)
+                            Button(action: {
+                                isShowingPromptModal.toggle()
+                            }) {
+                                HStack(spacing: 6) {
+                                    Text("💬")
+                                    Text(viewModel.activeSystemPrompt?.title ?? "No Prompt")
+                                    Text("▾")
+                                }
+                                .font(.system(.body, design: .monospaced))
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
+                                .background(
+                                    Capsule()
+                                        .fill(isPromptHovered ? Color.gray.opacity(0.2) : Color(nsColor: .controlBackgroundColor))
+                                        .overlay(
+                                            Capsule()
+                                                .stroke(Color.gray.opacity(isPromptHovered ? 0.5 : 0.3), lineWidth: 1)
+                                        )
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .onHover { isPromptHovered = $0 }
+                            .help("Select System Prompt")
+                            .sheet(isPresented: $isShowingPromptModal) {
+                                SystemPromptModalView(viewModel: viewModel)
+                            }
+                            
+                            // Endpoints Button
+                            Button(action: {
+                                isShowingEndpointModal.toggle()
+                            }) {
+                                HStack(spacing: 6) {
+                                    Text("🔌")
+                                    Text("Endpoints")
+                                }
+                                .font(.system(.body, design: .monospaced))
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
+                                .background(
+                                    Capsule()
+                                        .fill(isEndpointsHovered ? Color.gray.opacity(0.2) : Color(nsColor: .controlBackgroundColor))
+                                        .overlay(
+                                            Capsule()
+                                                .stroke(Color.gray.opacity(isEndpointsHovered ? 0.5 : 0.3), lineWidth: 1)
+                                        )
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .onHover { isEndpointsHovered = $0 }
+                            .help("Manage Endpoint Configurations")
+                            .sheet(isPresented: $isShowingEndpointModal) {
+                                EndpointConfigModalView(viewModel: viewModel)
+                            }
+                        }
+                        
                         Spacer()
                         
                         // Status Bar Indicators
@@ -455,7 +521,18 @@ struct SettingsView: View {
     @Environment(\.dismiss) var dismiss
     
     let voiceOptions = [
-        "zf_001", "zm_009", "af_heart", "af_bella", "af_nicole", "af_sarah", "am_adam", "am_michael", "bf_emma", "bf_isabella", "bm_george", "bm_lewis"
+        "af_aoede", "af_bella", "af_heart", "af_jessica", "af_kore", "af_nicole", "af_nova", "af_river", "af_sarah", "af_sky",
+    "am_adam", "am_echo", "am_eric", "am_fenrir", "am_liam", "am_michael", "am_onyx", "am_puck", "am_santa",
+    "bf_alice", "bf_emma", "bf_isabella", "bf_lily",
+    "bm_daniel", "bm_fable", "bm_george", "bm_lewis",
+    "ef_dora", "em_alex", "em_santa",
+    "ff_siwis",
+    "hf_alpha", "hf_beta", "hm_omega", "hm_psi",
+    "if_sara", "im_nicola",
+    "jf_alpha", "jf_gongitsune", "jf_nezumi", "jf_tebukuro", "jm_kumo",
+    "pf_dora", "pm_alex", "pm_santa",
+    "zf_xiaobei", "zf_xiaoni", "zf_xiaoxiao", "zf_xiaoyi",
+    "zm_yunjian", "zm_yunxi", "zm_yunxia", "zm_yunyang"
     ]
     
     var body: some View {
@@ -475,26 +552,8 @@ struct SettingsView: View {
             Divider()
             
             Form {
-                Section(header: Text("Speech to Text (STT) Settings").fontWeight(.bold)) {
-                    TextField("STT WebSocket URL", text: $viewModel.sttURL)
-                        .textFieldStyle(.roundedBorder)
-                        .help("WebSocket endpoint for streaming audio data.")
-                }
-                .padding(.bottom, 8)
-                
-                Section(header: Text("Text Generation (LLM) Settings").fontWeight(.bold)) {
-                    TextField("LLM HTTP URL", text: $viewModel.llmURL)
-                        .textFieldStyle(.roundedBorder)
-                    TextField("LLM Model Name", text: $viewModel.llmModel)
-                        .textFieldStyle(.roundedBorder)
-                    TextField("System Prompt", text: $viewModel.systemPrompt)
-                        .textFieldStyle(.roundedBorder)
-                }
-                .padding(.bottom, 8)
                 
                 Section(header: Text("Text to Speech (TTS) Settings").fontWeight(.bold)) {
-                    TextField("TTS HTTP URL", text: $viewModel.ttsURL)
-                        .textFieldStyle(.roundedBorder)
                     TextField("TTS Model Name", text: $viewModel.ttsModel)
                         .textFieldStyle(.roundedBorder)
                     
@@ -514,7 +573,486 @@ struct SettingsView: View {
             }
             .padding()
             .formStyle(.grouped)
-            .frame(width: 500, height: 420)
+            .frame(width: 500, height: 265)
+        }
+    }
+}
+
+// MARK: - System Prompt Modal View
+struct SystemPromptModalView: View {
+    @ObservedObject var viewModel: ChatViewModel
+    @Environment(\.dismiss) var dismiss
+    
+    @State private var newTitle = ""
+    @State private var newPromptText = ""
+    @State private var isGenerating = false
+    @State private var editingPrompt: SystemPrompt? = nil
+    @State private var hoveredPromptId: String? = nil
+    
+    var body: some View {
+        HStack(spacing: 0) {
+            // LEFT COLUMN: Select System Prompt (60% width)
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Select System Prompt")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                
+                ScrollView {
+                    VStack(spacing: 12) {
+                        ForEach(viewModel.systemPrompts) { prompt in
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack(alignment: .center) {
+                                    Text(prompt.title)
+                                        .font(.headline)
+                                        .foregroundColor(.white)
+                                    
+                                    Spacer()
+                                    
+                                    // Edit button
+                                    Button(action: {
+                                        editingPrompt = prompt
+                                        newTitle = prompt.title
+                                        newPromptText = prompt.promptText
+                                    }) {
+                                        Image(systemName: "pencil")
+                                            .font(.system(size: 14, weight: .bold))
+                                            .foregroundColor(.blue)
+                                    }
+                                    .buttonStyle(.plain)
+                                    .help("Edit system prompt")
+                                    
+                                    // Delete button
+                                    Button(action: {
+                                        viewModel.deleteSystemPrompt(prompt)
+                                    }) {
+                                        Image(systemName: "trash")
+                                            .font(.system(size: 14, weight: .bold))
+                                            .foregroundColor(.red)
+                                    }
+                                    .buttonStyle(.plain)
+                                    .help("Delete system prompt")
+                                }
+                                
+                                Text(prompt.promptText)
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                                    .lineLimit(2)
+                                    .multilineTextAlignment(.leading)
+                            }
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(prompt.isActive ? Color.blue.opacity(0.15) : (hoveredPromptId == prompt.id ? Color.gray.opacity(0.18) : Color.gray.opacity(0.1)))
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(prompt.isActive ? Color.blue : Color.gray.opacity(0.2), lineWidth: prompt.isActive ? 2 : 1)
+                            )
+                            .contentShape(Rectangle())
+                            .onHover { isHovered in
+                                if isHovered {
+                                    hoveredPromptId = prompt.id
+                                } else if hoveredPromptId == prompt.id {
+                                    hoveredPromptId = nil
+                                }
+                            }
+                            .onTapGesture {
+                                viewModel.selectSystemPrompt(prompt)
+                                dismiss()
+                            }
+                        }
+                    }
+                }
+            }
+            .padding(24)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color(red: 0.12, green: 0.12, blue: 0.14))
+            
+            Divider()
+                .background(Color.gray.opacity(0.3))
+            
+            // RIGHT COLUMN: Create/Edit Prompt (40% width)
+            VStack(alignment: .leading, spacing: 16) {
+                Text(editingPrompt == nil ? "Create New Prompt" : "Edit Prompt")
+                    .font(.title3)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                
+                // Title Field
+                TextField("Title (e.g. Grammar Expert)", text: $newTitle)
+                    .textFieldStyle(.plain)
+                    .padding(8)
+                    .background(Color.black.opacity(0.6))
+                    .cornerRadius(6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                    )
+                    .font(.body)
+                
+                // AI Prompt Generation Button
+                Button(action: {
+                    generatePromptWithAI()
+                }) {
+                    HStack {
+                        Spacer()
+                        if isGenerating {
+                            ProgressView()
+                                .controlSize(.small)
+                                .padding(.trailing, 4)
+                            Text("Generating...")
+                        } else {
+                            Text("✨ Generate Prompt with AI")
+                        }
+                        Spacer()
+                    }
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .padding(.vertical, 8)
+                    .background(newTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? Color.purple.opacity(0.3) : Color.purple)
+                    .cornerRadius(6)
+                }
+                .buttonStyle(.plain)
+                .disabled(newTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isGenerating)
+                
+                // Prompt Content Area
+                TextEditor(text: $newPromptText)
+                    .font(.system(.body, design: .monospaced))
+                    .foregroundColor(.white)
+                    .padding(6)
+                    .scrollContentBackground(.hidden)
+                    .background(Color.black.opacity(0.6))
+                    .cornerRadius(6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                    )
+                
+                // Save/Update Button
+                Button(action: {
+                    savePrompt()
+                }) {
+                    Text(editingPrompt == nil ? "Save Prompt" : "Update Prompt")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(newTitle.isEmpty || newPromptText.isEmpty ? Color.blue.opacity(0.3) : Color.blue)
+                        .cornerRadius(8)
+                }
+                .buttonStyle(.plain)
+                .disabled(newTitle.isEmpty || newPromptText.isEmpty)
+                
+                // Cancel button
+                Button(action: {
+                    if editingPrompt != nil {
+                        editingPrompt = nil
+                        newTitle = ""
+                        newPromptText = ""
+                    } else {
+                        dismiss()
+                    }
+                }) {
+                    Text("Cancel")
+                        .foregroundColor(.gray)
+                        .underline()
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(24)
+            .frame(minWidth: 320, maxWidth: 320, maxHeight: .infinity)
+            .background(Color(red: 0.16, green: 0.16, blue: 0.18))
+        }
+        .frame(width: 780, height: 480)
+        .preferredColorScheme(.dark)
+    }
+    
+    private func generatePromptWithAI() {
+        let title = newTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !title.isEmpty else { return }
+        
+        isGenerating = true
+        Task {
+            if let result = await viewModel.generatePromptText(for: title) {
+                newPromptText = result
+            }
+            isGenerating = false
+        }
+    }
+    
+    private func savePrompt() {
+        let title = newTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        let promptText = newPromptText.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        guard !title.isEmpty && !promptText.isEmpty else { return }
+        
+        if let existing = editingPrompt {
+            viewModel.updateSystemPrompt(existing, title: title, promptText: promptText)
+        } else {
+            viewModel.createSystemPrompt(title: title, promptText: promptText)
+        }
+        
+        newTitle = ""
+        newPromptText = ""
+        editingPrompt = nil
+    }
+}
+
+// MARK: - Endpoint Configuration Modal View
+struct EndpointConfigModalView: View {
+    @ObservedObject var viewModel: ChatViewModel
+    @Environment(\.dismiss) var dismiss
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // Header
+            HStack {
+                Text("AI Endpoint Configuration Manager")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                
+                Spacer()
+                
+                // New Config Button
+                NewConfigButton {
+                    viewModel.createEndpointConfig(
+                        name: "New Config",
+                        textGenURL: "https://text_gen.npro.ai/v1/chat/completions",
+                        ttsURL: "https://text_to_speech.npro.ai/v1/audio/speech",
+                        sttURL: "wss://speech_to_text.npro.ai?silence_duration_ms=1000"
+                    )
+                }
+                .help("Add new endpoint configuration")
+                
+                // Done Button
+                Button(action: {
+                    dismiss()
+                }) {
+                    Text("Done")
+                        .font(.body)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(Color.gray.opacity(0.3))
+                        .cornerRadius(8)
+                }
+                .buttonStyle(.plain)
+                .padding(.leading, 8)
+            }
+            .padding(24)
+            .background(Color(red: 0.08, green: 0.08, blue: 0.09))
+            
+            Divider()
+                .background(Color.gray.opacity(0.3))
+            
+            // Cards Scroll View
+            ScrollView {
+                VStack(spacing: 20) {
+                    ForEach(viewModel.endpointConfigs) { config in
+                        EndpointConfigCard(config: config, viewModel: viewModel)
+                    }
+                }
+                .padding(24)
+            }
+            .background(Color(red: 0.08, green: 0.08, blue: 0.09))
+        }
+        .frame(width: 800, height: 550)
+        .preferredColorScheme(.dark)
+    }
+}
+
+struct NewConfigButton: View {
+    let action: () -> Void
+    @State private var isHovered = false
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                Image(systemName: "plus")
+                Text("New Configuration")
+            }
+            .font(.body)
+            .fontWeight(.semibold)
+            .foregroundColor(.white)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(isHovered ? Color(red: 0.55, green: 0.3, blue: 0.65) : Color(red: 0.45, green: 0.25, blue: 0.55))
+            )
+        }
+        .buttonStyle(.plain)
+        .onHover { isHovered = $0 }
+    }
+}
+
+// MARK: - Endpoint Config Card View
+struct EndpointConfigCard: View {
+    let config: EndpointConfig
+    @ObservedObject var viewModel: ChatViewModel
+    
+    @State private var name: String = ""
+    @State private var textGenURL: String = ""
+    @State private var ttsURL: String = ""
+    @State private var sttURL: String = ""
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Header: Name, Active Toggle, Delete Button
+            HStack {
+                HStack(spacing: 6) {
+                    Text("Config Name:")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                    TextField("Configuration Name", text: $name)
+                        .font(.headline)
+                        .textFieldStyle(.plain)
+                        .foregroundColor(.white)
+                }
+                
+                Spacer()
+                
+                // Toggle ACTIVE
+                HStack(spacing: 8) {
+                    Toggle("", isOn: Binding(
+                        get: { config.isActive },
+                        set: { newValue in
+                            if newValue {
+                                viewModel.selectEndpointConfig(config)
+                            }
+                        }
+                    ))
+                    .toggleStyle(.switch)
+                    .labelsHidden()
+                    .controlSize(.small)
+                    
+                    Text(config.isActive ? "ACTIVE" : "INACTIVE")
+                        .font(.caption2)
+                        .fontWeight(.bold)
+                        .monospaced()
+                        .foregroundColor(config.isActive ? .blue : .gray)
+                }
+                
+                // Delete button
+                if !config.isActive {
+                    Button(action: {
+                        viewModel.deleteEndpointConfig(id: config.id)
+                    }) {
+                        Image(systemName: "trash")
+                            .foregroundColor(.red.opacity(0.8))
+                    }
+                    .buttonStyle(.plain)
+                    .help("Delete configuration")
+                    .padding(.leading, 8)
+                } else {
+                    Image(systemName: "trash")
+                        .foregroundColor(.gray.opacity(0.3))
+                        .padding(.leading, 8)
+                        .help("Cannot delete active configuration")
+                }
+            }
+            
+            // Text Gen Field
+            VStack(alignment: .leading, spacing: 4) {
+                Text("TEXT GENERATION")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(.gray)
+                TextField("Text Generation URL", text: $textGenURL)
+                    .textFieldStyle(.plain)
+                    .padding(8)
+                    .background(Color.black.opacity(0.3))
+                    .cornerRadius(6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                    )
+                    .font(.system(.body, design: .monospaced))
+            }
+            
+            // TTS Field
+            VStack(alignment: .leading, spacing: 4) {
+                Text("TTS")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(.gray)
+                TextField("TTS URL", text: $ttsURL)
+                    .textFieldStyle(.plain)
+                    .padding(8)
+                    .background(Color.black.opacity(0.3))
+                    .cornerRadius(6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                    )
+                    .font(.system(.body, design: .monospaced))
+            }
+            
+            // STT Field
+            VStack(alignment: .leading, spacing: 4) {
+                Text("STT")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(.gray)
+                TextField("STT URL", text: $sttURL)
+                    .textFieldStyle(.plain)
+                    .padding(8)
+                    .background(Color.black.opacity(0.3))
+                    .cornerRadius(6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                    )
+                    .font(.system(.body, design: .monospaced))
+            }
+            
+            // Save Button
+            HStack {
+                Spacer()
+                Button(action: {
+                    viewModel.updateEndpointConfig(
+                        id: config.id,
+                        name: name,
+                        textGenURL: textGenURL,
+                        ttsURL: ttsURL,
+                        sttURL: sttURL
+                    )
+                }) {
+                    Text("Save")
+                        .font(.body)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 6)
+                        .background(Color.white.opacity(0.12))
+                        .cornerRadius(6)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                        )
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(16)
+        .background(Color(red: 0.12, green: 0.12, blue: 0.14))
+        .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(config.isActive ? Color.blue : Color.gray.opacity(0.2), lineWidth: config.isActive ? 2 : 1)
+        )
+        .onAppear {
+            self.name = config.name
+            self.textGenURL = config.textGenURL
+            self.ttsURL = config.ttsURL
+            self.sttURL = config.sttURL
+        }
+        .onChange(of: config) {
+            self.name = config.name
+            self.textGenURL = config.textGenURL
+            self.ttsURL = config.ttsURL
+            self.sttURL = config.sttURL
         }
     }
 }

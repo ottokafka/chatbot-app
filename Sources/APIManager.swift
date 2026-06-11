@@ -10,6 +10,7 @@ struct ChatCompletionRequest: Codable {
     let messages: [ChatMessage]
     let temperature: Double
     let stream: Bool
+    let max_tokens: Int
 }
 
 struct ChatCompletionResponse: Decodable {
@@ -31,6 +32,7 @@ struct TTSRequest: Codable {
     let speed: Double
 }
 
+@MainActor
 class APIManager {
     var onLog: ((String) -> Void)?
     
@@ -39,7 +41,8 @@ class APIManager {
         endpoint: String,
         model: String,
         messages: [ChatMessage],
-        temperature: Double = 0.7
+        temperature: Double = 0.7,
+        max_tokens: Int = 199
     ) async throws -> String {
         guard let url = URL(string: endpoint) else {
             throw NSError(domain: "APIManager", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid Text Gen Endpoint URL"])
@@ -49,7 +52,8 @@ class APIManager {
             model: model,
             messages: messages,
             temperature: temperature,
-            stream: false
+            stream: false,
+            max_tokens: max_tokens
         )
         
         let jsonData = try JSONEncoder().encode(payload)
