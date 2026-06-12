@@ -187,6 +187,13 @@ struct ContentView: View {
                             }
                         )
                         
+                        StopPlaybackButton(
+                            isPlaying: viewModel.isPlayingAudio,
+                            action: {
+                                viewModel.stopPlayback()
+                            }
+                        )
+                        
                         // Message Input Field
                         TextField("Type a message to assistant...", text: $textInput, onCommit: {
                             sendText()
@@ -384,6 +391,46 @@ struct RecordButton: View {
             pulseScale = 1.15
         }
         .help(isActive ? "Stop listening" : "Start listening")
+    }
+}
+
+// MARK: - Stop Playback Button View
+struct StopPlaybackButton: View {
+    let isPlaying: Bool
+    let action: () -> Void
+    
+    @State private var isHovered = false
+    
+    var body: some View {
+        Button(action: {
+            if isPlaying {
+                action()
+            }
+        }) {
+            ZStack {
+                Circle()
+                    .fill(isPlaying ? (isHovered ? Color.red.opacity(0.28) : Color.red.opacity(0.18)) : Color.secondary.opacity(0.1))
+                    .frame(width: 44, height: 44)
+                    .overlay(
+                        Circle()
+                            .stroke(isPlaying ? (isHovered ? Color.red.opacity(0.6) : Color.red.opacity(0.3)) : Color.clear, lineWidth: 1)
+                    )
+                    .scaleEffect(isPlaying && isHovered ? 1.05 : 1.0)
+                    .animation(.easeInOut(duration: 0.2), value: isHovered)
+                
+                Image(systemName: "square.fill")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(isPlaying ? .red : .secondary.opacity(0.4))
+            }
+        }
+        .buttonStyle(.plain)
+        .disabled(!isPlaying)
+        .onHover { hovering in
+            if isPlaying {
+                isHovered = hovering
+            }
+        }
+        .help(isPlaying ? "Stop audio playback" : "No audio playing")
     }
 }
 

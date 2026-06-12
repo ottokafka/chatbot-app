@@ -271,6 +271,17 @@ class ChatViewModel: ObservableObject {
         webSocketManager = nil
     }
     
+    func stopPlayback() {
+        log("Stopping playback requested by user.", tag: "AUDIO")
+        audioPlayer.stop()
+        isPlayingAudio = false
+        // Resume mic recording if it's supposed to be active
+        if isMicrophoneActive {
+            log("Playback stopped: Resuming microphone recording.", tag: "AUDIO")
+            audioRecorder.start()
+        }
+    }
+    
     // MARK: - Chat Logic
     
     /// Sends a manually typed message
