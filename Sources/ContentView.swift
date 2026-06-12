@@ -4,7 +4,6 @@ import Translation
 struct ContentView: View {
     @StateObject private var viewModel = ChatViewModel()
     @State private var textInput = ""
-    @State private var isShowingSettings = false
     @State private var isShowingPromptModal = false
     @State private var isShowingEndpointModal = false
     @State private var isLogsExpanded = true
@@ -148,19 +147,6 @@ struct ContentView: View {
                             StatusIndicator(title: "AUDIO", isActive: viewModel.isPlayingAudio, activeColor: .orange)
                         }
                         .padding(.trailing, 10)
-                        
-                        // Settings Gear
-                        Button(action: {
-                            isShowingSettings.toggle()
-                        }) {
-                            Image(systemName: "gearshape")
-                                .font(.title3)
-                        }
-                        .buttonStyle(.bordered)
-                        .help("Settings")
-                        .sheet(isPresented: $isShowingSettings) {
-                            SettingsView(viewModel: viewModel)
-                        }
                     }
                     .padding()
                     .background(Color(nsColor: .windowBackgroundColor))
@@ -515,69 +501,6 @@ struct LogRow: View {
     }
 }
 
-// MARK: - Settings View
-struct SettingsView: View {
-    @ObservedObject var viewModel: ChatViewModel
-    @Environment(\.dismiss) var dismiss
-    
-    let voiceOptions = [
-        "af_aoede", "af_bella", "af_heart", "af_jessica", "af_kore", "af_nicole", "af_nova", "af_river", "af_sarah", "af_sky",
-    "am_adam", "am_echo", "am_eric", "am_fenrir", "am_liam", "am_michael", "am_onyx", "am_puck", "am_santa",
-    "bf_alice", "bf_emma", "bf_isabella", "bf_lily",
-    "bm_daniel", "bm_fable", "bm_george", "bm_lewis",
-    "ef_dora", "em_alex", "em_santa",
-    "ff_siwis",
-    "hf_alpha", "hf_beta", "hm_omega", "hm_psi",
-    "if_sara", "im_nicola",
-    "jf_alpha", "jf_gongitsune", "jf_nezumi", "jf_tebukuro", "jm_kumo",
-    "pf_dora", "pm_alex", "pm_santa",
-    "zf_xiaobei", "zf_xiaoni", "zf_xiaoxiao", "zf_xiaoyi",
-    "zm_yunjian", "zm_yunxi", "zm_yunxia", "zm_yunyang"
-    ]
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Text("Developer Configuration")
-                    .font(.headline)
-                Spacer()
-                Button("Done") {
-                    dismiss()
-                }
-                .buttonStyle(.borderedProminent)
-            }
-            .padding()
-            .background(Color(nsColor: .windowBackgroundColor))
-            
-            Divider()
-            
-            Form {
-                
-                Section(header: Text("Text to Speech (TTS) Settings").fontWeight(.bold)) {
-                    TextField("TTS Model Name", text: $viewModel.ttsModel)
-                        .textFieldStyle(.roundedBorder)
-                    
-                    Picker("TTS Voice", selection: $viewModel.ttsVoice) {
-                        ForEach(voiceOptions, id: \.self) { voice in
-                            Text(voice).tag(voice)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    
-                    HStack {
-                        Text("Playback Speed (\(String(format: "%.1f", viewModel.ttsSpeed))x)")
-                            .font(.body)
-                        Slider(value: $viewModel.ttsSpeed, in: 0.5...2.0, step: 0.1)
-                    }
-                }
-            }
-            .padding()
-            .formStyle(.grouped)
-            .frame(width: 500, height: 265)
-        }
-    }
-}
-
 // MARK: - System Prompt Modal View
 struct SystemPromptModalView: View {
     @ObservedObject var viewModel: ChatViewModel
@@ -806,29 +729,88 @@ struct EndpointConfigModalView: View {
     @ObservedObject var viewModel: ChatViewModel
     @Environment(\.dismiss) var dismiss
     
+    @State private var selectedConfig: EndpointConfig?
+    
     var body: some View {
-        VStack(spacing: 0) {
-            // Header
-            HStack {
-                Text("AI Endpoint Configuration Manager")
-                    .font(.title2)
-                    .fontWeight(.bold)
+        HStack(spacing: 0) {
+            // SIDEBAR
+            VStack(alignment: .leading, spacing: 16) {
+                // New Config Button
+                Button(action: {
+                    let newName = "New Config"
+                    let stt = "wss://speech_to_text.npro.ai?silence_duration_ms=1000"
+                    let llm = "https://text_gen.npro.ai/v1/chat/completions"
+                    let tts = "https://text_to_speech.npro.ai/v1/audio/speech"
+                    viewModel.createEndpointConfig(
+                        name: newName,
+                        textGenURL: llm,
+                        ttsURL: tts,
+                        sttURL: stt
+                    )
+                    // Select the newly created configuration
+                    if let last = viewModel.endpointConfigs.last {
+                        selectedConfig = last
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: "plus")
+                        Text("New Configuration")
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(Color.white.opacity(0.08))
+                    .cornerRadius(6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(.plain)
+                
+                Text("Configurations")
+                    .font(.headline)
                     .foregroundColor(.white)
+                    .padding(.top, 8)
+                
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 8) {
+                        ForEach(viewModel.endpointConfigs) { config in
+                            HStack {
+                                Button(action: {
+                                    selectedConfig = config
+                                }) {
+                                    Text(config.name)
+                                        .font(.body)
+                                        .foregroundColor(selectedConfig?.id == config.id ? .white : .gray)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .padding(.vertical, 6)
+                                        .padding(.horizontal, 10)
+                                }
+                                .buttonStyle(.plain)
+                                .background(selectedConfig?.id == config.id ? Color.blue : Color.clear)
+                                .cornerRadius(6)
+                                
+                                if !config.isActive {
+                                    Button(action: {
+                                        viewModel.deleteEndpointConfig(id: config.id)
+                                        if selectedConfig?.id == config.id {
+                                            selectedConfig = viewModel.endpointConfigs.first(where: { $0.id != config.id })
+                                        }
+                                    }) {
+                                        Image(systemName: "trash")
+                                            .foregroundColor(.red.opacity(0.8))
+                                    }
+                                    .buttonStyle(.plain)
+                                    .padding(.trailing, 4)
+                                }
+                            }
+                        }
+                    }
+                }
                 
                 Spacer()
                 
-                // New Config Button
-                NewConfigButton {
-                    viewModel.createEndpointConfig(
-                        name: "New Config",
-                        textGenURL: "https://text_gen.npro.ai/v1/chat/completions",
-                        ttsURL: "https://text_to_speech.npro.ai/v1/audio/speech",
-                        sttURL: "wss://speech_to_text.npro.ai?silence_duration_ms=1000"
-                    )
-                }
-                .help("Add new endpoint configuration")
-                
-                // Done Button
+                // Done button at the bottom of the sidebar
                 Button(action: {
                     dismiss()
                 }) {
@@ -836,58 +818,60 @@ struct EndpointConfigModalView: View {
                         .font(.body)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
-                        .padding(.horizontal, 14)
+                        .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
                         .background(Color.gray.opacity(0.3))
                         .cornerRadius(8)
                 }
                 .buttonStyle(.plain)
-                .padding(.leading, 8)
             }
-            .padding(24)
-            .background(Color(red: 0.08, green: 0.08, blue: 0.09))
+            .padding(20)
+            .frame(width: 240)
+            .background(Color(red: 0.08, green: 0.08, blue: 0.1))
             
             Divider()
                 .background(Color.gray.opacity(0.3))
             
-            // Cards Scroll View
-            ScrollView {
-                VStack(spacing: 20) {
-                    ForEach(viewModel.endpointConfigs) { config in
+            // DETAIL VIEW
+            VStack(spacing: 0) {
+                if let config = selectedConfig {
+                    ScrollView {
                         EndpointConfigCard(config: config, viewModel: viewModel)
+                            .id(config.id) // Resets state when config changes
+                            .padding(24)
                     }
+                } else {
+                    VStack(spacing: 16) {
+                        Image(systemName: "slider.horizontal.3")
+                            .font(.system(size: 48))
+                            .foregroundColor(.gray)
+                        Text("No Configuration Selected")
+                            .font(.headline)
+                            .foregroundColor(.gray)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                .padding(24)
             }
-            .background(Color(red: 0.08, green: 0.08, blue: 0.09))
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color(red: 0.12, green: 0.12, blue: 0.14))
         }
-        .frame(width: 800, height: 550)
+        .frame(width: 850, height: 600)
         .preferredColorScheme(.dark)
-    }
-}
-
-struct NewConfigButton: View {
-    let action: () -> Void
-    @State private var isHovered = false
-    
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 6) {
-                Image(systemName: "plus")
-                Text("New Configuration")
+        .onAppear {
+            if selectedConfig == nil {
+                selectedConfig = viewModel.activeEndpointConfig ?? viewModel.endpointConfigs.first
             }
-            .font(.body)
-            .fontWeight(.semibold)
-            .foregroundColor(.white)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(isHovered ? Color(red: 0.55, green: 0.3, blue: 0.65) : Color(red: 0.45, green: 0.25, blue: 0.55))
-            )
         }
-        .buttonStyle(.plain)
-        .onHover { isHovered = $0 }
+        .onChange(of: viewModel.endpointConfigs) {
+            // Keep selectedConfig pointer in sync if config is deleted or updated
+            if let current = selectedConfig {
+                if !viewModel.endpointConfigs.contains(where: { $0.id == current.id }) {
+                    selectedConfig = viewModel.activeEndpointConfig ?? viewModel.endpointConfigs.first
+                }
+            } else {
+                selectedConfig = viewModel.activeEndpointConfig ?? viewModel.endpointConfigs.first
+            }
+        }
     }
 }
 
@@ -901,8 +885,14 @@ struct EndpointConfigCard: View {
     @State private var ttsURL: String = ""
     @State private var sttURL: String = ""
     
+    @State private var textGenResult: String = ""
+    @State private var isTestingTextGen: Bool = false
+    
+    @State private var ttsInputText: String = "Hello, this is a test of the text to speech endpoint."
+    @State private var isPlayingTTS: Bool = false
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 14) {
             // Header: Name, Active Toggle, Delete Button
             HStack {
                 HStack(spacing: 6) {
@@ -937,45 +927,65 @@ struct EndpointConfigCard: View {
                         .monospaced()
                         .foregroundColor(config.isActive ? .blue : .gray)
                 }
-                
-                // Delete button
-                if !config.isActive {
-                    Button(action: {
-                        viewModel.deleteEndpointConfig(id: config.id)
-                    }) {
-                        Image(systemName: "trash")
-                            .foregroundColor(.red.opacity(0.8))
-                    }
-                    .buttonStyle(.plain)
-                    .help("Delete configuration")
-                    .padding(.leading, 8)
-                } else {
-                    Image(systemName: "trash")
-                        .foregroundColor(.gray.opacity(0.3))
-                        .padding(.leading, 8)
-                        .help("Cannot delete active configuration")
-                }
             }
             
             // Text Gen Field
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text("TEXT GENERATION")
                     .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.gray)
-                TextField("Text Generation URL", text: $textGenURL)
-                    .textFieldStyle(.plain)
-                    .padding(8)
-                    .background(Color.black.opacity(0.3))
+                HStack(spacing: 8) {
+                    TextField("Text Generation URL", text: $textGenURL)
+                        .textFieldStyle(.plain)
+                        .padding(8)
+                        .background(Color.black.opacity(0.3))
+                        .cornerRadius(6)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                        )
+                        .font(.system(.body, design: .monospaced))
+                    
+                    Button(action: {
+                        runTextGenTest()
+                    }) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(Color.blue)
+                            
+                            if isTestingTextGen {
+                                ProgressView()
+                                    .controlSize(.small)
+                                    .scaleEffect(0.8)
+                            } else {
+                                Text("Test")
+                                    .font(.body)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.white)
+                            }
+                        }
+                        .frame(width: 60, height: 32)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(isTestingTextGen)
+                }
+                
+                // Text Gen Response Box
+                Text(textGenResult.isEmpty ? "Sample text generated by the model will appear here." : textGenResult)
+                    .font(.system(.body, design: .monospaced))
+                    .foregroundColor(textGenResult.isEmpty ? .gray : .white)
+                    .padding(10)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.black.opacity(0.4))
                     .cornerRadius(6)
                     .overlay(
                         RoundedRectangle(cornerRadius: 6)
-                            .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                            .stroke(Color.gray.opacity(0.15), lineWidth: 1)
                     )
-                    .font(.system(.body, design: .monospaced))
             }
             
             // TTS Field
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text("TTS")
                     .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.gray)
@@ -989,23 +999,121 @@ struct EndpointConfigCard: View {
                             .stroke(Color.gray.opacity(0.2), lineWidth: 1)
                     )
                     .font(.system(.body, design: .monospaced))
+                
+                // TTS Voice Selection Dropdown Inline
+                HStack {
+                    Text("TTS Voice")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    if viewModel.voiceOptions.isEmpty {
+                        Text("No voices loaded (check TTS server)")
+                            .font(.caption)
+                            .foregroundColor(.yellow)
+                    } else {
+                        Picker("", selection: $viewModel.ttsVoice) {
+                            ForEach(viewModel.voiceOptions, id: \.self) { voice in
+                                Text(voice).tag(voice)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .labelsHidden()
+                    }
+                }
+                .padding(.vertical, 2)
+                
+                // Enter Text for Speech Section
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Enter Text for Speech")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(.gray)
+                    HStack(spacing: 8) {
+                        TextField("Type text to synthesize...", text: $ttsInputText)
+                            .textFieldStyle(.plain)
+                            .padding(8)
+                            .background(Color.black.opacity(0.3))
+                            .cornerRadius(6)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                            )
+                            .font(.system(.body, design: .monospaced))
+                        
+                        Button(action: {
+                            playTTSTest()
+                        }) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(Color.blue)
+                                    .frame(width: 36, height: 32)
+                                
+                                if isPlayingTTS {
+                                    ProgressView()
+                                        .controlSize(.small)
+                                        .scaleEffect(0.8)
+                                } else {
+                                    Image(systemName: "play.fill")
+                                        .foregroundColor(.white)
+                                }
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(isPlayingTTS || ttsInputText.trimmingCharacters(in: .whitespaces).isEmpty)
+                    }
+                }
             }
             
             // STT Field
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text("STT")
                     .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.gray)
-                TextField("STT URL", text: $sttURL)
-                    .textFieldStyle(.plain)
-                    .padding(8)
-                    .background(Color.black.opacity(0.3))
+                HStack(spacing: 8) {
+                    TextField("STT URL", text: $sttURL)
+                        .textFieldStyle(.plain)
+                        .padding(8)
+                        .background(Color.black.opacity(0.3))
+                        .cornerRadius(6)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                        )
+                        .font(.system(.body, design: .monospaced))
+                    
+                    let isDictating = viewModel.activeTestSTTConfigId == config.id
+                    Button(action: {
+                        if isDictating {
+                            viewModel.stopSTTTest()
+                        } else {
+                            viewModel.startSTTTest(configId: config.id, url: sttURL)
+                        }
+                    }) {
+                        Text(isDictating ? "Stop Dictation" : "Start Dictation")
+                            .font(.body)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 8)
+                            .background(isDictating ? Color.red : Color.blue)
+                            .cornerRadius(6)
+                    }
+                    .buttonStyle(.plain)
+                }
+                
+                // Dictation Text Output Box
+                let isDictating = viewModel.activeTestSTTConfigId == config.id
+                let dictationDisplayText = isDictating ? (viewModel.testSTTText.isEmpty ? "Listening... Speak now." : viewModel.testSTTText) : "Live dictation text appears here as you speak."
+                Text(dictationDisplayText)
+                    .font(.system(.body, design: .monospaced))
+                    .foregroundColor(isDictating && !viewModel.testSTTText.isEmpty ? .white : .gray)
+                    .padding(10)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.black.opacity(0.4))
                     .cornerRadius(6)
                     .overlay(
                         RoundedRectangle(cornerRadius: 6)
-                            .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                            .stroke(Color.gray.opacity(0.15), lineWidth: 1)
                     )
-                    .font(.system(.body, design: .monospaced))
             }
             
             // Save Button
@@ -1035,13 +1143,7 @@ struct EndpointConfigCard: View {
                 .buttonStyle(.plain)
             }
         }
-        .padding(16)
-        .background(Color(red: 0.12, green: 0.12, blue: 0.14))
-        .cornerRadius(12)
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(config.isActive ? Color.blue : Color.gray.opacity(0.2), lineWidth: config.isActive ? 2 : 1)
-        )
+        .padding(.vertical, 8)
         .onAppear {
             self.name = config.name
             self.textGenURL = config.textGenURL
@@ -1053,6 +1155,33 @@ struct EndpointConfigCard: View {
             self.textGenURL = config.textGenURL
             self.ttsURL = config.ttsURL
             self.sttURL = config.sttURL
+        }
+    }
+    
+    private func runTextGenTest() {
+        isTestingTextGen = true
+        textGenResult = "Connecting and generating..."
+        Task {
+            do {
+                let response = try await viewModel.runTextGenTest(url: textGenURL)
+                textGenResult = response
+            } catch {
+                textGenResult = "Error: \(error.localizedDescription)"
+            }
+            isTestingTextGen = false
+        }
+    }
+    
+    private func playTTSTest() {
+        guard !ttsInputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        isPlayingTTS = true
+        Task {
+            do {
+                try await viewModel.runTTSTest(url: ttsURL, text: ttsInputText)
+            } catch {
+                viewModel.log("TTS test failed: \(error.localizedDescription)", tag: "ERROR")
+            }
+            isPlayingTTS = false
         }
     }
 }

@@ -51,6 +51,9 @@ class ChatViewModel: ObservableObject {
         didSet {
             UserDefaults.standard.set(ttsURL, forKey: "ttsURL")
             updateActiveConfigFromSettings()
+            Task {
+                await fetchVoicesFromCurrentEndpoint()
+            }
         }
     }
     @Published var ttsModel: String {
@@ -62,11 +65,18 @@ class ChatViewModel: ObservableObject {
     @Published var ttsSpeed: Double {
         didSet { UserDefaults.standard.set(ttsSpeed, forKey: "ttsSpeed") }
     }
+    @Published var voiceOptions: [String] = []
+    @Published var isTestingVoice = false
     @Published var systemPrompts: [SystemPrompt] = []
     @Published var activeSystemPrompt: SystemPrompt?
     
     @Published var endpointConfigs: [EndpointConfig] = []
     @Published var activeEndpointConfig: EndpointConfig?
+    
+    @Published var activeTestSTTConfigId: Int64? = nil
+    @Published var testSTTText = ""
+    private var testWebSocketManager: WebSocketManager?
+    private var testAudioRecorder: AudioRecorder?
     
     init() {
         // Load settings from UserDefaults or use defaults from readme
@@ -82,6 +92,11 @@ class ChatViewModel: ObservableObject {
         loadConversations()
         loadSystemPrompts()
         loadEndpointConfigs()
+        
+        Task {
+            await fetchVoicesFromCurrentEndpoint()
+        }
+        
         log("Developer Chatbot Initialized.", tag: "SYSTEM")
     }
     
@@ -489,5 +504,189 @@ class ChatViewModel: ObservableObject {
                 endpointConfigs[idx].ttsURL = ttsURL
             }
         }
+    }
+    
+    func fetchVoicesFromCurrentEndpoint() async {
+        let currentTTSURL = ttsURL
+        log("Fetching TTS voices list from endpoint: \(currentTTSURL)", tag: "TTS")
+        do {
+            let fetched = try await apiManager.fetchVoices(endpoint: currentTTSURL)
+            self.voiceOptions = fetched
+            self.log("Successfully loaded \(fetched.count) voices from server.", tag: "TTS")
+            
+            // If the currently selected voice is not in the fetched list, default to a sensible fallback
+            if !fetched.isEmpty && !fetched.contains(ttsVoice) {
+                if fetched.contains("bm_daniel") {
+                    self.ttsVoice = "bm_daniel"
+                } else if fetched.contains("zf_xiaoxiao") {
+                    self.ttsVoice = "zf_xiaoxiao"
+                } else if fetched.contains("zm_009") {
+                    self.ttsVoice = "zm_009"
+                } else if let first = fetched.first {
+                    self.ttsVoice = first
+                }
+                self.log("Current voice not available. Switched voice to: \(self.ttsVoice)", tag: "TTS")
+            }
+        } catch {
+            self.log("Failed to fetch voices from server: \(error.localizedDescription).", tag: "ERROR")
+            self.voiceOptions = [] // clear options to show warning in UI
+        }
+    }
+    
+    func testTextGenEndpoint(url: String) async -> Bool {
+        return await apiManager.testTextGenConnection(url: url)
+    }
+    
+    func testTTSEndpoint(url: String) async -> Bool {
+        do {
+            let voices = try await apiManager.fetchVoices(endpoint: url)
+            return !voices.isEmpty
+        } catch {
+            return false
+        }
+    }
+    
+    func testSTTEndpoint(url: String) async -> Bool {
+        return await apiManager.testSTTConnection(url: url)
+    }
+    
+    func testSelectedVoice() {
+        guard !isTestingVoice else { return }
+        isTestingVoice = true
+        log("Testing voice '\(ttsVoice)'...", tag: "TTS")
+        
+        Task {
+            do {
+                let text: String
+                let prefix = ttsVoice.prefix(1).lowercased()
+                switch prefix {
+                case "z":
+                    text = "你好，这是测试声音。"
+                case "j":
+                    text = "こんにちは、テスト音声です。"
+                case "e":
+                    text = "Hola, esta es una voz de prueba."
+                case "f":
+                    text = "Bonjour, ceci est une voix de test."
+                case "h":
+                    text = "नमस्ते, यह एक परीक्षण आवाज़ है।"
+                case "i":
+                    text = "Ciao, questa è una voce di prova."
+                case "p":
+                    text = "Olá, esta é uma voz de teste."
+                default:
+                    text = "Hello, this is a test voice."
+                }
+                
+                let audioData = try await apiManager.generateSpeech(
+                    endpoint: ttsURL,
+                    model: ttsModel,
+                    text: text,
+                    voice: ttsVoice,
+                    speed: ttsSpeed
+                )
+                
+                audioPlayer.play(data: audioData)
+                log("Voice test audio generated and playing.", tag: "TTS")
+            } catch {
+                log("Failed to test voice: \(error.localizedDescription)", tag: "ERROR")
+            }
+            isTestingVoice = false
+        }
+    }
+    
+    func runTextGenTest(url: String) async throws -> String {
+        log("Running Text Gen test on \(url)", tag: "LLM")
+        let response = try await apiManager.generateText(
+            endpoint: url,
+            model: "default-test",
+            messages: [
+                ChatMessage(role: "user", content: "Write a short sentence about a quick brown fox.")
+            ],
+            temperature: 0.7,
+            max_tokens: 50
+        )
+        return response
+    }
+    
+    func runTTSTest(url: String, text: String) async throws {
+        log("Running TTS test on \(url) with text: \(text)", tag: "TTS")
+        let audioData = try await apiManager.generateSpeech(
+            endpoint: url,
+            model: ttsModel,
+            text: text,
+            voice: ttsVoice.isEmpty ? "bm_daniel" : ttsVoice,
+            speed: ttsSpeed
+        )
+        audioPlayer.play(data: audioData)
+    }
+    
+    func startSTTTest(configId: Int64, url: String) {
+        stopSTTTest()
+        
+        log("Starting STT test for config \(configId) on \(url)", tag: "STT")
+        activeTestSTTConfigId = configId
+        testSTTText = ""
+        
+        if isMicrophoneActive {
+            stopMicrophonePipeline()
+        }
+        
+        testWebSocketManager = WebSocketManager(urlString: url)
+        testWebSocketManager?.onLog = { [weak self] msg in
+            self?.log("[Test STT] \(msg)", tag: "STT")
+        }
+        testWebSocketManager?.onError = { [weak self] err in
+            self?.log("[Test STT] Error: \(err)", tag: "ERROR")
+        }
+        testWebSocketManager?.onConnectionStateChange = { [weak self] connected in
+            guard let self = self else { return }
+            Task { @MainActor in
+                if connected {
+                    self.log("[Test STT] Connected. Starting audio capture.", tag: "STT")
+                    self.testAudioRecorder = AudioRecorder()
+                    self.testAudioRecorder?.onLog = { msg in
+                        self.log("[Test Audio] \(msg)", tag: "AUDIO")
+                    }
+                    self.testAudioRecorder?.onError = { err in
+                        self.log("[Test Audio] Error: \(err)", tag: "ERROR")
+                        Task { @MainActor in
+                            self.stopSTTTest()
+                        }
+                    }
+                    self.testAudioRecorder?.onAudioData = { data in
+                        Task { @MainActor in
+                            self.testWebSocketManager?.sendAudio(data: data)
+                        }
+                    }
+                    self.testAudioRecorder?.start()
+                } else {
+                    self.log("[Test STT] Disconnected.", tag: "STT")
+                    self.stopSTTTest()
+                }
+            }
+        }
+        testWebSocketManager?.onMessageReceived = { [weak self] transcription in
+            guard let self = self else { return }
+            Task { @MainActor in
+                self.log("[Test STT] Transcription: \"\(transcription)\"", tag: "STT")
+                self.testSTTText = transcription
+            }
+        }
+        
+        testWebSocketManager?.connect()
+    }
+    
+    func stopSTTTest() {
+        guard activeTestSTTConfigId != nil else { return }
+        log("Stopping STT test.", tag: "STT")
+        activeTestSTTConfigId = nil
+        testSTTText = ""
+        
+        testAudioRecorder?.stop()
+        testAudioRecorder = nil
+        
+        testWebSocketManager?.disconnect()
+        testWebSocketManager = nil
     }
 }

@@ -32,6 +32,10 @@ struct TTSRequest: Codable {
     let speed: Double
 }
 
+struct VoicesResponse: Codable {
+    let voices: [String]
+}
+
 @MainActor
 class APIManager {
     var onLog: ((String) -> Void)?
@@ -136,5 +140,115 @@ class APIManager {
         }
         
         return data
+    }
+    
+    /// Dynamically fetches the list of voice names supported by the TTS server
+    func fetchVoices(endpoint: String) async throws -> [String] {
+        var voicesURLString = endpoint
+        if endpoint.hasSuffix("/speech") {
+            voicesURLString = String(endpoint.dropLast(6)) + "voices"
+        } else {
+            if let urlObj = URL(string: endpoint) {
+                voicesURLString = urlObj.deletingLastPathComponent().appendingPathComponent("voices").absoluteString
+            }
+        }
+        
+        guard let url = URL(string: voicesURLString) else {
+            throw NSError(domain: "APIManager", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid Voices URL"])
+        }
+        
+        onLog?("APIManager [TTS]: Fetching voices list from \(voicesURLString)")
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw NSError(domain: "APIManager", code: 500, userInfo: [NSLocalizedDescriptionKey: "Invalid HTTP Response"])
+        }
+        
+        onLog?("APIManager [TTS]: Fetch voices response status: \(httpResponse.statusCode)")
+        
+        guard httpResponse.statusCode == 200 else {
+            let errBody = String(data: data, encoding: .utf8) ?? "No body"
+            throw NSError(domain: "APIManager", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP Error \(httpResponse.statusCode): \(errBody)"])
+        }
+        
+        let decoded = try JSONDecoder().decode(VoicesResponse.self, from: data)
+        return decoded.voices
+    }
+    
+    /// Connection verifier for Text Generation endpoint
+    func testTextGenConnection(url: String) async -> Bool {
+        guard let urlObj = URL(string: url) else { return false }
+        onLog?("APIManager [LLM]: Testing connection to \(url)")
+        
+        var request = URLRequest(url: urlObj)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let testPayload: [String: Any] = [
+            "model": "ping-test",
+            "messages": [["role": "user", "content": "ping"]],
+            "max_tokens": 1
+        ]
+        
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: testPayload) else { return false }
+        request.httpBody = jsonData
+        
+        do {
+            let (_, response) = try await URLSession.shared.data(for: request)
+            if let httpResponse = response as? HTTPURLResponse {
+                onLog?("APIManager [LLM]: Connection test returned status code: \(httpResponse.statusCode)")
+                return (200...299).contains(httpResponse.statusCode)
+            }
+        } catch {
+            onLog?("APIManager [LLM]: Connection test failed with error: \(error.localizedDescription)")
+            return false
+        }
+        return false
+    }
+    
+    /// Connection verifier for STT WebSocket endpoint
+    func testSTTConnection(url: String) async -> Bool {
+        guard let urlObj = URL(string: url) else { return false }
+        onLog?("APIManager [STT]: Testing connection to \(url)")
+        
+        return await withCheckedContinuation { continuation in
+            let session = URLSession(configuration: .default)
+            let task = session.webSocketTask(with: urlObj)
+            
+            var completed = false
+            func finish(result: Bool) {
+                if !completed {
+                    completed = true
+                    task.cancel(with: .normalClosure, reason: nil)
+                    continuation.resume(returning: result)
+                }
+            }
+            
+            Task {
+                try? await Task.sleep(nanoseconds: 3_000_000_000)
+                finish(result: false)
+            }
+            
+            task.resume()
+            
+            task.sendPing { [weak self] error in
+                if let error = error {
+                    Task { @MainActor in
+                        self?.onLog?("APIManager [STT]: Ping test failed: \(error.localizedDescription)")
+                    }
+                    finish(result: false)
+                } else {
+                    Task { @MainActor in
+                        self?.onLog?("APIManager [STT]: Ping test succeeded")
+                    }
+                    finish(result: true)
+                }
+            }
+        }
     }
 }
