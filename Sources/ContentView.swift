@@ -200,7 +200,7 @@ struct ContentView: View {
                                         isTranslationEnabled: viewModel.isTranslationEnabled,
                                         isPhonicsEnabled: viewModel.isPhonicsEnabled
                                     )
-                                    .id(message.id)
+                                    .id(messageRowID(message.id))
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -211,7 +211,7 @@ struct ContentView: View {
                         .onChange(of: viewModel.messages) {
                             if let lastMessage = viewModel.messages.last {
                                 withAnimation {
-                                    proxy.scrollTo(lastMessage.id, anchor: .bottom)
+                                    proxy.scrollTo(messageRowID(lastMessage.id), anchor: .bottom)
                                 }
                             }
                         }
@@ -367,6 +367,10 @@ struct ContentView: View {
         #if os(macOS)
         .frame(minWidth: 800, minHeight: 600)
         #endif
+    }
+    
+    private func messageRowID(_ messageID: String) -> String {
+        "\(messageID)-translation-\(viewModel.isTranslationEnabled)"
     }
     
     private func sendText() {
