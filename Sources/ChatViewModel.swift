@@ -78,6 +78,13 @@ class ChatViewModel: ObservableObject {
     private var testWebSocketManager: WebSocketManager?
     private var testAudioRecorder: AudioRecorder?
     
+    @Published var isTranslationEnabled: Bool {
+        didSet { UserDefaults.standard.set(isTranslationEnabled, forKey: "isTranslationEnabled") }
+    }
+    @Published var isPhonicsEnabled: Bool {
+        didSet { UserDefaults.standard.set(isPhonicsEnabled, forKey: "isPhonicsEnabled") }
+    }
+    
     init() {
         // Load settings from UserDefaults or use defaults from readme
         self.sttURL = UserDefaults.standard.string(forKey: "sttURL") ?? "wss://speech_to_text.npro.ai?silence_duration_ms=1000"
@@ -87,6 +94,9 @@ class ChatViewModel: ObservableObject {
         self.ttsModel = UserDefaults.standard.string(forKey: "ttsModel") ?? "kokoro-v1"
         self.ttsVoice = UserDefaults.standard.string(forKey: "ttsVoice") ?? "bm_daniel"
         self.ttsSpeed = UserDefaults.standard.double(forKey: "ttsSpeed") == 0 ? 1.0 : UserDefaults.standard.double(forKey: "ttsSpeed")
+        
+        self.isTranslationEnabled = UserDefaults.standard.object(forKey: "isTranslationEnabled") as? Bool ?? true
+        self.isPhonicsEnabled = UserDefaults.standard.object(forKey: "isPhonicsEnabled") as? Bool ?? true
         
         setupCallbacks()
         loadConversations()

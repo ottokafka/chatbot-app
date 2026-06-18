@@ -13,6 +13,8 @@ struct ContentView: View {
     
     @State private var isPromptHovered = false
     @State private var isEndpointsHovered = false
+    @State private var isTranslationHovered = false
+    @State private var isPhonicsHovered = false
     
     var body: some View {
         NavigationSplitView {
@@ -67,98 +69,10 @@ struct ContentView: View {
         } detail: {
             // MAIN DETAIL VIEW
             VStack(spacing: 0) {
-                if let activeConv = viewModel.activeConversation {
+                if viewModel.activeConversation != nil {
                     // Chat Window Header
-                    #if os(iOS)
-                    VStack(alignment: .leading, spacing: 10) {
-                        // Row 1: Title & Status Indicators
-                        HStack {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(activeConv.title)
-                                    .font(.caption2)
-                                    .fontWeight(.semibold)
-                                Text("ID: \(activeConv.id.prefix(8))...")
-                                    .font(.caption2)
-                                    .foregroundColor(.secondary)
-                            }
-                            
-                            Spacer()
-                            
-                            HStack(spacing: 6) {
-                                StatusIndicator(title: "STT", isActive: viewModel.isWebSocketConnected, activeColor: .green)
-                                StatusIndicator(title: "LLM", isActive: viewModel.isGeneratingText, activeColor: .yellow)
-                                StatusIndicator(title: "TTS", isActive: viewModel.isGeneratingSpeech, activeColor: .blue)
-                                StatusIndicator(title: "AUDIO", isActive: viewModel.isPlayingAudio, activeColor: .orange)
-                            }
-                        }
-                        
-                        // Row 2: Prompt and Endpoints buttons side-by-side
-                        HStack(spacing: 10) {
-                            Button(action: {
-                                isShowingPromptModal.toggle()
-                            }) {
-                                HStack(spacing: 4) {
-                                    Text("💬")
-                                    Text(viewModel.activeSystemPrompt?.title ?? "No Prompt")
-                                        .lineLimit(1)
-                                }
-                                .font(.footnote)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(
-                                    Capsule()
-                                        .fill(Color.platformControlBackground)
-                                        .overlay(
-                                            Capsule()
-                                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                                        )
-                                )
-                            }
-                            .buttonStyle(.plain)
-                            .sheet(isPresented: $isShowingPromptModal) {
-                                SystemPromptModalView(viewModel: viewModel)
-                            }
-                            
-                            Button(action: {
-                                isShowingEndpointModal.toggle()
-                            }) {
-                                HStack(spacing: 4) {
-                                    Text("🔌")
-                                    Text("Endpoints")
-                                }
-                                .font(.footnote)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(
-                                    Capsule()
-                                        .fill(Color.platformControlBackground)
-                                        .overlay(
-                                            Capsule()
-                                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                                        )
-                                )
-                            }
-                            .buttonStyle(.plain)
-                            .sheet(isPresented: $isShowingEndpointModal) {
-                                EndpointConfigModalView(viewModel: viewModel)
-                            }
-                        }
-                    }
-                    .padding()
-                    .background(Color.platformWindowBackground)
-                    #else
+                    #if !os(iOS)
                     HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(activeConv.title)
-                                .font(.title3)
-                                .fontWeight(.semibold)
-                            Text("Conversation ID: \(activeConv.id)")
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
-                        }
-                        
-                        Spacer()
-                        
                         // Centered Buttons Group
                         HStack(spacing: 12) {
                             // Context Switcher Pill Button (Click #1)
@@ -185,9 +99,6 @@ struct ContentView: View {
                             .buttonStyle(.plain)
                             .onHover { isPromptHovered = $0 }
                             .help("Select System Prompt")
-                            .sheet(isPresented: $isShowingPromptModal) {
-                                SystemPromptModalView(viewModel: viewModel)
-                            }
                             
                             // Endpoints Button
                             Button(action: {
@@ -212,9 +123,54 @@ struct ContentView: View {
                             .buttonStyle(.plain)
                             .onHover { isEndpointsHovered = $0 }
                             .help("Manage Endpoint Configurations")
-                            .sheet(isPresented: $isShowingEndpointModal) {
-                                EndpointConfigModalView(viewModel: viewModel)
+                            
+                            // Translation Toggle Button
+                            Button(action: {
+                                viewModel.isTranslationEnabled.toggle()
+                            }) {
+                                HStack(spacing: 6) {
+                                    Text(viewModel.isTranslationEnabled ? "🌐" : "🌐 (Off)")
+                                    Text("Translation")
+                                }
+                                .font(.system(.body, design: .monospaced))
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
+                                .background(
+                                    Capsule()
+                                        .fill(viewModel.isTranslationEnabled ? Color.blue.opacity(0.15) : (isTranslationHovered ? Color.gray.opacity(0.2) : Color.platformControlBackground))
+                                        .overlay(
+                                            Capsule()
+                                                .stroke(viewModel.isTranslationEnabled ? Color.blue.opacity(0.6) : (Color.gray.opacity(isTranslationHovered ? 0.5 : 0.3)), lineWidth: 1)
+                                        )
+                                )
                             }
+                            .buttonStyle(.plain)
+                            .onHover { isTranslationHovered = $0 }
+                            .help("Toggle translation feature")
+                            
+                            // Phonics Toggle Button
+                            Button(action: {
+                                viewModel.isPhonicsEnabled.toggle()
+                            }) {
+                                HStack(spacing: 6) {
+                                    Text(viewModel.isPhonicsEnabled ? "🗣️" : "🗣️ (Off)")
+                                    Text("Phonics")
+                                }
+                                .font(.system(.body, design: .monospaced))
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
+                                .background(
+                                    Capsule()
+                                        .fill(viewModel.isPhonicsEnabled ? Color.blue.opacity(0.15) : (isPhonicsHovered ? Color.gray.opacity(0.2) : Color.platformControlBackground))
+                                        .overlay(
+                                            Capsule()
+                                                .stroke(viewModel.isPhonicsEnabled ? Color.blue.opacity(0.6) : (Color.gray.opacity(isPhonicsHovered ? 0.5 : 0.3)), lineWidth: 1)
+                                        )
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .onHover { isPhonicsHovered = $0 }
+                            .help("Toggle Pinyin phonics")
                         }
                         
                         Spacer()
@@ -239,8 +195,12 @@ struct ContentView: View {
                         ScrollView {
                             VStack(alignment: .leading, spacing: 16) {
                                 ForEach(viewModel.messages) { message in
-                                    MessageRow(message: message)
-                                        .id(message.id)
+                                    MessageRow(
+                                        message: message,
+                                        isTranslationEnabled: viewModel.isTranslationEnabled,
+                                        isPhonicsEnabled: viewModel.isPhonicsEnabled
+                                    )
+                                    .id(message.id)
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -335,6 +295,55 @@ struct ContentView: View {
                 #endif
                 #endif
             }
+            .sheet(isPresented: $isShowingPromptModal) {
+                SystemPromptModalView(viewModel: viewModel)
+            }
+            .sheet(isPresented: $isShowingEndpointModal) {
+                EndpointConfigModalView(viewModel: viewModel)
+            }
+            .toolbar {
+                #if os(iOS)
+                if viewModel.activeConversation != nil {
+                    ToolbarItem(placement: .principal) {
+                        HStack(spacing: 6) {
+                            StatusIndicator(title: "STT", isActive: viewModel.isWebSocketConnected, activeColor: .green, showTitle: false)
+                            StatusIndicator(title: "LLM", isActive: viewModel.isGeneratingText, activeColor: .yellow, showTitle: false)
+                            StatusIndicator(title: "TTS", isActive: viewModel.isGeneratingSpeech, activeColor: .blue, showTitle: false)
+                            StatusIndicator(title: "AUDIO", isActive: viewModel.isPlayingAudio, activeColor: .orange, showTitle: false)
+                        }
+                    }
+                    ToolbarItemGroup(placement: .navigationBarTrailing) {
+                        HStack(spacing: 12) {
+                            Button(action: {
+                                isShowingPromptModal.toggle()
+                            }) {
+                                Text("💬")
+                            }
+                            
+                            Button(action: {
+                                isShowingEndpointModal.toggle()
+                            }) {
+                                Text("🔌")
+                            }
+                            
+                            Button(action: {
+                                viewModel.isTranslationEnabled.toggle()
+                            }) {
+                                Text("🌐")
+                                    .foregroundColor(viewModel.isTranslationEnabled ? .blue : .gray)
+                            }
+                            
+                            Button(action: {
+                                viewModel.isPhonicsEnabled.toggle()
+                            }) {
+                                Text("🗣️")
+                                    .foregroundColor(viewModel.isPhonicsEnabled ? .blue : .gray)
+                            }
+                        }
+                    }
+                }
+                #endif
+            }
         }
         #if os(macOS)
         .frame(minWidth: 800, minHeight: 600)
@@ -352,8 +361,13 @@ struct ContentView: View {
 // MARK: - Message Row View
 struct MessageRow: View {
     let message: Message
+    let isTranslationEnabled: Bool
+    let isPhonicsEnabled: Bool
     
-    @State private var englishTranslation: String = ""
+    @State private var translatedText: String = ""
+    #if canImport(Translation) && !targetEnvironment(simulator)
+    @State private var translationConfiguration: TranslationSession.Configuration?
+    #endif
     
     var isUser: Bool { message.role == "user" }
     
@@ -379,20 +393,41 @@ struct MessageRow: View {
                     Text(message.content)
                         .font(.system(.body, design: .monospaced))
                     
-                    if message.content.containsChineseCharacters, let pinyin = message.content.toPinyin() {
-                        Divider()
-                            .padding(.top, 2)
-                        Text(pinyin)
-                            .font(.system(.subheadline, design: .monospaced))
-                            .foregroundColor(.secondary)
-                            .italic()
-                        
-                        if !englishTranslation.isEmpty {
+                    if message.content.isChinese() {
+                        // Source is Chinese
+                        if isPhonicsEnabled, let pinyin = message.content.toPinyin() {
                             Divider()
                                 .padding(.top, 2)
-                            Text(englishTranslation)
+                            Text(pinyin)
                                 .font(.system(.subheadline, design: .monospaced))
                                 .foregroundColor(.secondary)
+                                .italic()
+                        }
+                        
+                        if isTranslationEnabled && !translatedText.isEmpty {
+                            Divider()
+                                .padding(.top, 2)
+                            Text(translatedText)
+                                .font(.system(.subheadline, design: .monospaced))
+                                .foregroundColor(.secondary)
+                        }
+                    } else {
+                        // Source is English/Other
+                        if isTranslationEnabled && !translatedText.isEmpty {
+                            Divider()
+                                .padding(.top, 2)
+                            Text(translatedText)
+                                .font(.system(.subheadline, design: .monospaced))
+                                .foregroundColor(.secondary)
+                            
+                            if isPhonicsEnabled, let pinyin = translatedText.toPinyin() {
+                                Divider()
+                                    .padding(.top, 2)
+                                Text(pinyin)
+                                    .font(.system(.subheadline, design: .monospaced))
+                                    .foregroundColor(.secondary)
+                                    .italic()
+                            }
                         }
                     }
                 }
@@ -412,20 +447,55 @@ struct MessageRow: View {
             
             if !isUser { Spacer() }
         }
-        #if canImport(Translation)
-        .translationTask(
-            source: Locale.Language(identifier: "zh-Hans"),
-            target: Locale.Language(identifier: "en")
-        ) { session in
+        .onAppear {
+            updateTranslationConfiguration()
+        }
+        .onChange(of: isTranslationEnabled) {
+            updateTranslationConfiguration()
+            if !isTranslationEnabled {
+                translatedText = ""
+            }
+        }
+        .onChange(of: message.content) {
+            updateTranslationConfiguration()
+        }
+        #if canImport(Translation) && !targetEnvironment(simulator)
+        .translationTask(translationConfiguration) { session in
             do {
-                if message.content.containsChineseCharacters {
-                    let response = try await session.translate(message.content)
-                    await MainActor.run {
-                        self.englishTranslation = response.targetText
-                    }
+                let response = try await session.translate(message.content)
+                await MainActor.run {
+                    self.translatedText = response.targetText
                 }
             } catch {
                 print("Translation failed: \(error)")
+            }
+        }
+        #endif
+    }
+    
+    private func updateTranslationConfiguration() {
+        guard isTranslationEnabled else {
+            #if canImport(Translation) && !targetEnvironment(simulator)
+            if #available(macOS 15.0, iOS 17.4, *) {
+                translationConfiguration = nil
+            }
+            #endif
+            return
+        }
+        
+        #if canImport(Translation) && !targetEnvironment(simulator)
+        if #available(macOS 15.0, iOS 17.4, *) {
+            let content = message.content
+            if content.isChinese() {
+                translationConfiguration = TranslationSession.Configuration(
+                    source: Locale.Language(identifier: "zh-Hans"),
+                    target: Locale.Language(identifier: "en")
+                )
+            } else if content.detectedLanguage() == "en" || !content.containsChineseCharacters {
+                translationConfiguration = TranslationSession.Configuration(
+                    source: Locale.Language(identifier: "en"),
+                    target: Locale.Language(identifier: "zh-Hans")
+                )
             }
         }
         #endif
@@ -437,6 +507,7 @@ struct StatusIndicator: View {
     let title: String
     let isActive: Bool
     let activeColor: Color
+    var showTitle: Bool = true
     
     var body: some View {
         HStack(spacing: 4) {
@@ -444,11 +515,13 @@ struct StatusIndicator: View {
                 .fill(isActive ? activeColor : Color.secondary.opacity(0.3))
                 .frame(width: 8, height: 8)
                 .shadow(color: isActive ? activeColor.opacity(0.6) : .clear, radius: 2)
-            Text(title)
-                .font(.system(size: 10, weight: .semibold, design: .monospaced))
-                .foregroundColor(isActive ? .primary : .secondary)
+            if showTitle {
+                Text(title)
+                    .font(.system(size: 10, weight: .semibold, design: .monospaced))
+                    .foregroundColor(isActive ? .primary : .secondary)
+            }
         }
-        .padding(.horizontal, 6)
+        .padding(.horizontal, showTitle ? 6 : 4)
         .padding(.vertical, 3)
         .background(
             RoundedRectangle(cornerRadius: 4)

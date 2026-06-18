@@ -19,4 +19,41 @@ extension String {
                    (value >= 0xF900 && value <= 0xFAFF)
         }
     }
+    
+    /// Checks if the string contains any Japanese characters (Hiragana or Katakana).
+    var containsJapaneseCharacters: Bool {
+        return unicodeScalars.contains { scalar in
+            let value = scalar.value
+            return (value >= 0x3040 && value <= 0x309F) ||
+                   (value >= 0x30A0 && value <= 0x30FF)
+        }
+    }
+    
+    /// Checks if the string contains any Latin letters (standard English alphabet).
+    var containsLatinCharacters: Bool {
+        return unicodeScalars.contains { scalar in
+            let value = scalar.value
+            return (value >= 0x0041 && value <= 0x005A) || // A-Z
+                   (value >= 0x0061 && value <= 0x007A)    // a-z
+        }
+    }
+    
+    /// Detects the language tag ("zh-Hans", "ja", "en") using fallback character checks.
+    func detectedLanguage() -> String {
+        if containsChineseCharacters {
+            return "zh-Hans"
+        }
+        if containsJapaneseCharacters {
+            return "ja"
+        }
+        if containsLatinCharacters {
+            return "en"
+        }
+        return "en"
+    }
+    
+    /// Returns true if the language is Chinese.
+    func isChinese() -> Bool {
+        return containsChineseCharacters || detectedLanguage() == "zh-Hans"
+    }
 }
