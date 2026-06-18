@@ -257,7 +257,12 @@ struct ContentView: View {
                         .controlSize(.large)
                         .disabled(textInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     }
+                    #if os(iOS)
+                    .padding(.horizontal)
+                    .padding(.vertical, )
+                    #else
                     .padding()
+                    #endif
                     .background(Color.platformWindowBackground)
                     
                 } else {
@@ -344,6 +349,10 @@ struct ContentView: View {
                 }
                 #endif
             }
+            .navigationTitle("")
+            #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
         }
         #if os(macOS)
         .frame(minWidth: 800, minHeight: 600)
