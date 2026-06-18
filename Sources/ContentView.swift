@@ -323,26 +323,36 @@ struct ContentView: View {
                                 isShowingPromptModal.toggle()
                             }) {
                                 Text("💬")
+                                    .padding(6)
+                                    .background(Circle().fill(Color.gray.opacity(0.12)))
+                                    .overlay(Circle().stroke(Color.gray.opacity(0.25), lineWidth: 1))
                             }
                             
                             Button(action: {
                                 isShowingEndpointModal.toggle()
                             }) {
                                 Text("🔌")
+                                    .padding(6)
+                                    .background(Circle().fill(Color.gray.opacity(0.12)))
+                                    .overlay(Circle().stroke(Color.gray.opacity(0.25), lineWidth: 1))
                             }
                             
                             Button(action: {
                                 viewModel.isTranslationEnabled.toggle()
                             }) {
                                 Text("🌐")
-                                    .foregroundColor(viewModel.isTranslationEnabled ? .blue : .gray)
+                                    .padding(6)
+                                    .background(Circle().fill(viewModel.isTranslationEnabled ? Color.blue.opacity(0.18) : Color.gray.opacity(0.12)))
+                                    .overlay(Circle().stroke(viewModel.isTranslationEnabled ? Color.blue.opacity(0.8) : Color.gray.opacity(0.25), lineWidth: 1))
                             }
                             
                             Button(action: {
                                 viewModel.isPhonicsEnabled.toggle()
                             }) {
                                 Text("🗣️")
-                                    .foregroundColor(viewModel.isPhonicsEnabled ? .blue : .gray)
+                                    .padding(6)
+                                    .background(Circle().fill(viewModel.isPhonicsEnabled ? Color.blue.opacity(0.18) : Color.gray.opacity(0.12)))
+                                    .overlay(Circle().stroke(viewModel.isPhonicsEnabled ? Color.blue.opacity(0.8) : Color.gray.opacity(0.25), lineWidth: 1))
                             }
                         }
                     }
