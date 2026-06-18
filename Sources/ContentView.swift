@@ -1,5 +1,7 @@
 import SwiftUI
+#if canImport(Translation)
 import Translation
+#endif
 
 struct ContentView: View {
     @StateObject private var viewModel = ChatViewModel()
@@ -67,6 +69,84 @@ struct ContentView: View {
             VStack(spacing: 0) {
                 if let activeConv = viewModel.activeConversation {
                     // Chat Window Header
+                    #if os(iOS)
+                    VStack(alignment: .leading, spacing: 10) {
+                        // Row 1: Title & Status Indicators
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(activeConv.title)
+                                    .font(.caption2)
+                                    .fontWeight(.semibold)
+                                Text("ID: \(activeConv.id.prefix(8))...")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            Spacer()
+                            
+                            HStack(spacing: 6) {
+                                StatusIndicator(title: "STT", isActive: viewModel.isWebSocketConnected, activeColor: .green)
+                                StatusIndicator(title: "LLM", isActive: viewModel.isGeneratingText, activeColor: .yellow)
+                                StatusIndicator(title: "TTS", isActive: viewModel.isGeneratingSpeech, activeColor: .blue)
+                                StatusIndicator(title: "AUDIO", isActive: viewModel.isPlayingAudio, activeColor: .orange)
+                            }
+                        }
+                        
+                        // Row 2: Prompt and Endpoints buttons side-by-side
+                        HStack(spacing: 10) {
+                            Button(action: {
+                                isShowingPromptModal.toggle()
+                            }) {
+                                HStack(spacing: 4) {
+                                    Text("💬")
+                                    Text(viewModel.activeSystemPrompt?.title ?? "No Prompt")
+                                        .lineLimit(1)
+                                }
+                                .font(.footnote)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(
+                                    Capsule()
+                                        .fill(Color.platformControlBackground)
+                                        .overlay(
+                                            Capsule()
+                                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                                        )
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .sheet(isPresented: $isShowingPromptModal) {
+                                SystemPromptModalView(viewModel: viewModel)
+                            }
+                            
+                            Button(action: {
+                                isShowingEndpointModal.toggle()
+                            }) {
+                                HStack(spacing: 4) {
+                                    Text("🔌")
+                                    Text("Endpoints")
+                                }
+                                .font(.footnote)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(
+                                    Capsule()
+                                        .fill(Color.platformControlBackground)
+                                        .overlay(
+                                            Capsule()
+                                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                                        )
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .sheet(isPresented: $isShowingEndpointModal) {
+                                EndpointConfigModalView(viewModel: viewModel)
+                            }
+                        }
+                    }
+                    .padding()
+                    .background(Color.platformWindowBackground)
+                    #else
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(activeConv.title)
@@ -95,7 +175,7 @@ struct ContentView: View {
                                 .padding(.vertical, 8)
                                 .background(
                                     Capsule()
-                                        .fill(isPromptHovered ? Color.gray.opacity(0.2) : Color(nsColor: .controlBackgroundColor))
+                                        .fill(isPromptHovered ? Color.gray.opacity(0.2) : Color.platformControlBackground)
                                         .overlay(
                                             Capsule()
                                                 .stroke(Color.gray.opacity(isPromptHovered ? 0.5 : 0.3), lineWidth: 1)
@@ -122,7 +202,7 @@ struct ContentView: View {
                                 .padding(.vertical, 8)
                                 .background(
                                     Capsule()
-                                        .fill(isEndpointsHovered ? Color.gray.opacity(0.2) : Color(nsColor: .controlBackgroundColor))
+                                        .fill(isEndpointsHovered ? Color.gray.opacity(0.2) : Color.platformControlBackground)
                                         .overlay(
                                             Capsule()
                                                 .stroke(Color.gray.opacity(isEndpointsHovered ? 0.5 : 0.3), lineWidth: 1)
@@ -149,7 +229,8 @@ struct ContentView: View {
                         .padding(.trailing, 10)
                     }
                     .padding()
-                    .background(Color(nsColor: .windowBackgroundColor))
+                    .background(Color.platformWindowBackground)
+                    #endif
                     
                     Divider()
                     
@@ -162,9 +243,11 @@ struct ContentView: View {
                                         .id(message.id)
                                 }
                             }
+                            .frame(maxWidth: .infinity, alignment: .leading)
                             .padding()
                         }
-                        .background(Color(nsColor: .controlBackgroundColor))
+                        .frame(maxWidth: .infinity)
+                        .background(Color.platformControlBackground)
                         .onChange(of: viewModel.messages) {
                             if let lastMessage = viewModel.messages.last {
                                 withAnimation {
@@ -215,7 +298,7 @@ struct ContentView: View {
                         .disabled(textInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     }
                     .padding()
-                    .background(Color(nsColor: .windowBackgroundColor))
+                    .background(Color.platformWindowBackground)
                     
                 } else {
                     // Empty State
@@ -238,16 +321,24 @@ struct ContentView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
                 
-                // Verbose Console Logs Panel
-                Divider()
-                LogConsolePanel(
-                    viewModel: viewModel,
-                    isExpanded: $isLogsExpanded,
-                    height: $logsHeight
-                )
+                #if os(macOS)
+                #if canImport(Translation)
+                if #available(macOS 15.0, *) {
+                    // Verbose Console Logs Panel
+                    Divider()
+                    LogConsolePanel(
+                        viewModel: viewModel,
+                        isExpanded: $isLogsExpanded,
+                        height: $logsHeight
+                    )
+                }
+                #endif
+                #endif
             }
         }
+        #if os(macOS)
         .frame(minWidth: 800, minHeight: 600)
+        #endif
     }
     
     private func sendText() {
@@ -309,7 +400,7 @@ struct MessageRow: View {
                 .padding(.vertical, 10)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(isUser ? Color.blue.opacity(0.15) : Color(nsColor: .controlBackgroundColor))
+                        .fill(isUser ? Color.blue.opacity(0.15) : Color.platformControlBackground)
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
                                 .stroke(isUser ? Color.blue.opacity(0.4) : Color.gray.opacity(0.2), lineWidth: 1)
@@ -321,6 +412,7 @@ struct MessageRow: View {
             
             if !isUser { Spacer() }
         }
+        #if canImport(Translation)
         .translationTask(
             source: Locale.Language(identifier: "zh-Hans"),
             target: Locale.Language(identifier: "en")
@@ -336,6 +428,7 @@ struct MessageRow: View {
                 print("Translation failed: \(error)")
             }
         }
+        #endif
     }
 }
 
@@ -456,8 +549,12 @@ struct LogConsolePanel: View {
                 HStack(spacing: 12) {
                     Button("Copy Logs") {
                         let logText = viewModel.logs.map { "[\($0.timestamp.formatted())] [\($0.tag)] \($0.message)" }.joined(separator: "\n")
+                        #if os(macOS)
                         NSPasteboard.general.clearContents()
                         NSPasteboard.general.setString(logText, forType: .string)
+                        #else
+                        UIPasteboard.general.string = logText
+                        #endif
                     }
                     .buttonStyle(.borderless)
                     .controlSize(.small)
@@ -480,7 +577,7 @@ struct LogConsolePanel: View {
             }
             .padding(.horizontal)
             .padding(.vertical, 8)
-            .background(Color(nsColor: .windowBackgroundColor))
+            .background(Color.platformWindowBackground)
             
             if isExpanded {
                 Divider()
@@ -558,8 +655,187 @@ struct SystemPromptModalView: View {
     @State private var isGenerating = false
     @State private var editingPrompt: SystemPrompt? = nil
     @State private var hoveredPromptId: String? = nil
+    @State private var iOSActiveTab = 0
     
     var body: some View {
+        #if os(iOS)
+        VStack(spacing: 0) {
+            Picker("", selection: $iOSActiveTab) {
+                Text("Select").tag(0)
+                Text("Create / Edit").tag(1)
+            }
+            .pickerStyle(.segmented)
+            .padding()
+            
+            if iOSActiveTab == 0 {
+                // Select System Prompt List
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("Select System Prompt")
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                    
+                    ScrollView {
+                        VStack(spacing: 12) {
+                            ForEach(viewModel.systemPrompts) { prompt in
+                                VStack(alignment: .leading, spacing: 4) {
+                                    HStack(alignment: .center) {
+                                        Text(prompt.title)
+                                            .font(.headline)
+                                            .foregroundColor(.white)
+                                        
+                                        Spacer()
+                                        
+                                        // Edit button
+                                        Button(action: {
+                                            editingPrompt = prompt
+                                            newTitle = prompt.title
+                                            newPromptText = prompt.promptText
+                                            iOSActiveTab = 1
+                                        }) {
+                                            Image(systemName: "pencil")
+                                                .font(.system(size: 14, weight: .bold))
+                                                .foregroundColor(.blue)
+                                        }
+                                        .buttonStyle(.plain)
+                                        
+                                        // Delete button
+                                        Button(action: {
+                                            viewModel.deleteSystemPrompt(prompt)
+                                        }) {
+                                            Image(systemName: "trash")
+                                                .font(.system(size: 14, weight: .bold))
+                                                .foregroundColor(.red)
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                    
+                                    Text(prompt.promptText)
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
+                                        .lineLimit(3)
+                                        .multilineTextAlignment(.leading)
+                                }
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(prompt.isActive ? Color.blue.opacity(0.15) : Color.gray.opacity(0.1))
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(prompt.isActive ? Color.blue : Color.gray.opacity(0.2), lineWidth: prompt.isActive ? 2 : 1)
+                                )
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    viewModel.selectSystemPrompt(prompt)
+                                    dismiss()
+                                }
+                            }
+                        }
+                    }
+                }
+                .padding(20)
+                .background(Color(red: 0.12, green: 0.12, blue: 0.14))
+            } else {
+                // Create/Edit Prompt Form
+                VStack(alignment: .leading, spacing: 16) {
+                    
+                    HStack(spacing: 8) {
+                        // Title Field
+                        TextField("Title (e.g. Grammar Expert)", text: $newTitle)
+                            .textFieldStyle(.plain)
+                            .padding(.horizontal, 10)
+                            .frame(height: 44)
+                            .background(Color.black.opacity(0.6))
+                            .cornerRadius(8)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                            )
+                            .font(.body)
+                        
+                        // AI Prompt Generation Button
+                        Button(action: {
+                            generatePromptWithAI()
+                        }) {
+                            HStack(spacing: 6) {
+                                if isGenerating {
+                                    ProgressView()
+                                        .controlSize(.small)
+                                } else {
+                                    Image(systemName: "sparkles")
+                                    Text("AI")
+                                }
+                            }
+                            .font(.system(size: 15, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 14)
+                            .frame(height: 44)
+                            .background(newTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? Color.purple.opacity(0.3) : Color.purple)
+                            .cornerRadius(8)
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(newTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isGenerating)
+                    }
+                    
+                    // Prompt Content Area
+                    TextEditor(text: $newPromptText)
+                        .font(.system(.body, design: .monospaced))
+                        .foregroundColor(.white)
+                        .padding(6)
+                        .scrollContentBackground(.hidden)
+                        .background(Color.black.opacity(0.6))
+                        .cornerRadius(6)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                        )
+                    
+                    HStack(spacing: 12) {
+                        // Cancel button
+                        Button(action: {
+                            if editingPrompt != nil {
+                                editingPrompt = nil
+                                newTitle = ""
+                                newPromptText = ""
+                                iOSActiveTab = 0
+                            } else {
+                                dismiss()
+                            }
+                        }) {
+                            Text("Cancel")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 48)
+                                .background(Color.gray.opacity(0.3))
+                                .cornerRadius(12)
+                        }
+                        .buttonStyle(.plain)
+                        
+                        // Save/Update Button
+                        Button(action: {
+                            savePrompt()
+                            iOSActiveTab = 0
+                        }) {
+                            Text(editingPrompt == nil ? "Save Prompt" : "Update Prompt")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 48)
+                                .background(newTitle.isEmpty || newPromptText.isEmpty ? Color.blue.opacity(0.3) : Color.blue)
+                                .cornerRadius(12)
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(newTitle.isEmpty || newPromptText.isEmpty)
+                    }
+                }
+                .padding(20)
+                .background(Color(red: 0.16, green: 0.16, blue: 0.18))
+            }
+        }
+        .preferredColorScheme(.dark)
+        #else
         HStack(spacing: 0) {
             // LEFT COLUMN: Select System Prompt (60% width)
             VStack(alignment: .leading, spacing: 16) {
@@ -644,10 +920,6 @@ struct SystemPromptModalView: View {
             
             // RIGHT COLUMN: Create/Edit Prompt (40% width)
             VStack(alignment: .leading, spacing: 16) {
-                Text(editingPrompt == nil ? "Create New Prompt" : "Edit Prompt")
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
                 
                 // Title Field
                 TextField("Title (e.g. Grammar Expert)", text: $newTitle)
@@ -738,6 +1010,7 @@ struct SystemPromptModalView: View {
         }
         .frame(width: 780, height: 480)
         .preferredColorScheme(.dark)
+        #endif
     }
     
     private func generatePromptWithAI() {
@@ -777,8 +1050,156 @@ struct EndpointConfigModalView: View {
     @Environment(\.dismiss) var dismiss
     
     @State private var selectedConfig: EndpointConfig?
+    @State private var iOSActiveTab = 0
     
     var body: some View {
+        #if os(iOS)
+        VStack(spacing: 0) {
+            Picker("", selection: $iOSActiveTab) {
+                Text("Configs").tag(0)
+                Text("Details").tag(1)
+            }
+            .pickerStyle(.segmented)
+            .padding()
+            
+            if iOSActiveTab == 0 {
+                // Config Profile List (Sidebar equivalent)
+                VStack(alignment: .leading, spacing: 16) {
+                    // New Config Button
+                    Button(action: {
+                        let newName = "New Config"
+                        let stt = "wss://speech_to_text.npro.ai?silence_duration_ms=1000"
+                        let llm = "https://text_gen.npro.ai/v1/chat/completions"
+                        let tts = "https://text_to_speech.npro.ai/v1/audio/speech"
+                        _ = viewModel.createEndpointConfig(
+                            name: newName,
+                            textGenURL: llm,
+                            ttsURL: tts,
+                            sttURL: stt
+                        )
+                        // Select the newly created configuration and open detail tab
+                        if let last = viewModel.endpointConfigs.last {
+                            selectedConfig = last
+                            iOSActiveTab = 1
+                        }
+                    }) {
+                        HStack {
+                            Image(systemName: "plus")
+                            Text("New Configuration")
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                        .background(Color.white.opacity(0.08))
+                        .cornerRadius(6)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    
+                    Text("Configurations")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding(.top, 8)
+                    
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 8) {
+                            ForEach(viewModel.endpointConfigs) { config in
+                                HStack {
+                                    Button(action: {
+                                        selectedConfig = config
+                                        iOSActiveTab = 1
+                                    }) {
+                                        Text(config.name)
+                                            .font(.body)
+                                            .foregroundColor(selectedConfig?.id == config.id ? .white : .gray)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .padding(.vertical, 8)
+                                            .padding(.horizontal, 10)
+                                    }
+                                    .buttonStyle(.plain)
+                                    .background(selectedConfig?.id == config.id ? Color.blue : Color.clear)
+                                    .cornerRadius(6)
+                                    
+                                    if !config.isActive {
+                                        Button(action: {
+                                            viewModel.deleteEndpointConfig(id: config.id)
+                                            if selectedConfig?.id == config.id {
+                                                selectedConfig = viewModel.endpointConfigs.first(where: { $0.id != config.id })
+                                            }
+                                        }) {
+                                            Image(systemName: "trash")
+                                                .foregroundColor(.red.opacity(0.8))
+                                        }
+                                        .buttonStyle(.plain)
+                                        .padding(.trailing, 4)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    Spacer()
+                    
+                    // Done button at the bottom of the sidebar
+                    Button(action: {
+                        dismiss()
+                    }) {
+                        Text("Done")
+                            .font(.body)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(Color.gray.opacity(0.3))
+                            .cornerRadius(8)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(20)
+                .background(Color(red: 0.08, green: 0.08, blue: 0.1))
+            } else {
+                // Detail Card view
+                VStack(spacing: 0) {
+                    if let config = selectedConfig {
+                        ScrollView {
+                            EndpointConfigCard(config: config, viewModel: viewModel)
+                                .id(config.id)
+                                .padding(20)
+                        }
+                    } else {
+                        VStack(spacing: 16) {
+                            Image(systemName: "slider.horizontal.3")
+                                .font(.system(size: 48))
+                                .foregroundColor(.gray)
+                            Text("No Configuration Selected")
+                                .font(.headline)
+                                .foregroundColor(.gray)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color(red: 0.12, green: 0.12, blue: 0.14))
+            }
+        }
+        .preferredColorScheme(.dark)
+        .onAppear {
+            if selectedConfig == nil {
+                selectedConfig = viewModel.activeEndpointConfig ?? viewModel.endpointConfigs.first
+            }
+        }
+        .onChange(of: viewModel.endpointConfigs) {
+            if let current = selectedConfig {
+                if !viewModel.endpointConfigs.contains(where: { $0.id == current.id }) {
+                    selectedConfig = viewModel.activeEndpointConfig ?? viewModel.endpointConfigs.first
+                }
+            } else {
+                selectedConfig = viewModel.activeEndpointConfig ?? viewModel.endpointConfigs.first
+            }
+        }
+        #else
         HStack(spacing: 0) {
             // SIDEBAR
             VStack(alignment: .leading, spacing: 16) {
@@ -919,6 +1340,7 @@ struct EndpointConfigModalView: View {
                 selectedConfig = viewModel.activeEndpointConfig ?? viewModel.endpointConfigs.first
             }
         }
+        #endif
     }
 }
 

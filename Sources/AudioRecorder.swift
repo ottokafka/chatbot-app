@@ -52,6 +52,19 @@ class AudioRecorder: ObservableObject {
     }
     
     private func startRecording() {
+        #if os(iOS)
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetooth])
+            try session.setActive(true)
+            onLog?("AudioRecorder: AVAudioSession configured and activated.")
+        } catch {
+            onLog?("AudioRecorder: Failed to configure AVAudioSession: \(error.localizedDescription)")
+            onError?("Failed to configure audio session: \(error.localizedDescription)")
+            return
+        }
+        #endif
+
         let inputNode = audioEngine.inputNode
         let inputFormat = inputNode.inputFormat(forBus: 0)
         

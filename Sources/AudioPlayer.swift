@@ -11,6 +11,16 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     func play(data: Data) {
         stop()
         
+        #if os(iOS)
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetooth])
+            try session.setActive(true)
+        } catch {
+            onLog?("AudioPlayer: Failed to configure AVAudioSession for playback: \(error.localizedDescription)")
+        }
+        #endif
+        
         onLog?("AudioPlayer: Initializing playback for audio data size \(data.count) bytes.")
         
         do {
