@@ -1140,176 +1140,65 @@ struct SystemPromptModalView: View {
     }
 }
 
+// MARK: - Endpoint Configuration
+private enum EndpointConfigTemplate {
+    static let newName = "New Config"
+    static let stt = "wss://speech_to_text.npro.ai?silence_duration_ms=1000"
+    static let llm = "https://text_gen.npro.ai/v1/chat/completions"
+    static let tts = "https://text_to_speech.npro.ai/v1/audio/speech"
+}
+
+private func endpointHostSummary(from urlString: String) -> String {
+    let trimmed = urlString.trimmingCharacters(in: .whitespacesAndNewlines)
+    if let host = URL(string: trimmed)?.host, !host.isEmpty {
+        return host
+    }
+    if trimmed.count > 40 {
+        return String(trimmed.prefix(37)) + "..."
+    }
+    return trimmed.isEmpty ? "No URL set" : trimmed
+}
+
 // MARK: - Endpoint Configuration Modal View
 struct EndpointConfigModalView: View {
     @ObservedObject var viewModel: ChatViewModel
     @Environment(\.dismiss) var dismiss
     
     @State private var selectedConfig: EndpointConfig?
-    @State private var iOSActiveTab = 0
+    #if os(iOS)
+    @State private var navigationPath = NavigationPath()
+    #endif
     
     var body: some View {
         #if os(iOS)
-        VStack(spacing: 0) {
-            Picker("", selection: $iOSActiveTab) {
-                Text("Configs").tag(0)
-                Text("Details").tag(1)
-            }
-            .pickerStyle(.segmented)
-            .padding()
-            
-            if iOSActiveTab == 0 {
-                // Config Profile List (Sidebar equivalent)
-                VStack(alignment: .leading, spacing: 16) {
-                    // New Config Button
-                    Button(action: {
-                        let newName = "New Config"
-                        let stt = "wss://speech_to_text.npro.ai?silence_duration_ms=1000"
-                        let llm = "https://text_gen.npro.ai/v1/chat/completions"
-                        let tts = "https://text_to_speech.npro.ai/v1/audio/speech"
-                        _ = viewModel.createEndpointConfig(
-                            name: newName,
-                            textGenURL: llm,
-                            ttsURL: tts,
-                            sttURL: stt
-                        )
-                        // Select the newly created configuration and open detail tab
-                        if let last = viewModel.endpointConfigs.last {
-                            selectedConfig = last
-                            iOSActiveTab = 1
-                        }
-                    }) {
-                        HStack {
-                            Image(systemName: "plus")
-                            Text("New Configuration")
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
-                        .background(Color.white.opacity(0.08))
-                        .cornerRadius(6)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 6)
-                                .stroke(Color.white.opacity(0.15), lineWidth: 1)
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    
-                    Text("Configurations")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding(.top, 8)
-                    
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 8) {
-                            ForEach(viewModel.endpointConfigs) { config in
-                                HStack {
-                                    Button(action: {
-                                        selectedConfig = config
-                                        iOSActiveTab = 1
-                                    }) {
-                                        Text(config.name)
-                                            .font(.body)
-                                            .foregroundColor(selectedConfig?.id == config.id ? .white : .gray)
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                            .padding(.vertical, 8)
-                                            .padding(.horizontal, 10)
-                                    }
-                                    .buttonStyle(.plain)
-                                    .background(selectedConfig?.id == config.id ? Color.blue : Color.clear)
-                                    .cornerRadius(6)
-                                    
-                                    if !config.isActive {
-                                        Button(action: {
-                                            viewModel.deleteEndpointConfig(id: config.id)
-                                            if selectedConfig?.id == config.id {
-                                                selectedConfig = viewModel.endpointConfigs.first(where: { $0.id != config.id })
-                                            }
-                                        }) {
-                                            Image(systemName: "trash")
-                                                .foregroundColor(.red.opacity(0.8))
-                                        }
-                                        .buttonStyle(.plain)
-                                        .padding(.trailing, 4)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                    // Done button at the bottom of the sidebar
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        Text("Done")
-                            .font(.body)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
-                            .background(Color.gray.opacity(0.3))
-                            .cornerRadius(8)
-                    }
-                    .buttonStyle(.plain)
-                }
-                .padding(20)
-                .background(Color(red: 0.08, green: 0.08, blue: 0.1))
-            } else {
-                // Detail Card view
-                VStack(spacing: 0) {
-                    if let config = selectedConfig {
-                        ScrollView {
-                            EndpointConfigCard(config: config, viewModel: viewModel)
-                                .id(config.id)
-                                .padding(20)
-                        }
+        NavigationStack(path: $navigationPath) {
+            EndpointConfigListView(viewModel: viewModel, navigationPath: $navigationPath)
+                .navigationDestination(for: EndpointConfig.self) { config in
+                    if let current = viewModel.endpointConfigs.first(where: { $0.id == config.id }) {
+                        EndpointConfigDetailView(config: current, viewModel: viewModel)
                     } else {
-                        VStack(spacing: 16) {
-                            Image(systemName: "slider.horizontal.3")
-                                .font(.system(size: 48))
-                                .foregroundColor(.gray)
-                            Text("No Configuration Selected")
-                                .font(.headline)
-                                .foregroundColor(.gray)
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        ContentUnavailableView(
+                            "Configuration Not Found",
+                            systemImage: "exclamationmark.triangle",
+                            description: Text("This configuration may have been deleted.")
+                        )
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(red: 0.12, green: 0.12, blue: 0.14))
-            }
         }
         .preferredColorScheme(.dark)
-        .onAppear {
-            if selectedConfig == nil {
-                selectedConfig = viewModel.activeEndpointConfig ?? viewModel.endpointConfigs.first
-            }
-        }
-        .onChange(of: viewModel.endpointConfigs) {
-            if let current = selectedConfig {
-                if !viewModel.endpointConfigs.contains(where: { $0.id == current.id }) {
-                    selectedConfig = viewModel.activeEndpointConfig ?? viewModel.endpointConfigs.first
-                }
-            } else {
-                selectedConfig = viewModel.activeEndpointConfig ?? viewModel.endpointConfigs.first
-            }
-        }
+        .presentationDetents([.large])
+        .presentationDragIndicator(.visible)
         #else
         HStack(spacing: 0) {
             // SIDEBAR
             VStack(alignment: .leading, spacing: 16) {
                 // New Config Button
                 Button(action: {
-                    let newName = "New Config"
-                    let stt = "wss://speech_to_text.npro.ai?silence_duration_ms=1000"
-                    let llm = "https://text_gen.npro.ai/v1/chat/completions"
-                    let tts = "https://text_to_speech.npro.ai/v1/audio/speech"
                     viewModel.createEndpointConfig(
-                        name: newName,
-                        textGenURL: llm,
-                        ttsURL: tts,
-                        sttURL: stt
+                        name: EndpointConfigTemplate.newName,
+                        textGenURL: EndpointConfigTemplate.llm,
+                        ttsURL: EndpointConfigTemplate.tts,
+                        sttURL: EndpointConfigTemplate.stt
                     )
                     // Select the newly created configuration
                     if let last = viewModel.endpointConfigs.last {
@@ -1439,6 +1328,340 @@ struct EndpointConfigModalView: View {
         #endif
     }
 }
+
+#if os(iOS)
+// MARK: - iOS Endpoint Config List
+struct EndpointConfigListView: View {
+    @ObservedObject var viewModel: ChatViewModel
+    @Binding var navigationPath: NavigationPath
+    @Environment(\.dismiss) private var dismiss
+    
+    var body: some View {
+        List {
+            ForEach(viewModel.endpointConfigs) { config in
+                NavigationLink(value: config) {
+                    EndpointConfigRowView(config: config)
+                }
+                .deleteDisabled(config.isActive)
+            }
+            .onDelete(perform: deleteConfigs)
+        }
+        .navigationTitle("Endpoints")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Done") {
+                    dismiss()
+                }
+            }
+            ToolbarItem(placement: .primaryAction) {
+                Button(action: createAndOpenNew) {
+                    Image(systemName: "plus")
+                }
+                .accessibilityLabel("New Configuration")
+            }
+        }
+    }
+    
+    private func createAndOpenNew() {
+        viewModel.createEndpointConfig(
+            name: EndpointConfigTemplate.newName,
+            textGenURL: EndpointConfigTemplate.llm,
+            ttsURL: EndpointConfigTemplate.tts,
+            sttURL: EndpointConfigTemplate.stt
+        )
+        if let newConfig = viewModel.endpointConfigs.last {
+            navigationPath.append(newConfig)
+        }
+    }
+    
+    private func deleteConfigs(at offsets: IndexSet) {
+        for index in offsets {
+            let config = viewModel.endpointConfigs[index]
+            guard !config.isActive else { continue }
+            viewModel.deleteEndpointConfig(id: config.id)
+        }
+    }
+}
+
+struct EndpointConfigRowView: View {
+    let config: EndpointConfig
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(config.name)
+                    .font(.body)
+                Text(endpointHostSummary(from: config.textGenURL))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            
+            Spacer(minLength: 8)
+            
+            if config.isActive {
+                Text("Active")
+                    .font(.caption2)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.blue)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.blue.opacity(0.15))
+                    .clipShape(Capsule())
+            }
+        }
+        .padding(.vertical, 2)
+    }
+}
+
+// MARK: - iOS Endpoint Config Detail
+struct EndpointConfigDetailView: View {
+    let config: EndpointConfig
+    @ObservedObject var viewModel: ChatViewModel
+    @Environment(\.dismiss) private var dismiss
+    
+    @State private var name: String = ""
+    @State private var textGenURL: String = ""
+    @State private var ttsURL: String = ""
+    @State private var sttURL: String = ""
+    
+    @State private var textGenResult: String = ""
+    @State private var isTestingTextGen = false
+    
+    @State private var ttsInputText = "Hello, this is a test of the text to speech endpoint."
+    @State private var isPlayingTTS = false
+    
+    @State private var isTextGenExpanded = true
+    @State private var isTTSExpanded = false
+    @State private var isSTTExpanded = false
+    
+    private var currentConfig: EndpointConfig {
+        viewModel.endpointConfigs.first(where: { $0.id == config.id }) ?? config
+    }
+    
+    private var isDictating: Bool {
+        viewModel.activeTestSTTConfigId == config.id
+    }
+    
+    var body: some View {
+        Form {
+            Section {
+                TextField("Configuration Name", text: $name)
+                
+                Toggle("Use this configuration", isOn: Binding(
+                    get: { currentConfig.isActive },
+                    set: { newValue in
+                        if newValue {
+                            viewModel.selectEndpointConfig(currentConfig)
+                        }
+                    }
+                ))
+            }
+            
+            Section {
+                DisclosureGroup("Text Generation", isExpanded: $isTextGenExpanded) {
+                    TextField("Text Generation URL", text: $textGenURL, axis: .vertical)
+                        .lineLimit(1...4)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .keyboardType(.URL)
+                        .font(.system(.body, design: .monospaced))
+                    
+                    Button(action: runTextGenTest) {
+                        HStack {
+                            Spacer()
+                            if isTestingTextGen {
+                                ProgressView()
+                            }
+                            Text(isTestingTextGen ? "Testing..." : "Test Connection")
+                                .fontWeight(.semibold)
+                            Spacer()
+                        }
+                    }
+                    .disabled(isTestingTextGen || textGenURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    
+                    Text(textGenResult.isEmpty ? "Sample text generated by the model will appear here." : textGenResult)
+                        .font(.system(.footnote, design: .monospaced))
+                        .foregroundStyle(textGenResult.isEmpty ? .secondary : .primary)
+                        .frame(maxWidth: .infinity, minHeight: 80, alignment: .topLeading)
+                        .padding(10)
+                        .background(Color(.secondarySystemGroupedBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+            }
+            
+            Section {
+                DisclosureGroup("Text-to-Speech", isExpanded: $isTTSExpanded) {
+                    TextField("TTS URL", text: $ttsURL, axis: .vertical)
+                        .lineLimit(1...4)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .keyboardType(.URL)
+                        .font(.system(.body, design: .monospaced))
+                    
+                    if viewModel.voiceOptions.isEmpty {
+                        Text("No voices loaded (check TTS server)")
+                            .font(.caption)
+                            .foregroundStyle(.yellow)
+                    } else {
+                        Picker("Voice", selection: $viewModel.ttsVoice) {
+                            ForEach(viewModel.voiceOptions, id: \.self) { voice in
+                                Text(voice).tag(voice)
+                            }
+                        }
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text("Speed")
+                            Spacer()
+                            Text(String(format: "%.2fx", viewModel.ttsSpeed))
+                                .foregroundStyle(.secondary)
+                                .monospacedDigit()
+                        }
+                        Slider(value: $viewModel.ttsSpeed, in: 0.5...2.0, step: 0.05)
+                    }
+                    
+                    TextField("Type text to synthesize...", text: $ttsInputText, axis: .vertical)
+                        .lineLimit(2...5)
+                        .font(.system(.body, design: .monospaced))
+                    
+                    Button(action: playTTSTest) {
+                        HStack {
+                            Spacer()
+                            if isPlayingTTS {
+                                ProgressView()
+                            } else {
+                                Image(systemName: "play.fill")
+                            }
+                            Text(isPlayingTTS ? "Playing..." : "Play Test Audio")
+                                .fontWeight(.semibold)
+                            Spacer()
+                        }
+                    }
+                    .disabled(isPlayingTTS || ttsInputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+            }
+            
+            Section {
+                DisclosureGroup("Speech-to-Text", isExpanded: $isSTTExpanded) {
+                    TextField("STT URL", text: $sttURL, axis: .vertical)
+                        .lineLimit(1...4)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .keyboardType(.URL)
+                        .font(.system(.body, design: .monospaced))
+                    
+                    Button(action: toggleDictation) {
+                        HStack {
+                            Spacer()
+                            Text(isDictating ? "Stop Dictation" : "Start Dictation")
+                                .fontWeight(.semibold)
+                            Spacer()
+                        }
+                    }
+                    .tint(isDictating ? .red : .blue)
+                    
+                    Text(dictationDisplayText)
+                        .font(.system(.footnote, design: .monospaced))
+                        .foregroundStyle(isDictating && !viewModel.testSTTText.isEmpty ? .primary : .secondary)
+                        .frame(maxWidth: .infinity, minHeight: 80, alignment: .topLeading)
+                        .padding(10)
+                        .background(Color(.secondarySystemGroupedBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+            }
+        }
+        .navigationTitle(name.isEmpty ? "Configuration" : name)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Save") {
+                    saveConfig()
+                }
+            }
+            if !currentConfig.isActive {
+                ToolbarItem(placement: .destructiveAction) {
+                    Button("Delete", role: .destructive) {
+                        deleteConfig()
+                    }
+                }
+            }
+        }
+        .onAppear {
+            syncFieldsFromConfig()
+        }
+        .onChange(of: config) {
+            syncFieldsFromConfig()
+        }
+    }
+    
+    private var dictationDisplayText: String {
+        if isDictating {
+            return viewModel.testSTTText.isEmpty ? "Listening... Speak now." : viewModel.testSTTText
+        }
+        return "Live dictation text appears here as you speak."
+    }
+    
+    private func syncFieldsFromConfig() {
+        let source = currentConfig
+        name = source.name
+        textGenURL = source.textGenURL
+        ttsURL = source.ttsURL
+        sttURL = source.sttURL
+    }
+    
+    private func saveConfig() {
+        viewModel.updateEndpointConfig(
+            id: config.id,
+            name: name,
+            textGenURL: textGenURL,
+            ttsURL: ttsURL,
+            sttURL: sttURL
+        )
+    }
+    
+    private func deleteConfig() {
+        viewModel.deleteEndpointConfig(id: config.id)
+        dismiss()
+    }
+    
+    private func runTextGenTest() {
+        isTestingTextGen = true
+        textGenResult = "Connecting and generating..."
+        Task {
+            do {
+                let response = try await viewModel.runTextGenTest(url: textGenURL)
+                textGenResult = response
+            } catch {
+                textGenResult = "Error: \(error.localizedDescription)"
+            }
+            isTestingTextGen = false
+        }
+    }
+    
+    private func playTTSTest() {
+        guard !ttsInputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        isPlayingTTS = true
+        Task {
+            do {
+                try await viewModel.runTTSTest(url: ttsURL, text: ttsInputText)
+            } catch {
+                viewModel.log("TTS test failed: \(error.localizedDescription)", tag: "ERROR")
+            }
+            isPlayingTTS = false
+        }
+    }
+    
+    private func toggleDictation() {
+        if isDictating {
+            viewModel.stopSTTTest()
+        } else {
+            viewModel.startSTTTest(configId: config.id, url: sttURL)
+        }
+    }
+}
+#endif
 
 // MARK: - Endpoint Config Card View
 struct EndpointConfigCard: View {
