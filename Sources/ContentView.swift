@@ -1587,6 +1587,21 @@ struct EndpointConfigCard: View {
                 }
                 .padding(.vertical, 2)
                 
+                // TTS Speed Slider
+                HStack {
+                    Text("TTS Speed")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Text(String(format: "%.2fx", viewModel.ttsSpeed))
+                        .font(.system(.body, design: .monospaced))
+                        .foregroundColor(.blue)
+                        .frame(width: 48, alignment: .trailing)
+                    Slider(value: $viewModel.ttsSpeed, in: 0.5...2.0, step: 0.05)
+                        .frame(width: 150)
+                }
+                .padding(.vertical, 2)
+                
                 // Enter Text for Speech Section
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Enter Text for Speech")
