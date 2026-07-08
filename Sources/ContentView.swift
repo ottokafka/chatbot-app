@@ -208,7 +208,7 @@ struct ContentView: View {
                                         isTranslationEnabled: viewModel.isTranslationEnabled,
                                         isPhonicsEnabled: viewModel.isPhonicsEnabled,
                                         isPlaying: viewModel.currentlyPlayingMessageId == message.id && viewModel.isPlayingAudio,
-                                        isGeneratingAudio: viewModel.isGeneratingSpeech && message.id == viewModel.messages.last?.id && message.role == "assistant",
+                                        isGeneratingAudio: viewModel.generatingAudioMessageId == message.id,
                                         onPlayAudio: {
                                             viewModel.playMessageAudio(message)
                                         }
@@ -430,13 +430,12 @@ struct MessageRow: View {
                         .font(.system(size: 9))
                         .foregroundColor(.secondary)
 
-                    if !isUser {
-                        MessageAudioButton(
-                            isPlaying: isPlaying,
-                            isGenerating: isGeneratingAudio,
-                            action: onPlayAudio
-                        )
-                    }
+                    MessageAudioButton(
+                        accent: isUser ? .user : .assistant,
+                        isPlaying: isPlaying,
+                        isGenerating: isGeneratingAudio,
+                        action: onPlayAudio
+                    )
                 }
                 
                 // Content Bubble
@@ -613,7 +612,20 @@ struct RecordButton: View {
 }
 
 // MARK: - Message Audio Button View
+enum MessageAudioAccent {
+    case user
+    case assistant
+
+    var idleColor: Color {
+        switch self {
+        case .user: return .blue
+        case .assistant: return .green
+        }
+    }
+}
+
 struct MessageAudioButton: View {
+    let accent: MessageAudioAccent
     let isPlaying: Bool
     let isGenerating: Bool
     let action: () -> Void
@@ -628,7 +640,8 @@ struct MessageAudioButton: View {
         if isPlaying {
             return isHovered ? Color.red.opacity(0.22) : Color.red.opacity(0.14)
         }
-        return isHovered ? Color.green.opacity(0.22) : Color.green.opacity(0.14)
+        let base = accent.idleColor
+        return isHovered ? base.opacity(0.22) : base.opacity(0.14)
     }
 
     private var strokeColor: Color {
@@ -638,11 +651,21 @@ struct MessageAudioButton: View {
         if isPlaying {
             return isHovered ? Color.red.opacity(0.65) : Color.red.opacity(0.4)
         }
-        return isHovered ? Color.green.opacity(0.65) : Color.green.opacity(0.4)
+        let base = accent.idleColor
+        return isHovered ? base.opacity(0.65) : base.opacity(0.4)
     }
 
     private var iconColor: Color {
-        isPlaying ? .red : .green
+        if isPlaying { return .red }
+        return accent.idleColor
+    }
+
+    private var helpText: String {
+        if isPlaying { return L10n.stopAudioPlayback(lang) }
+        switch accent {
+        case .user: return L10n.playQuestionAudio(lang)
+        case .assistant: return L10n.playMessageAudio(lang)
+        }
     }
 
     var body: some View {
@@ -674,7 +697,7 @@ struct MessageAudioButton: View {
         #if os(macOS)
         .onHover { isHovered = $0 }
         #endif
-        .help(isPlaying ? L10n.stopAudioPlayback(lang) : L10n.playMessageAudio(lang))
+        .help(helpText)
     }
 }
 

@@ -33,6 +33,7 @@ class ChatViewModel: ObservableObject {
     @Published var currentlyPlayingMessageId: String?
     @Published var isGeneratingText = false
     @Published var isGeneratingSpeech = false
+    @Published var generatingAudioMessageId: String?
     
     // Configuration Settings (persisted in UserDefaults)
     @Published var sttURL: String {
@@ -313,8 +314,6 @@ class ChatViewModel: ObservableObject {
     }
 
     func playMessageAudio(_ message: Message) {
-        guard message.role == "assistant" else { return }
-
         if currentlyPlayingMessageId == message.id && isPlayingAudio {
             stopPlayback()
             return
@@ -363,9 +362,8 @@ class ChatViewModel: ObservableObject {
     }
 
     private func regenerateSpeech(for message: Message) async {
-        guard message.role == "assistant" else { return }
-        isGeneratingSpeech = true
-        log("Regenerating speech for message \(message.id)...", tag: "TTS")
+        setGeneratingAudio(for: message.id)
+        log("Generating speech for message \(message.id)...", tag: "TTS")
 
         do {
             let audioData = try await apiManager.generateSpeech(
@@ -375,14 +373,19 @@ class ChatViewModel: ObservableObject {
                 voice: ttsVoice,
                 speed: ttsSpeed
             )
-            isGeneratingSpeech = false
+            setGeneratingAudio(for: nil)
             saveAudioData(audioData, messageId: message.id, conversationId: message.conversationId)
             currentlyPlayingMessageId = message.id
             audioPlayer.play(data: audioData)
         } catch {
-            log("TTS regeneration error: \(error.localizedDescription)", tag: "ERROR")
-            isGeneratingSpeech = false
+            log("TTS error: \(error.localizedDescription)", tag: "ERROR")
+            setGeneratingAudio(for: nil)
         }
+    }
+
+    private func setGeneratingAudio(for messageId: String?) {
+        generatingAudioMessageId = messageId
+        isGeneratingSpeech = messageId != nil
     }
     
     // MARK: - Chat Logic
@@ -471,7 +474,7 @@ class ChatViewModel: ObservableObject {
     }
     
     private func runSpeechGeneration(messageId: String, conversationId: String, text: String) async {
-        isGeneratingSpeech = true
+        setGeneratingAudio(for: messageId)
         log("Triggering speech synthesis for text length \(text.count)...", tag: "SYSTEM")
         
         do {
@@ -483,14 +486,14 @@ class ChatViewModel: ObservableObject {
                 speed: ttsSpeed
             )
             
-            isGeneratingSpeech = false
+            setGeneratingAudio(for: nil)
             saveAudioData(audioData, messageId: messageId, conversationId: conversationId)
             currentlyPlayingMessageId = messageId
             audioPlayer.play(data: audioData)
             
         } catch {
             log("TTS Error: \(error.localizedDescription)", tag: "ERROR")
-            isGeneratingSpeech = false
+            setGeneratingAudio(for: nil)
         }
     }
     
