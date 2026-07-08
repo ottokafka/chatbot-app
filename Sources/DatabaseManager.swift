@@ -1,4 +1,5 @@
 import Foundation
+import FSRS
 import SQLite3
 
 struct Conversation: Identifiable, Equatable, Hashable {
@@ -38,19 +39,22 @@ class DatabaseManager {
     private var db: OpaquePointer?
     private let dbPath: String
 
-    init() {
-        // Find Application Support Directory
-        let fileManager = FileManager.default
-        let appSupportURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        let appDirURL = appSupportURL.appendingPathComponent("DeveloperChatbot")
-        
-        do {
-            try fileManager.createDirectory(at: appDirURL, withIntermediateDirectories: true, attributes: nil)
-        } catch {
-            print("DatabaseManager: Failed to create app directory: \(error)")
+    init(databasePath: String? = nil) {
+        if let databasePath {
+            self.dbPath = databasePath
+        } else {
+            let fileManager = FileManager.default
+            let appSupportURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+            let appDirURL = appSupportURL.appendingPathComponent("DeveloperChatbot")
+
+            do {
+                try fileManager.createDirectory(at: appDirURL, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                print("DatabaseManager: Failed to create app directory: \(error)")
+            }
+
+            self.dbPath = appDirURL.appendingPathComponent("history.sqlite").path
         }
-        
-        self.dbPath = appDirURL.appendingPathComponent("history.sqlite").path
         print("DatabaseManager: Opening database at \(dbPath)")
         
         if sqlite3_open(dbPath, &db) != SQLITE_OK {
@@ -109,10 +113,43 @@ class DatabaseManager {
         );
         """
         
+        let createFlashcardsTable = """
+        CREATE TABLE IF NOT EXISTS flashcards (
+            id TEXT PRIMARY KEY,
+            front TEXT NOT NULL,
+            back TEXT NOT NULL,
+            phonics TEXT,
+            source_message_id TEXT,
+            source_conversation_id TEXT,
+            created_at REAL NOT NULL,
+            due REAL NOT NULL,
+            stability REAL NOT NULL,
+            difficulty REAL NOT NULL,
+            elapsed_days REAL NOT NULL DEFAULT 0,
+            scheduled_days REAL NOT NULL DEFAULT 0,
+            learning_steps INTEGER NOT NULL DEFAULT 0,
+            reps INTEGER NOT NULL DEFAULT 0,
+            lapses INTEGER NOT NULL DEFAULT 0,
+            state INTEGER NOT NULL DEFAULT 0,
+            last_review REAL
+        );
+        """
+
+        let createFlashcardsDueIndex = """
+        CREATE INDEX IF NOT EXISTS idx_flashcards_due ON flashcards(due);
+        """
+
+        let createFlashcardsFrontIndex = """
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_flashcards_front ON flashcards(front);
+        """
+
         execute(sql: createConversationsTable)
         execute(sql: createMessagesTable)
         execute(sql: createSystemPromptsTable)
         execute(sql: createEndpointsTable)
+        execute(sql: createFlashcardsTable)
+        execute(sql: createFlashcardsDueIndex)
+        execute(sql: createFlashcardsFrontIndex)
         migrateDatabase()
 
         prepopulateDefaultPrompts()
@@ -122,6 +159,9 @@ class DatabaseManager {
     private func migrateDatabase() {
         if !columnExists(table: "messages", column: "audio_path") {
             execute(sql: "ALTER TABLE messages ADD COLUMN audio_path TEXT;")
+        }
+        if columnExists(table: "flashcards", column: "notes") && !columnExists(table: "flashcards", column: "phonics") {
+            execute(sql: "ALTER TABLE flashcards RENAME COLUMN notes TO phonics;")
         }
     }
 
@@ -557,5 +597,258 @@ class DatabaseManager {
             }
         }
         sqlite3_finalize(statement)
+    }
+
+    // MARK: - Flashcards CRUD
+
+    func fetchFlashcards() -> [Flashcard] {
+        var flashcards: [Flashcard] = []
+        let sql = """
+        SELECT id, front, back, phonics, source_message_id, source_conversation_id, created_at,
+               due, stability, difficulty, elapsed_days, scheduled_days, learning_steps, reps, lapses, state, last_review
+        FROM flashcards
+        ORDER BY due ASC;
+        """
+        var statement: OpaquePointer?
+
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            while sqlite3_step(statement) == SQLITE_ROW {
+                if let flashcard = parseFlashcard(from: statement) {
+                    flashcards.append(flashcard)
+                }
+            }
+        } else {
+            let errmsg = sqlite3_errmsg(db) != nil ? String(cString: sqlite3_errmsg(db)!) : "Unknown error"
+            print("DatabaseManager: Failed to prepare fetchFlashcards statement: \(errmsg)")
+        }
+        sqlite3_finalize(statement)
+        return flashcards
+    }
+
+    func fetchDueFlashcards(before date: Date = Date()) -> [Flashcard] {
+        var flashcards: [Flashcard] = []
+        let sql = """
+        SELECT id, front, back, phonics, source_message_id, source_conversation_id, created_at,
+               due, stability, difficulty, elapsed_days, scheduled_days, learning_steps, reps, lapses, state, last_review
+        FROM flashcards
+        WHERE due <= ?
+        ORDER BY due ASC;
+        """
+        var statement: OpaquePointer?
+
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            sqlite3_bind_double(statement, 1, date.timeIntervalSince1970)
+
+            while sqlite3_step(statement) == SQLITE_ROW {
+                if let flashcard = parseFlashcard(from: statement) {
+                    flashcards.append(flashcard)
+                }
+            }
+        } else {
+            let errmsg = sqlite3_errmsg(db) != nil ? String(cString: sqlite3_errmsg(db)!) : "Unknown error"
+            print("DatabaseManager: Failed to prepare fetchDueFlashcards statement: \(errmsg)")
+        }
+        sqlite3_finalize(statement)
+        return flashcards
+    }
+
+    @discardableResult
+    func insertFlashcard(_ flashcard: Flashcard) -> String? {
+        let sql = """
+        INSERT INTO flashcards (
+            id, front, back, phonics, source_message_id, source_conversation_id, created_at,
+            due, stability, difficulty, elapsed_days, scheduled_days, learning_steps, reps, lapses, state, last_review
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        """
+        var statement: OpaquePointer?
+
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            bindFlashcard(flashcard, to: statement)
+
+            if sqlite3_step(statement) == SQLITE_DONE {
+                sqlite3_finalize(statement)
+                return flashcard.id
+            }
+
+            let errmsg = sqlite3_errmsg(db) != nil ? String(cString: sqlite3_errmsg(db)!) : "Unknown error"
+            print("DatabaseManager: Failed to insert flashcard: \(errmsg)")
+        } else {
+            let errmsg = sqlite3_errmsg(db) != nil ? String(cString: sqlite3_errmsg(db)!) : "Unknown error"
+            print("DatabaseManager: Failed to prepare insert flashcard statement: \(errmsg)")
+        }
+        sqlite3_finalize(statement)
+        return nil
+    }
+
+    func updateFlashcardFSRSState(id: String, card: Card) {
+        let sql = """
+        UPDATE flashcards
+        SET due = ?, stability = ?, difficulty = ?, elapsed_days = ?, scheduled_days = ?,
+            learning_steps = ?, reps = ?, lapses = ?, state = ?, last_review = ?
+        WHERE id = ?;
+        """
+        var statement: OpaquePointer?
+
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            sqlite3_bind_double(statement, 1, card.due.timeIntervalSince1970)
+            sqlite3_bind_double(statement, 2, card.stability)
+            sqlite3_bind_double(statement, 3, card.difficulty)
+            sqlite3_bind_double(statement, 4, card.elapsedDays)
+            sqlite3_bind_double(statement, 5, card.scheduledDays)
+            sqlite3_bind_int(statement, 6, Int32(card.learningSteps))
+            sqlite3_bind_int(statement, 7, Int32(card.reps))
+            sqlite3_bind_int(statement, 8, Int32(card.lapses))
+            sqlite3_bind_int(statement, 9, Int32(card.state.rawValue))
+            if let lastReview = card.lastReview {
+                sqlite3_bind_double(statement, 10, lastReview.timeIntervalSince1970)
+            } else {
+                sqlite3_bind_null(statement, 10)
+            }
+            sqlite3_bind_text(statement, 11, (id as NSString).utf8String, -1, nil)
+
+            if sqlite3_step(statement) != SQLITE_DONE {
+                let errmsg = sqlite3_errmsg(db) != nil ? String(cString: sqlite3_errmsg(db)!) : "Unknown error"
+                print("DatabaseManager: Failed to update flashcard FSRS state: \(errmsg)")
+            }
+        } else {
+            let errmsg = sqlite3_errmsg(db) != nil ? String(cString: sqlite3_errmsg(db)!) : "Unknown error"
+            print("DatabaseManager: Failed to prepare update flashcard FSRS state statement: \(errmsg)")
+        }
+        sqlite3_finalize(statement)
+    }
+
+    func updateFlashcardContent(id: String, front: String, back: String, phonics: String?) {
+        let sql = "UPDATE flashcards SET front = ?, back = ?, phonics = ? WHERE id = ?;"
+        var statement: OpaquePointer?
+
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            sqlite3_bind_text(statement, 1, (front as NSString).utf8String, -1, nil)
+            sqlite3_bind_text(statement, 2, (back as NSString).utf8String, -1, nil)
+            if let phonics {
+                sqlite3_bind_text(statement, 3, (phonics as NSString).utf8String, -1, nil)
+            } else {
+                sqlite3_bind_null(statement, 3)
+            }
+            sqlite3_bind_text(statement, 4, (id as NSString).utf8String, -1, nil)
+
+            if sqlite3_step(statement) != SQLITE_DONE {
+                let errmsg = sqlite3_errmsg(db) != nil ? String(cString: sqlite3_errmsg(db)!) : "Unknown error"
+                print("DatabaseManager: Failed to update flashcard content: \(errmsg)")
+            }
+        } else {
+            let errmsg = sqlite3_errmsg(db) != nil ? String(cString: sqlite3_errmsg(db)!) : "Unknown error"
+            print("DatabaseManager: Failed to prepare update flashcard content statement: \(errmsg)")
+        }
+        sqlite3_finalize(statement)
+    }
+
+    func deleteFlashcard(id: String) {
+        let sql = "DELETE FROM flashcards WHERE id = ?;"
+        execute(sql: sql, parameters: [id])
+    }
+
+    func flashcardExists(front: String, excludingId: String? = nil) -> Bool {
+        let sql: String
+        if excludingId != nil {
+            sql = "SELECT COUNT(*) FROM flashcards WHERE front = ? AND id != ?;"
+        } else {
+            sql = "SELECT COUNT(*) FROM flashcards WHERE front = ?;"
+        }
+        var statement: OpaquePointer?
+        var exists = false
+
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            sqlite3_bind_text(statement, 1, (front as NSString).utf8String, -1, nil)
+            if let excludingId {
+                sqlite3_bind_text(statement, 2, (excludingId as NSString).utf8String, -1, nil)
+            }
+            if sqlite3_step(statement) == SQLITE_ROW {
+                exists = sqlite3_column_int(statement, 0) > 0
+            }
+        }
+        sqlite3_finalize(statement)
+        return exists
+    }
+
+    private func parseFlashcard(from statement: OpaquePointer?) -> Flashcard? {
+        guard let statement,
+              let idCol = sqlite3_column_text(statement, 0),
+              let frontCol = sqlite3_column_text(statement, 1),
+              let backCol = sqlite3_column_text(statement, 2) else {
+            return nil
+        }
+
+        let id = String(cString: idCol)
+        let front = String(cString: frontCol)
+        let back = String(cString: backCol)
+        let phonics = sqlite3_column_text(statement, 3).map { String(cString: $0) }
+        let sourceMessageId = sqlite3_column_text(statement, 4).map { String(cString: $0) }
+        let sourceConversationId = sqlite3_column_text(statement, 5).map { String(cString: $0) }
+        let createdAt = Date(timeIntervalSince1970: sqlite3_column_double(statement, 6))
+
+        let fsrsCard = Card.fromDatabase(
+            due: Date(timeIntervalSince1970: sqlite3_column_double(statement, 7)),
+            stability: sqlite3_column_double(statement, 8),
+            difficulty: sqlite3_column_double(statement, 9),
+            elapsedDays: sqlite3_column_double(statement, 10),
+            scheduledDays: sqlite3_column_double(statement, 11),
+            learningSteps: Int(sqlite3_column_int(statement, 12)),
+            reps: Int(sqlite3_column_int(statement, 13)),
+            lapses: Int(sqlite3_column_int(statement, 14)),
+            state: CardState(rawValue: Int(sqlite3_column_int(statement, 15))) ?? .new,
+            lastReview: sqlite3_column_type(statement, 16) == SQLITE_NULL
+                ? nil
+                : Date(timeIntervalSince1970: sqlite3_column_double(statement, 16))
+        )
+
+        return Flashcard(
+            id: id,
+            front: front,
+            back: back,
+            phonics: phonics,
+            sourceMessageId: sourceMessageId,
+            sourceConversationId: sourceConversationId,
+            createdAt: createdAt,
+            fsrsCard: fsrsCard
+        )
+    }
+
+    private func bindFlashcard(_ flashcard: Flashcard, to statement: OpaquePointer?) {
+        guard let statement else { return }
+
+        let card = flashcard.fsrsCard
+        sqlite3_bind_text(statement, 1, (flashcard.id as NSString).utf8String, -1, nil)
+        sqlite3_bind_text(statement, 2, (flashcard.front as NSString).utf8String, -1, nil)
+        sqlite3_bind_text(statement, 3, (flashcard.back as NSString).utf8String, -1, nil)
+        if let phonics = flashcard.phonics {
+            sqlite3_bind_text(statement, 4, (phonics as NSString).utf8String, -1, nil)
+        } else {
+            sqlite3_bind_null(statement, 4)
+        }
+        if let sourceMessageId = flashcard.sourceMessageId {
+            sqlite3_bind_text(statement, 5, (sourceMessageId as NSString).utf8String, -1, nil)
+        } else {
+            sqlite3_bind_null(statement, 5)
+        }
+        if let sourceConversationId = flashcard.sourceConversationId {
+            sqlite3_bind_text(statement, 6, (sourceConversationId as NSString).utf8String, -1, nil)
+        } else {
+            sqlite3_bind_null(statement, 6)
+        }
+        sqlite3_bind_double(statement, 7, flashcard.createdAt.timeIntervalSince1970)
+        sqlite3_bind_double(statement, 8, card.due.timeIntervalSince1970)
+        sqlite3_bind_double(statement, 9, card.stability)
+        sqlite3_bind_double(statement, 10, card.difficulty)
+        sqlite3_bind_double(statement, 11, card.elapsedDays)
+        sqlite3_bind_double(statement, 12, card.scheduledDays)
+        sqlite3_bind_int(statement, 13, Int32(card.learningSteps))
+        sqlite3_bind_int(statement, 14, Int32(card.reps))
+        sqlite3_bind_int(statement, 15, Int32(card.lapses))
+        sqlite3_bind_int(statement, 16, Int32(card.state.rawValue))
+        if let lastReview = card.lastReview {
+            sqlite3_bind_double(statement, 17, lastReview.timeIntervalSince1970)
+        } else {
+            sqlite3_bind_null(statement, 17)
+        }
     }
 }

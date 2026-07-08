@@ -358,6 +358,160 @@ enum L10n {
     static func uiLanguageHelp(_ lang: AppLanguage) -> String {
         lang == .zh ? "切换界面语言" : "Switch interface language"
     }
+
+    // MARK: - Flashcards
+    static func addToFlashcard(_ lang: AppLanguage) -> String {
+        lang == .zh ? "添加到闪卡" : "Add to Flashcard"
+    }
+
+    static func addEntireMessage(_ lang: AppLanguage) -> String {
+        lang == .zh ? "添加整条消息" : "Add Entire Message"
+    }
+
+    static func createFlashcard(_ lang: AppLanguage) -> String {
+        lang == .zh ? "创建闪卡" : "Create Flashcard"
+    }
+
+    static func flashcardFront(_ lang: AppLanguage) -> String {
+        lang == .zh ? "正面" : "Front"
+    }
+
+    static func flashcardBack(_ lang: AppLanguage) -> String {
+        lang == .zh ? "背面" : "Back"
+    }
+
+    static func flashcardPhonics(_ lang: AppLanguage) -> String {
+        lang == .zh ? "拼音" : "Phonics"
+    }
+
+    static func flashcardFrontPlaceholder(_ lang: AppLanguage) -> String {
+        lang == .zh ? "词汇或句子…" : "Word or sentence..."
+    }
+
+    static func flashcardBackPlaceholder(_ lang: AppLanguage) -> String {
+        lang == .zh ? "翻译或释义…" : "Translation or definition..."
+    }
+
+    static func flashcardPhonicsPlaceholder(_ lang: AppLanguage) -> String {
+        lang == .zh ? "自动生成的拼音…" : "Auto-generated pinyin..."
+    }
+
+    static func saveFlashcard(_ lang: AppLanguage) -> String {
+        lang == .zh ? "保存闪卡" : "Save Flashcard"
+    }
+
+    static func flashcardDuplicate(_ lang: AppLanguage) -> String {
+        lang == .zh ? "该词条已存在" : "This entry already exists"
+    }
+
+    static func flashcardFrontRequired(_ lang: AppLanguage) -> String {
+        lang == .zh ? "请填写正面内容" : "Front text is required"
+    }
+
+    static func flashcardBackRequired(_ lang: AppLanguage) -> String {
+        lang == .zh ? "请填写背面内容" : "Back text is required"
+    }
+
+    static func flashcardSaveFailed(_ lang: AppLanguage) -> String {
+        lang == .zh ? "保存闪卡失败" : "Failed to save flashcard"
+    }
+
+    static func translating(_ lang: AppLanguage) -> String {
+        lang == .zh ? "翻译中…" : "Translating..."
+    }
+
+    static func flashcards(_ lang: AppLanguage) -> String {
+        lang == .zh ? "闪卡" : "Flashcards"
+    }
+
+    static func flashcardsWithDue(_ lang: AppLanguage, due: Int) -> String {
+        if lang == .zh {
+            return due > 0 ? "闪卡 (\(due))" : "闪卡"
+        }
+        return due > 0 ? "Flashcards (\(due))" : "Flashcards"
+    }
+
+    static func flashcardDeckSummary(_ lang: AppLanguage, total: Int, due: Int) -> String {
+        if lang == .zh {
+            return "\(total) 张闪卡 · \(due) 张待复习"
+        }
+        return "\(total) cards · \(due) due"
+    }
+
+    static func studyNow(_ lang: AppLanguage, count: Int) -> String {
+        if lang == .zh {
+            return count > 0 ? "开始学习 (\(count))" : "开始学习"
+        }
+        return count > 0 ? "Study Now (\(count))" : "Study Now"
+    }
+
+    static func noFlashcards(_ lang: AppLanguage) -> String {
+        lang == .zh ? "暂无闪卡" : "No flashcards yet"
+    }
+
+    static func noFlashcardsHint(_ lang: AppLanguage) -> String {
+        lang == .zh ? "在对话中选中文本，右键添加到闪卡。" : "Select text in a conversation and add it to a flashcard."
+    }
+
+    static func dueToday(_ lang: AppLanguage) -> String {
+        lang == .zh ? "今日到期" : "Due today"
+    }
+
+    static func dueInDays(_ lang: AppLanguage, days: Int) -> String {
+        lang == .zh ? "\(days) 天后" : "Due in \(days)d"
+    }
+
+    static func editFlashcard(_ lang: AppLanguage) -> String {
+        lang == .zh ? "编辑" : "Edit"
+    }
+
+    static func editFlashcardTitle(_ lang: AppLanguage) -> String {
+        lang == .zh ? "编辑闪卡" : "Edit Flashcard"
+    }
+
+    static func updateFlashcard(_ lang: AppLanguage) -> String {
+        lang == .zh ? "更新闪卡" : "Update Flashcard"
+    }
+
+    static func reviewProgress(_ lang: AppLanguage, current: Int, total: Int) -> String {
+        lang == .zh ? "第 \(current) / \(total) 张" : "Card \(current) of \(total)"
+    }
+
+    static func tapToReveal(_ lang: AppLanguage) -> String {
+        lang == .zh ? "点击显示答案" : "Tap to reveal"
+    }
+
+    static func revealAnswer(_ lang: AppLanguage) -> String {
+        lang == .zh ? "显示答案" : "Reveal Answer"
+    }
+
+    static func reviewComplete(_ lang: AppLanguage) -> String {
+        lang == .zh ? "复习完成！" : "Review complete!"
+    }
+
+    static func noCardsDue(_ lang: AppLanguage) -> String {
+        lang == .zh ? "暂无待复习的闪卡" : "No cards due for review"
+    }
+
+    static func gradeAgain(_ lang: AppLanguage) -> String {
+        lang == .zh ? "重来" : "Again"
+    }
+
+    static func gradeHard(_ lang: AppLanguage) -> String {
+        lang == .zh ? "困难" : "Hard"
+    }
+
+    static func gradeGood(_ lang: AppLanguage) -> String {
+        lang == .zh ? "良好" : "Good"
+    }
+
+    static func gradeEasy(_ lang: AppLanguage) -> String {
+        lang == .zh ? "简单" : "Easy"
+    }
+
+    static func deleteFlashcardHelp(_ lang: AppLanguage) -> String {
+        lang == .zh ? "删除闪卡" : "Delete flashcard"
+    }
 }
 
 // MARK: - Language Toggle

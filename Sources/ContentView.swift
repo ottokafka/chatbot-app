@@ -5,6 +5,7 @@ import Translation
 
 struct ContentView: View {
     @StateObject private var viewModel = ChatViewModel()
+    @StateObject private var flashcardVM = FlashcardViewModel()
     private var lang: AppLanguage { viewModel.appLanguage }
     @State private var textInput = ""
     @State private var isShowingPromptModal = false
@@ -16,54 +17,89 @@ struct ContentView: View {
     @State private var isEndpointsHovered = false
     @State private var isTranslationHovered = false
     @State private var isPhonicsHovered = false
+    @State private var appSection: AppSection = .conversations
+    @State private var selectedFlashcard: Flashcard?
     
     var body: some View {
         NavigationSplitView {
             // SIDEBAR
             VStack(alignment: .leading, spacing: 12) {
-                // New Chat Button
-                Button(action: {
-                    viewModel.startNewConversation()
-                }) {
-                    HStack {
-                        Image(systemName: "plus.bubble")
-                        Text(L10n.newChat(lang))
-                            .font(.headline)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 8)
+                Picker("", selection: $appSection) {
+                    Text(L10n.conversations(lang)).tag(AppSection.conversations)
+                    Text(L10n.flashcardsWithDue(lang, due: flashcardVM.dueCount)).tag(AppSection.flashcards)
                 }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
+                .pickerStyle(.segmented)
                 .padding(.horizontal)
-                
-                // Conversations List
-                List(viewModel.conversations, selection: Binding(
-                    get: { viewModel.activeConversation },
-                    set: { val in if let v = val { viewModel.selectConversation(v) } }
-                )) { conversation in
-                    NavigationLink(value: conversation) {
+
+                if appSection == .conversations {
+                    Button(action: {
+                        viewModel.startNewConversation()
+                    }) {
                         HStack {
-                            Image(systemName: "message")
-                                .foregroundColor(.secondary)
-                            Text(conversation.title)
-                                .lineLimit(1)
-                                .font(.body)
+                            Image(systemName: "plus.bubble")
+                            Text(L10n.newChat(lang))
+                                .font(.headline)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    .padding(.horizontal)
+
+                    List(viewModel.conversations, selection: Binding(
+                        get: { viewModel.activeConversation },
+                        set: { val in if let v = val { viewModel.selectConversation(v) } }
+                    )) { conversation in
+                        NavigationLink(value: conversation) {
+                            HStack {
+                                Image(systemName: "message")
+                                    .foregroundColor(.secondary)
+                                Text(conversation.title)
+                                    .lineLimit(1)
+                                    .font(.body)
+                                Spacer()
+                                Button(action: {
+                                    viewModel.deleteConversation(conversation)
+                                }) {
+                                    Image(systemName: "trash")
+                                        .foregroundColor(.red.opacity(0.8))
+                                }
+                                .buttonStyle(.plain)
+                                .help(L10n.deleteConversation(lang))
+                            }
+                        }
+                        .tag(conversation)
+                    }
+                    .listStyle(.sidebar)
+                } else {
+                    List(flashcardVM.flashcards, selection: $selectedFlashcard) { card in
+                        HStack(alignment: .top, spacing: 8) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(card.front)
+                                    .lineLimit(1)
+                                    .font(.body)
+                                Text(flashcardVM.dueLabel(for: card, language: lang))
+                                    .font(.caption2)
+                                    .foregroundColor(flashcardVM.isDue(card) ? .orange : .secondary)
+                            }
                             Spacer()
-                            // Delete Button
                             Button(action: {
-                                viewModel.deleteConversation(conversation)
+                                flashcardVM.deleteFlashcard(card)
+                                if selectedFlashcard?.id == card.id {
+                                    selectedFlashcard = nil
+                                }
                             }) {
                                 Image(systemName: "trash")
                                     .foregroundColor(.red.opacity(0.8))
                             }
                             .buttonStyle(.plain)
-                            .help(L10n.deleteConversation(lang))
+                            .help(L10n.deleteFlashcardHelp(lang))
                         }
+                        .tag(card)
                     }
-                    .tag(conversation)
+                    .listStyle(.sidebar)
                 }
-                .listStyle(.sidebar)
                 
                 Divider()
                     .padding(.horizontal)
@@ -72,12 +108,19 @@ struct ContentView: View {
                     .padding(.horizontal)
                     .padding(.bottom, 8)
             }
-            .navigationTitle(L10n.conversations(lang))
+            .navigationTitle(appSection == .conversations ? L10n.conversations(lang) : L10n.flashcards(lang))
             .frame(minWidth: 200, idealWidth: 240)
+            .onChange(of: appSection) { _, newSection in
+                if newSection == .flashcards {
+                    flashcardVM.loadFlashcards()
+                }
+            }
         } detail: {
             // MAIN DETAIL VIEW
             VStack(spacing: 0) {
-                if viewModel.activeConversation != nil {
+                if appSection == .flashcards {
+                    FlashcardDeckView(flashcardVM: flashcardVM)
+                } else if viewModel.activeConversation != nil {
                     // Chat Window Header
                     #if !os(iOS)
                     HStack {
@@ -205,6 +248,7 @@ struct ContentView: View {
                                 ForEach(viewModel.messages) { message in
                                     MessageRow(
                                         message: message,
+                                        flashcardVM: flashcardVM,
                                         isTranslationEnabled: viewModel.isTranslationEnabled,
                                         isPhonicsEnabled: viewModel.isPhonicsEnabled,
                                         isPlaying: viewModel.currentlyPlayingMessageId == message.id && viewModel.isPlayingAudio,
@@ -321,6 +365,31 @@ struct ContentView: View {
                 EndpointConfigModalView(viewModel: viewModel)
                     .environment(\.appLanguage, viewModel.appLanguage)
             }
+            .sheet(isPresented: $flashcardVM.isShowingCreateSheet, onDismiss: {
+                if flashcardVM.draft != nil {
+                    flashcardVM.cancelDraft()
+                }
+            }) {
+                FlashcardCreateSheet(flashcardVM: flashcardVM)
+                    .environment(\.appLanguage, viewModel.appLanguage)
+            }
+            .sheet(isPresented: $flashcardVM.isShowingReviewSession, onDismiss: {
+                flashcardVM.endReviewSession()
+            }) {
+                FlashcardReviewView(flashcardVM: flashcardVM)
+                    .environment(\.appLanguage, viewModel.appLanguage)
+            }
+            .onAppear {
+                flashcardVM.onLog = { message in
+                    viewModel.log(message, tag: "DB")
+                }
+            }
+            .onChange(of: flashcardVM.flashcards) { _, _ in
+                if let selected = selectedFlashcard,
+                   !flashcardVM.flashcards.contains(where: { $0.id == selected.id }) {
+                    selectedFlashcard = nil
+                }
+            }
             .toolbar {
                 #if os(iOS)
                 if viewModel.activeConversation != nil {
@@ -400,6 +469,7 @@ struct ContentView: View {
 // MARK: - Message Row View
 struct MessageRow: View {
     let message: Message
+    @ObservedObject var flashcardVM: FlashcardViewModel
     let isTranslationEnabled: Bool
     let isPhonicsEnabled: Bool
     let isPlaying: Bool
@@ -440,9 +510,19 @@ struct MessageRow: View {
                 
                 // Content Bubble
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(message.content)
-                        .font(.system(.body, design: .monospaced))
-                    
+                    SelectableMessageText(
+                        text: message.content,
+                        addToFlashcardLabel: L10n.addToFlashcard(lang),
+                        addEntireMessageLabel: L10n.addEntireMessage(lang),
+                        onAddFlashcard: { selection in
+                            flashcardVM.prepareDraft(
+                                front: selection,
+                                message: message,
+                                translatedText: translatedText
+                            )
+                        }
+                    )
+
                     if message.content.isChinese() {
                         // Source is Chinese
                         if isPhonicsEnabled, let pinyin = message.content.toPinyin() {
@@ -452,6 +532,7 @@ struct MessageRow: View {
                                 .font(.system(.subheadline, design: .monospaced))
                                 .foregroundColor(.secondary)
                                 .italic()
+                                .textSelection(.enabled)
                         }
                         
                         if isTranslationEnabled && !translatedText.isEmpty {
@@ -460,6 +541,7 @@ struct MessageRow: View {
                             Text(translatedText)
                                 .font(.system(.subheadline, design: .monospaced))
                                 .foregroundColor(.secondary)
+                                .textSelection(.enabled)
                         }
                     } else {
                         // Source is English/Other
@@ -469,6 +551,7 @@ struct MessageRow: View {
                             Text(translatedText)
                                 .font(.system(.subheadline, design: .monospaced))
                                 .foregroundColor(.secondary)
+                                .textSelection(.enabled)
                             
                             if isPhonicsEnabled, let pinyin = translatedText.toPinyin() {
                                 Divider()
@@ -477,6 +560,7 @@ struct MessageRow: View {
                                     .font(.system(.subheadline, design: .monospaced))
                                     .foregroundColor(.secondary)
                                     .italic()
+                                    .textSelection(.enabled)
                             }
                         }
                     }
@@ -491,8 +575,7 @@ struct MessageRow: View {
                                 .stroke(isUser ? Color.blue.opacity(0.4) : Color.gray.opacity(0.2), lineWidth: 1)
                         )
                 )
-                    .foregroundColor(.primary)
-                    .textSelection(.enabled)
+                .foregroundColor(.primary)
             }
             
             if !isUser { Spacer() }

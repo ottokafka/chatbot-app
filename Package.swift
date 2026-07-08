@@ -9,12 +9,23 @@ let package = Package(
     products: [
         .executable(name: "DeveloperChatbot", targets: ["DeveloperChatbot"])
     ],
-    dependencies: [],
+    dependencies: [
+        .package(url: "https://github.com/open-spaced-repetition/swift-fsrs.git", branch: "main")
+    ],
     targets: [
         .executableTarget(
             name: "DeveloperChatbot",
-            dependencies: [],
+            dependencies: [
+                .product(name: "FSRS", package: "swift-fsrs")
+            ],
             path: "Sources"
+        ),
+        .testTarget(
+            name: "DeveloperChatbotTests",
+            dependencies: [
+                .product(name: "FSRS", package: "swift-fsrs")
+            ],
+            path: "Tests"
         )
     ]
 )
