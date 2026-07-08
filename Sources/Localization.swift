@@ -122,6 +122,10 @@ enum L10n {
         lang == .zh ? "播放问题音频" : "Play question audio"
     }
 
+    static func playFlashcardAudio(_ lang: AppLanguage) -> String {
+        lang == .zh ? "播放词汇音频" : "Play vocabulary audio"
+    }
+
     // MARK: - Message Roles
     static func developerRole(_ lang: AppLanguage) -> String {
         lang == .zh ? "用户" : "DEVELOPER"

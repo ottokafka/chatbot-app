@@ -19,6 +19,7 @@ class ChatViewModel: ObservableObject {
     private let audioPlayer = AudioPlayer()
     private let audioStorage = AudioStorage()
     private var audioCache: [String: Data] = [:]
+    private var ephemeralAudioCache: [String: Data] = [:]
     
     // Published State
     @Published var conversations: [Conversation] = []
@@ -34,6 +35,8 @@ class ChatViewModel: ObservableObject {
     @Published var isGeneratingText = false
     @Published var isGeneratingSpeech = false
     @Published var generatingAudioMessageId: String?
+    @Published var currentlyPlayingEphemeralId: String?
+    @Published var generatingEphemeralId: String?
     
     // Configuration Settings (persisted in UserDefaults)
     @Published var sttURL: String {
@@ -171,6 +174,7 @@ class ChatViewModel: ObservableObject {
             Task { @MainActor in
                 self.isPlayingAudio = false
                 self.currentlyPlayingMessageId = nil
+                self.currentlyPlayingEphemeralId = nil
                 // Resume mic recording if it's supposed to be active
                 if self.isMicrophoneActive {
                     self.log("Playback finished: Resuming microphone recording.", tag: "AUDIO")
@@ -306,10 +310,88 @@ class ChatViewModel: ObservableObject {
         audioPlayer.stop()
         isPlayingAudio = false
         currentlyPlayingMessageId = nil
+        currentlyPlayingEphemeralId = nil
+        generatingEphemeralId = nil
+        updateGeneratingSpeechState()
         // Resume mic recording if it's supposed to be active
         if isMicrophoneActive {
             log("Playback stopped: Resuming microphone recording.", tag: "AUDIO")
             audioRecorder.start()
+        }
+    }
+
+    func isPlayingEphemeralAudio(id: String) -> Bool {
+        currentlyPlayingEphemeralId == id && isPlayingAudio
+    }
+
+    func isGeneratingEphemeralAudio(id: String) -> Bool {
+        generatingEphemeralId == id
+    }
+
+    func playEphemeralSpeech(text: String, playbackId: String) {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+
+        if currentlyPlayingEphemeralId == playbackId && isPlayingAudio {
+            stopPlayback()
+            return
+        }
+
+        if isPlayingAudio {
+            stopPlayback()
+        }
+
+        if let cached = ephemeralAudioCache[playbackId] {
+            currentlyPlayingMessageId = nil
+            currentlyPlayingEphemeralId = playbackId
+            audioPlayer.play(data: cached)
+            return
+        }
+
+        Task {
+            await generateAndPlayEphemeralSpeech(text: trimmed, playbackId: playbackId)
+        }
+    }
+
+    func clearEphemeralAudioCache() {
+        stopPlayback()
+        ephemeralAudioCache.removeAll()
+    }
+
+    private func generateAndPlayEphemeralSpeech(text: String, playbackId: String) async {
+        generatingEphemeralId = playbackId
+        updateGeneratingSpeechState()
+        log("Generating ephemeral speech for \(playbackId)...", tag: "TTS")
+
+        do {
+            let audioData = try await apiManager.generateSpeech(
+                endpoint: ttsURL,
+                model: ttsModel,
+                text: text,
+                voice: ttsVoice.isEmpty ? "bm_daniel" : ttsVoice,
+                speed: ttsSpeed
+            )
+            ephemeralAudioCache[playbackId] = audioData
+            let shouldPlay = generatingEphemeralId == playbackId
+            if shouldPlay {
+                generatingEphemeralId = nil
+            }
+            updateGeneratingSpeechState()
+
+            guard shouldPlay else {
+                log("Ephemeral speech for \(playbackId) finished after playback was cancelled; cached only.", tag: "TTS")
+                return
+            }
+
+            currentlyPlayingMessageId = nil
+            currentlyPlayingEphemeralId = playbackId
+            audioPlayer.play(data: audioData)
+        } catch {
+            log("Ephemeral TTS error: \(error.localizedDescription)", tag: "ERROR")
+            if generatingEphemeralId == playbackId {
+                generatingEphemeralId = nil
+            }
+            updateGeneratingSpeechState()
         }
     }
 
@@ -331,6 +413,7 @@ class ChatViewModel: ObservableObject {
             return
         }
 
+        currentlyPlayingEphemeralId = nil
         currentlyPlayingMessageId = message.id
         audioPlayer.play(data: audioData)
     }
@@ -375,6 +458,7 @@ class ChatViewModel: ObservableObject {
             )
             setGeneratingAudio(for: nil)
             saveAudioData(audioData, messageId: message.id, conversationId: message.conversationId)
+            currentlyPlayingEphemeralId = nil
             currentlyPlayingMessageId = message.id
             audioPlayer.play(data: audioData)
         } catch {
@@ -385,7 +469,11 @@ class ChatViewModel: ObservableObject {
 
     private func setGeneratingAudio(for messageId: String?) {
         generatingAudioMessageId = messageId
-        isGeneratingSpeech = messageId != nil
+        updateGeneratingSpeechState()
+    }
+
+    private func updateGeneratingSpeechState() {
+        isGeneratingSpeech = generatingAudioMessageId != nil || generatingEphemeralId != nil
     }
     
     // MARK: - Chat Logic
@@ -488,6 +576,7 @@ class ChatViewModel: ObservableObject {
             
             setGeneratingAudio(for: nil)
             saveAudioData(audioData, messageId: messageId, conversationId: conversationId)
+            currentlyPlayingEphemeralId = nil
             currentlyPlayingMessageId = messageId
             audioPlayer.play(data: audioData)
             

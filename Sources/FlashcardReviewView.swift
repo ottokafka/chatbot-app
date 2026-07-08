@@ -3,6 +3,7 @@ import FSRS
 
 struct FlashcardReviewView: View {
     @ObservedObject var flashcardVM: FlashcardViewModel
+    @ObservedObject var chatVM: ChatViewModel
     @Environment(\.appLanguage) private var lang
     @Environment(\.dismiss) private var dismiss
 
@@ -22,6 +23,9 @@ struct FlashcardReviewView: View {
         }
         .frame(minWidth: 520, minHeight: 480)
         .background(Color.platformControlBackground)
+        .onDisappear {
+            chatVM.clearEphemeralAudioCache()
+        }
     }
 
     private var reviewHeader: some View {
@@ -49,14 +53,21 @@ struct FlashcardReviewView: View {
     }
 
     private func reviewCardView(_ card: Flashcard) -> some View {
-        VStack(spacing: 24) {
+        let frontPlaybackId = "\(card.id)-front"
+        let backPlaybackId = "\(card.id)-back"
+
+        return VStack(spacing: 24) {
             Spacer()
 
             VStack(spacing: 16) {
-                Text(card.front)
-                    .font(.system(size: 32, weight: .medium, design: .monospaced))
-                    .multilineTextAlignment(.center)
-                    .frame(maxWidth: .infinity)
+                flashcardTextRow(
+                    text: card.front,
+                    font: .system(size: 32, weight: .medium, design: .monospaced),
+                    playbackId: frontPlaybackId,
+                    onPlay: {
+                        chatVM.playEphemeralSpeech(text: card.front, playbackId: frontPlaybackId)
+                    }
+                )
 
                 if !flashcardVM.isAnswerRevealed {
                     Text(L10n.tapToReveal(lang))
@@ -66,11 +77,15 @@ struct FlashcardReviewView: View {
                     Divider()
                         .padding(.horizontal, 40)
 
-                    Text(card.back)
-                        .font(.system(size: 22, design: .monospaced))
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity)
+                    flashcardTextRow(
+                        text: card.back,
+                        font: .system(size: 22, design: .monospaced),
+                        foreground: .secondary,
+                        playbackId: backPlaybackId,
+                        onPlay: {
+                            chatVM.playEphemeralSpeech(text: card.back, playbackId: backPlaybackId)
+                        }
+                    )
 
                     if let phonics = card.phonics, !phonics.isEmpty {
                         Text(phonics)
@@ -111,18 +126,45 @@ struct FlashcardReviewView: View {
         }
     }
 
+    private func flashcardTextRow(
+        text: String,
+        font: Font,
+        foreground: Color = .primary,
+        playbackId: String,
+        onPlay: @escaping () -> Void
+    ) -> some View {
+        HStack(alignment: .center, spacing: 12) {
+            Text(text)
+                .font(font)
+                .foregroundColor(foreground)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+
+            MessageAudioButton(
+                accent: .flashcard,
+                isPlaying: chatVM.isPlayingEphemeralAudio(id: playbackId),
+                isGenerating: chatVM.isGeneratingEphemeralAudio(id: playbackId),
+                action: onPlay
+            )
+        }
+    }
+
     private var gradeButtons: some View {
         HStack(spacing: 12) {
             GradeButton(title: L10n.gradeAgain(lang), color: .red) {
+                chatVM.stopPlayback()
                 flashcardVM.gradeCurrentCard(.again)
             }
             GradeButton(title: L10n.gradeHard(lang), color: .orange) {
+                chatVM.stopPlayback()
                 flashcardVM.gradeCurrentCard(.hard)
             }
             GradeButton(title: L10n.gradeGood(lang), color: .green) {
+                chatVM.stopPlayback()
                 flashcardVM.gradeCurrentCard(.good)
             }
             GradeButton(title: L10n.gradeEasy(lang), color: .blue) {
+                chatVM.stopPlayback()
                 flashcardVM.gradeCurrentCard(.easy)
             }
         }

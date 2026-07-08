@@ -376,7 +376,7 @@ struct ContentView: View {
             .sheet(isPresented: $flashcardVM.isShowingReviewSession, onDismiss: {
                 flashcardVM.endReviewSession()
             }) {
-                FlashcardReviewView(flashcardVM: flashcardVM)
+                FlashcardReviewView(flashcardVM: flashcardVM, chatVM: viewModel)
                     .environment(\.appLanguage, viewModel.appLanguage)
             }
             .onAppear {
@@ -698,11 +698,13 @@ struct RecordButton: View {
 enum MessageAudioAccent {
     case user
     case assistant
+    case flashcard
 
     var idleColor: Color {
         switch self {
         case .user: return .blue
         case .assistant: return .green
+        case .flashcard: return .orange
         }
     }
 }
@@ -748,6 +750,7 @@ struct MessageAudioButton: View {
         switch accent {
         case .user: return L10n.playQuestionAudio(lang)
         case .assistant: return L10n.playMessageAudio(lang)
+        case .flashcard: return L10n.playFlashcardAudio(lang)
         }
     }
 
