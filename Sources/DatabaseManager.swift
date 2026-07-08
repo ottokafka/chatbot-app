@@ -12,6 +12,7 @@ struct Message: Identifiable, Equatable, Hashable {
     let conversationId: String
     let role: String
     let content: String
+    let audioPath: String?
     let createdAt: Date
 }
 
@@ -112,9 +113,36 @@ class DatabaseManager {
         execute(sql: createMessagesTable)
         execute(sql: createSystemPromptsTable)
         execute(sql: createEndpointsTable)
-        
+        migrateDatabase()
+
         prepopulateDefaultPrompts()
         prepopulateDefaultEndpoints()
+    }
+
+    private func migrateDatabase() {
+        if !columnExists(table: "messages", column: "audio_path") {
+            execute(sql: "ALTER TABLE messages ADD COLUMN audio_path TEXT;")
+        }
+    }
+
+    private func columnExists(table: String, column: String) -> Bool {
+        let sql = "PRAGMA table_info(\(table));"
+        var statement: OpaquePointer?
+        var exists = false
+
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            while sqlite3_step(statement) == SQLITE_ROW {
+                if let nameCol = sqlite3_column_text(statement, 1) {
+                    let name = String(cString: nameCol)
+                    if name == column {
+                        exists = true
+                        break
+                    }
+                }
+            }
+        }
+        sqlite3_finalize(statement)
+        return exists
     }
 
     private func execute(sql: String, parameters: [String] = []) {
@@ -200,7 +228,7 @@ class DatabaseManager {
 
     func fetchMessages(conversationId: String) -> [Message] {
         var messages: [Message] = []
-        let sql = "SELECT id, conversation_id, role, content, created_at FROM messages WHERE conversation_id = ? ORDER BY created_at ASC;"
+        let sql = "SELECT id, conversation_id, role, content, audio_path, created_at FROM messages WHERE conversation_id = ? ORDER BY created_at ASC;"
         var statement: OpaquePointer?
         
         if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
@@ -216,13 +244,15 @@ class DatabaseManager {
                     let convId = String(cString: convIdCol)
                     let role = String(cString: roleCol)
                     let content = String(cString: contentCol)
-                    let createdAtVal = sqlite3_column_double(statement, 4)
+                    let audioPath = sqlite3_column_text(statement, 4).map { String(cString: $0) }
+                    let createdAtVal = sqlite3_column_double(statement, 5)
                     
                     messages.append(Message(
                         id: id,
                         conversationId: convId,
                         role: role,
                         content: content,
+                        audioPath: audioPath,
                         createdAt: Date(timeIntervalSince1970: createdAtVal)
                     ))
                 }
@@ -256,6 +286,29 @@ class DatabaseManager {
             print("DatabaseManager: Failed to prepare insert message: \(errmsg)")
         }
         sqlite3_finalize(statement)
+    }
+
+    func updateMessageAudioPath(id: String, audioPath: String) {
+        let sql = "UPDATE messages SET audio_path = ? WHERE id = ?;"
+        execute(sql: sql, parameters: [audioPath, id])
+    }
+
+    func fetchMessageAudioPaths(conversationId: String) -> [String] {
+        var paths: [String] = []
+        let sql = "SELECT audio_path FROM messages WHERE conversation_id = ? AND audio_path IS NOT NULL;"
+        var statement: OpaquePointer?
+
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            sqlite3_bind_text(statement, 1, (conversationId as NSString).utf8String, -1, nil)
+
+            while sqlite3_step(statement) == SQLITE_ROW {
+                if let pathCol = sqlite3_column_text(statement, 0) {
+                    paths.append(String(cString: pathCol))
+                }
+            }
+        }
+        sqlite3_finalize(statement)
+        return paths
     }
     
     private func prepopulateDefaultPrompts() {

@@ -5,6 +5,7 @@ import Translation
 
 struct ContentView: View {
     @StateObject private var viewModel = ChatViewModel()
+    private var lang: AppLanguage { viewModel.appLanguage }
     @State private var textInput = ""
     @State private var isShowingPromptModal = false
     @State private var isShowingEndpointModal = false
@@ -26,7 +27,7 @@ struct ContentView: View {
                 }) {
                     HStack {
                         Image(systemName: "plus.bubble")
-                        Text("New Chat")
+                        Text(L10n.newChat(lang))
                             .font(.headline)
                     }
                     .frame(maxWidth: .infinity)
@@ -57,14 +58,21 @@ struct ContentView: View {
                                     .foregroundColor(.red.opacity(0.8))
                             }
                             .buttonStyle(.plain)
-                            .help("Delete conversation")
+                            .help(L10n.deleteConversation(lang))
                         }
                     }
                     .tag(conversation)
                 }
                 .listStyle(.sidebar)
+                
+                Divider()
+                    .padding(.horizontal)
+                
+                LanguageToggle(language: $viewModel.appLanguage)
+                    .padding(.horizontal)
+                    .padding(.bottom, 8)
             }
-            .navigationTitle("Conversations")
+            .navigationTitle(L10n.conversations(lang))
             .frame(minWidth: 200, idealWidth: 240)
         } detail: {
             // MAIN DETAIL VIEW
@@ -81,7 +89,7 @@ struct ContentView: View {
                             }) {
                                 HStack(spacing: 6) {
                                     Text("💬")
-                                    Text(viewModel.activeSystemPrompt?.title ?? "No Prompt")
+                                    Text(viewModel.activeSystemPrompt?.title ?? L10n.noPrompt(lang))
                                     Text("▾")
                                 }
                                 .font(.system(.body, design: .monospaced))
@@ -98,7 +106,7 @@ struct ContentView: View {
                             }
                             .buttonStyle(.plain)
                             .onHover { isPromptHovered = $0 }
-                            .help("Select System Prompt")
+                            .help(L10n.selectSystemPromptHelp(lang))
                             
                             // Endpoints Button
                             Button(action: {
@@ -106,7 +114,7 @@ struct ContentView: View {
                             }) {
                                 HStack(spacing: 6) {
                                     Text("🔌")
-                                    Text("Endpoints")
+                                    Text(L10n.endpoints(lang))
                                 }
                                 .font(.system(.body, design: .monospaced))
                                 .padding(.horizontal, 14)
@@ -122,15 +130,15 @@ struct ContentView: View {
                             }
                             .buttonStyle(.plain)
                             .onHover { isEndpointsHovered = $0 }
-                            .help("Manage Endpoint Configurations")
+                            .help(L10n.manageEndpointsHelp(lang))
                             
                             // Translation Toggle Button
                             Button(action: {
                                 viewModel.isTranslationEnabled.toggle()
                             }) {
                                 HStack(spacing: 6) {
-                                    Text(viewModel.isTranslationEnabled ? "🌐" : "🌐 (Off)")
-                                    Text("Translation")
+                                    Text(viewModel.isTranslationEnabled ? "🌐" : "🌐")
+                                    Text(viewModel.isTranslationEnabled ? L10n.messageTranslation(lang) : L10n.messageTranslationOff(lang))
                                 }
                                 .font(.system(.body, design: .monospaced))
                                 .padding(.horizontal, 14)
@@ -146,15 +154,15 @@ struct ContentView: View {
                             }
                             .buttonStyle(.plain)
                             .onHover { isTranslationHovered = $0 }
-                            .help("Toggle translation feature")
+                            .help(L10n.toggleMessageTranslationHelp(lang))
                             
                             // Phonics Toggle Button
                             Button(action: {
                                 viewModel.isPhonicsEnabled.toggle()
                             }) {
                                 HStack(spacing: 6) {
-                                    Text(viewModel.isPhonicsEnabled ? "🗣️" : "🗣️ (Off)")
-                                    Text("Phonics")
+                                    Text(viewModel.isPhonicsEnabled ? "🗣️" : "🗣️")
+                                    Text(viewModel.isPhonicsEnabled ? L10n.phonics(lang) : L10n.phonicsOff(lang))
                                 }
                                 .font(.system(.body, design: .monospaced))
                                 .padding(.horizontal, 14)
@@ -170,7 +178,7 @@ struct ContentView: View {
                             }
                             .buttonStyle(.plain)
                             .onHover { isPhonicsHovered = $0 }
-                            .help("Toggle Pinyin phonics")
+                            .help(L10n.togglePhonicsHelp(lang))
                         }
                         
                         Spacer()
@@ -198,7 +206,12 @@ struct ContentView: View {
                                     MessageRow(
                                         message: message,
                                         isTranslationEnabled: viewModel.isTranslationEnabled,
-                                        isPhonicsEnabled: viewModel.isPhonicsEnabled
+                                        isPhonicsEnabled: viewModel.isPhonicsEnabled,
+                                        isPlaying: viewModel.currentlyPlayingMessageId == message.id && viewModel.isPlayingAudio,
+                                        isGeneratingAudio: viewModel.isGeneratingSpeech && message.id == viewModel.messages.last?.id && message.role == "assistant",
+                                        onPlayAudio: {
+                                            viewModel.playMessageAudio(message)
+                                        }
                                     )
                                     .id(messageRowID(message.id))
                                 }
@@ -238,7 +251,7 @@ struct ContentView: View {
                         )
                         
                         // Message Input Field
-                        TextField("Type a message to assistant...", text: $textInput, onCommit: {
+                        TextField(L10n.messagePlaceholder(lang), text: $textInput, onCommit: {
                             sendText()
                         })
                         .textFieldStyle(.roundedBorder)
@@ -271,13 +284,13 @@ struct ContentView: View {
                         Image(systemName: "bubble.left.and.bubble.right")
                             .font(.system(size: 64))
                             .foregroundColor(.secondary)
-                        Text("No Conversation Selected")
+                        Text(L10n.noConversationSelected(lang))
                             .font(.title2)
                             .fontWeight(.medium)
-                        Text("Create a new chat or select an existing conversation to get started.")
+                        Text(L10n.emptyStateHint(lang))
                             .foregroundColor(.secondary)
                         
-                        Button("Start New Chat") {
+                        Button(L10n.startNewChat(lang)) {
                             viewModel.startNewConversation()
                         }
                         .buttonStyle(.borderedProminent)
@@ -302,9 +315,11 @@ struct ContentView: View {
             }
             .sheet(isPresented: $isShowingPromptModal) {
                 SystemPromptModalView(viewModel: viewModel)
+                    .environment(\.appLanguage, viewModel.appLanguage)
             }
             .sheet(isPresented: $isShowingEndpointModal) {
                 EndpointConfigModalView(viewModel: viewModel)
+                    .environment(\.appLanguage, viewModel.appLanguage)
             }
             .toolbar {
                 #if os(iOS)
@@ -364,6 +379,7 @@ struct ContentView: View {
             .navigationBarTitleDisplayMode(.inline)
             #endif
         }
+        .environment(\.appLanguage, viewModel.appLanguage)
         #if os(macOS)
         .frame(minWidth: 800, minHeight: 600)
         #endif
@@ -386,7 +402,11 @@ struct MessageRow: View {
     let message: Message
     let isTranslationEnabled: Bool
     let isPhonicsEnabled: Bool
+    let isPlaying: Bool
+    let isGeneratingAudio: Bool
+    let onPlayAudio: () -> Void
     
+    @Environment(\.appLanguage) private var lang
     @State private var translatedText: String = ""
     #if canImport(Translation) && !targetEnvironment(simulator)
     @State private var translationConfiguration: TranslationSession.Configuration?
@@ -401,7 +421,7 @@ struct MessageRow: View {
             VStack(alignment: isUser ? .trailing : .leading, spacing: 4) {
                 // Header (Role & Timestamp)
                 HStack(spacing: 8) {
-                    Text(isUser ? "DEVELOPER" : "ASSISTANT")
+                    Text(isUser ? L10n.developerRole(lang) : L10n.assistantRole(lang))
                         .font(.caption2)
                         .fontWeight(.bold)
                         .foregroundColor(isUser ? .blue : .green)
@@ -409,6 +429,14 @@ struct MessageRow: View {
                     Text(message.createdAt, style: .time)
                         .font(.system(size: 9))
                         .foregroundColor(.secondary)
+
+                    if !isUser {
+                        MessageAudioButton(
+                            isPlaying: isPlaying,
+                            isGenerating: isGeneratingAudio,
+                            action: onPlayAudio
+                        )
+                    }
                 }
                 
                 // Content Bubble
@@ -559,6 +587,7 @@ struct RecordButton: View {
     let isConnected: Bool
     let action: () -> Void
     
+    @Environment(\.appLanguage) private var lang
     @State private var pulseScale: CGFloat = 1.0
     
     var body: some View {
@@ -579,7 +608,73 @@ struct RecordButton: View {
         .onAppear {
             pulseScale = 1.15
         }
-        .help(isActive ? "Stop listening" : "Start listening")
+        .help(isActive ? L10n.stopListening(lang) : L10n.startListening(lang))
+    }
+}
+
+// MARK: - Message Audio Button View
+struct MessageAudioButton: View {
+    let isPlaying: Bool
+    let isGenerating: Bool
+    let action: () -> Void
+
+    @Environment(\.appLanguage) private var lang
+    @State private var isHovered = false
+
+    private var fillColor: Color {
+        if isGenerating {
+            return Color.secondary.opacity(0.12)
+        }
+        if isPlaying {
+            return isHovered ? Color.red.opacity(0.22) : Color.red.opacity(0.14)
+        }
+        return isHovered ? Color.green.opacity(0.22) : Color.green.opacity(0.14)
+    }
+
+    private var strokeColor: Color {
+        if isGenerating {
+            return Color.secondary.opacity(0.3)
+        }
+        if isPlaying {
+            return isHovered ? Color.red.opacity(0.65) : Color.red.opacity(0.4)
+        }
+        return isHovered ? Color.green.opacity(0.65) : Color.green.opacity(0.4)
+    }
+
+    private var iconColor: Color {
+        isPlaying ? .red : .green
+    }
+
+    var body: some View {
+        Button(action: action) {
+            ZStack {
+                Circle()
+                    .fill(fillColor)
+                    .frame(width: 32, height: 32)
+                    .overlay(
+                        Circle()
+                            .stroke(strokeColor, lineWidth: 1.5)
+                    )
+                    .scaleEffect(isHovered && !isGenerating ? 1.05 : 1.0)
+                    .animation(.easeInOut(duration: 0.2), value: isHovered)
+
+                if isGenerating {
+                    ProgressView()
+                        .controlSize(.small)
+                        .frame(width: 14, height: 14)
+                } else {
+                    Image(systemName: isPlaying ? "stop.fill" : "play.fill")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundColor(iconColor)
+                }
+            }
+        }
+        .buttonStyle(.plain)
+        .disabled(isGenerating)
+        #if os(macOS)
+        .onHover { isHovered = $0 }
+        #endif
+        .help(isPlaying ? L10n.stopAudioPlayback(lang) : L10n.playMessageAudio(lang))
     }
 }
 
@@ -588,6 +683,7 @@ struct StopPlaybackButton: View {
     let isPlaying: Bool
     let action: () -> Void
     
+    @Environment(\.appLanguage) private var lang
     @State private var isHovered = false
     
     var body: some View {
@@ -619,7 +715,7 @@ struct StopPlaybackButton: View {
                 isHovered = hovering
             }
         }
-        .help(isPlaying ? "Stop audio playback" : "No audio playing")
+        .help(isPlaying ? L10n.stopAudioPlayback(lang) : L10n.noAudioPlaying(lang))
     }
 }
 
@@ -629,6 +725,8 @@ struct LogConsolePanel: View {
     @Binding var isExpanded: Bool
     @Binding var height: CGFloat
     
+    private var lang: AppLanguage { viewModel.appLanguage }
+    
     var body: some View {
         VStack(spacing: 0) {
             // Header
@@ -636,14 +734,14 @@ struct LogConsolePanel: View {
                 HStack(spacing: 8) {
                     Image(systemName: "terminal.fill")
                         .font(.body)
-                    Text("System Console Logs")
+                    Text(L10n.systemConsoleLogs(lang))
                         .font(.headline)
                         .fontDesign(.monospaced)
                 }
                 Spacer()
                 
                 HStack(spacing: 12) {
-                    Button("Copy Logs") {
+                    Button(L10n.copyLogs(lang)) {
                         let logText = viewModel.logs.map { "[\($0.timestamp.formatted())] [\($0.tag)] \($0.message)" }.joined(separator: "\n")
                         #if os(macOS)
                         NSPasteboard.general.clearContents()
@@ -655,7 +753,7 @@ struct LogConsolePanel: View {
                     .buttonStyle(.borderless)
                     .controlSize(.small)
                     
-                    Button("Clear") {
+                    Button(L10n.clear(lang)) {
                         viewModel.clearLogs()
                     }
                     .buttonStyle(.borderless)
@@ -746,6 +844,7 @@ struct SystemPromptModalView: View {
     @ObservedObject var viewModel: ChatViewModel
     @Environment(\.dismiss) var dismiss
     
+    private var lang: AppLanguage { viewModel.appLanguage }
     @State private var newTitle = ""
     @State private var newPromptText = ""
     @State private var isGenerating = false
@@ -757,8 +856,8 @@ struct SystemPromptModalView: View {
         #if os(iOS)
         VStack(spacing: 0) {
             Picker("", selection: $iOSActiveTab) {
-                Text("Select").tag(0)
-                Text("Create / Edit").tag(1)
+                Text(L10n.tabSelect(lang)).tag(0)
+                Text(L10n.tabCreateEdit(lang)).tag(1)
             }
             .pickerStyle(.segmented)
             .padding()
@@ -766,7 +865,7 @@ struct SystemPromptModalView: View {
             if iOSActiveTab == 0 {
                 // Select System Prompt List
                 VStack(alignment: .leading, spacing: 16) {
-                    Text("Select System Prompt")
+                    Text(L10n.selectSystemPrompt(lang))
                         .font(.title3)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
@@ -838,7 +937,7 @@ struct SystemPromptModalView: View {
                     
                     HStack(spacing: 8) {
                         // Title Field
-                        TextField("Title (e.g. Grammar Expert)", text: $newTitle)
+                        TextField(L10n.promptTitlePlaceholder(lang), text: $newTitle)
                             .textFieldStyle(.plain)
                             .padding(.horizontal, 10)
                             .frame(height: 44)
@@ -899,7 +998,7 @@ struct SystemPromptModalView: View {
                                 dismiss()
                             }
                         }) {
-                            Text("Cancel")
+                            Text(L10n.cancel(lang))
                                 .font(.headline)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
@@ -914,7 +1013,7 @@ struct SystemPromptModalView: View {
                             savePrompt()
                             iOSActiveTab = 0
                         }) {
-                            Text(editingPrompt == nil ? "Save Prompt" : "Update Prompt")
+                            Text(editingPrompt == nil ? L10n.savePrompt(lang) : L10n.updatePrompt(lang))
                                 .font(.headline)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
@@ -935,7 +1034,7 @@ struct SystemPromptModalView: View {
         HStack(spacing: 0) {
             // LEFT COLUMN: Select System Prompt (60% width)
             VStack(alignment: .leading, spacing: 16) {
-                Text("Select System Prompt")
+                Text(L10n.selectSystemPrompt(lang))
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
@@ -962,7 +1061,7 @@ struct SystemPromptModalView: View {
                                             .foregroundColor(.blue)
                                     }
                                     .buttonStyle(.plain)
-                                    .help("Edit system prompt")
+                                    .help(L10n.editSystemPromptHelp(lang))
                                     
                                     // Delete button
                                     Button(action: {
@@ -973,7 +1072,7 @@ struct SystemPromptModalView: View {
                                             .foregroundColor(.red)
                                     }
                                     .buttonStyle(.plain)
-                                    .help("Delete system prompt")
+                                    .help(L10n.deleteSystemPromptHelp(lang))
                                 }
                                 
                                 Text(prompt.promptText)
@@ -1018,7 +1117,7 @@ struct SystemPromptModalView: View {
             VStack(alignment: .leading, spacing: 16) {
                 
                 // Title Field
-                TextField("Title (e.g. Grammar Expert)", text: $newTitle)
+                TextField(L10n.promptTitlePlaceholder(lang), text: $newTitle)
                     .textFieldStyle(.plain)
                     .padding(8)
                     .background(Color.black.opacity(0.6))
@@ -1039,9 +1138,9 @@ struct SystemPromptModalView: View {
                             ProgressView()
                                 .controlSize(.small)
                                 .padding(.trailing, 4)
-                            Text("Generating...")
+                            Text(L10n.generating(lang))
                         } else {
-                            Text("✨ Generate Prompt with AI")
+                            Text(L10n.generatePromptWithAI(lang))
                         }
                         Spacer()
                     }
@@ -1072,7 +1171,7 @@ struct SystemPromptModalView: View {
                 Button(action: {
                     savePrompt()
                 }) {
-                    Text(editingPrompt == nil ? "Save Prompt" : "Update Prompt")
+                    Text(editingPrompt == nil ? L10n.savePrompt(lang) : L10n.updatePrompt(lang))
                         .font(.headline)
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
@@ -1093,7 +1192,7 @@ struct SystemPromptModalView: View {
                         dismiss()
                     }
                 }) {
-                    Text("Cancel")
+                    Text(L10n.cancel(lang))
                         .foregroundColor(.gray)
                         .underline()
                         .frame(maxWidth: .infinity)
@@ -1142,13 +1241,12 @@ struct SystemPromptModalView: View {
 
 // MARK: - Endpoint Configuration
 private enum EndpointConfigTemplate {
-    static let newName = "New Config"
     static let stt = "wss://speech_to_text.npro.ai?silence_duration_ms=1000"
     static let llm = "https://text_gen.npro.ai/v1/chat/completions"
     static let tts = "https://text_to_speech.npro.ai/v1/audio/speech"
 }
 
-private func endpointHostSummary(from urlString: String) -> String {
+private func endpointHostSummary(from urlString: String, language: AppLanguage) -> String {
     let trimmed = urlString.trimmingCharacters(in: .whitespacesAndNewlines)
     if let host = URL(string: trimmed)?.host, !host.isEmpty {
         return host
@@ -1156,7 +1254,7 @@ private func endpointHostSummary(from urlString: String) -> String {
     if trimmed.count > 40 {
         return String(trimmed.prefix(37)) + "..."
     }
-    return trimmed.isEmpty ? "No URL set" : trimmed
+    return trimmed.isEmpty ? L10n.noURLSet(language) : trimmed
 }
 
 // MARK: - Endpoint Configuration Modal View
@@ -1164,6 +1262,7 @@ struct EndpointConfigModalView: View {
     @ObservedObject var viewModel: ChatViewModel
     @Environment(\.dismiss) var dismiss
     
+    private var lang: AppLanguage { viewModel.appLanguage }
     @State private var selectedConfig: EndpointConfig?
     #if os(iOS)
     @State private var navigationPath = NavigationPath()
@@ -1178,9 +1277,9 @@ struct EndpointConfigModalView: View {
                         EndpointConfigDetailView(config: current, viewModel: viewModel)
                     } else {
                         ContentUnavailableView(
-                            "Configuration Not Found",
+                            L10n.configurationNotFound(lang),
                             systemImage: "exclamationmark.triangle",
-                            description: Text("This configuration may have been deleted.")
+                            description: Text(L10n.configurationDeletedHint(lang))
                         )
                     }
                 }
@@ -1195,7 +1294,7 @@ struct EndpointConfigModalView: View {
                 // New Config Button
                 Button(action: {
                     viewModel.createEndpointConfig(
-                        name: EndpointConfigTemplate.newName,
+                        name: L10n.newConfigName(lang),
                         textGenURL: EndpointConfigTemplate.llm,
                         ttsURL: EndpointConfigTemplate.tts,
                         sttURL: EndpointConfigTemplate.stt
@@ -1207,7 +1306,7 @@ struct EndpointConfigModalView: View {
                 }) {
                     HStack {
                         Image(systemName: "plus")
-                        Text("New Configuration")
+                        Text(L10n.newConfiguration(lang))
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
@@ -1220,7 +1319,7 @@ struct EndpointConfigModalView: View {
                 }
                 .buttonStyle(.plain)
                 
-                Text("Configurations")
+                Text(L10n.configurations(lang))
                     .font(.headline)
                     .foregroundColor(.white)
                     .padding(.top, 8)
@@ -1267,7 +1366,7 @@ struct EndpointConfigModalView: View {
                 Button(action: {
                     dismiss()
                 }) {
-                    Text("Done")
+                    Text(L10n.done(lang))
                         .font(.body)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
@@ -1298,7 +1397,7 @@ struct EndpointConfigModalView: View {
                         Image(systemName: "slider.horizontal.3")
                             .font(.system(size: 48))
                             .foregroundColor(.gray)
-                        Text("No Configuration Selected")
+                        Text(L10n.noConfigurationSelected(lang))
                             .font(.headline)
                             .foregroundColor(.gray)
                     }
@@ -1336,6 +1435,8 @@ struct EndpointConfigListView: View {
     @Binding var navigationPath: NavigationPath
     @Environment(\.dismiss) private var dismiss
     
+    private var lang: AppLanguage { viewModel.appLanguage }
+    
     var body: some View {
         List {
             ForEach(viewModel.endpointConfigs) { config in
@@ -1346,11 +1447,11 @@ struct EndpointConfigListView: View {
             }
             .onDelete(perform: deleteConfigs)
         }
-        .navigationTitle("Endpoints")
+        .navigationTitle(L10n.endpoints(lang))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Done") {
+                Button(L10n.done(lang)) {
                     dismiss()
                 }
             }
@@ -1358,14 +1459,14 @@ struct EndpointConfigListView: View {
                 Button(action: createAndOpenNew) {
                     Image(systemName: "plus")
                 }
-                .accessibilityLabel("New Configuration")
+                .accessibilityLabel(L10n.newConfiguration(lang))
             }
         }
     }
     
     private func createAndOpenNew() {
         viewModel.createEndpointConfig(
-            name: EndpointConfigTemplate.newName,
+            name: L10n.newConfigName(lang),
             textGenURL: EndpointConfigTemplate.llm,
             ttsURL: EndpointConfigTemplate.tts,
             sttURL: EndpointConfigTemplate.stt
@@ -1387,12 +1488,14 @@ struct EndpointConfigListView: View {
 struct EndpointConfigRowView: View {
     let config: EndpointConfig
     
+    @Environment(\.appLanguage) private var lang
+    
     var body: some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(config.name)
                     .font(.body)
-                Text(endpointHostSummary(from: config.textGenURL))
+                Text(endpointHostSummary(from: config.textGenURL, language: lang))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -1400,7 +1503,7 @@ struct EndpointConfigRowView: View {
             Spacer(minLength: 8)
             
             if config.isActive {
-                Text("Active")
+                Text(L10n.active(lang))
                     .font(.caption2)
                     .fontWeight(.semibold)
                     .foregroundStyle(.blue)
@@ -1420,6 +1523,7 @@ struct EndpointConfigDetailView: View {
     @ObservedObject var viewModel: ChatViewModel
     @Environment(\.dismiss) private var dismiss
     
+    private var lang: AppLanguage { viewModel.appLanguage }
     @State private var name: String = ""
     @State private var textGenURL: String = ""
     @State private var ttsURL: String = ""
@@ -1446,9 +1550,9 @@ struct EndpointConfigDetailView: View {
     var body: some View {
         Form {
             Section {
-                TextField("Configuration Name", text: $name)
+                TextField(L10n.configurationName(lang), text: $name)
                 
-                Toggle("Use this configuration", isOn: Binding(
+                Toggle(L10n.useThisConfiguration(lang), isOn: Binding(
                     get: { currentConfig.isActive },
                     set: { newValue in
                         if newValue {
@@ -1459,8 +1563,8 @@ struct EndpointConfigDetailView: View {
             }
             
             Section {
-                DisclosureGroup("Text Generation", isExpanded: $isTextGenExpanded) {
-                    TextField("Text Generation URL", text: $textGenURL, axis: .vertical)
+                DisclosureGroup(L10n.textGeneration(lang), isExpanded: $isTextGenExpanded) {
+                    TextField(L10n.textGenerationURL(lang), text: $textGenURL, axis: .vertical)
                         .lineLimit(1...4)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
@@ -1473,14 +1577,14 @@ struct EndpointConfigDetailView: View {
                             if isTestingTextGen {
                                 ProgressView()
                             }
-                            Text(isTestingTextGen ? "Testing..." : "Test Connection")
+                            Text(isTestingTextGen ? L10n.testing(lang) : L10n.testConnection(lang))
                                 .fontWeight(.semibold)
                             Spacer()
                         }
                     }
                     .disabled(isTestingTextGen || textGenURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     
-                    Text(textGenResult.isEmpty ? "Sample text generated by the model will appear here." : textGenResult)
+                    Text(textGenResult.isEmpty ? L10n.textGenSamplePlaceholder(lang) : textGenResult)
                         .font(.system(.footnote, design: .monospaced))
                         .foregroundStyle(textGenResult.isEmpty ? .secondary : .primary)
                         .frame(maxWidth: .infinity, minHeight: 80, alignment: .topLeading)
@@ -1491,8 +1595,8 @@ struct EndpointConfigDetailView: View {
             }
             
             Section {
-                DisclosureGroup("Text-to-Speech", isExpanded: $isTTSExpanded) {
-                    TextField("TTS URL", text: $ttsURL, axis: .vertical)
+                DisclosureGroup(L10n.tts(lang), isExpanded: $isTTSExpanded) {
+                    TextField(L10n.ttsURL(lang), text: $ttsURL, axis: .vertical)
                         .lineLimit(1...4)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
@@ -1500,11 +1604,11 @@ struct EndpointConfigDetailView: View {
                         .font(.system(.body, design: .monospaced))
                     
                     if viewModel.voiceOptions.isEmpty {
-                        Text("No voices loaded (check TTS server)")
+                        Text(L10n.noVoicesLoaded(lang))
                             .font(.caption)
                             .foregroundStyle(.yellow)
                     } else {
-                        Picker("Voice", selection: $viewModel.ttsVoice) {
+                        Picker(L10n.voice(lang), selection: $viewModel.ttsVoice) {
                             ForEach(viewModel.voiceOptions, id: \.self) { voice in
                                 Text(voice).tag(voice)
                             }
@@ -1513,7 +1617,7 @@ struct EndpointConfigDetailView: View {
                     
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
-                            Text("Speed")
+                            Text(L10n.speed(lang))
                             Spacer()
                             Text(String(format: "%.2fx", viewModel.ttsSpeed))
                                 .foregroundStyle(.secondary)
@@ -1522,7 +1626,7 @@ struct EndpointConfigDetailView: View {
                         Slider(value: $viewModel.ttsSpeed, in: 0.5...2.0, step: 0.05)
                     }
                     
-                    TextField("Type text to synthesize...", text: $ttsInputText, axis: .vertical)
+                    TextField(L10n.synthesizePlaceholder(lang), text: $ttsInputText, axis: .vertical)
                         .lineLimit(2...5)
                         .font(.system(.body, design: .monospaced))
                     
@@ -1534,7 +1638,7 @@ struct EndpointConfigDetailView: View {
                             } else {
                                 Image(systemName: "play.fill")
                             }
-                            Text(isPlayingTTS ? "Playing..." : "Play Test Audio")
+                            Text(isPlayingTTS ? L10n.playing(lang) : L10n.playTestAudio(lang))
                                 .fontWeight(.semibold)
                             Spacer()
                         }
@@ -1544,8 +1648,8 @@ struct EndpointConfigDetailView: View {
             }
             
             Section {
-                DisclosureGroup("Speech-to-Text", isExpanded: $isSTTExpanded) {
-                    TextField("STT URL", text: $sttURL, axis: .vertical)
+                DisclosureGroup(L10n.stt(lang), isExpanded: $isSTTExpanded) {
+                    TextField(L10n.sttURL(lang), text: $sttURL, axis: .vertical)
                         .lineLimit(1...4)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
@@ -1555,7 +1659,7 @@ struct EndpointConfigDetailView: View {
                     Button(action: toggleDictation) {
                         HStack {
                             Spacer()
-                            Text(isDictating ? "Stop Dictation" : "Start Dictation")
+                            Text(isDictating ? L10n.stopDictation(lang) : L10n.startDictation(lang))
                                 .fontWeight(.semibold)
                             Spacer()
                         }
@@ -1572,17 +1676,17 @@ struct EndpointConfigDetailView: View {
                 }
             }
         }
-        .navigationTitle(name.isEmpty ? "Configuration" : name)
+        .navigationTitle(name.isEmpty ? L10n.configuration(lang) : name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button("Save") {
+                Button(L10n.save(lang)) {
                     saveConfig()
                 }
             }
             if !currentConfig.isActive {
                 ToolbarItem(placement: .destructiveAction) {
-                    Button("Delete", role: .destructive) {
+                    Button(L10n.delete(lang), role: .destructive) {
                         deleteConfig()
                     }
                 }
@@ -1598,9 +1702,9 @@ struct EndpointConfigDetailView: View {
     
     private var dictationDisplayText: String {
         if isDictating {
-            return viewModel.testSTTText.isEmpty ? "Listening... Speak now." : viewModel.testSTTText
+            return viewModel.testSTTText.isEmpty ? L10n.listeningSpeakNow(lang) : viewModel.testSTTText
         }
-        return "Live dictation text appears here as you speak."
+        return L10n.dictationPlaceholder(lang)
     }
     
     private func syncFieldsFromConfig() {
@@ -1628,7 +1732,7 @@ struct EndpointConfigDetailView: View {
     
     private func runTextGenTest() {
         isTestingTextGen = true
-        textGenResult = "Connecting and generating..."
+        textGenResult = L10n.connectingAndGenerating(lang)
         Task {
             do {
                 let response = try await viewModel.runTextGenTest(url: textGenURL)
@@ -1668,6 +1772,7 @@ struct EndpointConfigCard: View {
     let config: EndpointConfig
     @ObservedObject var viewModel: ChatViewModel
     
+    private var lang: AppLanguage { viewModel.appLanguage }
     @State private var name: String = ""
     @State private var textGenURL: String = ""
     @State private var ttsURL: String = ""
@@ -1684,10 +1789,10 @@ struct EndpointConfigCard: View {
             // Header: Name, Active Toggle, Delete Button
             HStack {
                 HStack(spacing: 6) {
-                    Text("Config Name:")
+                    Text(L10n.configNameLabel(lang))
                         .font(.headline)
                         .foregroundColor(.secondary)
-                    TextField("Configuration Name", text: $name)
+                    TextField(L10n.configurationName(lang), text: $name)
                         .font(.headline)
                         .textFieldStyle(.plain)
                         .foregroundColor(.white)
@@ -1709,7 +1814,7 @@ struct EndpointConfigCard: View {
                     .labelsHidden()
                     .controlSize(.small)
                     
-                    Text(config.isActive ? "ACTIVE" : "INACTIVE")
+                    Text(config.isActive ? L10n.active(lang) : L10n.inactive(lang))
                         .font(.caption2)
                         .fontWeight(.bold)
                         .monospaced()
@@ -1719,11 +1824,11 @@ struct EndpointConfigCard: View {
             
             // Text Gen Field
             VStack(alignment: .leading, spacing: 6) {
-                Text("TEXT GENERATION")
+                Text(L10n.textGeneration(lang))
                     .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.gray)
                 HStack(spacing: 8) {
-                    TextField("Text Generation URL", text: $textGenURL)
+                    TextField(L10n.textGenerationURL(lang), text: $textGenURL)
                         .textFieldStyle(.plain)
                         .padding(8)
                         .background(Color.black.opacity(0.3))
@@ -1746,7 +1851,7 @@ struct EndpointConfigCard: View {
                                     .controlSize(.small)
                                     .scaleEffect(0.8)
                             } else {
-                                Text("Test")
+                                Text(L10n.test(lang))
                                     .font(.body)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.white)
@@ -1759,7 +1864,7 @@ struct EndpointConfigCard: View {
                 }
                 
                 // Text Gen Response Box
-                Text(textGenResult.isEmpty ? "Sample text generated by the model will appear here." : textGenResult)
+                Text(textGenResult.isEmpty ? L10n.textGenSamplePlaceholder(lang) : textGenResult)
                     .font(.system(.body, design: .monospaced))
                     .foregroundColor(textGenResult.isEmpty ? .gray : .white)
                     .padding(10)
@@ -1774,10 +1879,10 @@ struct EndpointConfigCard: View {
             
             // TTS Field
             VStack(alignment: .leading, spacing: 6) {
-                Text("TTS")
+                Text(L10n.tts(lang))
                     .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.gray)
-                TextField("TTS URL", text: $ttsURL)
+                TextField(L10n.ttsURL(lang), text: $ttsURL)
                     .textFieldStyle(.plain)
                     .padding(8)
                     .background(Color.black.opacity(0.3))
@@ -1790,12 +1895,12 @@ struct EndpointConfigCard: View {
                 
                 // TTS Voice Selection Dropdown Inline
                 HStack {
-                    Text("TTS Voice")
+                    Text(L10n.ttsVoice(lang))
                         .font(.body)
                         .foregroundColor(.secondary)
                     Spacer()
                     if viewModel.voiceOptions.isEmpty {
-                        Text("No voices loaded (check TTS server)")
+                        Text(L10n.noVoicesLoaded(lang))
                             .font(.caption)
                             .foregroundColor(.yellow)
                     } else {
@@ -1812,7 +1917,7 @@ struct EndpointConfigCard: View {
                 
                 // TTS Speed Slider
                 HStack {
-                    Text("TTS Speed")
+                    Text(L10n.ttsSpeed(lang))
                         .font(.body)
                         .foregroundColor(.secondary)
                     Spacer()
@@ -1827,11 +1932,11 @@ struct EndpointConfigCard: View {
                 
                 // Enter Text for Speech Section
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Enter Text for Speech")
+                    Text(L10n.enterTextForSpeech(lang))
                         .font(.system(size: 10, weight: .bold))
                         .foregroundColor(.gray)
                     HStack(spacing: 8) {
-                        TextField("Type text to synthesize...", text: $ttsInputText)
+                        TextField(L10n.synthesizePlaceholder(lang), text: $ttsInputText)
                             .textFieldStyle(.plain)
                             .padding(8)
                             .background(Color.black.opacity(0.3))
@@ -1868,11 +1973,11 @@ struct EndpointConfigCard: View {
             
             // STT Field
             VStack(alignment: .leading, spacing: 6) {
-                Text("STT")
+                Text(L10n.stt(lang))
                     .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.gray)
                 HStack(spacing: 8) {
-                    TextField("STT URL", text: $sttURL)
+                    TextField(L10n.sttURL(lang), text: $sttURL)
                         .textFieldStyle(.plain)
                         .padding(8)
                         .background(Color.black.opacity(0.3))
@@ -1891,7 +1996,7 @@ struct EndpointConfigCard: View {
                             viewModel.startSTTTest(configId: config.id, url: sttURL)
                         }
                     }) {
-                        Text(isDictating ? "Stop Dictation" : "Start Dictation")
+                        Text(isDictating ? L10n.stopDictation(lang) : L10n.startDictation(lang))
                             .font(.body)
                             .fontWeight(.semibold)
                             .foregroundColor(.white)
@@ -1905,7 +2010,7 @@ struct EndpointConfigCard: View {
                 
                 // Dictation Text Output Box
                 let isDictating = viewModel.activeTestSTTConfigId == config.id
-                let dictationDisplayText = isDictating ? (viewModel.testSTTText.isEmpty ? "Listening... Speak now." : viewModel.testSTTText) : "Live dictation text appears here as you speak."
+                let dictationDisplayText = isDictating ? (viewModel.testSTTText.isEmpty ? L10n.listeningSpeakNow(lang) : viewModel.testSTTText) : L10n.dictationPlaceholder(lang)
                 Text(dictationDisplayText)
                     .font(.system(.body, design: .monospaced))
                     .foregroundColor(isDictating && !viewModel.testSTTText.isEmpty ? .white : .gray)
@@ -1931,7 +2036,7 @@ struct EndpointConfigCard: View {
                         sttURL: sttURL
                     )
                 }) {
-                    Text("Save")
+                    Text(L10n.save(lang))
                         .font(.body)
                         .foregroundColor(.white)
                         .padding(.horizontal, 16)
@@ -1963,7 +2068,7 @@ struct EndpointConfigCard: View {
     
     private func runTextGenTest() {
         isTestingTextGen = true
-        textGenResult = "Connecting and generating..."
+        textGenResult = L10n.connectingAndGenerating(lang)
         Task {
             do {
                 let response = try await viewModel.runTextGenTest(url: textGenURL)

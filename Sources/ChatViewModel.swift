@@ -17,6 +17,8 @@ class ChatViewModel: ObservableObject {
     private var webSocketManager: WebSocketManager?
     private let audioRecorder = AudioRecorder()
     private let audioPlayer = AudioPlayer()
+    private let audioStorage = AudioStorage()
+    private var audioCache: [String: Data] = [:]
     
     // Published State
     @Published var conversations: [Conversation] = []
@@ -28,6 +30,7 @@ class ChatViewModel: ObservableObject {
     @Published var isMicrophoneActive = false
     @Published var isWebSocketConnected = false
     @Published var isPlayingAudio = false
+    @Published var currentlyPlayingMessageId: String?
     @Published var isGeneratingText = false
     @Published var isGeneratingSpeech = false
     
@@ -84,6 +87,9 @@ class ChatViewModel: ObservableObject {
     @Published var isPhonicsEnabled: Bool {
         didSet { UserDefaults.standard.set(isPhonicsEnabled, forKey: "isPhonicsEnabled") }
     }
+    @Published var appLanguage: AppLanguage {
+        didSet { UserDefaults.standard.set(appLanguage.rawValue, forKey: "appLanguage") }
+    }
     
     init() {
         // Load settings from UserDefaults or use defaults from readme
@@ -97,6 +103,12 @@ class ChatViewModel: ObservableObject {
         
         self.isTranslationEnabled = UserDefaults.standard.object(forKey: "isTranslationEnabled") as? Bool ?? true
         self.isPhonicsEnabled = UserDefaults.standard.object(forKey: "isPhonicsEnabled") as? Bool ?? true
+        if let savedLanguage = UserDefaults.standard.string(forKey: "appLanguage"),
+           let language = AppLanguage(rawValue: savedLanguage) {
+            self.appLanguage = language
+        } else {
+            self.appLanguage = .en
+        }
         
         setupCallbacks()
         loadConversations()
@@ -157,6 +169,7 @@ class ChatViewModel: ObservableObject {
             guard let self = self else { return }
             Task { @MainActor in
                 self.isPlayingAudio = false
+                self.currentlyPlayingMessageId = nil
                 // Resume mic recording if it's supposed to be active
                 if self.isMicrophoneActive {
                     self.log("Playback finished: Resuming microphone recording.", tag: "AUDIO")
@@ -202,7 +215,7 @@ class ChatViewModel: ObservableObject {
     }
     
     func startNewConversation() {
-        let title = "New Chat"
+        let title = L10n.newChat(appLanguage)
         let id = dbManager.createConversation(title: title)
         let newConv = Conversation(id: id, title: title, createdAt: Date())
         conversations.insert(newConv, at: 0)
@@ -211,7 +224,13 @@ class ChatViewModel: ObservableObject {
     }
     
     func deleteConversation(_ conversation: Conversation) {
+        let audioPaths = dbManager.fetchMessageAudioPaths(conversationId: conversation.id)
         dbManager.deleteConversation(id: conversation.id)
+        for path in audioPaths {
+            audioStorage.delete(filename: path)
+            let messageId = (path as NSString).deletingPathExtension
+            audioCache.removeValue(forKey: messageId)
+        }
         log("Deleted conversation '\(conversation.title)' from DB.", tag: "DB")
         
         if activeConversation?.id == conversation.id {
@@ -285,10 +304,84 @@ class ChatViewModel: ObservableObject {
         log("Stopping playback requested by user.", tag: "AUDIO")
         audioPlayer.stop()
         isPlayingAudio = false
+        currentlyPlayingMessageId = nil
         // Resume mic recording if it's supposed to be active
         if isMicrophoneActive {
             log("Playback stopped: Resuming microphone recording.", tag: "AUDIO")
             audioRecorder.start()
+        }
+    }
+
+    func playMessageAudio(_ message: Message) {
+        guard message.role == "assistant" else { return }
+
+        if currentlyPlayingMessageId == message.id && isPlayingAudio {
+            stopPlayback()
+            return
+        }
+
+        if isPlayingAudio {
+            stopPlayback()
+        }
+
+        guard let audioData = loadAudioData(for: message) else {
+            log("No saved audio for message \(message.id). Regenerating speech.", tag: "AUDIO")
+            Task {
+                await regenerateSpeech(for: message)
+            }
+            return
+        }
+
+        currentlyPlayingMessageId = message.id
+        audioPlayer.play(data: audioData)
+    }
+
+    private func loadAudioData(for message: Message) -> Data? {
+        if let cached = audioCache[message.id] {
+            return cached
+        }
+        guard let filename = message.audioPath,
+              let data = audioStorage.load(filename: filename) else {
+            return nil
+        }
+        audioCache[message.id] = data
+        return data
+    }
+
+    private func saveAudioData(_ data: Data, messageId: String, conversationId: String) {
+        do {
+            let filename = try audioStorage.save(messageId: messageId, data: data)
+            audioCache[messageId] = data
+            dbManager.updateMessageAudioPath(id: messageId, audioPath: filename)
+            if activeConversation?.id == conversationId {
+                messages = dbManager.fetchMessages(conversationId: conversationId)
+            }
+            log("Saved audio for message \(messageId) (\(data.count) bytes).", tag: "DB")
+        } catch {
+            log("Failed to save audio for message \(messageId): \(error.localizedDescription)", tag: "ERROR")
+        }
+    }
+
+    private func regenerateSpeech(for message: Message) async {
+        guard message.role == "assistant" else { return }
+        isGeneratingSpeech = true
+        log("Regenerating speech for message \(message.id)...", tag: "TTS")
+
+        do {
+            let audioData = try await apiManager.generateSpeech(
+                endpoint: ttsURL,
+                model: ttsModel,
+                text: message.content,
+                voice: ttsVoice,
+                speed: ttsSpeed
+            )
+            isGeneratingSpeech = false
+            saveAudioData(audioData, messageId: message.id, conversationId: message.conversationId)
+            currentlyPlayingMessageId = message.id
+            audioPlayer.play(data: audioData)
+        } catch {
+            log("TTS regeneration error: \(error.localizedDescription)", tag: "ERROR")
+            isGeneratingSpeech = false
         }
     }
     
@@ -319,7 +412,7 @@ class ChatViewModel: ObservableObject {
         messages = dbManager.fetchMessages(conversationId: conv.id)
         
         // 4. Update conversation title if it is "New Chat" and this is the first message
-        if conv.title == "New Chat" {
+        if conv.title == L10n.newChat(.en) || conv.title == L10n.newChat(.zh) {
             let truncatedTitle = String(text.prefix(30)) + (text.count > 30 ? "..." : "")
             dbManager.updateConversationTitle(id: conv.id, title: truncatedTitle)
             activeConversation?.title = truncatedTitle
@@ -369,7 +462,7 @@ class ChatViewModel: ObservableObject {
             isGeneratingText = false
             
             // Trigger TTS
-            await runSpeechGeneration(for: assistantText)
+            await runSpeechGeneration(messageId: responseId, conversationId: conv.id, text: assistantText)
             
         } catch {
             log("LLM Error: \(error.localizedDescription)", tag: "ERROR")
@@ -377,7 +470,7 @@ class ChatViewModel: ObservableObject {
         }
     }
     
-    private func runSpeechGeneration(for text: String) async {
+    private func runSpeechGeneration(messageId: String, conversationId: String, text: String) async {
         isGeneratingSpeech = true
         log("Triggering speech synthesis for text length \(text.count)...", tag: "SYSTEM")
         
@@ -391,8 +484,8 @@ class ChatViewModel: ObservableObject {
             )
             
             isGeneratingSpeech = false
-            
-            // Play WAV bytes
+            saveAudioData(audioData, messageId: messageId, conversationId: conversationId)
+            currentlyPlayingMessageId = messageId
             audioPlayer.play(data: audioData)
             
         } catch {
@@ -460,7 +553,7 @@ class ChatViewModel: ObservableObject {
             let stt = "wss://speech_to_text.npro.ai?silence_duration_ms=1000"
             let llm = "https://text_gen.npro.ai/v1/chat/completions"
             let tts = "https://text_to_speech.npro.ai/v1/audio/speech"
-            _ = dbManager.createEndpoint(name: "Default Config", textGenURL: llm, ttsURL: tts, sttURL: stt, isActive: true)
+            _ = dbManager.createEndpoint(name: L10n.defaultConfigName(appLanguage), textGenURL: llm, ttsURL: tts, sttURL: stt, isActive: true)
             fetched = dbManager.fetchEndpoints()
         }
         endpointConfigs = fetched
