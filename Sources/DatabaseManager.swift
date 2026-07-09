@@ -14,7 +14,31 @@ struct Message: Identifiable, Equatable, Hashable {
     let role: String
     let content: String
     let audioPath: String?
+    /// Original STT text when content was corrected for learner speech.
+    let rawContent: String?
+    /// Short pronunciation / phrasing note from the correction layer.
+    let tutorFeedback: String?
     let createdAt: Date
+
+    init(
+        id: String,
+        conversationId: String,
+        role: String,
+        content: String,
+        audioPath: String? = nil,
+        rawContent: String? = nil,
+        tutorFeedback: String? = nil,
+        createdAt: Date
+    ) {
+        self.id = id
+        self.conversationId = conversationId
+        self.role = role
+        self.content = content
+        self.audioPath = audioPath
+        self.rawContent = rawContent
+        self.tutorFeedback = tutorFeedback
+        self.createdAt = createdAt
+    }
 }
 
 struct SystemPrompt: Identifiable, Equatable, Hashable {
@@ -160,6 +184,12 @@ class DatabaseManager {
         if !columnExists(table: "messages", column: "audio_path") {
             execute(sql: "ALTER TABLE messages ADD COLUMN audio_path TEXT;")
         }
+        if !columnExists(table: "messages", column: "raw_content") {
+            execute(sql: "ALTER TABLE messages ADD COLUMN raw_content TEXT;")
+        }
+        if !columnExists(table: "messages", column: "tutor_feedback") {
+            execute(sql: "ALTER TABLE messages ADD COLUMN tutor_feedback TEXT;")
+        }
         if columnExists(table: "flashcards", column: "notes") && !columnExists(table: "flashcards", column: "phonics") {
             execute(sql: "ALTER TABLE flashcards RENAME COLUMN notes TO phonics;")
         }
@@ -268,7 +298,10 @@ class DatabaseManager {
 
     func fetchMessages(conversationId: String) -> [Message] {
         var messages: [Message] = []
-        let sql = "SELECT id, conversation_id, role, content, audio_path, created_at FROM messages WHERE conversation_id = ? ORDER BY created_at ASC;"
+        let sql = """
+        SELECT id, conversation_id, role, content, audio_path, raw_content, tutor_feedback, created_at
+        FROM messages WHERE conversation_id = ? ORDER BY created_at ASC;
+        """
         var statement: OpaquePointer?
         
         if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
@@ -285,7 +318,9 @@ class DatabaseManager {
                     let role = String(cString: roleCol)
                     let content = String(cString: contentCol)
                     let audioPath = sqlite3_column_text(statement, 4).map { String(cString: $0) }
-                    let createdAtVal = sqlite3_column_double(statement, 5)
+                    let rawContent = sqlite3_column_text(statement, 5).map { String(cString: $0) }
+                    let tutorFeedback = sqlite3_column_text(statement, 6).map { String(cString: $0) }
+                    let createdAtVal = sqlite3_column_double(statement, 7)
                     
                     messages.append(Message(
                         id: id,
@@ -293,6 +328,8 @@ class DatabaseManager {
                         role: role,
                         content: content,
                         audioPath: audioPath,
+                        rawContent: rawContent,
+                        tutorFeedback: tutorFeedback,
                         createdAt: Date(timeIntervalSince1970: createdAtVal)
                     ))
                 }
@@ -305,8 +342,18 @@ class DatabaseManager {
         return messages
     }
 
-    func insertMessage(id: String = UUID().uuidString, conversationId: String, role: String, content: String) {
-        let sql = "INSERT INTO messages (id, conversation_id, role, content, created_at) VALUES (?, ?, ?, ?, ?);"
+    func insertMessage(
+        id: String = UUID().uuidString,
+        conversationId: String,
+        role: String,
+        content: String,
+        rawContent: String? = nil,
+        tutorFeedback: String? = nil
+    ) {
+        let sql = """
+        INSERT INTO messages (id, conversation_id, role, content, raw_content, tutor_feedback, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?);
+        """
         let now = Date().timeIntervalSince1970
         var statement: OpaquePointer?
         
@@ -315,7 +362,17 @@ class DatabaseManager {
             sqlite3_bind_text(statement, 2, (conversationId as NSString).utf8String, -1, nil)
             sqlite3_bind_text(statement, 3, (role as NSString).utf8String, -1, nil)
             sqlite3_bind_text(statement, 4, (content as NSString).utf8String, -1, nil)
-            sqlite3_bind_double(statement, 5, now)
+            if let rawContent {
+                sqlite3_bind_text(statement, 5, (rawContent as NSString).utf8String, -1, nil)
+            } else {
+                sqlite3_bind_null(statement, 5)
+            }
+            if let tutorFeedback {
+                sqlite3_bind_text(statement, 6, (tutorFeedback as NSString).utf8String, -1, nil)
+            } else {
+                sqlite3_bind_null(statement, 6)
+            }
+            sqlite3_bind_double(statement, 7, now)
             
             if sqlite3_step(statement) != SQLITE_DONE {
                 let errmsg = sqlite3_errmsg(db) != nil ? String(cString: sqlite3_errmsg(db)!) : "Unknown error"

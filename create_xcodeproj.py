@@ -33,6 +33,7 @@ def main():
         "PracticePreviewSheet.swift",
         "PracticeSessionView.swift",
         "SelectableMessageText.swift",
+        "SpeechCorrection.swift",
         "String+Pinyin.swift",
         "WebSocketManager.swift",
     ]

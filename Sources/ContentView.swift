@@ -226,14 +226,41 @@ struct ContentView: View {
                             .buttonStyle(.plain)
                             .onHover { isPhonicsHovered = $0 }
                             .help(L10n.togglePhonicsHelp(lang))
+
+                            // Direct STT vs STT + LLM practice pipeline
+                            Picker("", selection: $viewModel.speechPipelineMode) {
+                                Text(L10n.speechPipelineDirect(lang)).tag(SpeechPipelineMode.directSTT)
+                                Text(L10n.speechPipelineSTTPlusLLM(lang)).tag(SpeechPipelineMode.sttPlusLLM)
+                            }
+                            .pickerStyle(.segmented)
+                            .frame(maxWidth: 220)
+                            .help(L10n.speechPipelineModeHelp(lang))
+
+                            // NVIDIA STT language force
+                            Picker("", selection: $viewModel.sttLanguage) {
+                                ForEach(STTLanguage.allCases) { option in
+                                    Text(option.displayName).tag(option)
+                                }
+                            }
+                            .labelsHidden()
+                            .frame(width: 110)
+                            .help(L10n.sttLanguageHelp(lang))
                         }
                         
                         Spacer()
                         
                         // Status Bar Indicators
                         HStack(spacing: 12) {
-                            StatusIndicator(title: "STT", isActive: viewModel.isWebSocketConnected, activeColor: .green)
-                            StatusIndicator(title: "LLM", isActive: viewModel.isGeneratingText, activeColor: .yellow)
+                            StatusIndicator(
+                                title: viewModel.speechPipelineMode == .sttPlusLLM ? "STT+LLM" : "STT",
+                                isActive: viewModel.isWebSocketConnected,
+                                activeColor: .green
+                            )
+                            StatusIndicator(
+                                title: viewModel.isCorrectingSpeech ? "FIX" : "LLM",
+                                isActive: viewModel.isGeneratingText || viewModel.isCorrectingSpeech,
+                                activeColor: .yellow
+                            )
                             StatusIndicator(title: "TTS", isActive: viewModel.isGeneratingSpeech, activeColor: .blue)
                             StatusIndicator(title: "AUDIO", isActive: viewModel.isPlayingAudio, activeColor: .orange)
                         }
@@ -458,6 +485,26 @@ struct ContentView: View {
                                     .background(Circle().fill(viewModel.isPhonicsEnabled ? Color.blue.opacity(0.18) : Color.gray.opacity(0.12)))
                                     .overlay(Circle().stroke(viewModel.isPhonicsEnabled ? Color.blue.opacity(0.8) : Color.gray.opacity(0.25), lineWidth: 1))
                             }
+
+                            Menu {
+                                ForEach(SpeechPipelineMode.allCases) { mode in
+                                    Button {
+                                        viewModel.speechPipelineMode = mode
+                                    } label: {
+                                        if viewModel.speechPipelineMode == mode {
+                                            Label(L10n.speechPipelineLabel(mode, lang: lang), systemImage: "checkmark")
+                                        } else {
+                                            Text(L10n.speechPipelineLabel(mode, lang: lang))
+                                        }
+                                    }
+                                }
+                            } label: {
+                                Text(viewModel.speechPipelineMode == .sttPlusLLM ? "🎯" : "🎙️")
+                                    .padding(6)
+                                    .background(Circle().fill(viewModel.speechPipelineMode == .sttPlusLLM ? Color.blue.opacity(0.18) : Color.gray.opacity(0.12)))
+                                    .overlay(Circle().stroke(viewModel.speechPipelineMode == .sttPlusLLM ? Color.blue.opacity(0.8) : Color.gray.opacity(0.25), lineWidth: 1))
+                            }
+                            .help(L10n.speechPipelineModeHelp(lang))
                         }
                     }
                 }
@@ -542,6 +589,22 @@ struct MessageRow: View {
                             )
                         }
                     )
+
+                    if isUser, let raw = message.rawContent,
+                       !raw.isEmpty,
+                       raw != message.content {
+                        Text("\(L10n.heardAs(lang)): \(raw)")
+                            .font(.system(.caption, design: .monospaced))
+                            .foregroundColor(.secondary)
+                            .textSelection(.enabled)
+                    }
+
+                    if isUser, let tip = message.tutorFeedback, !tip.isEmpty {
+                        Text("\(L10n.pronunciationTip(lang)): \(tip)")
+                            .font(.system(.caption, design: .default))
+                            .foregroundColor(.orange)
+                            .textSelection(.enabled)
+                    }
 
                     if message.content.isChinese() {
                         // Source is Chinese

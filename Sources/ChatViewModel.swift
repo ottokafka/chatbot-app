@@ -91,9 +91,34 @@ class ChatViewModel: ObservableObject {
     @Published var isPhonicsEnabled: Bool {
         didSet { UserDefaults.standard.set(isPhonicsEnabled, forKey: "isPhonicsEnabled") }
     }
+    /// Voice pipeline: direct STT only, or STT + LLM correction/practice.
+    @Published var speechPipelineMode: SpeechPipelineMode {
+        didSet {
+            UserDefaults.standard.set(speechPipelineMode.rawValue, forKey: "speechPipelineMode")
+            let label = speechPipelineMode == .directSTT ? "Direct STT" : "STT + LLM"
+            log("Speech pipeline mode: \(label)", tag: "SYSTEM")
+        }
+    }
+
+    /// Convenience: true when mode is STT + LLM (practice with correction).
+    var isSpeechCorrectionEnabled: Bool {
+        speechPipelineMode.usesLLMCorrection
+    }
+    /// Forced language for NVIDIA STT (`?language=`). Default Chinese for this app.
+    @Published var sttLanguage: STTLanguage {
+        didSet {
+            UserDefaults.standard.set(sttLanguage.rawValue, forKey: "sttLanguage")
+            // Language is a WebSocket query param — reconnect if mic is live.
+            if isMicrophoneActive {
+                reconnectMicrophoneForSTTSettingsChange()
+            }
+        }
+    }
     @Published var appLanguage: AppLanguage {
         didSet { UserDefaults.standard.set(appLanguage.rawValue, forKey: "appLanguage") }
     }
+    /// True while the correction LLM call is in flight (before main chat generation).
+    @Published var isCorrectingSpeech = false
     
     init() {
         // Load settings from UserDefaults or use defaults from readme
@@ -107,6 +132,21 @@ class ChatViewModel: ObservableObject {
         
         self.isTranslationEnabled = UserDefaults.standard.object(forKey: "isTranslationEnabled") as? Bool ?? true
         self.isPhonicsEnabled = UserDefaults.standard.object(forKey: "isPhonicsEnabled") as? Bool ?? true
+        if let savedMode = UserDefaults.standard.string(forKey: "speechPipelineMode"),
+           let mode = SpeechPipelineMode(rawValue: savedMode) {
+            self.speechPipelineMode = mode
+        } else if let legacy = UserDefaults.standard.object(forKey: "isSpeechCorrectionEnabled") as? Bool {
+            // Migrate previous on/off toggle into the two explicit modes.
+            self.speechPipelineMode = legacy ? .sttPlusLLM : .directSTT
+        } else {
+            self.speechPipelineMode = .sttPlusLLM
+        }
+        if let savedSTTLang = UserDefaults.standard.string(forKey: "sttLanguage"),
+           let language = STTLanguage(rawValue: savedSTTLang) {
+            self.sttLanguage = language
+        } else {
+            self.sttLanguage = .chinese
+        }
         if let savedLanguage = UserDefaults.standard.string(forKey: "appLanguage"),
            let language = AppLanguage(rawValue: savedLanguage) {
             self.appLanguage = language
@@ -255,12 +295,25 @@ class ChatViewModel: ObservableObject {
         }
     }
     
+    /// NVIDIA STT URL with forced `language=` query param.
+    var resolvedSTTURL: String {
+        SpeechCorrection.sttURL(base: sttURL, language: sttLanguage)
+    }
+
+    private func reconnectMicrophoneForSTTSettingsChange() {
+        log("STT settings changed. Reconnecting microphone with language=\(sttLanguage.rawValue).", tag: "SYSTEM")
+        stopMicrophonePipeline()
+        startMicrophonePipeline()
+    }
+
     private func startMicrophonePipeline() {
-        log("Activating microphone and Speech-To-Text WebSocket connection.", tag: "SYSTEM")
+        let connectURL = resolvedSTTURL
+        let modeLabel = speechPipelineMode == .directSTT ? "Direct STT" : "STT + LLM"
+        log("Activating microphone (\(modeLabel)) → \(connectURL)", tag: "SYSTEM")
         isMicrophoneActive = true
         
-        // Re-create WebSocketManager
-        webSocketManager = WebSocketManager(urlString: sttURL)
+        // Re-create WebSocketManager (NVIDIA: language forced for better learner ASR)
+        webSocketManager = WebSocketManager(urlString: connectURL)
         webSocketManager?.onLog = { [weak self] msg in
             self?.log(msg, tag: "STT")
         }
@@ -289,7 +342,7 @@ class ChatViewModel: ObservableObject {
             guard let self = self else { return }
             Task { @MainActor in
                 self.log("Received Speech-to-Text transcription: \"\(transcription)\"", tag: "STT")
-                await self.handleUserMessage(transcription)
+                await self.handleVoiceTranscription(transcription)
             }
         }
         
@@ -478,15 +531,72 @@ class ChatViewModel: ObservableObject {
     
     // MARK: - Chat Logic
     
-    /// Sends a manually typed message
+    /// Sends a manually typed message (skips speech correction — text is already intentional).
     func sendTextMessage(_ text: String) {
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         Task {
             await handleUserMessage(text)
         }
     }
+
+    /// Voice path: optional LLM correction against NVIDIA raw ASR, then normal chat turn.
+    private func handleVoiceTranscription(_ raw: String) async {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+
+        guard isSpeechCorrectionEnabled else {
+            await handleUserMessage(trimmed)
+            return
+        }
+
+        isCorrectingSpeech = true
+        isGeneratingText = true
+        log("Running speech correction for learner ASR…", tag: "LLM")
+
+        let history: [ChatMessage]
+        if let convId = activeConversation?.id {
+            history = dbManager.fetchMessages(conversationId: convId)
+                .suffix(8)
+                .map { ChatMessage(role: $0.role, content: $0.content) }
+        } else {
+            history = []
+        }
+
+        let result = await SpeechCorrection.correct(
+            rawText: trimmed,
+            history: Array(history),
+            targetLanguage: sttLanguage,
+            appLanguage: appLanguage,
+            endpoint: llmURL,
+            model: llmModel,
+            apiManager: apiManager
+        )
+
+        isCorrectingSpeech = false
+        // runTextGeneration will keep/set isGeneratingText for the main chat call
+
+        if result.usedFallback {
+            log("Speech correction fallback — using raw ASR: \"\(trimmed)\"", tag: "LLM")
+        } else {
+            log("STT raw: \"\(trimmed)\" → corrected: \"\(result.correctedText)\"", tag: "STT")
+            if !result.feedback.isEmpty {
+                log("Tutor feedback: \(result.feedback)", tag: "LLM")
+            }
+        }
+
+        let feedback = result.feedback.isEmpty ? nil : result.feedback
+        await handleUserMessage(
+            result.correctedText,
+            rawASR: trimmed,
+            feedback: feedback
+        )
+    }
     
-    private func handleUserMessage(_ text: String) async {
+    private func handleUserMessage(
+        _ text: String,
+        rawASR: String? = nil,
+        feedback: String? = nil
+    ) async {
         // 1. Ensure we have an active conversation
         if activeConversation == nil {
             startNewConversation()
@@ -494,9 +604,21 @@ class ChatViewModel: ObservableObject {
         
         guard let conv = activeConversation else { return }
         
-        // 2. Insert user message in database
+        // 2. Insert user message (corrected content + optional raw ASR / tutor feedback from voice path)
         let messageId = UUID().uuidString
-        dbManager.insertMessage(id: messageId, conversationId: conv.id, role: "user", content: text)
+        let rawTrimmed = rawASR?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let rawToStore = (rawTrimmed?.isEmpty == false) ? rawTrimmed : nil
+        let feedbackTrimmed = feedback?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let feedbackToStore = (feedbackTrimmed?.isEmpty == false) ? feedbackTrimmed : nil
+
+        dbManager.insertMessage(
+            id: messageId,
+            conversationId: conv.id,
+            role: "user",
+            content: text,
+            rawContent: rawToStore,
+            tutorFeedback: feedbackToStore
+        )
         log("Saved user message to DB.", tag: "DB")
         
         // 3. Reload messages list

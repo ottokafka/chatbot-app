@@ -93,6 +93,51 @@ enum L10n {
         lang == .zh ? "开关拼音显示" : "Toggle Pinyin phonics"
     }
 
+    static func speechPipelineModeHelp(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "直接语音识别，或 语音识别 + LLM 纠错练习"
+            : "Direct speech-to-text, or speech-to-text + LLM practice correction"
+    }
+
+    static func speechPipelineDirect(_ lang: AppLanguage) -> String {
+        lang == .zh ? "直接 STT" : "Direct STT"
+    }
+
+    static func speechPipelineSTTPlusLLM(_ lang: AppLanguage) -> String {
+        lang == .zh ? "STT + LLM" : "STT + LLM"
+    }
+
+    static func speechPipelineDirectHelp(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "识别结果直接进入对话，不做纠错"
+            : "Send raw speech-to-text into the chat with no correction"
+    }
+
+    static func speechPipelineSTTPlusLLMHelp(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "识别后再用 LLM 纠错并给出发音提示（练习模式）"
+            : "Correct ASR with the LLM and show pronunciation tips (practice mode)"
+    }
+
+    static func speechPipelineLabel(_ mode: SpeechPipelineMode, lang: AppLanguage) -> String {
+        switch mode {
+        case .directSTT: return speechPipelineDirect(lang)
+        case .sttPlusLLM: return speechPipelineSTTPlusLLM(lang)
+        }
+    }
+
+    static func sttLanguageHelp(_ lang: AppLanguage) -> String {
+        lang == .zh ? "强制语音识别语言（传给 NVIDIA STT）" : "Force STT language for NVIDIA speech server"
+    }
+
+    static func heardAs(_ lang: AppLanguage) -> String {
+        lang == .zh ? "识别为" : "Heard"
+    }
+
+    static func pronunciationTip(_ lang: AppLanguage) -> String {
+        lang == .zh ? "发音提示" : "Tip"
+    }
+
     // MARK: - Input Area
     static func messagePlaceholder(_ lang: AppLanguage) -> String {
         lang == .zh ? "输入消息发送给助手…" : "Type a message to assistant..."
