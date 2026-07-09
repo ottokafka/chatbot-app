@@ -26,6 +26,7 @@ final class FlashcardViewModel: ObservableObject {
 
     @Published var flashcards: [Flashcard] = []
     @Published var dueCount: Int = 0
+    @Published var searchText: String = ""
     @Published var draft: FlashcardDraft?
     @Published var editingFlashcardId: String?
     @Published var isShowingCreateSheet = false
@@ -47,6 +48,21 @@ final class FlashcardViewModel: ObservableObject {
     }
 
     var isEditing: Bool { editingFlashcardId != nil }
+
+    var filteredFlashcards: [Flashcard] {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return flashcards }
+
+        return flashcards.filter { card in
+            card.front.localizedCaseInsensitiveContains(query)
+                || card.back.localizedCaseInsensitiveContains(query)
+                || (card.phonics?.localizedCaseInsensitiveContains(query) ?? false)
+        }
+    }
+
+    var isSearchActive: Bool {
+        !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
 
     init() {
         loadFlashcards()

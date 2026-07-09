@@ -457,6 +457,22 @@ enum L10n {
         lang == .zh ? "在对话中选中文本，右键添加到闪卡。" : "Select text in a conversation and add it to a flashcard."
     }
 
+    static func searchFlashcards(_ lang: AppLanguage) -> String {
+        lang == .zh ? "搜索闪卡…" : "Search flashcards…"
+    }
+
+    static func clearSearch(_ lang: AppLanguage) -> String {
+        lang == .zh ? "清空搜索" : "Clear search"
+    }
+
+    static func noSearchResults(_ lang: AppLanguage) -> String {
+        lang == .zh ? "没有匹配的闪卡" : "No flashcards match your search"
+    }
+
+    static func noSearchResultsHint(_ lang: AppLanguage) -> String {
+        lang == .zh ? "试试其他关键词，或清空搜索。" : "Try a different keyword, or clear the search."
+    }
+
     static func dueToday(_ lang: AppLanguage) -> String {
         lang == .zh ? "今日到期" : "Due today"
     }

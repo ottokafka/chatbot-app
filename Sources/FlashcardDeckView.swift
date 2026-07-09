@@ -13,7 +13,12 @@ struct FlashcardDeckView: View {
             if flashcardVM.flashcards.isEmpty {
                 emptyState
             } else {
-                flashcardList
+                searchBar
+                if flashcardVM.filteredFlashcards.isEmpty {
+                    noSearchResultsState
+                } else {
+                    flashcardList
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -49,6 +54,38 @@ struct FlashcardDeckView: View {
         .background(Color.platformWindowBackground)
     }
 
+    private var searchBar: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .foregroundColor(.secondary)
+            TextField(L10n.searchFlashcards(lang), text: $flashcardVM.searchText)
+                .textFieldStyle(.plain)
+            if flashcardVM.isSearchActive {
+                Button {
+                    flashcardVM.searchText = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.secondary)
+                }
+                .buttonStyle(.borderless)
+                .help(L10n.clearSearch(lang))
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.platformWindowBackground)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.gray.opacity(0.25), lineWidth: 1)
+                )
+        )
+        .padding(.horizontal)
+        .padding(.top, 12)
+        .padding(.bottom, 4)
+    }
+
     private var emptyState: some View {
         VStack(spacing: 16) {
             Image(systemName: "rectangle.on.rectangle.angled")
@@ -66,10 +103,27 @@ struct FlashcardDeckView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
+    private var noSearchResultsState: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 48))
+                .foregroundColor(.secondary)
+            Text(L10n.noSearchResults(lang))
+                .font(.title3)
+                .fontWeight(.medium)
+            Text(L10n.noSearchResultsHint(lang))
+                .font(.body)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: 360)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
     private var flashcardList: some View {
         ScrollView {
             LazyVStack(spacing: 12) {
-                ForEach(flashcardVM.flashcards) { card in
+                ForEach(flashcardVM.filteredFlashcards) { card in
                     FlashcardDeckRow(
                         card: card,
                         dueLabel: flashcardVM.dueLabel(for: card, language: lang),
