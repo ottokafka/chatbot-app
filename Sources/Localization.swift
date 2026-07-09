@@ -532,6 +532,195 @@ enum L10n {
     static func deleteFlashcardHelp(_ lang: AppLanguage) -> String {
         lang == .zh ? "删除闪卡" : "Delete flashcard"
     }
+
+    // MARK: - Practice Pack
+
+    static func practiceWithAI(_ lang: AppLanguage) -> String {
+        lang == .zh ? "AI 练习" : "Practice with AI"
+    }
+
+    static func practiceWithAIHelp(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "根据今日到期闪卡生成练习例句（不会写入你的卡组）"
+            : "Generate practice examples from due cards (does not add to your deck)"
+    }
+
+    static func practiceGenerating(_ lang: AppLanguage) -> String {
+        lang == .zh ? "正在生成练习…" : "Generating practice…"
+    }
+
+    static func practicePreviewTitle(_ lang: AppLanguage) -> String {
+        lang == .zh ? "练习预览" : "Practice Preview"
+    }
+
+    static func practicePreviewSummary(_ lang: AppLanguage, cards: Int, seeds: Int) -> String {
+        if lang == .zh {
+            return "基于 \(seeds) 张到期卡生成了 \(cards) 条例句"
+        }
+        return "\(cards) examples from \(seeds) due card\(seeds == 1 ? "" : "s")"
+    }
+
+    static func practicePreviewAINote(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "由 AI 根据到期闪卡生成。可编辑、重生成或勾选后保存到卡组。"
+            : "AI-generated from your due cards. Edit, regenerate, or select examples to save into your deck."
+    }
+
+    static func practiceSelectAll(_ lang: AppLanguage) -> String {
+        lang == .zh ? "全选" : "Select all"
+    }
+
+    static func practiceDeselectAll(_ lang: AppLanguage) -> String {
+        lang == .zh ? "取消全选" : "Deselect all"
+    }
+
+    static func practiceSaveSelected(_ lang: AppLanguage, count: Int) -> String {
+        if lang == .zh {
+            return count > 0 ? "保存到卡组 (\(count))" : "保存到卡组"
+        }
+        return count > 0 ? "Save to Deck (\(count))" : "Save to Deck"
+    }
+
+    static func practiceSaveOne(_ lang: AppLanguage) -> String {
+        lang == .zh ? "保存到卡组" : "Save to deck"
+    }
+
+    static func practiceSavedBadge(_ lang: AppLanguage) -> String {
+        lang == .zh ? "已保存" : "Saved"
+    }
+
+    static func practiceRegenerateOne(_ lang: AppLanguage) -> String {
+        lang == .zh ? "重生成此条" : "Regenerate"
+    }
+
+    static func practiceRegenerateMissingParent(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "找不到对应的原闪卡，无法重生成此例句。"
+            : "Could not find the source flashcard for this example."
+    }
+
+    static func practiceSaveResultSummary(
+        _ lang: AppLanguage,
+        saved: Int,
+        duplicates: Int,
+        failed: Int
+    ) -> String {
+        if lang == .zh {
+            var parts: [String] = []
+            if saved > 0 { parts.append("已保存 \(saved) 张") }
+            if duplicates > 0 { parts.append("重复 \(duplicates) 张") }
+            if failed > 0 { parts.append("失败 \(failed) 张") }
+            if parts.isEmpty { return "没有可保存的例句" }
+            return parts.joined(separator: " · ")
+        }
+        var parts: [String] = []
+        if saved > 0 { parts.append("Saved \(saved)") }
+        if duplicates > 0 { parts.append("\(duplicates) duplicate\(duplicates == 1 ? "" : "s")") }
+        if failed > 0 { parts.append("\(failed) failed") }
+        if parts.isEmpty { return "Nothing to save" }
+        return parts.joined(separator: " · ")
+    }
+
+    static func practiceInfoTitle(_ lang: AppLanguage) -> String {
+        lang == .zh ? "练习" : "Practice"
+    }
+
+    static func practiceCompleteSaveHint(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "可选中喜欢的例句保存到卡组。未保存的练习不会影响复习进度。"
+            : "Optionally save favorites into your deck. Unsaved practice does not affect review schedules."
+    }
+
+    static func practiceMarkForSave(_ lang: AppLanguage) -> String {
+        lang == .zh ? "标记保存" : "Mark to save"
+    }
+
+    static func practiceRegenerate(_ lang: AppLanguage) -> String {
+        lang == .zh ? "重新生成" : "Regenerate"
+    }
+
+    static func practiceMissingLLMEndpoint(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "未配置文本生成接口，请先在接口配置中设置。"
+            : "No text-generation endpoint configured. Set one in Endpoints."
+    }
+
+    static func practiceGenerationFailedDetail(_ lang: AppLanguage, detail: String) -> String {
+        if lang == .zh {
+            return "生成练习失败：\(detail)"
+        }
+        return "Failed to generate practice: \(detail)"
+    }
+
+    static func practiceSentenceLabel(_ lang: AppLanguage) -> String {
+        lang == .zh ? "例句" : "Sentence"
+    }
+
+    static func practiceTranslationLabel(_ lang: AppLanguage) -> String {
+        lang == .zh ? "翻译" : "Translation"
+    }
+
+    static func practiceFromWord(_ lang: AppLanguage, word: String) -> String {
+        lang == .zh ? "来自：\(word)" : "From: \(word)"
+    }
+
+    static func startPractice(_ lang: AppLanguage) -> String {
+        lang == .zh ? "开始练习" : "Start Practice"
+    }
+
+    static func discardPractice(_ lang: AppLanguage) -> String {
+        lang == .zh ? "丢弃练习" : "Discard Practice"
+    }
+
+    static func removePracticeCard(_ lang: AppLanguage) -> String {
+        lang == .zh ? "移除" : "Remove"
+    }
+
+    static func practiceSessionTitle(_ lang: AppLanguage) -> String {
+        lang == .zh ? "练习" : "Practice"
+    }
+
+    static func practiceProgress(_ lang: AppLanguage, current: Int, total: Int) -> String {
+        lang == .zh ? "练习 \(current) / \(total)" : "Practice \(current) of \(total)"
+    }
+
+    static func practiceComplete(_ lang: AppLanguage) -> String {
+        lang == .zh ? "练习完成！" : "Practice complete!"
+    }
+
+    static func practiceCompleteHint(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "练习本身不影响复习进度。喜欢的例句可勾选后保存到卡组。"
+            : "Practice itself does not affect review schedules. Select favorites below to save into your deck."
+    }
+
+    static func practiceNext(_ lang: AppLanguage) -> String {
+        lang == .zh ? "下一张" : "Next"
+    }
+
+    static func practiceEmptyPreview(_ lang: AppLanguage) -> String {
+        lang == .zh ? "没有可练习的卡片" : "No practice cards left"
+    }
+
+    static func practiceEmptyPreviewHint(_ lang: AppLanguage) -> String {
+        lang == .zh ? "移除了全部例句。可以丢弃后重新生成。" : "You removed every example. Discard and generate again."
+    }
+
+    static func practiceNoDueCards(_ lang: AppLanguage) -> String {
+        lang == .zh ? "没有到期的闪卡可练习" : "No due cards to practice from"
+    }
+
+    static func practiceGenerationFailed(_ lang: AppLanguage) -> String {
+        lang == .zh ? "生成练习失败" : "Failed to generate practice cards"
+    }
+
+    static func practiceErrorTitle(_ lang: AppLanguage) -> String {
+        lang == .zh ? "练习出错" : "Practice error"
+    }
+
+    static func dismissError(_ lang: AppLanguage) -> String {
+        lang == .zh ? "关闭" : "Dismiss"
+    }
 }
 
 // MARK: - Language Toggle

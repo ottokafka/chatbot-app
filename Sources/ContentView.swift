@@ -119,7 +119,11 @@ struct ContentView: View {
             // MAIN DETAIL VIEW
             VStack(spacing: 0) {
                 if appSection == .flashcards {
-                    FlashcardDeckView(flashcardVM: flashcardVM)
+                    FlashcardDeckView(
+                        flashcardVM: flashcardVM,
+                        llmEndpoint: viewModel.llmURL,
+                        llmModel: viewModel.llmModel
+                    )
                 } else if viewModel.activeConversation != nil {
                     // Chat Window Header
                     #if !os(iOS)
@@ -377,6 +381,22 @@ struct ContentView: View {
                 flashcardVM.endReviewSession()
             }) {
                 FlashcardReviewView(flashcardVM: flashcardVM, chatVM: viewModel)
+                    .environment(\.appLanguage, viewModel.appLanguage)
+            }
+            .sheet(isPresented: $flashcardVM.isShowingPracticePreview, onDismiss: {
+                if flashcardVM.pendingPracticeSessionStart {
+                    flashcardVM.presentPendingPracticeSessionIfNeeded()
+                } else if !flashcardVM.isShowingPracticeSession {
+                    flashcardVM.discardPracticePack()
+                }
+            }) {
+                PracticePreviewSheet(flashcardVM: flashcardVM)
+                    .environment(\.appLanguage, viewModel.appLanguage)
+            }
+            .sheet(isPresented: $flashcardVM.isShowingPracticeSession, onDismiss: {
+                flashcardVM.discardPracticePack()
+            }) {
+                PracticeSessionView(flashcardVM: flashcardVM, chatVM: viewModel)
                     .environment(\.appLanguage, viewModel.appLanguage)
             }
             .onAppear {

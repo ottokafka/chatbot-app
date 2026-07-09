@@ -23,6 +23,8 @@ enum AppSection: String, CaseIterable, Identifiable {
 @MainActor
 final class FlashcardViewModel: ObservableObject {
     private let dbManager = DatabaseManager()
+    private let apiManager = APIManager()
+    private var practiceGenerationTask: Task<Void, Never>?
 
     @Published var flashcards: [Flashcard] = []
     @Published var dueCount: Int = 0
@@ -40,14 +42,65 @@ final class FlashcardViewModel: ObservableObject {
     @Published var isAnswerRevealed = false
     @Published var reviewComplete = false
 
-    var onLog: ((String) -> Void)?
+    // MARK: Practice pack (ephemeral; not part of the main deck)
+
+    @Published var practicePack: PracticePack?
+    @Published var isGeneratingPractice = false
+    @Published var practiceError: String?
+    @Published var practiceInfoMessage: String?
+    @Published var isShowingPracticePreview = false
+    @Published var isShowingPracticeSession = false
+    /// Set when leaving the preview sheet to open the session (avoids discard on preview dismiss).
+    @Published var pendingPracticeSessionStart = false
+    @Published var practiceQueue: [PracticeCard] = []
+    @Published var currentPracticeIndex = 0
+    @Published var isPracticeAnswerRevealed = false
+    @Published var practiceComplete = false
+    /// Practice cards the user wants to pin into the main deck.
+    @Published var selectedPracticeCardIds: Set<String> = []
+    /// Practice cards already saved this pack (for UI badges).
+    @Published var savedPracticeCardIds: Set<String> = []
+    /// Cards currently being regenerated one-at-a-time.
+    @Published var regeneratingPracticeCardIds: Set<String> = []
+
+    /// Last LLM config used for practice generation (for regenerate from preview).
+    private var lastPracticeLLMEndpoint: String?
+    private var lastPracticeLLMModel: String?
+    private var lastPracticeAppLanguage: AppLanguage = .en
+    private var itemRegenerationTasks: [String: Task<Void, Never>] = [:]
+
+    var onLog: ((String) -> Void)? {
+        didSet {
+            apiManager.onLog = { [weak self] message in
+                self?.onLog?(message)
+            }
+        }
+    }
 
     var currentReviewCard: Flashcard? {
         guard currentReviewIndex < reviewQueue.count else { return nil }
         return reviewQueue[currentReviewIndex]
     }
 
+    var currentPracticeCard: PracticeCard? {
+        guard currentPracticeIndex < practiceQueue.count else { return nil }
+        return practiceQueue[currentPracticeIndex]
+    }
+
     var isEditing: Bool { editingFlashcardId != nil }
+
+    var canStartPractice: Bool {
+        dueCount > 0 && !isGeneratingPractice
+    }
+
+    var selectedPracticeCards: [PracticeCard] {
+        let source = practicePack?.cards ?? practiceQueue
+        return source.filter { selectedPracticeCardIds.contains($0.id) }
+    }
+
+    var hasPracticeSelection: Bool {
+        !selectedPracticeCardIds.isEmpty
+    }
 
     var filteredFlashcards: [Flashcard] {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -306,10 +359,447 @@ final class FlashcardViewModel: ObservableObject {
         loadFlashcards()
     }
 
+    // MARK: - Practice Pack (session-scoped; no FSRS / no deck inserts)
+
+    /// Generates a practice pack from current due cards via the LLM and opens the preview sheet.
+    func beginPracticeGeneration(
+        appLanguage: AppLanguage,
+        llmEndpoint: String,
+        llmModel: String
+    ) {
+        guard !isGeneratingPractice else { return }
+
+        let dueCards = FSRSManager.shared.dueCards(from: flashcards)
+        guard !dueCards.isEmpty else {
+            practiceError = L10n.practiceNoDueCards(appLanguage)
+            onLog?("Practice generation skipped: no due cards")
+            return
+        }
+
+        let endpoint = llmEndpoint.trimmingCharacters(in: .whitespacesAndNewlines)
+        let model = llmModel.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !endpoint.isEmpty else {
+            practiceError = L10n.practiceMissingLLMEndpoint(appLanguage)
+            onLog?("Practice generation skipped: missing LLM endpoint")
+            return
+        }
+
+        lastPracticeLLMEndpoint = endpoint
+        lastPracticeLLMModel = model.isEmpty ? "default" : model
+        lastPracticeAppLanguage = appLanguage
+
+        practiceGenerationTask?.cancel()
+        cancelAllItemRegenerations()
+        isGeneratingPractice = true
+        practiceError = nil
+        practiceInfoMessage = nil
+        // Close any open preview while regenerating so the dashboard spinner is visible.
+        isShowingPracticePreview = false
+        practicePack = nil
+        selectedPracticeCardIds = []
+        savedPracticeCardIds = []
+        onLog?("Practice generation started from \(dueCards.count) due card(s) via \(endpoint)")
+
+        let seeds = dueCards
+        let resolvedModel = lastPracticeLLMModel ?? "default"
+
+        practiceGenerationTask = Task { [weak self] in
+            guard let self else { return }
+            do {
+                let pack = try await PracticeCardGenerator.generatePack(
+                    from: seeds,
+                    endpoint: endpoint,
+                    model: resolvedModel,
+                    appLanguage: appLanguage,
+                    apiManager: self.apiManager
+                )
+                guard !Task.isCancelled else { return }
+
+                self.practicePack = pack
+                self.selectedPracticeCardIds = []
+                self.savedPracticeCardIds = []
+                self.regeneratingPracticeCardIds = []
+                self.isGeneratingPractice = false
+                self.isShowingPracticePreview = true
+                self.onLog?(
+                    "Practice pack ready: \(pack.cards.count) card(s) from \(pack.sourceDueCount) due seed(s)"
+                )
+            } catch is CancellationError {
+                self.isGeneratingPractice = false
+                self.onLog?("Practice generation cancelled")
+            } catch {
+                if Task.isCancelled || Self.isCancellation(error) {
+                    self.isGeneratingPractice = false
+                    self.onLog?("Practice generation cancelled")
+                    return
+                }
+                self.isGeneratingPractice = false
+                self.practicePack = nil
+                self.practiceError = L10n.practiceGenerationFailedDetail(
+                    appLanguage,
+                    detail: error.localizedDescription
+                )
+                self.onLog?("Practice generation failed: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    /// Regenerates the pack using the last LLM settings (from preview or after a failure).
+    func regeneratePracticePack() {
+        guard let endpoint = lastPracticeLLMEndpoint else {
+            practiceError = L10n.practiceMissingLLMEndpoint(lastPracticeAppLanguage)
+            return
+        }
+        beginPracticeGeneration(
+            appLanguage: lastPracticeAppLanguage,
+            llmEndpoint: endpoint,
+            llmModel: lastPracticeLLMModel ?? "default"
+        )
+    }
+
+    func removePracticeCard(id: String) {
+        cancelItemRegeneration(id: id)
+        guard var pack = practicePack else { return }
+        pack.cards.removeAll { $0.id == id }
+        practicePack = pack
+        selectedPracticeCardIds.remove(id)
+        savedPracticeCardIds.remove(id)
+        regeneratingPracticeCardIds.remove(id)
+    }
+
+    func updatePracticeCard(id: String, front: String? = nil, back: String? = nil, phonics: String? = nil) {
+        guard var pack = practicePack,
+              let index = pack.cards.firstIndex(where: { $0.id == id }) else { return }
+        if let front {
+            pack.cards[index].front = front
+        }
+        if let back {
+            pack.cards[index].back = back
+        }
+        if let phonics {
+            let trimmed = phonics.trimmingCharacters(in: .whitespacesAndNewlines)
+            pack.cards[index].phonics = trimmed.isEmpty ? nil : trimmed
+        }
+        if front != nil || back != nil || phonics != nil {
+            savedPracticeCardIds.remove(id)
+        }
+        practicePack = pack
+    }
+
+    func togglePracticeCardSelection(id: String) {
+        if selectedPracticeCardIds.contains(id) {
+            selectedPracticeCardIds.remove(id)
+        } else {
+            selectedPracticeCardIds.insert(id)
+        }
+    }
+
+    func selectAllPracticeCards() {
+        let ids = (practicePack?.cards ?? practiceQueue).map(\.id)
+        selectedPracticeCardIds = Set(ids)
+    }
+
+    func deselectAllPracticeCards() {
+        selectedPracticeCardIds = []
+    }
+
+    func isPracticeCardSelected(_ id: String) -> Bool {
+        selectedPracticeCardIds.contains(id)
+    }
+
+    func isPracticeCardSaved(_ id: String) -> Bool {
+        savedPracticeCardIds.contains(id)
+    }
+
+    func isRegeneratingPracticeCard(_ id: String) -> Bool {
+        regeneratingPracticeCardIds.contains(id)
+    }
+
+    /// Regenerates one practice example in-place (keeps card id for stable selection/UI).
+    func regeneratePracticeCard(id: String) {
+        guard !isGeneratingPractice else { return }
+        guard !regeneratingPracticeCardIds.contains(id) else { return }
+        guard let endpoint = lastPracticeLLMEndpoint else {
+            practiceError = L10n.practiceMissingLLMEndpoint(lastPracticeAppLanguage)
+            return
+        }
+        guard let pack = practicePack,
+              let index = pack.cards.firstIndex(where: { $0.id == id }) else { return }
+
+        let existing = pack.cards[index]
+        guard let seed = resolveSeed(for: existing) else {
+            practiceError = L10n.practiceRegenerateMissingParent(lastPracticeAppLanguage)
+            onLog?("Practice single regenerate failed: missing parent seed for \(id)")
+            return
+        }
+
+        let model = lastPracticeLLMModel ?? "default"
+        let appLanguage = lastPracticeAppLanguage
+        let avoid = pack.cards.map(\.front)
+
+        cancelItemRegeneration(id: id)
+        regeneratingPracticeCardIds.insert(id)
+        practiceError = nil
+        onLog?("Practice single regenerate started for parent \"\(seed.front)\"")
+
+        let task = Task { [weak self] in
+            guard let self else { return }
+            defer {
+                self.regeneratingPracticeCardIds.remove(id)
+                self.itemRegenerationTasks[id] = nil
+            }
+            do {
+                let generated = try await PracticeCardGenerator.regenerateExample(
+                    seed: seed,
+                    existingSentences: avoid,
+                    endpoint: endpoint,
+                    model: model,
+                    appLanguage: appLanguage,
+                    apiManager: self.apiManager
+                )
+                guard !Task.isCancelled else { return }
+                guard var currentPack = self.practicePack,
+                      let currentIndex = currentPack.cards.firstIndex(where: { $0.id == id }) else { return }
+
+                currentPack.cards[currentIndex] = PracticeCard(
+                    id: id,
+                    front: generated.front,
+                    back: generated.back,
+                    phonics: generated.phonics,
+                    parentFlashcardId: generated.parentFlashcardId ?? seed.id,
+                    parentFront: generated.parentFront ?? seed.front
+                )
+                self.practicePack = currentPack
+                self.savedPracticeCardIds.remove(id)
+                self.onLog?("Practice single regenerate ready: \"\(generated.front)\"")
+            } catch is CancellationError {
+                self.onLog?("Practice single regenerate cancelled")
+            } catch {
+                if Task.isCancelled || Self.isCancellation(error) {
+                    self.onLog?("Practice single regenerate cancelled")
+                    return
+                }
+                self.practiceError = L10n.practiceGenerationFailedDetail(
+                    appLanguage,
+                    detail: error.localizedDescription
+                )
+                self.onLog?("Practice single regenerate failed: \(error.localizedDescription)")
+            }
+        }
+        itemRegenerationTasks[id] = task
+    }
+
+    /// Pins selected practice cards into the main deck as normal flashcards (new FSRS state).
+    @discardableResult
+    func saveSelectedPracticeCardsToDeck(appLanguage: AppLanguage) -> PracticeSaveResult {
+        let cards = selectedPracticeCards
+        let result = savePracticeCardsToDeck(cards, appLanguage: appLanguage)
+        practiceInfoMessage = L10n.practiceSaveResultSummary(
+            appLanguage,
+            saved: result.savedCount,
+            duplicates: result.duplicateCount,
+            failed: result.failedCount
+        )
+        return result
+    }
+
+    /// Pins a single practice card into the main deck.
+    @discardableResult
+    func savePracticeCardToDeck(id: String, appLanguage: AppLanguage) -> PracticeSaveResult {
+        let source = practicePack?.cards ?? practiceQueue
+        guard let card = source.first(where: { $0.id == id }) else {
+            return PracticeSaveResult()
+        }
+        let result = savePracticeCardsToDeck([card], appLanguage: appLanguage)
+        practiceInfoMessage = L10n.practiceSaveResultSummary(
+            appLanguage,
+            saved: result.savedCount,
+            duplicates: result.duplicateCount,
+            failed: result.failedCount
+        )
+        return result
+    }
+
+    /// Closes the preview sheet; the session sheet is presented from preview `onDismiss`.
+    func startPracticeSession() {
+        guard let pack = practicePack else { return }
+        let validCards = pack.cards.filter {
+            !$0.front.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                && !$0.back.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
+        guard !validCards.isEmpty else { return }
+        practiceQueue = validCards
+        let queueIds = Set(validCards.map(\.id))
+        selectedPracticeCardIds = selectedPracticeCardIds.intersection(queueIds)
+        currentPracticeIndex = 0
+        isPracticeAnswerRevealed = false
+        practiceComplete = false
+        pendingPracticeSessionStart = true
+        isShowingPracticePreview = false
+        onLog?("Practice session starting (\(practiceQueue.count) cards)")
+    }
+
+    /// Called after the preview sheet fully dismisses when the user chose Start Practice.
+    func presentPendingPracticeSessionIfNeeded() {
+        guard pendingPracticeSessionStart else { return }
+        pendingPracticeSessionStart = false
+        guard !practiceQueue.isEmpty else {
+            discardPracticePack()
+            return
+        }
+        isShowingPracticeSession = true
+        onLog?("Practice session presented (\(practiceQueue.count) cards)")
+    }
+
+    func revealPracticeAnswer() {
+        isPracticeAnswerRevealed = true
+    }
+
+    /// Advances past the current practice card without touching FSRS or the main deck.
+    func advancePracticeCard() {
+        guard currentPracticeCard != nil else { return }
+        currentPracticeIndex += 1
+        isPracticeAnswerRevealed = false
+        if currentPracticeIndex >= practiceQueue.count {
+            practiceComplete = true
+            onLog?("Practice session complete")
+        }
+    }
+
+    func discardPracticePack() {
+        let hadPack = practicePack != nil
+            || isShowingPracticeSession
+            || isShowingPracticePreview
+            || pendingPracticeSessionStart
+            || isGeneratingPractice
+            || !itemRegenerationTasks.isEmpty
+        practiceGenerationTask?.cancel()
+        practiceGenerationTask = nil
+        cancelAllItemRegenerations()
+        practicePack = nil
+        practiceError = nil
+        practiceInfoMessage = nil
+        isGeneratingPractice = false
+        isShowingPracticePreview = false
+        isShowingPracticeSession = false
+        pendingPracticeSessionStart = false
+        practiceQueue = []
+        currentPracticeIndex = 0
+        isPracticeAnswerRevealed = false
+        practiceComplete = false
+        selectedPracticeCardIds = []
+        savedPracticeCardIds = []
+        regeneratingPracticeCardIds = []
+        if hadPack {
+            onLog?("Practice pack discarded")
+        }
+    }
+
+    private func savePracticeCardsToDeck(
+        _ cards: [PracticeCard],
+        appLanguage: AppLanguage
+    ) -> PracticeSaveResult {
+        var result = PracticeSaveResult()
+
+        for card in cards {
+            let front = card.front.trimmingCharacters(in: .whitespacesAndNewlines)
+            let back = card.back.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !front.isEmpty, !back.isEmpty else {
+                result.skippedEmptyCount += 1
+                continue
+            }
+
+            if dbManager.flashcardExists(front: front) {
+                result.duplicateCount += 1
+                savedPracticeCardIds.insert(card.id)
+                onLog?("Practice save skipped (duplicate): \"\(front)\"")
+                continue
+            }
+
+            var phonics = card.phonics?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            if phonics.isEmpty {
+                phonics = FlashcardTranslator.autoFillPhonics(for: front)
+            }
+
+            let flashcard = Flashcard(
+                front: front,
+                back: back,
+                phonics: phonics.isEmpty ? nil : phonics
+            )
+
+            if dbManager.insertFlashcard(flashcard) != nil {
+                result.savedCount += 1
+                savedPracticeCardIds.insert(card.id)
+                onLog?("Practice card saved to deck: \"\(front)\"")
+            } else {
+                result.failedCount += 1
+                onLog?("Practice save failed: \"\(front)\"")
+            }
+        }
+
+        if result.savedCount > 0 {
+            loadFlashcards()
+        }
+
+        // Clear selection for successfully handled cards (saved or already-duplicate).
+        if result.savedCount > 0 || result.duplicateCount > 0 {
+            let handledFronts = Set(
+                cards
+                    .map { $0.front.trimmingCharacters(in: .whitespacesAndNewlines) }
+                    .filter { !$0.isEmpty }
+            )
+            let source = practicePack?.cards ?? practiceQueue
+            for card in source where handledFronts.contains(card.front.trimmingCharacters(in: .whitespacesAndNewlines)) {
+                if savedPracticeCardIds.contains(card.id) {
+                    selectedPracticeCardIds.remove(card.id)
+                }
+            }
+        }
+
+        _ = appLanguage // reserved for localized logging if needed later
+        return result
+    }
+
+    private func resolveSeed(for practiceCard: PracticeCard) -> Flashcard? {
+        if let parentId = practiceCard.parentFlashcardId,
+           let match = flashcards.first(where: { $0.id == parentId }) {
+            return match
+        }
+        if let parentFront = practiceCard.parentFront {
+            let key = parentFront.trimmingCharacters(in: .whitespacesAndNewlines)
+            if let match = flashcards.first(where: {
+                $0.front.trimmingCharacters(in: .whitespacesAndNewlines) == key
+            }) {
+                return match
+            }
+        }
+        return nil
+    }
+
+    private func cancelItemRegeneration(id: String) {
+        itemRegenerationTasks[id]?.cancel()
+        itemRegenerationTasks[id] = nil
+        regeneratingPracticeCardIds.remove(id)
+    }
+
+    private func cancelAllItemRegenerations() {
+        for (_, task) in itemRegenerationTasks {
+            task.cancel()
+        }
+        itemRegenerationTasks.removeAll()
+        regeneratingPracticeCardIds = []
+    }
+
     private func shouldRefreshAutoPhonics(in draft: FlashcardDraft) -> Bool {
         let trimmedPhonics = draft.phonics.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmedPhonics.isEmpty { return true }
         guard let autoGeneratedPhonics = draft.autoGeneratedPhonics else { return false }
         return trimmedPhonics == autoGeneratedPhonics.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private static func isCancellation(_ error: Error) -> Bool {
+        if error is CancellationError { return true }
+        let nsError = error as NSError
+        return nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled
     }
 }

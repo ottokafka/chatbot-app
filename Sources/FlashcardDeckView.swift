@@ -2,6 +2,9 @@ import SwiftUI
 
 struct FlashcardDeckView: View {
     @ObservedObject var flashcardVM: FlashcardViewModel
+    /// Active text-gen endpoint used for AI practice generation.
+    var llmEndpoint: String
+    var llmModel: String
     @Environment(\.appLanguage) private var lang
 
     var body: some View {
@@ -38,20 +41,59 @@ struct FlashcardDeckView: View {
 
             Spacer()
 
-            Button(action: {
-                flashcardVM.startReviewSession()
-            }) {
-                HStack(spacing: 6) {
-                    Image(systemName: "brain.head.profile")
-                    Text(L10n.studyNow(lang, count: flashcardVM.dueCount))
+            HStack(spacing: 10) {
+                Button(action: {
+                    flashcardVM.beginPracticeGeneration(
+                        appLanguage: lang,
+                        llmEndpoint: llmEndpoint,
+                        llmModel: llmModel
+                    )
+                }) {
+                    HStack(spacing: 6) {
+                        if flashcardVM.isGeneratingPractice {
+                            ProgressView()
+                                .controlSize(.small)
+                        } else {
+                            Image(systemName: "sparkles")
+                        }
+                        Text(flashcardVM.isGeneratingPractice
+                             ? L10n.practiceGenerating(lang)
+                             : L10n.practiceWithAI(lang))
+                    }
                 }
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+                .disabled(!flashcardVM.canStartPractice)
+                .help(L10n.practiceWithAIHelp(lang))
+
+                Button(action: {
+                    flashcardVM.startReviewSession()
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "brain.head.profile")
+                        Text(L10n.studyNow(lang, count: flashcardVM.dueCount))
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .disabled(flashcardVM.dueCount == 0)
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
-            .disabled(flashcardVM.dueCount == 0)
         }
         .padding()
         .background(Color.platformWindowBackground)
+        .alert(
+            L10n.practiceErrorTitle(lang),
+            isPresented: Binding(
+                get: { flashcardVM.practiceError != nil },
+                set: { if !$0 { flashcardVM.practiceError = nil } }
+            )
+        ) {
+            Button(L10n.dismissError(lang), role: .cancel) {
+                flashcardVM.practiceError = nil
+            }
+        } message: {
+            Text(flashcardVM.practiceError ?? "")
+        }
     }
 
     private var searchBar: some View {
