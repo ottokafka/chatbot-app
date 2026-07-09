@@ -16,10 +16,24 @@ enum FlashcardTranslator {
         return trimmedTranslation
     }
 
-    static func suggestedPhonics(for front: String) -> String? {
-        let trimmed = front.trimmingCharacters(in: .whitespacesAndNewlines)
+    static func suggestedPhonics(for text: String) -> String? {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard trimmed.isChinese(), let pinyin = trimmed.toPinyin() else { return nil }
         return pinyin
+    }
+
+    /// Pinyin for display: uses stored phonics when provided, otherwise auto-generates for Chinese text.
+    static func displayPhonics(for text: String, storedPhonics: String? = nil) -> String? {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.isChinese() else { return nil }
+
+        if let storedPhonics {
+            let trimmedStored = storedPhonics.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !trimmedStored.isEmpty {
+                return trimmedStored
+            }
+        }
+        return suggestedPhonics(for: text)
     }
 
     /// Returns pinyin phonics for storage, or an empty string when the front has no Chinese.

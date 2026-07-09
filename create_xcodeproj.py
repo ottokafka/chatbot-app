@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-import os
 import hashlib
+import os
+import shutil
 
 def gen_id(seed):
     h = hashlib.md5(seed.encode('utf-8')).hexdigest()
@@ -14,6 +15,7 @@ def main():
         "App.swift",
         "AudioPlayer.swift",
         "AudioRecorder.swift",
+        "AudioStorage.swift",
         "ChatViewModel.swift",
         "ContentView.swift",
         "DatabaseManager.swift",
@@ -24,10 +26,11 @@ def main():
         "FlashcardTranslator.swift",
         "FlashcardViewModel.swift",
         "FSRSManager.swift",
-        "SelectableMessageText.swift",
+        "Localization.swift",
         "Platform+Colors.swift",
+        "SelectableMessageText.swift",
         "String+Pinyin.swift",
-        "WebSocketManager.swift"
+        "WebSocketManager.swift",
     ]
     
     # Generate UUIDs
@@ -47,6 +50,10 @@ def main():
     target_config_list = gen_id("target_config_list")
     target_config_debug = gen_id("target_config_debug")
     target_config_release = gen_id("target_config_release")
+
+    package_ref_id = gen_id("package_swift_fsrs")
+    fsrs_product_dep_id = gen_id("package_product_fsrs")
+    fsrs_framework_build_id = gen_id("build_file_fsrs_framework")
     
     # Build sections
     build_files_content = []
@@ -63,6 +70,10 @@ def main():
 
     # Add the App Product File Reference
     file_refs_content.append(f"\t\t{product_app_file_ref} /* DeveloperChatbot.app */ = {{isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeveloperChatbot.app; sourceTree = BUILT_PRODUCTS_DIR; }};")
+
+    build_files_content.append(
+        f"\t\t{fsrs_framework_build_id} /* FSRS in Frameworks */ = {{isa = PBXBuildFile; productRef = {fsrs_product_dep_id} /* FSRS */; }};"
+    )
     
     # Format list of sources children
     sources_children = []
@@ -96,6 +107,7 @@ def main():
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				{fsrs_framework_build_id} /* FSRS in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		}};
@@ -141,6 +153,9 @@ def main():
 			dependencies = (
 			);
 			name = DeveloperChatbot;
+			packageProductDependencies = (
+				{fsrs_product_dep_id} /* FSRS */,
+			);
 			productName = DeveloperChatbot;
 			productReference = {product_app_file_ref} /* DeveloperChatbot.app */;
 			productType = "com.apple.product-type.application";
@@ -168,6 +183,9 @@ def main():
 				Base,
 			);
 			mainGroup = {main_group_id};
+			packageReferences = (
+				{package_ref_id} /* XCRemoteSwiftPackageReference "swift-fsrs" */,
+			);
 			productRefGroup = {products_group_id} /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -309,6 +327,7 @@ def main():
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSETS = "";
+				DEVELOPMENT_TEAM = F6UY7NRNYA;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleVersion = 1;
 				INFOPLIST_KEY_CFBundleShortVersionString = 1.0;
@@ -337,6 +356,7 @@ def main():
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSETS = "";
+				DEVELOPMENT_TEAM = F6UY7NRNYA;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleVersion = 1;
 				INFOPLIST_KEY_CFBundleShortVersionString = 1.0;
@@ -359,6 +379,25 @@ def main():
 			name = Release;
 		}};
 /* End XCBuildConfiguration section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		{package_ref_id} /* XCRemoteSwiftPackageReference "swift-fsrs" */ = {{
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/open-spaced-repetition/swift-fsrs.git";
+			requirement = {{
+				kind = branch;
+				branch = main;
+			}};
+		}};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		{fsrs_product_dep_id} /* FSRS */ = {{
+			isa = XCSwiftPackageProductDependency;
+			package = {package_ref_id} /* XCRemoteSwiftPackageReference "swift-fsrs" */;
+			productName = FSRS;
+		}};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCConfigurationList section */
 		{project_config_list} /* Build configuration list for PBXProject "DeveloperChatbot" */ = {{
@@ -389,6 +428,10 @@ def main():
     os.makedirs("DeveloperChatbot.xcodeproj", exist_ok=True)
     os.makedirs("DeveloperChatbot.xcodeproj/project.xcworkspace", exist_ok=True)
     os.makedirs("DeveloperChatbot.xcodeproj/xcshareddata/xcschemes", exist_ok=True)
+    swiftpm_dir = "DeveloperChatbot.xcodeproj/project.xcworkspace/xcshareddata/swiftpm"
+    os.makedirs(swiftpm_dir, exist_ok=True)
+    if os.path.exists("Package.resolved"):
+        shutil.copy("Package.resolved", os.path.join(swiftpm_dir, "Package.resolved"))
     
     # Write pbxproj
     with open("DeveloperChatbot.xcodeproj/project.pbxproj", "w") as f:

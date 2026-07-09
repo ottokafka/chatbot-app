@@ -69,6 +69,10 @@ struct FlashcardReviewView: View {
                     }
                 )
 
+                if let phonics = FlashcardTranslator.displayPhonics(for: card.front, storedPhonics: card.phonics) {
+                    phonicsLabel(phonics)
+                }
+
                 if !flashcardVM.isAnswerRevealed {
                     Text(L10n.tapToReveal(lang))
                         .font(.subheadline)
@@ -87,11 +91,8 @@ struct FlashcardReviewView: View {
                         }
                     )
 
-                    if let phonics = card.phonics, !phonics.isEmpty {
-                        Text(phonics)
-                            .font(.system(.title3, design: .monospaced))
-                            .foregroundColor(.secondary)
-                            .italic()
+                    if let phonics = FlashcardTranslator.displayPhonics(for: card.back) {
+                        phonicsLabel(phonics)
                     }
                 }
             }
@@ -124,6 +125,13 @@ struct FlashcardReviewView: View {
 
             Spacer(minLength: 24)
         }
+    }
+
+    private func phonicsLabel(_ phonics: String) -> some View {
+        Text(phonics)
+            .font(.system(.title3, design: .monospaced))
+            .foregroundColor(.secondary)
+            .italic()
     }
 
     private func flashcardTextRow(
