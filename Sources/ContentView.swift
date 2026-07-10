@@ -552,6 +552,17 @@ struct MessageRow: View {
                             .font(.system(.caption, design: .default))
                             .foregroundColor(.orange)
                             .textSelection(.enabled)
+
+                        if isPhonicsEnabled,
+                           tip.containsChineseCharacters,
+                           let pinyin = tip.toPinyin(),
+                           pinyin != tip {
+                            Text(pinyin)
+                                .font(.system(.caption2, design: .monospaced))
+                                .foregroundColor(.orange.opacity(0.85))
+                                .italic()
+                                .textSelection(.enabled)
+                        }
                     }
 
                     if message.content.isChinese() {
