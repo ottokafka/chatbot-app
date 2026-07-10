@@ -138,6 +138,47 @@ enum L10n {
         lang == .zh ? "发音提示" : "Tip"
     }
 
+    // MARK: - iOS Chat Tools Menu
+    static func chatTools(_ lang: AppLanguage) -> String {
+        lang == .zh ? "聊天工具" : "Chat tools"
+    }
+
+    static func chatToolsHint(_ lang: AppLanguage) -> String {
+        lang == .zh ? "打开工具菜单" : "Opens the tools menu"
+    }
+
+    static func toolPrompt(_ lang: AppLanguage) -> String {
+        lang == .zh ? "提示词" : "Prompt"
+    }
+
+    static func toolEndpoints(_ lang: AppLanguage) -> String {
+        lang == .zh ? "接口" : "Endpoints"
+    }
+
+    static func toolTranslation(_ lang: AppLanguage) -> String {
+        lang == .zh ? "翻译" : "Translation"
+    }
+
+    static func toolPhonics(_ lang: AppLanguage) -> String {
+        lang == .zh ? "拼音" : "Phonics"
+    }
+
+    static func toolSpeechMode(_ lang: AppLanguage) -> String {
+        lang == .zh ? "语音" : "Speech"
+    }
+
+    static func toolsBack(_ lang: AppLanguage) -> String {
+        lang == .zh ? "返回" : "Back"
+    }
+
+    static func a11yOn(_ lang: AppLanguage) -> String {
+        lang == .zh ? "开" : "On"
+    }
+
+    static func a11yOff(_ lang: AppLanguage) -> String {
+        lang == .zh ? "关" : "Off"
+    }
+
     // MARK: - Input Area
     static func messagePlaceholder(_ lang: AppLanguage) -> String {
         lang == .zh ? "输入消息发送给助手…" : "Type a message to assistant..."

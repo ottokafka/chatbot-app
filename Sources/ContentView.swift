@@ -448,64 +448,12 @@ struct ContentView: View {
                             StatusIndicator(title: "AUDIO", isActive: viewModel.isPlayingAudio, activeColor: .orange, showTitle: false)
                         }
                     }
-                    ToolbarItemGroup(placement: .navigationBarTrailing) {
-                        HStack(spacing: 12) {
-                            Button(action: {
-                                isShowingPromptModal.toggle()
-                            }) {
-                                Text("💬")
-                                    .padding(6)
-                                    .background(Circle().fill(Color.gray.opacity(0.12)))
-                                    .overlay(Circle().stroke(Color.gray.opacity(0.25), lineWidth: 1))
-                            }
-                            
-                            Button(action: {
-                                isShowingEndpointModal.toggle()
-                            }) {
-                                Text("🔌")
-                                    .padding(6)
-                                    .background(Circle().fill(Color.gray.opacity(0.12)))
-                                    .overlay(Circle().stroke(Color.gray.opacity(0.25), lineWidth: 1))
-                            }
-                            
-                            Button(action: {
-                                viewModel.isTranslationEnabled.toggle()
-                            }) {
-                                Text("🌐")
-                                    .padding(6)
-                                    .background(Circle().fill(viewModel.isTranslationEnabled ? Color.blue.opacity(0.18) : Color.gray.opacity(0.12)))
-                                    .overlay(Circle().stroke(viewModel.isTranslationEnabled ? Color.blue.opacity(0.8) : Color.gray.opacity(0.25), lineWidth: 1))
-                            }
-                            
-                            Button(action: {
-                                viewModel.isPhonicsEnabled.toggle()
-                            }) {
-                                Text("🗣️")
-                                    .padding(6)
-                                    .background(Circle().fill(viewModel.isPhonicsEnabled ? Color.blue.opacity(0.18) : Color.gray.opacity(0.12)))
-                                    .overlay(Circle().stroke(viewModel.isPhonicsEnabled ? Color.blue.opacity(0.8) : Color.gray.opacity(0.25), lineWidth: 1))
-                            }
-
-                            Menu {
-                                ForEach(SpeechPipelineMode.allCases) { mode in
-                                    Button {
-                                        viewModel.speechPipelineMode = mode
-                                    } label: {
-                                        if viewModel.speechPipelineMode == mode {
-                                            Label(L10n.speechPipelineLabel(mode, lang: lang), systemImage: "checkmark")
-                                        } else {
-                                            Text(L10n.speechPipelineLabel(mode, lang: lang))
-                                        }
-                                    }
-                                }
-                            } label: {
-                                Text(viewModel.speechPipelineMode == .sttPlusLLM ? "🎯" : "🎙️")
-                                    .padding(6)
-                                    .background(Circle().fill(viewModel.speechPipelineMode == .sttPlusLLM ? Color.blue.opacity(0.18) : Color.gray.opacity(0.12)))
-                                    .overlay(Circle().stroke(viewModel.speechPipelineMode == .sttPlusLLM ? Color.blue.opacity(0.8) : Color.gray.opacity(0.25), lineWidth: 1))
-                            }
-                            .help(L10n.speechPipelineModeHelp(lang))
-                        }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        ChatToolsMenuButton(
+                            viewModel: viewModel,
+                            isShowingPromptModal: $isShowingPromptModal,
+                            isShowingEndpointModal: $isShowingEndpointModal
+                        )
                     }
                 }
                 #endif

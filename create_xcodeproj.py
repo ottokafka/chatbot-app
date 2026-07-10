@@ -16,6 +16,7 @@ def main():
         "AudioPlayer.swift",
         "AudioRecorder.swift",
         "AudioStorage.swift",
+        "ChatToolsMenu.swift",
         "ChatViewModel.swift",
         "ContentView.swift",
         "DatabaseManager.swift",
