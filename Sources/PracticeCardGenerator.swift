@@ -95,7 +95,12 @@ enum PracticeCardGenerator {
             )
         }
 
-        return PracticePack(sourceDueCount: seeds.count, cards: cards)
+        return PracticePack(
+            sourceDueCount: seeds.count,
+            cards: cards,
+            styleUsed: style,
+            knownScaffoldCount: style == .natural ? 0 : knownFronts.count
+        )
     }
 
     /// Regenerates a single example sentence for one seed card.

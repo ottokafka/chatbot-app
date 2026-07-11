@@ -37,17 +37,25 @@ struct PracticePack: Identifiable, Equatable {
     /// How many vocabulary seed cards were used for generation (legacy name: sourceDueCount).
     var sourceDueCount: Int
     var cards: [PracticeCard]
+    /// Sentence style used when this pack was generated (drives preview copy; may differ from live preference).
+    var styleUsed: PracticeSentenceStyle
+    /// Known-scaffold front count at pack generation (0 for Natural / unused).
+    var knownScaffoldCount: Int
 
     init(
         id: String = UUID().uuidString,
         createdAt: Date = Date(),
         sourceDueCount: Int,
-        cards: [PracticeCard]
+        cards: [PracticeCard],
+        styleUsed: PracticeSentenceStyle = .comprehensible,
+        knownScaffoldCount: Int = 0
     ) {
         self.id = id
         self.createdAt = createdAt
         self.sourceDueCount = sourceDueCount
         self.cards = cards
+        self.styleUsed = styleUsed
+        self.knownScaffoldCount = knownScaffoldCount
     }
 }
 

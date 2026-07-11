@@ -101,9 +101,13 @@ struct FlashcardDeckView: View {
             .help(L10n.practiceSelectCardsHelp(lang))
         }
 
-        if flashcardVM.selectedDeckKind == .vocab {
-            practiceSentenceStylePicker
-        }
+        // Style applies to Practice with AI (vocab seeds) on any deck tab; keep adjacent to the control.
+        PracticeSentenceStylePicker(
+            style: $flashcardVM.practiceSentenceStyle,
+            lang: lang,
+            disabled: flashcardVM.isGeneratingPractice,
+            maxWidth: 160
+        )
 
         practiceWithAIControl
 
@@ -118,20 +122,6 @@ struct FlashcardDeckView: View {
         .buttonStyle(.borderedProminent)
         .controlSize(.large)
         .disabled(flashcardVM.dueCountForSelectedKind == 0)
-    }
-
-    /// Simple | Natural — set before generation; persists across sessions.
-    private var practiceSentenceStylePicker: some View {
-        Picker("", selection: $flashcardVM.practiceSentenceStyle) {
-            Text(L10n.practiceSentenceStyleSimple(lang)).tag(PracticeSentenceStyle.comprehensible)
-            Text(L10n.practiceSentenceStyleNatural(lang)).tag(PracticeSentenceStyle.natural)
-        }
-        .pickerStyle(.segmented)
-        .frame(maxWidth: 160)
-        .labelsHidden()
-        .help(L10n.practiceSentenceStyleHelp(lang))
-        .disabled(flashcardVM.isGeneratingPractice)
-        .accessibilityLabel(L10n.practiceSentenceStyleLabel(lang))
     }
 
     /// Primary Practice control: single button, or split menu when due + last session both exist.

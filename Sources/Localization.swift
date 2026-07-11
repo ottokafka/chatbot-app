@@ -803,10 +803,7 @@ enum L10n {
         return "\(cards) examples from \(seeds) seed card\(seeds == 1 ? "" : "s")"
     }
 
-    static func practicePreviewAINote(_ lang: AppLanguage) -> String {
-        practicePreviewAINote(lang, style: .comprehensible)
-    }
-
+    /// Preview banner describing the style used for the **current pack** (not the live preference).
     static func practicePreviewAINote(_ lang: AppLanguage, style: PracticeSentenceStyle) -> String {
         switch style {
         case .comprehensible:
@@ -818,6 +815,14 @@ enum L10n {
                 ? "由 AI 生成自然例句练习。可编辑、重生成；保存会进入「例句」库，不会写入词汇。"
                 : "AI-generated natural practice sentences. Edit or regenerate; saves go to Examples, not Vocabulary."
         }
+    }
+
+    /// Optional caption for known-scaffold size (Simple path only; hide when N == 0 or Natural).
+    static func practicePreviewKnownCount(_ lang: AppLanguage, count: Int) -> String {
+        if lang == .zh {
+            return "使用词库中 \(count) 个已学词"
+        }
+        return "Using \(count) known word\(count == 1 ? "" : "s") from your library"
     }
 
     /// Segmented control label for Simple (comprehensible) practice sentences.

@@ -265,16 +265,12 @@ struct FlashcardReviewView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
 
-                Picker("", selection: $flashcardVM.practiceSentenceStyle) {
-                    Text(L10n.practiceSentenceStyleSimple(lang)).tag(PracticeSentenceStyle.comprehensible)
-                    Text(L10n.practiceSentenceStyleNatural(lang)).tag(PracticeSentenceStyle.natural)
-                }
-                .pickerStyle(.segmented)
-                .frame(maxWidth: 220)
-                .labelsHidden()
-                .help(L10n.practiceSentenceStyleHelp(lang))
-                .disabled(flashcardVM.isGeneratingPractice)
-                .accessibilityLabel(L10n.practiceSentenceStyleLabel(lang))
+                PracticeSentenceStylePicker(
+                    style: $flashcardVM.practiceSentenceStyle,
+                    lang: lang,
+                    disabled: flashcardVM.isGeneratingPractice,
+                    maxWidth: 220
+                )
 
                 Button {
                     startPostStudyPractice()

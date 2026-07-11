@@ -1,5 +1,37 @@
 import SwiftUI
 
+/// Shared Simple | Natural segmented control for practice sentence style.
+struct PracticeSentenceStylePicker: View {
+    @Binding var style: PracticeSentenceStyle
+    var lang: AppLanguage
+    var disabled: Bool = false
+    var maxWidth: CGFloat = 160
+    var showLabel: Bool = false
+
+    var body: some View {
+        HStack(spacing: 10) {
+            if showLabel {
+                Text(L10n.practiceSentenceStyleLabel(lang))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            Picker("", selection: $style) {
+                Text(L10n.practiceSentenceStyleSimple(lang)).tag(PracticeSentenceStyle.comprehensible)
+                Text(L10n.practiceSentenceStyleNatural(lang)).tag(PracticeSentenceStyle.natural)
+            }
+            .pickerStyle(.segmented)
+            .frame(maxWidth: maxWidth)
+            .labelsHidden()
+            .help(L10n.practiceSentenceStyleHelp(lang))
+            .disabled(disabled)
+            .accessibilityLabel(L10n.practiceSentenceStyleLabel(lang))
+            if showLabel {
+                Spacer(minLength: 0)
+            }
+        }
+    }
+}
+
 struct PracticePreviewSheet: View {
     @ObservedObject var flashcardVM: FlashcardViewModel
     @Environment(\.appLanguage) private var lang
@@ -76,33 +108,27 @@ struct PracticePreviewSheet: View {
             Text(L10n.practicePreviewSummary(lang, cards: pack.cards.count, seeds: pack.sourceDueCount))
                 .font(.subheadline)
                 .fontWeight(.medium)
-            Text(L10n.practicePreviewAINote(lang, style: flashcardVM.practiceSentenceStyle))
+            // Describe the pack as generated, not the live preference (toggle applies on next regenerate).
+            Text(L10n.practicePreviewAINote(lang, style: pack.styleUsed))
                 .font(.caption)
                 .foregroundColor(.secondary)
+            if pack.styleUsed == .comprehensible, pack.knownScaffoldCount > 0 {
+                Text(L10n.practicePreviewKnownCount(lang, count: pack.knownScaffoldCount))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
 
-            sentenceStylePicker
+            PracticeSentenceStylePicker(
+                style: $flashcardVM.practiceSentenceStyle,
+                lang: lang,
+                disabled: flashcardVM.isGeneratingPractice || !flashcardVM.regeneratingPracticeCardIds.isEmpty,
+                maxWidth: 220,
+                showLabel: true
+            )
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
         .background(Color.platformWindowBackground.opacity(0.6))
-    }
-
-    private var sentenceStylePicker: some View {
-        HStack(spacing: 10) {
-            Text(L10n.practiceSentenceStyleLabel(lang))
-                .font(.caption)
-                .foregroundColor(.secondary)
-            Picker("", selection: $flashcardVM.practiceSentenceStyle) {
-                Text(L10n.practiceSentenceStyleSimple(lang)).tag(PracticeSentenceStyle.comprehensible)
-                Text(L10n.practiceSentenceStyleNatural(lang)).tag(PracticeSentenceStyle.natural)
-            }
-            .pickerStyle(.segmented)
-            .frame(maxWidth: 220)
-            .labelsHidden()
-            .help(L10n.practiceSentenceStyleHelp(lang))
-            .disabled(flashcardVM.isGeneratingPractice || !flashcardVM.regeneratingPracticeCardIds.isEmpty)
-            Spacer(minLength: 0)
-        }
     }
 
     private func selectionToolbar(_ pack: PracticePack) -> some View {

@@ -911,9 +911,15 @@ final class FlashcardViewModel: ObservableObject {
         cancelItemRegeneration(id: id)
         regeneratingPracticeCardIds.insert(id)
         practiceError = nil
-        onLog?(
-            "Practice single regenerate started for parent \"\(seed.front)\", known=\(knownFronts.count) knownChars=\(knownChars) style=\(style.rawValue)"
-        )
+        if style == .natural {
+            onLog?(
+                "Practice single regenerate started for parent \"\(seed.front)\", style=natural, scaffold=off"
+            )
+        } else {
+            onLog?(
+                "Practice single regenerate started for parent \"\(seed.front)\", known=\(knownFronts.count) knownChars=\(knownChars) style=\(style.rawValue)"
+            )
+        }
 
         let task = Task { [weak self] in
             guard let self else { return }
@@ -1208,8 +1214,13 @@ final class FlashcardViewModel: ObservableObject {
         sparse: Bool,
         style: PracticeSentenceStyle
     ) {
-        // Canonical analytics-style line (known scaffold + style).
-        var detail = "Practice generation from \(source.analyticsName) (\(seedCards.count) seeds), \(knownCount) known-scaffold words, knownChars=\(knownChars), style=\(style.rawValue), sparse=\(sparse)"
+        // Natural full opt-out: omit scaffold metrics so logs match generator behavior.
+        var detail: String
+        if style == .natural {
+            detail = "Practice generation from \(source.analyticsName) (\(seedCards.count) seeds), style=natural, scaffold=off"
+        } else {
+            detail = "Practice generation from \(source.analyticsName) (\(seedCards.count) seeds), \(knownCount) known-scaffold words, knownChars=\(knownChars), style=\(style.rawValue), sparse=\(sparse)"
+        }
         if source == .lastStudySession, let session = lastStudySession {
             let weakIds = Set(session.gradedEntries.filter(\.isWeak).map(\.id))
             let weakInSeeds = seedCards.filter { weakIds.contains($0.id) }.count
