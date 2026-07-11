@@ -37,6 +37,8 @@ def main():
         "SelectableMessageText.swift",
         "SpeakingPromptBuilder.swift",
         "SpeakingSession.swift",
+        "SpeakingSessionDebugView.swift",
+        "SpeakingSessionViewModel.swift",
         "SpeakingTargetTracker.swift",
         "SpeechCorrection.swift",
         "String+Pinyin.swift",

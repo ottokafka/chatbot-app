@@ -6,6 +6,8 @@ import Translation
 struct ContentView: View {
     @StateObject private var viewModel = ChatViewModel()
     @StateObject private var flashcardVM = FlashcardViewModel()
+    /// Speaking session ownership (D14). Deck UI ships in PR3; DEBUG typed sheet exercises PR2a.
+    @StateObject private var speakingVM = SpeakingSessionViewModel()
     private var lang: AppLanguage { viewModel.appLanguage }
     @State private var textInput = ""
     @State private var isShowingPromptModal = false
@@ -19,6 +21,9 @@ struct ContentView: View {
     @State private var isPhonicsHovered = false
     @State private var appSection: AppSection = .conversations
     @State private var selectedFlashcard: Flashcard?
+    #if DEBUG
+    @State private var isShowingSpeakingDebug = false
+    #endif
     
     var body: some View {
         NavigationSplitView {
@@ -107,6 +112,34 @@ struct ContentView: View {
                 LanguageToggle(language: $viewModel.appLanguage)
                     .padding(.horizontal)
                     .padding(.bottom, 8)
+
+                #if DEBUG
+                // PR2a: exercise typed speaking loop without full deck Speak UI.
+                Button {
+                    speakingVM.configureEndpoints(
+                        llmURL: viewModel.llmURL,
+                        llmModel: viewModel.llmModel,
+                        sttURL: viewModel.sttURL,
+                        ttsURL: viewModel.ttsURL,
+                        ttsVoice: viewModel.ttsVoice,
+                        appLanguage: viewModel.appLanguage,
+                        sttLanguage: viewModel.sttLanguage,
+                        onLog: { viewModel.log($0) }
+                    )
+                    isShowingSpeakingDebug = true
+                } label: {
+                    HStack {
+                        Image(systemName: "bubble.left.and.text.bubble.right")
+                        Text("Speak Debug")
+                    }
+                    .font(.caption)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .buttonStyle(.borderless)
+                .padding(.horizontal)
+                .padding(.bottom, 8)
+                .help("DEBUG: typed Speaking with AI session loop")
+                #endif
             }
             .navigationTitle(appSection == .conversations ? L10n.conversations(lang) : L10n.flashcards(lang))
             .frame(minWidth: 200, idealWidth: 240)
@@ -115,6 +148,11 @@ struct ContentView: View {
                     flashcardVM.loadFlashcards()
                 }
             }
+            #if DEBUG
+            .sheet(isPresented: $isShowingSpeakingDebug) {
+                SpeakingSessionDebugView(speakingVM: speakingVM)
+            }
+            #endif
         } detail: {
             // MAIN DETAIL VIEW
             VStack(spacing: 0) {
