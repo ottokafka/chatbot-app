@@ -30,6 +30,9 @@
 		F8F26018F8CABF0FD546CA0C /* PracticePreviewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02188F07729A61FC418EBF2 /* PracticePreviewSheet.swift */; };
 		48AA2D4A6156C182B1AA550E /* PracticeSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23B9A88123E2BEFA9390C186 /* PracticeSessionView.swift */; };
 		8CCFF859D4B36D3E42558ED4 /* SelectableMessageText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023CB7F63EE1E696FB51673B /* SelectableMessageText.swift */; };
+		1B25B8C0325BA167E1FE9C56 /* SpeakingPromptBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F07039C311DF96B498DD974 /* SpeakingPromptBuilder.swift */; };
+		46025153278A56C77283F9DC /* SpeakingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20AE6B725988F016D444A12 /* SpeakingSession.swift */; };
+		73CE3C64DA30F4DBD0512A43 /* SpeakingTargetTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53A2CB28033E2547DA6854C7 /* SpeakingTargetTracker.swift */; };
 		58D38C985E1E4C20F3BA3638 /* SpeechCorrection.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB80664C0A4CE63F4E0CA847 /* SpeechCorrection.swift */; };
 		A7DF6306F555EEF2AFE6968F /* String+Pinyin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06D260D42B257D8177ED131 /* String+Pinyin.swift */; };
 		0569F99F9A5072ABAE6378A9 /* WebSocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D17D5E4C3A17F3188513294 /* WebSocketManager.swift */; };
@@ -61,6 +64,9 @@
 		B02188F07729A61FC418EBF2 /* PracticePreviewSheet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "PracticePreviewSheet.swift"; path = "Sources/PracticePreviewSheet.swift"; sourceTree = "<group>"; };
 		23B9A88123E2BEFA9390C186 /* PracticeSessionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "PracticeSessionView.swift"; path = "Sources/PracticeSessionView.swift"; sourceTree = "<group>"; };
 		023CB7F63EE1E696FB51673B /* SelectableMessageText.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "SelectableMessageText.swift"; path = "Sources/SelectableMessageText.swift"; sourceTree = "<group>"; };
+		1F07039C311DF96B498DD974 /* SpeakingPromptBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "SpeakingPromptBuilder.swift"; path = "Sources/SpeakingPromptBuilder.swift"; sourceTree = "<group>"; };
+		A20AE6B725988F016D444A12 /* SpeakingSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "SpeakingSession.swift"; path = "Sources/SpeakingSession.swift"; sourceTree = "<group>"; };
+		53A2CB28033E2547DA6854C7 /* SpeakingTargetTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "SpeakingTargetTracker.swift"; path = "Sources/SpeakingTargetTracker.swift"; sourceTree = "<group>"; };
 		FB80664C0A4CE63F4E0CA847 /* SpeechCorrection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "SpeechCorrection.swift"; path = "Sources/SpeechCorrection.swift"; sourceTree = "<group>"; };
 		B06D260D42B257D8177ED131 /* String+Pinyin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "String+Pinyin.swift"; path = "Sources/String+Pinyin.swift"; sourceTree = "<group>"; };
 		0D17D5E4C3A17F3188513294 /* WebSocketManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "WebSocketManager.swift"; path = "Sources/WebSocketManager.swift"; sourceTree = "<group>"; };
@@ -114,6 +120,9 @@
 				B02188F07729A61FC418EBF2 /* PracticePreviewSheet.swift */,
 				23B9A88123E2BEFA9390C186 /* PracticeSessionView.swift */,
 				023CB7F63EE1E696FB51673B /* SelectableMessageText.swift */,
+				1F07039C311DF96B498DD974 /* SpeakingPromptBuilder.swift */,
+				A20AE6B725988F016D444A12 /* SpeakingSession.swift */,
+				53A2CB28033E2547DA6854C7 /* SpeakingTargetTracker.swift */,
 				FB80664C0A4CE63F4E0CA847 /* SpeechCorrection.swift */,
 				B06D260D42B257D8177ED131 /* String+Pinyin.swift */,
 				0D17D5E4C3A17F3188513294 /* WebSocketManager.swift */,
@@ -215,6 +224,9 @@
 				F8F26018F8CABF0FD546CA0C /* PracticePreviewSheet.swift in Sources */,
 				48AA2D4A6156C182B1AA550E /* PracticeSessionView.swift in Sources */,
 				8CCFF859D4B36D3E42558ED4 /* SelectableMessageText.swift in Sources */,
+				1B25B8C0325BA167E1FE9C56 /* SpeakingPromptBuilder.swift in Sources */,
+				46025153278A56C77283F9DC /* SpeakingSession.swift in Sources */,
+				73CE3C64DA30F4DBD0512A43 /* SpeakingTargetTracker.swift in Sources */,
 				58D38C985E1E4C20F3BA3638 /* SpeechCorrection.swift in Sources */,
 				A7DF6306F555EEF2AFE6968F /* String+Pinyin.swift in Sources */,
 				0569F99F9A5072ABAE6378A9 /* WebSocketManager.swift in Sources */,
