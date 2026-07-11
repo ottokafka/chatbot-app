@@ -1,0 +1,151 @@
+import SwiftUI
+
+/// Pre-start config for Speak with AI: seeds, known count, topic, encourage coverage (D7, D22).
+/// No 文/译 chrome in MVP.
+struct SpeakingSetupSheet: View {
+    @ObservedObject var speakingVM: SpeakingSessionViewModel
+    @ObservedObject var flashcardVM: FlashcardViewModel
+    @Environment(\.appLanguage) private var lang
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var topicHint: String = ""
+    @State private var encourageCoverage: Bool = true
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text(L10n.speakSetupTitle(lang))
+                .font(.title2)
+                .fontWeight(.bold)
+
+            if let config = speakingVM.pendingConfig {
+                setupBody(config)
+            } else {
+                Text(L10n.speakNoSeeds(lang))
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                Spacer()
+                HStack {
+                    Spacer()
+                    Button(L10n.cancel(lang)) {
+                        speakingVM.isShowingSetup = false
+                        dismiss()
+                    }
+                    .keyboardShortcut(.cancelAction)
+                }
+            }
+        }
+        .padding(24)
+        .frame(minWidth: 440, minHeight: 420)
+        .onAppear {
+            if let config = speakingVM.pendingConfig {
+                topicHint = config.topicHint
+                encourageCoverage = config.encourageTargetCoverage
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func setupBody(_ config: SpeakingSessionConfig) -> some View {
+        let targets = config.targetCards
+        let knownCount = config.knownFronts.count
+
+        VStack(alignment: .leading, spacing: 8) {
+            Text(
+                L10n.speakSetupSeedsSummary(
+                    lang,
+                    count: targets.count,
+                    sourceLabel: sourceLabel(for: config.seedSource)
+                )
+            )
+            .font(.subheadline)
+            .foregroundColor(.secondary)
+
+            Text(L10n.speakSetupKnownCount(lang, count: knownCount))
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+
+            if knownCount == 0 {
+                Label(L10n.speakSetupSparseWarning(lang), systemImage: "exclamationmark.triangle.fill")
+                    .font(.caption)
+                    .foregroundColor(.orange)
+                    .padding(.top, 2)
+            }
+        }
+
+        VStack(alignment: .leading, spacing: 6) {
+            Text(L10n.speakSetupTopicLabel(lang))
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundColor(.secondary)
+            TextField(L10n.speakSetupTopicPlaceholder(lang), text: $topicHint)
+                .textFieldStyle(.roundedBorder)
+        }
+
+        Toggle(isOn: $encourageCoverage) {
+            Text(L10n.speakSetupEncourageCoverage(lang))
+        }
+        .toggleStyle(.checkbox)
+
+        VStack(alignment: .leading, spacing: 6) {
+            Text(L10n.speakSetupTargetsLabel(lang))
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundColor(.secondary)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 6) {
+                    ForEach(config.targetFronts, id: \.self) { front in
+                        Text(front)
+                            .font(.caption)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.accentColor.opacity(0.12))
+                            .clipShape(Capsule())
+                    }
+                }
+            }
+        }
+
+        Spacer()
+
+        HStack {
+            Button(L10n.cancel(lang)) {
+                speakingVM.isShowingSetup = false
+                dismiss()
+            }
+            .keyboardShortcut(.cancelAction)
+
+            Spacer()
+
+            Button(L10n.speakStart(lang)) {
+                reapplyPendingAndStart(from: config)
+            }
+            .buttonStyle(.borderedProminent)
+            .keyboardShortcut(.defaultAction)
+            .disabled(targets.isEmpty)
+        }
+    }
+
+    private func reapplyPendingAndStart(from config: SpeakingSessionConfig) {
+        speakingVM.prepareSetup(
+            seedSource: config.seedSource,
+            targets: config.targetCards,
+            knownFronts: config.knownFronts,
+            topicHint: topicHint.trimmingCharacters(in: .whitespacesAndNewlines),
+            encourageTargetCoverage: encourageCoverage
+        )
+        Task {
+            await speakingVM.startSession()
+        }
+    }
+
+    private func sourceLabel(for source: PracticeSeedSource) -> String {
+        switch source {
+        case .dueVocab:
+            return L10n.speakSourceDue(lang)
+        case .lastStudySession:
+            return L10n.speakSourceLastSession(lang)
+        case .selectedVocab:
+            return L10n.speakSourceSelected(lang)
+        }
+    }
+}

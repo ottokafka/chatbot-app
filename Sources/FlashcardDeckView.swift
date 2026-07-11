@@ -2,12 +2,20 @@ import SwiftUI
 
 struct FlashcardDeckView: View {
     @ObservedObject var flashcardVM: FlashcardViewModel
+    @ObservedObject var speakingVM: SpeakingSessionViewModel
     /// Active text-gen endpoint used for AI practice generation.
     var llmEndpoint: String
     var llmModel: String
+    /// Wire chat endpoints / audio hooks into speakingVM before launch.
+    var configureSpeaking: () -> Void
+    /// D21: dismiss practice sheets before presenting Speak.
+    var dismissPracticeForSpeaking: () -> Void
+    /// D21: end speaking session/setup before Practice starts.
+    var endSpeakingForPractice: () -> Void
     @Environment(\.appLanguage) private var lang
 
     @State private var selectionLimitMessage: String?
+    @State private var speakingError: String?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -84,6 +92,19 @@ struct FlashcardDeckView: View {
         } message: {
             Text(flashcardVM.practiceError ?? "")
         }
+        .alert(
+            L10n.speakWithAI(lang),
+            isPresented: Binding(
+                get: { speakingError != nil },
+                set: { if !$0 { speakingError = nil } }
+            )
+        ) {
+            Button(L10n.dismissError(lang), role: .cancel) {
+                speakingError = nil
+            }
+        } message: {
+            Text(speakingError ?? "")
+        }
     }
 
     @ViewBuilder
@@ -110,6 +131,10 @@ struct FlashcardDeckView: View {
         )
 
         practiceWithAIControl
+
+        if SpeakingFeature.isEnabled {
+            speakWithAIControl
+        }
 
         Button(action: {
             flashcardVM.startReviewSession(kind: flashcardVM.selectedDeckKind)
@@ -185,12 +210,111 @@ struct FlashcardDeckView: View {
     }
 
     private func startDeckPractice(source: PracticeSeedSource) {
+        // D21: end speaking before practice starts.
+        endSpeakingForPractice()
         flashcardVM.beginPracticeGeneration(
             appLanguage: lang,
             llmEndpoint: llmEndpoint,
             llmModel: llmModel,
             seedSource: source
         )
+    }
+
+    /// Speak ▾ mirrors Practice sources (`availableDeckPracticeSeedSources`).
+    @ViewBuilder
+    private var speakWithAIControl: some View {
+        let label = speakWithAILabel
+        if flashcardVM.showsPracticeSeedMenu {
+            Menu {
+                ForEach(flashcardVM.availableDeckPracticeSeedSources, id: \.analyticsName) { source in
+                    Button {
+                        startDeckSpeaking(source: source)
+                    } label: {
+                        Text(speakSeedMenuTitle(for: source))
+                    }
+                }
+            } label: {
+                label
+            } primaryAction: {
+                startDeckSpeaking(source: flashcardVM.preferredDeckPracticeSeedSource)
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.large)
+            .disabled(!flashcardVM.canStartSpeaking)
+            .help(L10n.speakWithAIMenuHelp(lang))
+        } else {
+            Button {
+                startDeckSpeaking(source: flashcardVM.preferredDeckPracticeSeedSource)
+            } label: {
+                label
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.large)
+            .disabled(!flashcardVM.canStartSpeaking)
+            .help(
+                L10n.speakWithAIHelp(
+                    lang,
+                    hasDueVocab: flashcardVM.vocabDueCount > 0,
+                    lastSessionCount: flashcardVM.lastStudySessionSeedCount
+                )
+            )
+        }
+    }
+
+    private var speakWithAILabel: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "waveform")
+            Text(L10n.speakWithAI(lang))
+            if flashcardVM.showsPracticeSeedMenu {
+                Image(systemName: "chevron.down")
+                    .font(.caption.weight(.semibold))
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+
+    private func startDeckSpeaking(source: PracticeSeedSource) {
+        guard SpeakingFeature.isEnabled else { return }
+        guard let resolved = flashcardVM.resolveSpeakingLaunch(seedSource: source) else {
+            speakingError = L10n.speakNoSeeds(lang)
+            return
+        }
+        configureSpeaking()
+        dismissPracticeForSpeaking()
+        speakingVM.prepareSetup(
+            seedSource: source,
+            targets: resolved.targets,
+            knownFronts: resolved.knownFronts,
+            topicHint: "",
+            encourageTargetCoverage: true
+        )
+        speakingVM.isShowingSetup = true
+    }
+
+    private func startSpeakingFromSelection() {
+        guard SpeakingFeature.isEnabled else { return }
+        let seeds = flashcardVM.resolveSelectedVocabForSpeaking()
+        guard !seeds.isEmpty else {
+            speakingError = L10n.speakNoSeeds(lang)
+            return
+        }
+        let source = PracticeSeedSource.selectedVocab(ids: seeds.map(\.id))
+        guard let resolved = flashcardVM.resolveSpeakingLaunch(seedSource: source) else {
+            speakingError = L10n.speakNoSeeds(lang)
+            return
+        }
+        configureSpeaking()
+        dismissPracticeForSpeaking()
+        speakingVM.prepareSetup(
+            seedSource: source,
+            targets: resolved.targets,
+            knownFronts: resolved.knownFronts,
+            topicHint: "",
+            encourageTargetCoverage: true
+        )
+        // Exit multi-select like Practice does after launch.
+        flashcardVM.cancelVocabPracticeSelection()
+        speakingVM.isShowingSetup = true
     }
 
     private func practiceSeedMenuTitle(for source: PracticeSeedSource) -> String {
@@ -202,6 +326,18 @@ struct FlashcardDeckView: View {
             return L10n.practiceFromLastStudySession(lang, count: count)
         case .selectedVocab:
             return L10n.practiceSelectedWithAI(lang, count: count)
+        }
+    }
+
+    private func speakSeedMenuTitle(for source: PracticeSeedSource) -> String {
+        let count = flashcardVM.practiceSeedCount(for: source)
+        switch source {
+        case .dueVocab:
+            return L10n.speakFromDueVocab(lang, count: count)
+        case .lastStudySession:
+            return L10n.speakFromLastStudySession(lang, count: count)
+        case .selectedVocab:
+            return L10n.speakSelectedWithAI(lang, count: count)
         }
     }
 
@@ -217,6 +353,7 @@ struct FlashcardDeckView: View {
         .disabled(flashcardVM.isGeneratingPractice)
 
         Button {
+            endSpeakingForPractice()
             flashcardVM.beginPracticeFromSelectedVocab(
                 appLanguage: lang,
                 llmEndpoint: llmEndpoint,
@@ -242,6 +379,24 @@ struct FlashcardDeckView: View {
         .controlSize(.large)
         .disabled(!flashcardVM.hasSelectedVocabSeeds || flashcardVM.isGeneratingPractice)
         .help(L10n.practiceSelectedWithAIHelp(lang))
+
+        if SpeakingFeature.isEnabled {
+            Button {
+                startSpeakingFromSelection()
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "waveform")
+                    Text(L10n.speakSelectedWithAI(
+                        lang,
+                        count: flashcardVM.selectedVocabSeedCount
+                    ))
+                }
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.large)
+            .disabled(!flashcardVM.hasSelectedVocabSeeds || flashcardVM.isGeneratingPractice)
+            .help(L10n.speakSelectedWithAIHelp(lang))
+        }
     }
 
     private var selectionToolbar: some View {

@@ -33,7 +33,9 @@
 		1B25B8C0325BA167E1FE9C56 /* SpeakingPromptBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F07039C311DF96B498DD974 /* SpeakingPromptBuilder.swift */; };
 		46025153278A56C77283F9DC /* SpeakingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20AE6B725988F016D444A12 /* SpeakingSession.swift */; };
 		62BF659C9410BEFB924D6F4D /* SpeakingSessionDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC9E7DC3B09F169716DA6D81 /* SpeakingSessionDebugView.swift */; };
+		4F7E259212FE67670E38DCFE /* SpeakingSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8991DB88F98CF3B9C95EB960 /* SpeakingSessionView.swift */; };
 		34A50107180D9419AD76001D /* SpeakingSessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18BABB3168A2361FFF626B8E /* SpeakingSessionViewModel.swift */; };
+		B945EC28D60ED8D7FAD4CC11 /* SpeakingSetupSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C381245B12A35F85EE652D /* SpeakingSetupSheet.swift */; };
 		73CE3C64DA30F4DBD0512A43 /* SpeakingTargetTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53A2CB28033E2547DA6854C7 /* SpeakingTargetTracker.swift */; };
 		58D38C985E1E4C20F3BA3638 /* SpeechCorrection.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB80664C0A4CE63F4E0CA847 /* SpeechCorrection.swift */; };
 		A7DF6306F555EEF2AFE6968F /* String+Pinyin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06D260D42B257D8177ED131 /* String+Pinyin.swift */; };
@@ -69,7 +71,9 @@
 		1F07039C311DF96B498DD974 /* SpeakingPromptBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "SpeakingPromptBuilder.swift"; path = "Sources/SpeakingPromptBuilder.swift"; sourceTree = "<group>"; };
 		A20AE6B725988F016D444A12 /* SpeakingSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "SpeakingSession.swift"; path = "Sources/SpeakingSession.swift"; sourceTree = "<group>"; };
 		DC9E7DC3B09F169716DA6D81 /* SpeakingSessionDebugView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "SpeakingSessionDebugView.swift"; path = "Sources/SpeakingSessionDebugView.swift"; sourceTree = "<group>"; };
+		8991DB88F98CF3B9C95EB960 /* SpeakingSessionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "SpeakingSessionView.swift"; path = "Sources/SpeakingSessionView.swift"; sourceTree = "<group>"; };
 		18BABB3168A2361FFF626B8E /* SpeakingSessionViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "SpeakingSessionViewModel.swift"; path = "Sources/SpeakingSessionViewModel.swift"; sourceTree = "<group>"; };
+		38C381245B12A35F85EE652D /* SpeakingSetupSheet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "SpeakingSetupSheet.swift"; path = "Sources/SpeakingSetupSheet.swift"; sourceTree = "<group>"; };
 		53A2CB28033E2547DA6854C7 /* SpeakingTargetTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "SpeakingTargetTracker.swift"; path = "Sources/SpeakingTargetTracker.swift"; sourceTree = "<group>"; };
 		FB80664C0A4CE63F4E0CA847 /* SpeechCorrection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "SpeechCorrection.swift"; path = "Sources/SpeechCorrection.swift"; sourceTree = "<group>"; };
 		B06D260D42B257D8177ED131 /* String+Pinyin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "String+Pinyin.swift"; path = "Sources/String+Pinyin.swift"; sourceTree = "<group>"; };
@@ -127,7 +131,9 @@
 				1F07039C311DF96B498DD974 /* SpeakingPromptBuilder.swift */,
 				A20AE6B725988F016D444A12 /* SpeakingSession.swift */,
 				DC9E7DC3B09F169716DA6D81 /* SpeakingSessionDebugView.swift */,
+				8991DB88F98CF3B9C95EB960 /* SpeakingSessionView.swift */,
 				18BABB3168A2361FFF626B8E /* SpeakingSessionViewModel.swift */,
+				38C381245B12A35F85EE652D /* SpeakingSetupSheet.swift */,
 				53A2CB28033E2547DA6854C7 /* SpeakingTargetTracker.swift */,
 				FB80664C0A4CE63F4E0CA847 /* SpeechCorrection.swift */,
 				B06D260D42B257D8177ED131 /* String+Pinyin.swift */,
@@ -233,7 +239,9 @@
 				1B25B8C0325BA167E1FE9C56 /* SpeakingPromptBuilder.swift in Sources */,
 				46025153278A56C77283F9DC /* SpeakingSession.swift in Sources */,
 				62BF659C9410BEFB924D6F4D /* SpeakingSessionDebugView.swift in Sources */,
+				4F7E259212FE67670E38DCFE /* SpeakingSessionView.swift in Sources */,
 				34A50107180D9419AD76001D /* SpeakingSessionViewModel.swift in Sources */,
+				B945EC28D60ED8D7FAD4CC11 /* SpeakingSetupSheet.swift in Sources */,
 				73CE3C64DA30F4DBD0512A43 /* SpeakingTargetTracker.swift in Sources */,
 				58D38C985E1E4C20F3BA3638 /* SpeechCorrection.swift in Sources */,
 				A7DF6306F555EEF2AFE6968F /* String+Pinyin.swift in Sources */,

@@ -1006,6 +1006,271 @@ enum L10n {
     static func dismissError(_ lang: AppLanguage) -> String {
         lang == .zh ? "关闭" : "Dismiss"
     }
+
+    // MARK: - Speak with AI
+
+    static func speakWithAI(_ lang: AppLanguage) -> String {
+        lang == .zh ? "AI 口语" : "Speak with AI"
+    }
+
+    static func speakWithAIHelp(
+        _ lang: AppLanguage,
+        hasDueVocab: Bool = true,
+        lastSessionCount: Int = 0
+    ) -> String {
+        if hasDueVocab {
+            return lang == .zh
+                ? "用到期词汇进行受限口语对话；默认不保存，保存短语则进入例句库"
+                : "Constrained speaking practice with due vocabulary; ephemeral unless you save phrases to Examples"
+        }
+        if lastSessionCount > 0 {
+            if lang == .zh {
+                return "没有到期卡 — 用上次学习的 \(lastSessionCount) 个词练习口语；保存短语则进入例句库"
+            }
+            let word = lastSessionCount == 1 ? "word" : "words"
+            return "No cards due — speak with words from your last study session (\(lastSessionCount) \(word)); saves go to Examples"
+        }
+        return lang == .zh
+            ? "用已知词汇进行受限口语对话；默认不保存，保存短语则进入例句库"
+            : "Constrained speaking practice with words you know; ephemeral unless saved to Examples"
+    }
+
+    static func speakWithAIMenuHelp(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "点击用默认来源开始口语；打开菜单可在到期词汇与上次学习之间选择"
+            : "Click to speak from the default source; open the menu to choose due vocabulary or your last study session"
+    }
+
+    static func speakFromDueVocab(_ lang: AppLanguage, count: Int) -> String {
+        if lang == .zh {
+            return "到期词汇 (\(count))"
+        }
+        return "Due vocabulary (\(count))"
+    }
+
+    static func speakFromLastStudySession(_ lang: AppLanguage, count: Int) -> String {
+        if lang == .zh {
+            return "上次学习 (\(count))"
+        }
+        return "Last study session (\(count))"
+    }
+
+    static func speakSelectedWithAI(_ lang: AppLanguage, count: Int) -> String {
+        if lang == .zh {
+            return count > 0 ? "口语所选 (\(count))" : "口语所选"
+        }
+        return count > 0 ? "Speak selected (\(count))" : "Speak selected"
+    }
+
+    static func speakSelectedWithAIHelp(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "用所选词汇进行口语对话；不影响复习进度，保存短语则进入例句库"
+            : "Speak with selected vocabulary; does not affect schedule; saves go to Examples"
+    }
+
+    static func speakSetupTitle(_ lang: AppLanguage) -> String {
+        lang == .zh ? "AI 口语" : "Speak with AI"
+    }
+
+    static func speakSetupSeedsSummary(
+        _ lang: AppLanguage,
+        count: Int,
+        sourceLabel: String
+    ) -> String {
+        if lang == .zh {
+            return "种子：\(count) 个词（\(sourceLabel)）"
+        }
+        let word = count == 1 ? "seed" : "seeds"
+        return "\(count) \(word) from \(sourceLabel)"
+    }
+
+    static func speakSetupKnownCount(_ lang: AppLanguage, count: Int) -> String {
+        if lang == .zh {
+            return "已知脚手架：\(count) 个词"
+        }
+        return "Known scaffold: \(count) word\(count == 1 ? "" : "s")"
+    }
+
+    static func speakSetupSparseWarning(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "词库几乎为空 — 将仅用简单儿语练习。"
+            : "You’ll practice with baby language only — your known list is empty or very sparse."
+    }
+
+    static func speakSetupTopicLabel(_ lang: AppLanguage) -> String {
+        lang == .zh ? "话题（可选）" : "Topic (optional)"
+    }
+
+    static func speakSetupTopicPlaceholder(_ lang: AppLanguage) -> String {
+        lang == .zh ? "例如：在餐厅、日常问候…" : "e.g. at a restaurant, daily greetings…"
+    }
+
+    static func speakSetupEncourageCoverage(_ lang: AppLanguage) -> String {
+        lang == .zh ? "鼓励我使用目标词" : "Encourage me to use target words"
+    }
+
+    static func speakSetupTargetsLabel(_ lang: AppLanguage) -> String {
+        lang == .zh ? "目标词" : "Targets"
+    }
+
+    static func speakStart(_ lang: AppLanguage) -> String {
+        lang == .zh ? "开始口语" : "Start speaking"
+    }
+
+    static func speakSessionTitle(_ lang: AppLanguage) -> String {
+        lang == .zh ? "AI 口语" : "Speak with AI"
+    }
+
+    static func speakCoverageSummary(_ lang: AppLanguage, covered: Int, total: Int) -> String {
+        if lang == .zh {
+            return "已用 \(covered)/\(total) 个目标词"
+        }
+        return "\(covered)/\(total) targets used"
+    }
+
+    static func speakMicOn(_ lang: AppLanguage) -> String {
+        lang == .zh ? "麦克风开" : "Mic on"
+    }
+
+    static func speakMicOff(_ lang: AppLanguage) -> String {
+        lang == .zh ? "麦克风关" : "Mic off"
+    }
+
+    static func speakStatusListening(_ lang: AppLanguage) -> String {
+        lang == .zh ? "正在听…" : "Listening…"
+    }
+
+    static func speakStatusCorrecting(_ lang: AppLanguage) -> String {
+        lang == .zh ? "正在纠正…" : "Correcting…"
+    }
+
+    static func speakStatusThinking(_ lang: AppLanguage) -> String {
+        lang == .zh ? "正在思考…" : "Thinking…"
+    }
+
+    static func speakStatusSpeaking(_ lang: AppLanguage) -> String {
+        lang == .zh ? "正在播放…" : "Speaking…"
+    }
+
+    static func speakStatusReady(_ lang: AppLanguage) -> String {
+        lang == .zh ? "准备中…" : "Ready…"
+    }
+
+    static func speakStatusEnded(_ lang: AppLanguage) -> String {
+        lang == .zh ? "已结束" : "Ended"
+    }
+
+    static func speakTypePlaceholder(_ lang: AppLanguage) -> String {
+        lang == .zh ? "说或输入回复…" : "Speak or type a reply…"
+    }
+
+    static func speakSend(_ lang: AppLanguage) -> String {
+        lang == .zh ? "发送" : "Send"
+    }
+
+    static func speakRetryOpening(_ lang: AppLanguage) -> String {
+        lang == .zh ? "重试开场" : "Retry opening"
+    }
+
+    static func speakRetryLastReply(_ lang: AppLanguage) -> String {
+        lang == .zh ? "重试上一条回复" : "Retry last reply"
+    }
+
+    static func speakYou(_ lang: AppLanguage) -> String {
+        lang == .zh ? "你" : "You"
+    }
+
+    static func speakAI(_ lang: AppLanguage) -> String {
+        lang == .zh ? "AI" : "AI"
+    }
+
+    static func speakDone(_ lang: AppLanguage) -> String {
+        lang == .zh ? "完成" : "Done"
+    }
+
+    static func speakSummaryTitle(_ lang: AppLanguage) -> String {
+        lang == .zh ? "口语小结" : "Speaking summary"
+    }
+
+    static func speakSummaryCoverage(_ lang: AppLanguage, covered: Int, total: Int) -> String {
+        if lang == .zh {
+            return "你在对话中用了 \(covered)/\(total) 个目标词。"
+        }
+        return "You used \(covered) of \(total) target words."
+    }
+
+    static func speakSummaryTurns(_ lang: AppLanguage, count: Int) -> String {
+        if lang == .zh {
+            return "共 \(count) 轮对话"
+        }
+        return "\(count) turn\(count == 1 ? "" : "s")"
+    }
+
+    static func speakDiscard(_ lang: AppLanguage) -> String {
+        lang == .zh ? "丢弃会话" : "Discard session"
+    }
+
+    static func speakSaveHighlight(_ lang: AppLanguage) -> String {
+        lang == .zh ? "保存短语到例句" : "Save phrase to Examples"
+    }
+
+    static func speakSaveHighlightHelp(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "将选中的一句保存为例句（需要释义）"
+            : "Save the selected phrase as an Example (meaning required)"
+    }
+
+    static func speakSelectPhrase(_ lang: AppLanguage) -> String {
+        lang == .zh ? "选择要保存的句子" : "Select a phrase to save"
+    }
+
+    static func speakMeaningLabel(_ lang: AppLanguage) -> String {
+        lang == .zh ? "释义（必填）" : "Meaning (required)"
+    }
+
+    static func speakMeaningPlaceholder(_ lang: AppLanguage) -> String {
+        lang == .zh ? "输入或自动翻译得到释义" : "Type a meaning or use auto-translate"
+    }
+
+    static func speakMeaningRequired(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "保存前请先填写释义。"
+            : "Add a meaning before saving."
+    }
+
+    static func speakSaveSuccess(_ lang: AppLanguage) -> String {
+        lang == .zh ? "已保存到例句库" : "Saved to Examples"
+    }
+
+    static func speakSaveDuplicate(_ lang: AppLanguage) -> String {
+        lang == .zh ? "例句库中已有相同句子" : "That phrase is already in Examples"
+    }
+
+    static func speakSaveFailed(_ lang: AppLanguage) -> String {
+        lang == .zh ? "保存失败" : "Could not save phrase"
+    }
+
+    static func speakAutoTTS(_ lang: AppLanguage) -> String {
+        lang == .zh ? "自动朗读" : "Auto TTS"
+    }
+
+    static func speakSourceDue(_ lang: AppLanguage) -> String {
+        lang == .zh ? "到期词汇" : "due vocabulary"
+    }
+
+    static func speakSourceLastSession(_ lang: AppLanguage) -> String {
+        lang == .zh ? "上次学习" : "last study session"
+    }
+
+    static func speakSourceSelected(_ lang: AppLanguage) -> String {
+        lang == .zh ? "所选词汇" : "selected vocabulary"
+    }
+
+    static func speakNoSeeds(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "没有可练习的词汇。请先学习一些卡片，或等到有卡片到期。"
+            : "No vocabulary available to speak with. Study some cards first, or wait until cards are due."
+    }
 }
 
 // MARK: - Language Toggle

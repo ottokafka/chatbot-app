@@ -290,6 +290,89 @@ final class FlashcardViewModel: ObservableObject {
         resolvePracticeSeeds(source: source).count
     }
 
+    /// Same seed availability as practice (due / last session / manual selection).
+    var canStartSpeaking: Bool {
+        vocabDueCount > 0 || hasLastStudySessionSeeds || hasSelectedVocabSeeds
+    }
+
+    /// Resolves speaking seeds + known scaffold fronts (data plane only — no presentation flags).
+    /// Returns `nil` when no seeds are available for `seedSource`.
+    func resolveSpeakingLaunch(
+        seedSource: PracticeSeedSource
+    ) -> (targets: [Flashcard], knownFronts: [String])? {
+        let targets = resolvePracticeSeeds(source: seedSource)
+        guard !targets.isEmpty else { return nil }
+        let knownFronts = PracticeKnownVocabulary.resolve(
+            from: flashcards,
+            seedFrontsForScriptHint: targets.map(\.front)
+        )
+        return (targets, knownFronts)
+    }
+
+    /// Manual multi-select seeds for speaking, capped at `maxDueSeeds`.
+    /// Does **not** set speaking presentation flags (D14).
+    func resolveSelectedVocabForSpeaking(ids: [String]? = nil) -> [Flashcard] {
+        let orderedIds = ids ?? selectedVocabSeedIds
+        return Array(
+            resolveSelectedVocabCards(ids: orderedIds)
+                .prefix(PracticeGenerationConfig.maxDueSeeds)
+        )
+    }
+
+    /// Public gym insert for free-form phrases (speaking highlights, etc.).
+    /// Requires non-empty front **and** back; inserts `kind = .example`.
+    @discardableResult
+    func saveExamplePhrase(
+        front: String,
+        back: String,
+        phonics: String? = nil,
+        parentId: String? = nil
+    ) -> PracticeSaveResult {
+        var result = PracticeSaveResult()
+        let trimmedFront = front.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedBack = back.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedFront.isEmpty, !trimmedBack.isEmpty else {
+            result.skippedEmptyCount = 1
+            onLog?("Example phrase save refused: empty front or back")
+            return result
+        }
+
+        if dbManager.flashcardExists(front: trimmedFront) {
+            result.duplicateCount = 1
+            onLog?("Example phrase save skipped (duplicate): \"\(trimmedFront)\"")
+            return result
+        }
+
+        var resolvedPhonics = phonics?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if resolvedPhonics.isEmpty {
+            resolvedPhonics = FlashcardTranslator.autoFillPhonics(for: trimmedFront)
+        }
+
+        let parent = parentId.flatMap { id -> String? in
+            let trimmed = id.trimmingCharacters(in: .whitespacesAndNewlines)
+            return trimmed.isEmpty ? nil : trimmed
+        }
+
+        let flashcard = Flashcard(
+            front: trimmedFront,
+            back: trimmedBack,
+            phonics: resolvedPhonics.isEmpty ? nil : resolvedPhonics,
+            kind: .example,
+            parentFlashcardId: parent
+        )
+
+        if dbManager.insertFlashcard(flashcard) != nil {
+            result.savedCount = 1
+            loadFlashcards()
+            selectedDeckKind = .example
+            onLog?("Example phrase saved to gym: \"\(trimmedFront)\"")
+        } else {
+            result.failedCount = 1
+            onLog?("Example phrase save failed: \"\(trimmedFront)\"")
+        }
+        return result
+    }
+
     var selectedPracticeCards: [PracticeCard] {
         let source = practicePack?.cards ?? practiceQueue
         return source.filter { selectedPracticeCardIds.contains($0.id) }

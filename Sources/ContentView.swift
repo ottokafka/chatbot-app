@@ -178,8 +178,18 @@ struct ContentView: View {
                 if appSection == .flashcards {
                     FlashcardDeckView(
                         flashcardVM: flashcardVM,
+                        speakingVM: speakingVM,
                         llmEndpoint: viewModel.llmURL,
-                        llmModel: viewModel.llmModel
+                        llmModel: viewModel.llmModel,
+                        configureSpeaking: {
+                            configureSpeakingFromChat()
+                        },
+                        dismissPracticeForSpeaking: {
+                            dismissPracticeForSpeaking()
+                        },
+                        endSpeakingForPractice: {
+                            endSpeakingForPractice()
+                        }
                     )
                 } else if viewModel.activeConversation != nil {
                     // Chat Window Header
@@ -483,6 +493,26 @@ struct ContentView: View {
                 PracticeSessionView(flashcardVM: flashcardVM, chatVM: viewModel)
                     .environment(\.appLanguage, viewModel.appLanguage)
             }
+            .sheet(isPresented: $speakingVM.isShowingSetup, onDismiss: {
+                // Cancelled setup (no session started) — clear draft config.
+                if !speakingVM.isShowingSession && speakingVM.session == nil {
+                    speakingVM.discardSession()
+                }
+            }) {
+                SpeakingSetupSheet(speakingVM: speakingVM, flashcardVM: flashcardVM)
+                    .environment(\.appLanguage, viewModel.appLanguage)
+            }
+            .sheet(isPresented: $speakingVM.isShowingSession, onDismiss: {
+                // Tear down STT/mic on dismiss (residual PR2b).
+                speakingVM.endSession()
+            }) {
+                SpeakingSessionView(
+                    speakingVM: speakingVM,
+                    chatVM: viewModel,
+                    flashcardVM: flashcardVM
+                )
+                .environment(\.appLanguage, viewModel.appLanguage)
+            }
             .onAppear {
                 flashcardVM.onLog = { message in
                     viewModel.log(message, tag: "DB")
@@ -492,6 +522,22 @@ struct ContentView: View {
                 if let selected = selectedFlashcard,
                    !flashcardVM.flashcards.contains(where: { $0.id == selected.id }) {
                     selectedFlashcard = nil
+                }
+            }
+            // D21: any practice start (deck or post-study) ends speaking if open.
+            .onChange(of: flashcardVM.isGeneratingPractice) { _, generating in
+                if generating {
+                    endSpeakingForPractice()
+                }
+            }
+            .onChange(of: flashcardVM.isShowingPracticePreview) { _, showing in
+                if showing {
+                    endSpeakingForPractice()
+                }
+            }
+            .onChange(of: flashcardVM.isShowingPracticeSession) { _, showing in
+                if showing {
+                    endSpeakingForPractice()
                 }
             }
             .toolbar {
@@ -535,6 +581,61 @@ struct ContentView: View {
         guard !text.isEmpty else { return }
         viewModel.sendTextMessage(text)
         textInput = ""
+    }
+
+    // MARK: - Speaking wiring (D11, D14, D21)
+
+    /// Inject chat LLM/STT/TTS endpoints and shared ephemeral audio hooks into speakingVM.
+    private func configureSpeakingFromChat() {
+        speakingVM.configureEndpoints(
+            llmURL: viewModel.llmURL,
+            llmModel: viewModel.llmModel,
+            sttURL: viewModel.sttURL,
+            ttsURL: viewModel.ttsURL,
+            ttsVoice: viewModel.ttsVoice,
+            appLanguage: viewModel.appLanguage,
+            sttLanguage: viewModel.sttLanguage,
+            onLog: { viewModel.log($0) }
+        )
+        let chat = viewModel
+        speakingVM.configureChatAudio(
+            yieldHardware: {
+                chat.yieldAudioHardwareForExternalSession()
+            },
+            playEphemeralSpeech: { text, playbackId in
+                chat.playEphemeralSpeech(text: text, playbackId: playbackId)
+            },
+            isGeneratingEphemeral: { id in
+                chat.isGeneratingEphemeralAudio(id: id)
+            },
+            isPlayingEphemeral: { id in
+                chat.isPlayingEphemeralAudio(id: id)
+            },
+            stopPlayback: {
+                chat.stopPlayback()
+            }
+        )
+    }
+
+    /// D21: dismiss Practice preview/session before presenting Speak.
+    private func dismissPracticeForSpeaking() {
+        if flashcardVM.isShowingPracticePreview
+            || flashcardVM.isShowingPracticeSession
+            || flashcardVM.pendingPracticeSessionStart
+            || flashcardVM.isGeneratingPractice {
+            flashcardVM.discardPracticePack()
+        }
+    }
+
+    /// D21: end speaking setup/session before Practice starts.
+    private func endSpeakingForPractice() {
+        if speakingVM.isShowingSetup
+            || speakingVM.isShowingSession
+            || speakingVM.session != nil
+            || speakingVM.pendingConfig != nil {
+            speakingVM.endSession()
+            speakingVM.discardSession()
+        }
     }
 }
 

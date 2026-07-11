@@ -428,6 +428,11 @@ class ChatViewModel: ObservableObject {
             return
         }
 
+        // Arm generating flag *before* the async Task so external waiters
+        // (Speaking TTS idle poll) cannot race past idle before generate starts.
+        generatingEphemeralId = playbackId
+        updateGeneratingSpeechState()
+
         Task {
             await generateAndPlayEphemeralSpeech(text: trimmed, playbackId: playbackId)
         }

@@ -5,16 +5,16 @@ import Combine
 // MARK: - Feature flag
 
 /// UserDefaults key `speaking.enabled`.
-/// Default **false** until PR3 (first user-visible ship) lands, then default **true**.
+/// Default **true** as of PR3 (MVP ship). Explicit `false` still hides Speak controls.
 enum SpeakingFeature {
     static let userDefaultsKey = "speaking.enabled"
 
     /// First feature-flag pattern in this codebase — keep the helper tiny.
     static var isEnabled: Bool {
         get {
-            // Explicit false default when key is unset (object(forKey:) == nil).
+            // Unset key → enabled (PR3 ship default).
             if UserDefaults.standard.object(forKey: userDefaultsKey) == nil {
-                return false
+                return true
             }
             return UserDefaults.standard.bool(forKey: userDefaultsKey)
         }
@@ -240,6 +240,27 @@ final class SpeakingSessionViewModel: ObservableObject {
         await generateReply(isRetry: false)
     }
 
+    /// Stops voice pipeline and marks the session ended, keeping the sheet open for summary/save.
+    func finishConversation() {
+        generationTask?.cancel()
+        generationTask = nil
+        ttsWatchTask?.cancel()
+        ttsWatchTask = nil
+        inFlightTTSPlaybackId = nil
+
+        disconnectSpeakingSTT()
+        stopSharedPlayback?()
+
+        if var current = session {
+            current.status = .ended
+            current.lastError = nil
+            session = current
+        }
+        pendingUserText = nil
+        log("Speaking: finishConversation (summary)")
+    }
+
+    /// Full teardown: STT + player + dismiss presentation flags. Leaves chat mic off (D11).
     func endSession() {
         generationTask?.cancel()
         generationTask = nil
@@ -627,18 +648,29 @@ final class SpeakingSessionViewModel: ObservableObject {
 
         let task = Task { @MainActor [weak self] in
             guard let self else { return }
-            // Brief arming window: generate flag is set inside an async Task on chat.
-            try? await Task.sleep(nanoseconds: 150_000_000)
+            // Wait until generate or play is observed at least once (or brief arm window
+            // elapses). Chat now arms generating before its Task, so this is usually immediate.
+            var sawActivity = false
+            var polls = 0
             while !Task.isCancelled {
                 guard self.session?.id == sessionId else { return }
                 guard self.session?.status == .playingTTS else { return }
 
                 let generating = self.isGeneratingEphemeral?(playbackId) ?? false
                 let playing = self.isPlayingEphemeral?(playbackId) ?? false
-                if !generating && !playing {
+                if generating || playing {
+                    sawActivity = true
+                }
+                if sawActivity && !generating && !playing {
                     self.log("Speaking: TTS idle id=\(playbackId)")
                     return
                 }
+                // Generate never started (e.g. empty/disabled TTS) — leave after ~400ms arm.
+                if !sawActivity && polls >= 4 {
+                    self.log("Speaking: TTS idle (no activity) id=\(playbackId)")
+                    return
+                }
+                polls += 1
                 try? await Task.sleep(nanoseconds: 100_000_000)
             }
         }
