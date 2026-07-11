@@ -1,6 +1,15 @@
 import Foundation
 import FSRS
 
+/// Role of a persisted flashcard in the library vs gym model.
+/// See `docs/design-library-vs-gym.md` and `/flashcard_system.md`.
+enum FlashcardKind: String, CaseIterable, Identifiable, Codable {
+    case vocab
+    case example
+
+    var id: String { rawValue }
+}
+
 struct Flashcard: Identifiable, Equatable, Hashable {
     let id: String
 
@@ -12,6 +21,10 @@ struct Flashcard: Identifiable, Equatable, Hashable {
     var phonics: String?
     var sourceMessageId: String?
     var sourceConversationId: String?
+    /// `vocab` = user library; `example` = saved usage / gym.
+    var kind: FlashcardKind
+    /// When `kind == .example`, optional link to the source vocab card.
+    var parentFlashcardId: String?
     let createdAt: Date
     var fsrsCard: Card
 
@@ -22,6 +35,8 @@ struct Flashcard: Identifiable, Equatable, Hashable {
         phonics: String? = nil,
         sourceMessageId: String? = nil,
         sourceConversationId: String? = nil,
+        kind: FlashcardKind = .vocab,
+        parentFlashcardId: String? = nil,
         createdAt: Date = Date(),
         fsrsCard: Card? = nil
     ) {
@@ -31,6 +46,8 @@ struct Flashcard: Identifiable, Equatable, Hashable {
         self.phonics = phonics
         self.sourceMessageId = sourceMessageId
         self.sourceConversationId = sourceConversationId
+        self.kind = kind
+        self.parentFlashcardId = parentFlashcardId
         self.createdAt = createdAt
         self.fsrsCard = fsrsCard ?? FSRSManager.shared.createEmptyCard(now: createdAt)
     }

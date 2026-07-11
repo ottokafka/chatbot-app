@@ -528,6 +528,44 @@ enum L10n {
         return "\(total) cards · \(due) due"
     }
 
+    static func flashcardKindVocabTab(_ lang: AppLanguage, due: Int) -> String {
+        if lang == .zh {
+            return due > 0 ? "词汇 (\(due))" : "词汇"
+        }
+        return due > 0 ? "Vocabulary (\(due))" : "Vocabulary"
+    }
+
+    static func flashcardKindExampleTab(_ lang: AppLanguage, due: Int) -> String {
+        if lang == .zh {
+            return due > 0 ? "例句 (\(due))" : "例句"
+        }
+        return due > 0 ? "Examples (\(due))" : "Examples"
+    }
+
+    static func flashcardKindSummary(
+        _ lang: AppLanguage,
+        kind: FlashcardKind,
+        total: Int,
+        due: Int
+    ) -> String {
+        if lang == .zh {
+            let label = kind == .vocab ? "词汇" : "例句"
+            return "\(label) \(total) 张 · \(due) 张待复习"
+        }
+        let label = kind == .vocab ? "Vocabulary" : "Examples"
+        return "\(label): \(total) cards · \(due) due"
+    }
+
+    static func noExampleFlashcards(_ lang: AppLanguage) -> String {
+        lang == .zh ? "暂无保存的例句" : "No saved examples yet"
+    }
+
+    static func noExampleFlashcardsHint(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "用「AI 练习」生成例句，并在预览中保存到例句库。"
+            : "Use Practice with AI, then save favorites into Examples."
+    }
+
     static func studyNow(_ lang: AppLanguage, count: Int) -> String {
         if lang == .zh {
             return count > 0 ? "开始学习 (\(count))" : "开始学习"
@@ -627,8 +665,8 @@ enum L10n {
 
     static func practiceWithAIHelp(_ lang: AppLanguage) -> String {
         lang == .zh
-            ? "根据今日到期闪卡生成练习例句（不会写入你的卡组）"
-            : "Generate practice examples from due cards (does not add to your deck)"
+            ? "根据到期词汇生成练习例句；默认不保存，保存则进入例句库"
+            : "Generate practice from due vocabulary; ephemeral unless saved to Examples"
     }
 
     static func practiceGenerating(_ lang: AppLanguage) -> String {
@@ -648,8 +686,8 @@ enum L10n {
 
     static func practicePreviewAINote(_ lang: AppLanguage) -> String {
         lang == .zh
-            ? "由 AI 根据到期闪卡生成。可编辑、重生成或勾选后保存到卡组。"
-            : "AI-generated from your due cards. Edit, regenerate, or select examples to save into your deck."
+            ? "由 AI 根据到期词汇生成。可编辑、重生成；保存会进入「例句」库，不会写入词汇。"
+            : "AI-generated from due vocabulary. Edit or regenerate; saves go to Examples, not Vocabulary."
     }
 
     static func practiceSelectAll(_ lang: AppLanguage) -> String {
@@ -662,13 +700,13 @@ enum L10n {
 
     static func practiceSaveSelected(_ lang: AppLanguage, count: Int) -> String {
         if lang == .zh {
-            return count > 0 ? "保存到卡组 (\(count))" : "保存到卡组"
+            return count > 0 ? "保存到例句 (\(count))" : "保存到例句"
         }
-        return count > 0 ? "Save to Deck (\(count))" : "Save to Deck"
+        return count > 0 ? "Save to Examples (\(count))" : "Save to Examples"
     }
 
     static func practiceSaveOne(_ lang: AppLanguage) -> String {
-        lang == .zh ? "保存到卡组" : "Save to deck"
+        lang == .zh ? "保存到例句" : "Save to Examples"
     }
 
     static func practiceSavedBadge(_ lang: AppLanguage) -> String {
@@ -693,14 +731,14 @@ enum L10n {
     ) -> String {
         if lang == .zh {
             var parts: [String] = []
-            if saved > 0 { parts.append("已保存 \(saved) 张") }
+            if saved > 0 { parts.append("已保存 \(saved) 条到例句库") }
             if duplicates > 0 { parts.append("重复 \(duplicates) 张") }
             if failed > 0 { parts.append("失败 \(failed) 张") }
             if parts.isEmpty { return "没有可保存的例句" }
             return parts.joined(separator: " · ")
         }
         var parts: [String] = []
-        if saved > 0 { parts.append("Saved \(saved)") }
+        if saved > 0 { parts.append("Saved \(saved) to Examples") }
         if duplicates > 0 { parts.append("\(duplicates) duplicate\(duplicates == 1 ? "" : "s")") }
         if failed > 0 { parts.append("\(failed) failed") }
         if parts.isEmpty { return "Nothing to save" }

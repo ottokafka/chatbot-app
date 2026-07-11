@@ -191,7 +191,7 @@ struct FlashcardReviewView: View {
                 .font(.title2)
                 .fontWeight(.bold)
 
-            if flashcardVM.dueCount == 0 {
+            if flashcardVM.dueCountForSelectedKind == 0 {
                 Text(L10n.noCardsDue(lang))
                     .foregroundColor(.secondary)
             }

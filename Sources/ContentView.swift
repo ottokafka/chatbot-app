@@ -73,7 +73,7 @@ struct ContentView: View {
                     }
                     .listStyle(.sidebar)
                 } else {
-                    List(flashcardVM.flashcards, selection: $selectedFlashcard) { card in
+                    List(flashcardVM.flashcardsForSelectedKind, selection: $selectedFlashcard) { card in
                         HStack(alignment: .top, spacing: 8) {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(card.front)

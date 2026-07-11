@@ -155,12 +155,22 @@ class DatabaseManager {
             reps INTEGER NOT NULL DEFAULT 0,
             lapses INTEGER NOT NULL DEFAULT 0,
             state INTEGER NOT NULL DEFAULT 0,
-            last_review REAL
+            last_review REAL,
+            kind TEXT NOT NULL DEFAULT 'vocab',
+            parent_flashcard_id TEXT
         );
         """
 
         let createFlashcardsDueIndex = """
         CREATE INDEX IF NOT EXISTS idx_flashcards_due ON flashcards(due);
+        """
+
+        let createFlashcardsKindDueIndex = """
+        CREATE INDEX IF NOT EXISTS idx_flashcards_kind_due ON flashcards(kind, due);
+        """
+
+        let createFlashcardsParentIndex = """
+        CREATE INDEX IF NOT EXISTS idx_flashcards_parent ON flashcards(parent_flashcard_id);
         """
 
         let createFlashcardsFrontIndex = """
@@ -173,6 +183,8 @@ class DatabaseManager {
         execute(sql: createEndpointsTable)
         execute(sql: createFlashcardsTable)
         execute(sql: createFlashcardsDueIndex)
+        execute(sql: createFlashcardsKindDueIndex)
+        execute(sql: createFlashcardsParentIndex)
         execute(sql: createFlashcardsFrontIndex)
         migrateDatabase()
 
@@ -193,6 +205,14 @@ class DatabaseManager {
         if columnExists(table: "flashcards", column: "notes") && !columnExists(table: "flashcards", column: "phonics") {
             execute(sql: "ALTER TABLE flashcards RENAME COLUMN notes TO phonics;")
         }
+        if !columnExists(table: "flashcards", column: "kind") {
+            execute(sql: "ALTER TABLE flashcards ADD COLUMN kind TEXT NOT NULL DEFAULT 'vocab';")
+        }
+        if !columnExists(table: "flashcards", column: "parent_flashcard_id") {
+            execute(sql: "ALTER TABLE flashcards ADD COLUMN parent_flashcard_id TEXT;")
+        }
+        execute(sql: "CREATE INDEX IF NOT EXISTS idx_flashcards_kind_due ON flashcards(kind, due);")
+        execute(sql: "CREATE INDEX IF NOT EXISTS idx_flashcards_parent ON flashcards(parent_flashcard_id);")
     }
 
     private func columnExists(table: String, column: String) -> Bool {
@@ -658,17 +678,35 @@ class DatabaseManager {
 
     // MARK: - Flashcards CRUD
 
-    func fetchFlashcards() -> [Flashcard] {
-        var flashcards: [Flashcard] = []
-        let sql = """
-        SELECT id, front, back, phonics, source_message_id, source_conversation_id, created_at,
-               due, stability, difficulty, elapsed_days, scheduled_days, learning_steps, reps, lapses, state, last_review
-        FROM flashcards
-        ORDER BY due ASC;
+    private static let flashcardSelectColumns = """
+        id, front, back, phonics, source_message_id, source_conversation_id, created_at,
+        due, stability, difficulty, elapsed_days, scheduled_days, learning_steps, reps, lapses, state, last_review,
+        kind, parent_flashcard_id
         """
+
+    func fetchFlashcards(kind: FlashcardKind? = nil) -> [Flashcard] {
+        var flashcards: [Flashcard] = []
+        let sql: String
+        if kind != nil {
+            sql = """
+            SELECT \(Self.flashcardSelectColumns)
+            FROM flashcards
+            WHERE kind = ?
+            ORDER BY due ASC;
+            """
+        } else {
+            sql = """
+            SELECT \(Self.flashcardSelectColumns)
+            FROM flashcards
+            ORDER BY due ASC;
+            """
+        }
         var statement: OpaquePointer?
 
         if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            if let kind {
+                sqlite3_bind_text(statement, 1, (kind.rawValue as NSString).utf8String, -1, nil)
+            }
             while sqlite3_step(statement) == SQLITE_ROW {
                 if let flashcard = parseFlashcard(from: statement) {
                     flashcards.append(flashcard)
@@ -682,19 +720,31 @@ class DatabaseManager {
         return flashcards
     }
 
-    func fetchDueFlashcards(before date: Date = Date()) -> [Flashcard] {
+    func fetchDueFlashcards(kind: FlashcardKind? = nil, before date: Date = Date()) -> [Flashcard] {
         var flashcards: [Flashcard] = []
-        let sql = """
-        SELECT id, front, back, phonics, source_message_id, source_conversation_id, created_at,
-               due, stability, difficulty, elapsed_days, scheduled_days, learning_steps, reps, lapses, state, last_review
-        FROM flashcards
-        WHERE due <= ?
-        ORDER BY due ASC;
-        """
+        let sql: String
+        if kind != nil {
+            sql = """
+            SELECT \(Self.flashcardSelectColumns)
+            FROM flashcards
+            WHERE due <= ? AND kind = ?
+            ORDER BY due ASC;
+            """
+        } else {
+            sql = """
+            SELECT \(Self.flashcardSelectColumns)
+            FROM flashcards
+            WHERE due <= ?
+            ORDER BY due ASC;
+            """
+        }
         var statement: OpaquePointer?
 
         if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
             sqlite3_bind_double(statement, 1, date.timeIntervalSince1970)
+            if let kind {
+                sqlite3_bind_text(statement, 2, (kind.rawValue as NSString).utf8String, -1, nil)
+            }
 
             while sqlite3_step(statement) == SQLITE_ROW {
                 if let flashcard = parseFlashcard(from: statement) {
@@ -714,8 +764,9 @@ class DatabaseManager {
         let sql = """
         INSERT INTO flashcards (
             id, front, back, phonics, source_message_id, source_conversation_id, created_at,
-            due, stability, difficulty, elapsed_days, scheduled_days, learning_steps, reps, lapses, state, last_review
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            due, stability, difficulty, elapsed_days, scheduled_days, learning_steps, reps, lapses, state, last_review,
+            kind, parent_flashcard_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
         """
         var statement: OpaquePointer?
 
@@ -800,8 +851,9 @@ class DatabaseManager {
     }
 
     func deleteFlashcard(id: String) {
-        let sql = "DELETE FROM flashcards WHERE id = ?;"
-        execute(sql: sql, parameters: [id])
+        // Keep example cards; clear parent link when a vocab card is removed.
+        execute(sql: "UPDATE flashcards SET parent_flashcard_id = NULL WHERE parent_flashcard_id = ?;", parameters: [id])
+        execute(sql: "DELETE FROM flashcards WHERE id = ?;", parameters: [id])
     }
 
     func flashcardExists(front: String, excludingId: String? = nil) -> Bool {
@@ -858,6 +910,10 @@ class DatabaseManager {
                 : Date(timeIntervalSince1970: sqlite3_column_double(statement, 16))
         )
 
+        let kindRaw = sqlite3_column_text(statement, 17).map { String(cString: $0) } ?? FlashcardKind.vocab.rawValue
+        let kind = FlashcardKind(rawValue: kindRaw) ?? .vocab
+        let parentFlashcardId = sqlite3_column_text(statement, 18).map { String(cString: $0) }
+
         return Flashcard(
             id: id,
             front: front,
@@ -865,6 +921,8 @@ class DatabaseManager {
             phonics: phonics,
             sourceMessageId: sourceMessageId,
             sourceConversationId: sourceConversationId,
+            kind: kind,
+            parentFlashcardId: parentFlashcardId,
             createdAt: createdAt,
             fsrsCard: fsrsCard
         )
@@ -906,6 +964,12 @@ class DatabaseManager {
             sqlite3_bind_double(statement, 17, lastReview.timeIntervalSince1970)
         } else {
             sqlite3_bind_null(statement, 17)
+        }
+        sqlite3_bind_text(statement, 18, (flashcard.kind.rawValue as NSString).utf8String, -1, nil)
+        if let parentFlashcardId = flashcard.parentFlashcardId {
+            sqlite3_bind_text(statement, 19, (parentFlashcardId as NSString).utf8String, -1, nil)
+        } else {
+            sqlite3_bind_null(statement, 19)
         }
     }
 }

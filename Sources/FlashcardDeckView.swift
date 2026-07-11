@@ -13,7 +13,9 @@ struct FlashcardDeckView: View {
 
             Divider()
 
-            if flashcardVM.flashcards.isEmpty {
+            kindPicker
+
+            if flashcardVM.flashcardsForSelectedKind.isEmpty {
                 emptyState
             } else {
                 searchBar
@@ -34,7 +36,7 @@ struct FlashcardDeckView: View {
                 Text(L10n.flashcards(lang))
                     .font(.title2)
                     .fontWeight(.bold)
-                Text(L10n.flashcardDeckSummary(lang, total: flashcardVM.flashcards.count, due: flashcardVM.dueCount))
+                Text(summaryLine)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
@@ -67,16 +69,16 @@ struct FlashcardDeckView: View {
                 .help(L10n.practiceWithAIHelp(lang))
 
                 Button(action: {
-                    flashcardVM.startReviewSession()
+                    flashcardVM.startReviewSession(kind: flashcardVM.selectedDeckKind)
                 }) {
                     HStack(spacing: 6) {
                         Image(systemName: "brain.head.profile")
-                        Text(L10n.studyNow(lang, count: flashcardVM.dueCount))
+                        Text(L10n.studyNow(lang, count: flashcardVM.dueCountForSelectedKind))
                     }
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
-                .disabled(flashcardVM.dueCount == 0)
+                .disabled(flashcardVM.dueCountForSelectedKind == 0)
             }
         }
         .padding()
@@ -93,6 +95,30 @@ struct FlashcardDeckView: View {
             }
         } message: {
             Text(flashcardVM.practiceError ?? "")
+        }
+    }
+
+    private var summaryLine: String {
+        L10n.flashcardKindSummary(
+            lang,
+            kind: flashcardVM.selectedDeckKind,
+            total: flashcardVM.flashcardsForSelectedKind.count,
+            due: flashcardVM.dueCountForSelectedKind
+        )
+    }
+
+    private var kindPicker: some View {
+        Picker("", selection: $flashcardVM.selectedDeckKind) {
+            Text(L10n.flashcardKindVocabTab(lang, due: flashcardVM.vocabDueCount))
+                .tag(FlashcardKind.vocab)
+            Text(L10n.flashcardKindExampleTab(lang, due: flashcardVM.exampleDueCount))
+                .tag(FlashcardKind.example)
+        }
+        .pickerStyle(.segmented)
+        .padding(.horizontal)
+        .padding(.vertical, 10)
+        .onChange(of: flashcardVM.selectedDeckKind) { _, _ in
+            flashcardVM.searchText = ""
         }
     }
 
@@ -124,25 +150,38 @@ struct FlashcardDeckView: View {
                 )
         )
         .padding(.horizontal)
-        .padding(.top, 12)
         .padding(.bottom, 4)
     }
 
     private var emptyState: some View {
         VStack(spacing: 16) {
-            Image(systemName: "rectangle.on.rectangle.angled")
+            Image(systemName: flashcardVM.selectedDeckKind == .vocab
+                  ? "rectangle.on.rectangle.angled"
+                  : "text.book.closed")
                 .font(.system(size: 56))
                 .foregroundColor(.secondary)
-            Text(L10n.noFlashcards(lang))
+            Text(emptyTitle)
                 .font(.title3)
                 .fontWeight(.medium)
-            Text(L10n.noFlashcardsHint(lang))
+            Text(emptyHint)
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 360)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var emptyTitle: String {
+        flashcardVM.selectedDeckKind == .vocab
+            ? L10n.noFlashcards(lang)
+            : L10n.noExampleFlashcards(lang)
+    }
+
+    private var emptyHint: String {
+        flashcardVM.selectedDeckKind == .vocab
+            ? L10n.noFlashcardsHint(lang)
+            : L10n.noExampleFlashcardsHint(lang)
     }
 
     private var noSearchResultsState: some View {
@@ -170,6 +209,7 @@ struct FlashcardDeckView: View {
                         card: card,
                         dueLabel: flashcardVM.dueLabel(for: card, language: lang),
                         isDue: flashcardVM.isDue(card),
+                        parentFront: flashcardVM.parentFrontLabel(for: card),
                         onEdit: { flashcardVM.prepareEdit(flashcard: card) },
                         onDelete: { flashcardVM.deleteFlashcard(card) }
                     )
@@ -184,6 +224,7 @@ private struct FlashcardDeckRow: View {
     let card: Flashcard
     let dueLabel: String
     let isDue: Bool
+    let parentFront: String?
     let onEdit: () -> Void
     let onDelete: () -> Void
 
@@ -193,6 +234,13 @@ private struct FlashcardDeckRow: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 6) {
+                    if card.kind == .example, let parentFront, !parentFront.isEmpty {
+                        Text(L10n.practiceFromWord(lang, word: parentFront))
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.orange)
+                    }
+
                     Text(card.front)
                         .font(.system(.body, design: .monospaced))
                         .fontWeight(.semibold)

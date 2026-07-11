@@ -27,7 +27,12 @@ final class FlashcardViewModel: ObservableObject {
     private var practiceGenerationTask: Task<Void, Never>?
 
     @Published var flashcards: [Flashcard] = []
+    /// Primary due badge (vocabulary due). Kept for sidebar / existing call sites.
     @Published var dueCount: Int = 0
+    @Published var vocabDueCount: Int = 0
+    @Published var exampleDueCount: Int = 0
+    /// Active library tab: Vocabulary (library) vs Examples (gym).
+    @Published var selectedDeckKind: FlashcardKind = .vocab
     @Published var searchText: String = ""
     @Published var draft: FlashcardDraft?
     @Published var editingFlashcardId: String?
@@ -90,7 +95,7 @@ final class FlashcardViewModel: ObservableObject {
     var isEditing: Bool { editingFlashcardId != nil }
 
     var canStartPractice: Bool {
-        dueCount > 0 && !isGeneratingPractice
+        vocabDueCount > 0 && !isGeneratingPractice
     }
 
     var selectedPracticeCards: [PracticeCard] {
@@ -102,15 +107,30 @@ final class FlashcardViewModel: ObservableObject {
         !selectedPracticeCardIds.isEmpty
     }
 
-    var filteredFlashcards: [Flashcard] {
-        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !query.isEmpty else { return flashcards }
+    var flashcardsForSelectedKind: [Flashcard] {
+        flashcards.filter { $0.kind == selectedDeckKind }
+    }
 
-        return flashcards.filter { card in
+    var dueCountForSelectedKind: Int {
+        selectedDeckKind == .vocab ? vocabDueCount : exampleDueCount
+    }
+
+    var filteredFlashcards: [Flashcard] {
+        let base = flashcardsForSelectedKind
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return base }
+
+        return base.filter { card in
             card.front.localizedCaseInsensitiveContains(query)
                 || card.back.localizedCaseInsensitiveContains(query)
                 || (card.phonics?.localizedCaseInsensitiveContains(query) ?? false)
         }
+    }
+
+    /// Resolve display label for an example's parent vocab front.
+    func parentFrontLabel(for card: Flashcard) -> String? {
+        guard card.kind == .example, let parentId = card.parentFlashcardId else { return nil }
+        return flashcards.first(where: { $0.id == parentId })?.front
     }
 
     var isSearchActive: Bool {
@@ -123,7 +143,11 @@ final class FlashcardViewModel: ObservableObject {
 
     func loadFlashcards() {
         flashcards = dbManager.fetchFlashcards()
-        dueCount = FSRSManager.shared.dueCards(from: flashcards).count
+        let vocab = flashcards.filter { $0.kind == .vocab }
+        let examples = flashcards.filter { $0.kind == .example }
+        vocabDueCount = FSRSManager.shared.dueCards(from: vocab).count
+        exampleDueCount = FSRSManager.shared.dueCards(from: examples).count
+        dueCount = vocabDueCount
     }
 
     func dueLabel(for card: Flashcard, language: AppLanguage) -> String {
@@ -317,12 +341,15 @@ final class FlashcardViewModel: ObservableObject {
 
     // MARK: - Review Session
 
-    func startReviewSession() {
-        reviewQueue = dbManager.fetchDueFlashcards()
+    /// Starts an FSRS review for the given kind (defaults to the active dashboard tab).
+    func startReviewSession(kind: FlashcardKind? = nil) {
+        let reviewKind = kind ?? selectedDeckKind
+        reviewQueue = dbManager.fetchDueFlashcards(kind: reviewKind)
         currentReviewIndex = 0
         isAnswerRevealed = false
         reviewComplete = reviewQueue.isEmpty
         isShowingReviewSession = true
+        onLog?("Review started for \(reviewKind.rawValue) (\(reviewQueue.count) due)")
     }
 
     func revealAnswer() {
@@ -369,10 +396,13 @@ final class FlashcardViewModel: ObservableObject {
     ) {
         guard !isGeneratingPractice else { return }
 
-        let dueCards = FSRSManager.shared.dueCards(from: flashcards)
+        // Practice seeds from vocabulary due only (library), never from examples.
+        let dueCards = FSRSManager.shared.dueCards(
+            from: flashcards.filter { $0.kind == .vocab }
+        )
         guard !dueCards.isEmpty else {
             practiceError = L10n.practiceNoDueCards(appLanguage)
-            onLog?("Practice generation skipped: no due cards")
+            onLog?("Practice generation skipped: no due vocabulary cards")
             return
         }
 
@@ -724,13 +754,15 @@ final class FlashcardViewModel: ObservableObject {
             let flashcard = Flashcard(
                 front: front,
                 back: back,
-                phonics: phonics.isEmpty ? nil : phonics
+                phonics: phonics.isEmpty ? nil : phonics,
+                kind: .example,
+                parentFlashcardId: card.parentFlashcardId
             )
 
             if dbManager.insertFlashcard(flashcard) != nil {
                 result.savedCount += 1
                 savedPracticeCardIds.insert(card.id)
-                onLog?("Practice card saved to deck: \"\(front)\"")
+                onLog?("Practice example saved to gym: \"\(front)\"")
             } else {
                 result.failedCount += 1
                 onLog?("Practice save failed: \"\(front)\"")
@@ -739,6 +771,8 @@ final class FlashcardViewModel: ObservableObject {
 
         if result.savedCount > 0 {
             loadFlashcards()
+            // Land the user on the gym tab so the save is visible.
+            selectedDeckKind = .example
         }
 
         // Clear selection for successfully handled cards (saved or already-duplicate).
