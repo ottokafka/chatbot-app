@@ -52,12 +52,25 @@ struct PracticePack: Identifiable, Equatable {
 }
 
 /// How strictly practice sentences should stay simple / scaffolded.
-/// PR2: only `.comprehensible` is implemented in prompts; PR4 adds `.natural` opt-out.
-enum PracticeSentenceStyle: String, CaseIterable, Equatable {
+/// Persisted via UserDefaults key `practice.sentenceStyle` (rawValue).
+enum PracticeSentenceStyle: String, CaseIterable, Equatable, Identifiable {
     /// A0–A1 structure + prefer known vocab (default product behavior).
     case comprehensible
-    /// Legacy natural sentences — full opt-out; prompt branch lands in PR4 only.
+    /// Legacy natural sentences — full opt-out of baby language + known scaffold.
     case natural
+
+    var id: String { rawValue }
+
+    static let userDefaultsKey = "practice.sentenceStyle"
+
+    /// Load from UserDefaults; default Simple / comprehensible.
+    static func load(from defaults: UserDefaults = .standard) -> PracticeSentenceStyle {
+        if let raw = defaults.string(forKey: userDefaultsKey),
+           let style = PracticeSentenceStyle(rawValue: raw) {
+            return style
+        }
+        return .comprehensible
+    }
 }
 
 enum PracticeGenerationConfig {

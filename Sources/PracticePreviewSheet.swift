@@ -72,17 +72,37 @@ struct PracticePreviewSheet: View {
     }
 
     private func summaryBanner(_ pack: PracticePack) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 8) {
             Text(L10n.practicePreviewSummary(lang, cards: pack.cards.count, seeds: pack.sourceDueCount))
                 .font(.subheadline)
                 .fontWeight(.medium)
-            Text(L10n.practicePreviewAINote(lang))
+            Text(L10n.practicePreviewAINote(lang, style: flashcardVM.practiceSentenceStyle))
                 .font(.caption)
                 .foregroundColor(.secondary)
+
+            sentenceStylePicker
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
         .background(Color.platformWindowBackground.opacity(0.6))
+    }
+
+    private var sentenceStylePicker: some View {
+        HStack(spacing: 10) {
+            Text(L10n.practiceSentenceStyleLabel(lang))
+                .font(.caption)
+                .foregroundColor(.secondary)
+            Picker("", selection: $flashcardVM.practiceSentenceStyle) {
+                Text(L10n.practiceSentenceStyleSimple(lang)).tag(PracticeSentenceStyle.comprehensible)
+                Text(L10n.practiceSentenceStyleNatural(lang)).tag(PracticeSentenceStyle.natural)
+            }
+            .pickerStyle(.segmented)
+            .frame(maxWidth: 220)
+            .labelsHidden()
+            .help(L10n.practiceSentenceStyleHelp(lang))
+            .disabled(flashcardVM.isGeneratingPractice || !flashcardVM.regeneratingPracticeCardIds.isEmpty)
+            Spacer(minLength: 0)
+        }
     }
 
     private func selectionToolbar(_ pack: PracticePack) -> some View {

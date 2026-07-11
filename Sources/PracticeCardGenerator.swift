@@ -42,7 +42,7 @@ enum PracticeCardGenerator {
     }
 
     /// Builds an in-memory practice pack by calling the OpenAI-compatible text-gen endpoint.
-    /// PR2: always emits comprehensible (A0–A1 + known scaffold) prompts; `style` is accepted for API stability but ignored until PR4.
+    /// `.comprehensible` (default): A0–A1 + known scaffold. `.natural`: legacy freer prompts (full opt-out).
     @MainActor
     static func generatePack(
         from seedCards: [Flashcard],
@@ -56,14 +56,16 @@ enum PracticeCardGenerator {
         examplesPerCard: Int = PracticeGenerationConfig.examplesPerCard,
         maxTokens: Int = PracticeGenerationConfig.maxTokens
     ) async throws -> PracticePack {
-        _ = style // PR4: branch on .natural
         let seeds = Array(seedCards.prefix(maxSeeds))
         guard !seeds.isEmpty else { throw GeneratorError.noSeeds }
 
+        // Natural is a full opt-out: no known-scaffold injection (empty list).
+        let effectiveKnown = style == .natural ? [] : knownFronts
         let messages = buildMessages(
             seeds: seeds,
             examplesPerCard: examplesPerCard,
-            knownFronts: knownFronts,
+            knownFronts: effectiveKnown,
+            style: style,
             appLanguage: appLanguage
         )
 
@@ -81,20 +83,23 @@ enum PracticeCardGenerator {
         let cards = try parsePracticeCards(from: trimmed, seeds: seeds)
         guard !cards.isEmpty else { throw GeneratorError.noValidItems }
 
-        // Soft coverage diagnostics only — never drop cards or auto-retry (K7).
-        // Pack path: seedFronts = ALL pack seed fronts (co-seed content is legal by K3).
-        PracticeScaffoldValidator.logCoverageForCards(
-            cards,
-            knownFronts: knownFronts,
-            seedFronts: seeds.map(\.front),
-            onLog: apiManager.onLog
-        )
+        // Soft coverage diagnostics only for comprehensible path (K7).
+        // Natural sentences are unconstrained — skip scaffold coverage warnings.
+        if style != .natural {
+            // Pack path: seedFronts = ALL pack seed fronts (co-seed content is legal by K3).
+            PracticeScaffoldValidator.logCoverageForCards(
+                cards,
+                knownFronts: knownFronts,
+                seedFronts: seeds.map(\.front),
+                onLog: apiManager.onLog
+            )
+        }
 
         return PracticePack(sourceDueCount: seeds.count, cards: cards)
     }
 
     /// Regenerates a single example sentence for one seed card.
-    /// PR2: always comprehensible prompts; `style` ignored until PR4.
+    /// Same dual-path as pack generation (comprehensible vs natural opt-out).
     @MainActor
     static func regenerateExample(
         seed: Flashcard,
@@ -107,11 +112,12 @@ enum PracticeCardGenerator {
         apiManager: APIManager,
         maxTokens: Int = PracticeGenerationConfig.singleExampleMaxTokens
     ) async throws -> PracticeCard {
-        _ = style // PR4: branch on .natural
+        let effectiveKnown = style == .natural ? [] : knownFronts
         let messages = buildSingleRegenerateMessages(
             seed: seed,
             existingSentences: existingSentences,
-            knownFronts: knownFronts,
+            knownFronts: effectiveKnown,
+            style: style,
             appLanguage: appLanguage
         )
 
@@ -129,21 +135,115 @@ enum PracticeCardGenerator {
         let cards = try parsePracticeCards(from: trimmed, seeds: [seed])
         guard let card = cards.first else { throw GeneratorError.noValidItems }
 
-        // Soft coverage diagnostics only — regenerate seedFronts = that one seed.
-        PracticeScaffoldValidator.logCoverageForCards(
-            [card],
-            knownFronts: knownFronts,
-            seedFronts: [seed.front],
-            onLog: apiManager.onLog
-        )
+        if style != .natural {
+            // Soft coverage diagnostics only — regenerate seedFronts = that one seed.
+            PracticeScaffoldValidator.logCoverageForCards(
+                [card],
+                knownFronts: knownFronts,
+                seedFronts: [seed.front],
+                onLog: apiManager.onLog
+            )
+        }
 
         return card
     }
 
     // MARK: - Prompt
 
-    /// Pack system + user messages. Always comprehensible (baby language + KNOWN_VOCAB scaffold).
+    /// Pack system + user messages. Branches on style (comprehensible scaffold vs natural freer).
     static func buildMessages(
+        seeds: [Flashcard],
+        examplesPerCard: Int,
+        knownFronts: [String],
+        style: PracticeSentenceStyle = .comprehensible,
+        appLanguage: AppLanguage
+    ) -> [ChatMessage] {
+        switch style {
+        case .natural:
+            return buildNaturalMessages(seeds: seeds, examplesPerCard: examplesPerCard, appLanguage: appLanguage)
+        case .comprehensible:
+            return buildComprehensibleMessages(
+                seeds: seeds,
+                examplesPerCard: examplesPerCard,
+                knownFronts: knownFronts,
+                appLanguage: appLanguage
+            )
+        }
+    }
+
+    /// Legacy freer "natural example-sentence" pack prompts (full opt-out of baby + known).
+    /// Keeps structural JSON / parent_id / exact count rules.
+    static func buildNaturalMessages(
+        seeds: [Flashcard],
+        examplesPerCard: Int,
+        appLanguage: AppLanguage
+    ) -> [ChatMessage] {
+        let seedPayloads = seeds.map {
+            SeedPayload(
+                id: $0.id,
+                front: $0.front,
+                back: $0.back,
+                phonics: $0.phonics
+            )
+        }
+        let seedsJSON = encodeJSONArray(seedPayloads)
+
+        let system: String
+        if appLanguage == .zh {
+            system = """
+            你是语言学习助教。根据学生的词汇闪卡，生成自然的例句练习。
+            只输出合法 JSON，不要 markdown 代码块，不要解释。
+            JSON 结构：
+            {"items":[{"parent_id":"...","parent_front":"...","sentence":"...","translation":"...","phonics":"..."}]}
+            规则：
+            - 每张种子卡恰好 \(examplesPerCard) 条 items
+            - parent_id 必须是输入中的 id
+            - parent_front 应与该种子卡的 front 一致
+            - sentence 必须自然使用该卡的 front 词汇/短语
+            - 多条例句语境要不同（日常、提问、否定、工作/学习等）
+            - translation 为 sentence 的翻译（与卡的 back 语言一致）
+            - phonics：若 sentence 含中文，填拼音；否则可省略或空字符串
+            - 不要发明与 front 无关的新词作为练习目标
+            """
+        } else {
+            system = """
+            You are a language-learning tutor. Given the student's vocabulary flashcards, create natural example-sentence practice cards.
+            Output valid JSON only — no markdown fences, no commentary.
+            Schema:
+            {"items":[{"parent_id":"...","parent_front":"...","sentence":"...","translation":"...","phonics":"..."}]}
+            Rules:
+            - Exactly \(examplesPerCard) items per seed card
+            - parent_id MUST be the seed card id from the input
+            - parent_front should match that seed's front
+            - sentence MUST naturally use that card's front word/phrase
+            - Vary context across examples (daily life, questions, negation, work/study, etc.)
+            - translation is the meaning of sentence (same language as the card's back when possible)
+            - phonics: include pinyin when sentence is Chinese; otherwise omit or empty string
+            - Do not invent unrelated new headwords as the learning target
+            """
+        }
+
+        let user: String
+        if appLanguage == .zh {
+            user = """
+            请为以下词汇闪卡生成练习例句（每卡 \(examplesPerCard) 条）：
+            \(seedsJSON)
+            """
+        } else {
+            user = """
+            Generate practice example sentences for these vocabulary flashcards (\(examplesPerCard) per card):
+            \(seedsJSON)
+            """
+        }
+
+        return [
+            ChatMessage(role: "system", content: system),
+            ChatMessage(role: "user", content: user)
+        ]
+    }
+
+    /// Comprehensible pack prompts: baby language + KNOWN_VOCAB scaffold.
+    private static func buildComprehensibleMessages(
         seeds: [Flashcard],
         examplesPerCard: Int,
         knownFronts: [String],
@@ -283,8 +383,122 @@ enum PracticeCardGenerator {
         ]
     }
 
-    /// Single-item regenerate messages with the same comprehensible scaffold as pack generation.
+    /// Single-item regenerate messages; dual-path like pack generation.
     static func buildSingleRegenerateMessages(
+        seed: Flashcard,
+        existingSentences: [String],
+        knownFronts: [String],
+        style: PracticeSentenceStyle = .comprehensible,
+        appLanguage: AppLanguage
+    ) -> [ChatMessage] {
+        switch style {
+        case .natural:
+            return buildNaturalSingleRegenerateMessages(
+                seed: seed,
+                existingSentences: existingSentences,
+                appLanguage: appLanguage
+            )
+        case .comprehensible:
+            return buildComprehensibleSingleRegenerateMessages(
+                seed: seed,
+                existingSentences: existingSentences,
+                knownFronts: knownFronts,
+                appLanguage: appLanguage
+            )
+        }
+    }
+
+    /// Legacy freer single-item regenerate prompts (full opt-out).
+    static func buildNaturalSingleRegenerateMessages(
+        seed: Flashcard,
+        existingSentences: [String],
+        appLanguage: AppLanguage
+    ) -> [ChatMessage] {
+        let seedPayload = SeedPayload(
+            id: seed.id,
+            front: seed.front,
+            back: seed.back,
+            phonics: seed.phonics
+        )
+        let seedJSON: String
+        if let data = try? JSONEncoder().encode(seedPayload),
+           let string = String(data: data, encoding: .utf8) {
+            seedJSON = string
+        } else {
+            seedJSON = "{}"
+        }
+
+        let avoided = existingSentences
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+        let avoidedBlock = avoided.isEmpty
+            ? (appLanguage == .zh ? "（无）" : "(none)")
+            : avoided.map { "- \($0)" }.joined(separator: "\n")
+
+        let system: String
+        if appLanguage == .zh {
+            system = """
+            你是语言学习助教。为给定闪卡生成 1 条全新的自然例句。
+            只输出合法 JSON，不要 markdown 代码块，不要解释。
+            JSON 结构：
+            {"items":[{"parent_id":"...","parent_front":"...","sentence":"...","translation":"...","phonics":"..."}]}
+            规则：
+            - 恰好 1 条 item
+            - parent_id 必须等于输入卡的 id
+            - parent_front 应与种子卡的 front 一致
+            - sentence 必须自然使用 front 词汇/短语
+            - 不要与“避免使用的句子”重复或仅做微小改写
+            - translation 为 sentence 的翻译
+            - 含中文时提供 phonics（拼音）
+            """
+        } else {
+            system = """
+            You are a language-learning tutor. Create exactly 1 new natural example sentence for the given flashcard.
+            Output valid JSON only — no markdown fences, no commentary.
+            Schema:
+            {"items":[{"parent_id":"...","parent_front":"...","sentence":"...","translation":"...","phonics":"..."}]}
+            Rules:
+            - Exactly 1 item
+            - parent_id MUST equal the seed card id
+            - parent_front should match the seed's front
+            - sentence MUST naturally use the card's front word/phrase
+            - Do not repeat or lightly rephrase any sentence listed under avoid
+            - translation is the meaning of sentence
+            - Include phonics (pinyin) when the sentence is Chinese
+            """
+        }
+
+        let user: String
+        if appLanguage == .zh {
+            user = """
+            闪卡：
+            \(seedJSON)
+
+            避免使用的句子：
+            \(avoidedBlock)
+
+            请生成 1 条新例句。
+            """
+        } else {
+            user = """
+            Flashcard:
+            \(seedJSON)
+
+            Avoid these sentences:
+            \(avoidedBlock)
+
+            Generate 1 new example sentence.
+            """
+        }
+
+        return [
+            ChatMessage(role: "system", content: system),
+            ChatMessage(role: "user", content: user)
+        ]
+    }
+
+    /// Single-item regenerate with comprehensible scaffold (same policy as pack).
+    private static func buildComprehensibleSingleRegenerateMessages(
         seed: Flashcard,
         existingSentences: [String],
         knownFronts: [String],

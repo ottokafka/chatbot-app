@@ -804,9 +804,40 @@ enum L10n {
     }
 
     static func practicePreviewAINote(_ lang: AppLanguage) -> String {
+        practicePreviewAINote(lang, style: .comprehensible)
+    }
+
+    static func practicePreviewAINote(_ lang: AppLanguage, style: PracticeSentenceStyle) -> String {
+        switch style {
+        case .comprehensible:
+            return lang == .zh
+                ? "由 AI 用你已学的词生成简单练习句。可编辑、重生成；保存会进入「例句」库，不会写入词汇。"
+                : "AI-generated simple practice using words you know. Edit or regenerate; saves go to Examples, not Vocabulary."
+        case .natural:
+            return lang == .zh
+                ? "由 AI 生成自然例句练习。可编辑、重生成；保存会进入「例句」库，不会写入词汇。"
+                : "AI-generated natural practice sentences. Edit or regenerate; saves go to Examples, not Vocabulary."
+        }
+    }
+
+    /// Segmented control label for Simple (comprehensible) practice sentences.
+    static func practiceSentenceStyleSimple(_ lang: AppLanguage) -> String {
+        lang == .zh ? "简单" : "Simple"
+    }
+
+    /// Segmented control label for Natural (legacy freer) practice sentences.
+    static func practiceSentenceStyleNatural(_ lang: AppLanguage) -> String {
+        lang == .zh ? "自然" : "Natural"
+    }
+
+    static func practiceSentenceStyleHelp(_ lang: AppLanguage) -> String {
         lang == .zh
-            ? "由 AI 用你已学的词生成简单练习句。可编辑、重生成；保存会进入「例句」库，不会写入词汇。"
-            : "AI-generated simple practice using words you know. Edit or regenerate; saves go to Examples, not Vocabulary."
+            ? "简单：用你已学的词写短句（默认）。自然：更自由的例句，适合进阶。"
+            : "Simple: short sentences using words you know (default). Natural: freer example sentences for advanced practice."
+    }
+
+    static func practiceSentenceStyleLabel(_ lang: AppLanguage) -> String {
+        lang == .zh ? "例句风格" : "Sentence style"
     }
 
     static func practiceSelectAll(_ lang: AppLanguage) -> String {
