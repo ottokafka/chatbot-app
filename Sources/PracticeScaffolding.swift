@@ -171,3 +171,256 @@ enum PracticeUltraCommonBeginnerContent {
         }
     }
 }
+
+// MARK: - Soft post-generation coverage diagnostics (PR3)
+
+/// Soft coverage result for one practice sentence. Log-only in v1 — never drops cards or retries.
+struct PracticeSentenceDiagnostics: Equatable {
+    let sentence: String
+    /// 0...1 — higher means more of the sentence is explained by known/seed/function/ultra-common pieces.
+    let coverageEstimate: Double
+    let flagged: Bool
+}
+
+/// Soft scaffold coverage: English whitespace/letter tokens + Chinese greedy longest-match CJK.
+/// Allowlist shape matches generation legal set (K5 / K7) so obedient model output is not false-flagged.
+enum PracticeScaffoldValidator {
+    static let coverageFlagThreshold: Double = 0.5
+
+    static let englishFunctionWords: Set<String> = [
+        "a", "an", "the", "i", "you", "he", "she", "it", "we", "they", "me", "my", "your", "his", "her", "its",
+        "our", "their", "is", "are", "am", "was", "were", "be", "do", "does", "did", "not", "no", "yes",
+        "to", "of", "in", "on", "at", "for", "with", "and", "or", "but", "this", "that", "what", "where",
+        "when", "who", "how", "can", "will", "want", "have", "has", "had", "from", "by", "as", "if", "so"
+    ]
+
+    /// Closed-class / ultra-common particles & pronouns for CJK coverage matching.
+    static let chineseParticles: Set<String> = [
+        "的", "了", "吗", "呢", "吧", "啊", "不", "没", "是", "在", "有",
+        "我", "你", "他", "她", "它", "这", "那", "什么", "很", "也",
+        "都", "和", "就", "要", "会", "能"
+    ]
+
+    /// Shared with sparse-prompt escape — do not duplicate word lists.
+    static var ultraCommonBeginnerContentEnglish: Set<String> {
+        Set(PracticeUltraCommonBeginnerContent.english.map { $0.lowercased() })
+    }
+
+    static var ultraCommonBeginnerContentChinese: Set<String> {
+        Set(PracticeUltraCommonBeginnerContent.chinese)
+    }
+
+    /// Auto-detect: CJK in sentence → Chinese greedy match; else English tokens.
+    static func diagnose(
+        sentence: String,
+        knownFronts: [String],
+        seedFronts: [String]
+    ) -> PracticeSentenceDiagnostics {
+        if PracticeScaffolding.containsCJK(sentence) {
+            return diagnoseChinese(
+                sentence: sentence,
+                knownFronts: knownFronts,
+                seedFronts: seedFronts
+            )
+        }
+        return diagnoseEnglish(
+            sentence: sentence,
+            knownFronts: knownFronts,
+            seedFronts: seedFronts
+        )
+    }
+
+    /// English: lowercase, split on non-letter boundaries; drop empty / pure-digit tokens.
+    /// Covered if token is in known ∪ seed (tokenized) ∪ function words ∪ ultra-common beginners.
+    static func diagnoseEnglish(
+        sentence: String,
+        knownFronts: [String],
+        seedFronts: [String]
+    ) -> PracticeSentenceDiagnostics {
+        let tokens = englishTokens(from: sentence)
+        guard !tokens.isEmpty else {
+            return PracticeSentenceDiagnostics(
+                sentence: sentence,
+                coverageEstimate: 1.0,
+                flagged: false
+            )
+        }
+
+        var allow = englishFunctionWords.union(ultraCommonBeginnerContentEnglish)
+        for front in knownFronts + seedFronts {
+            for token in englishTokens(from: front) {
+                allow.insert(token)
+            }
+        }
+
+        let covered = tokens.reduce(0) { count, token in
+            count + (allow.contains(token) ? 1 : 0)
+        }
+        let estimate = Double(covered) / Double(tokens.count)
+        return PracticeSentenceDiagnostics(
+            sentence: sentence,
+            coverageEstimate: estimate,
+            flagged: estimate < coverageFlagThreshold
+        )
+    }
+
+    /// Chinese: CJK runs only; greedy longest-match against known ∪ seed ∪ particles ∪ ultra-common.
+    static func diagnoseChinese(
+        sentence: String,
+        knownFronts: [String],
+        seedFronts: [String]
+    ) -> PracticeSentenceDiagnostics {
+        let runs = cjkRuns(from: sentence)
+        let totalCJK = runs.reduce(0) { $0 + $1.count }
+        guard totalCJK > 0 else {
+            return PracticeSentenceDiagnostics(
+                sentence: sentence,
+                coverageEstimate: 1.0,
+                flagged: false
+            )
+        }
+
+        var matchKeys = Set<String>()
+        matchKeys.formUnion(chineseParticles)
+        matchKeys.formUnion(ultraCommonBeginnerContentChinese)
+        for front in knownFronts + seedFronts {
+            let trimmed = front.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmed.isEmpty, PracticeScaffolding.containsCJK(trimmed) else { continue }
+            matchKeys.insert(trimmed)
+        }
+        // Longest-first is critical (学习 before 学).
+        let sortedKeys = matchKeys.sorted { $0.count > $1.count }
+
+        var covered = 0
+        for run in runs {
+            covered += greedyLongestMatchCoveredCount(run: run, keysLongestFirst: sortedKeys)
+        }
+
+        let estimate = Double(covered) / Double(totalCJK)
+        return PracticeSentenceDiagnostics(
+            sentence: sentence,
+            coverageEstimate: estimate,
+            flagged: estimate < coverageFlagThreshold
+        )
+    }
+
+    /// Logs a single low-coverage warning when `diagnostics.flagged`. Never mutates cards.
+    static func logIfFlagged(
+        _ diagnostics: PracticeSentenceDiagnostics,
+        knownFrontsCount: Int,
+        onLog: ((String) -> Void)?
+    ) {
+        guard diagnostics.flagged else { return }
+        let sparse = knownFrontsCount < PracticeGenerationConfig.minKnownForRichScaffold
+        let sparseTag = sparse ? " sparse=true" : ""
+        let snippet = truncatedForLog(diagnostics.sentence)
+        let coverage = String(format: "%.2f", diagnostics.coverageEstimate)
+        onLog?(
+            "Practice scaffold warn: low coverage (\(coverage))\(sparseTag) for \"\(snippet)\""
+        )
+    }
+
+    /// Runs diagnostics on each card and logs warnings only.
+    /// - Parameter seedFronts: **All** pack seed fronts for pack path; single seed front for regenerate.
+    static func logCoverageForCards(
+        _ cards: [PracticeCard],
+        knownFronts: [String],
+        seedFronts: [String],
+        onLog: ((String) -> Void)?
+    ) {
+        let knownCount = knownFronts.count
+        for card in cards {
+            let diagnostics = diagnose(
+                sentence: card.front,
+                knownFronts: knownFronts,
+                seedFronts: seedFronts
+            )
+            logIfFlagged(diagnostics, knownFrontsCount: knownCount, onLog: onLog)
+        }
+    }
+
+    // MARK: - Token / match helpers
+
+    /// Letter-runs only (whitespace + punctuation split). Lowercased. Pure digits never appear.
+    static func englishTokens(from text: String) -> [String] {
+        let lower = text.lowercased()
+        var tokens: [String] = []
+        var current = ""
+        for ch in lower {
+            if ch.isLetter {
+                current.append(ch)
+            } else if !current.isEmpty {
+                tokens.append(current)
+                current = ""
+            }
+        }
+        if !current.isEmpty {
+            tokens.append(current)
+        }
+        return tokens
+    }
+
+    /// Contiguous CJK Unified / Ext A / Compatibility runs (same ranges as `containsChineseCharacters`).
+    static func cjkRuns(from text: String) -> [String] {
+        var runs: [String] = []
+        var current = ""
+        for ch in text {
+            if isCJKCharacter(ch) {
+                current.append(ch)
+            } else if !current.isEmpty {
+                runs.append(current)
+                current = ""
+            }
+        }
+        if !current.isEmpty {
+            runs.append(current)
+        }
+        return runs
+    }
+
+    private static func isCJKCharacter(_ ch: Character) -> Bool {
+        for scalar in ch.unicodeScalars {
+            let value = scalar.value
+            if (value >= 0x4E00 && value <= 0x9FFF)
+                || (value >= 0x3400 && value <= 0x4DBF)
+                || (value >= 0xF900 && value <= 0xFAFF) {
+                return true
+            }
+        }
+        return false
+    }
+
+    /// Walk one CJK run left-to-right; return count of covered characters.
+    private static func greedyLongestMatchCoveredCount(
+        run: String,
+        keysLongestFirst: [String]
+    ) -> Int {
+        var covered = 0
+        var idx = run.startIndex
+        while idx < run.endIndex {
+            let rest = run[idx...]
+            var matchedLength = 0
+            for key in keysLongestFirst {
+                if key.isEmpty { continue }
+                if rest.hasPrefix(key) {
+                    matchedLength = key.count
+                    break
+                }
+            }
+            if matchedLength > 0 {
+                covered += matchedLength
+                idx = run.index(idx, offsetBy: matchedLength)
+            } else {
+                idx = run.index(after: idx)
+            }
+        }
+        return covered
+    }
+
+    private static func truncatedForLog(_ sentence: String, maxChars: Int = 48) -> String {
+        let trimmed = sentence.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.count <= maxChars { return trimmed }
+        let end = trimmed.index(trimmed.startIndex, offsetBy: maxChars)
+        return String(trimmed[..<end]) + "…"
+    }
+}

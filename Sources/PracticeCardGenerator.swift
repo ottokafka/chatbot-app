@@ -81,6 +81,15 @@ enum PracticeCardGenerator {
         let cards = try parsePracticeCards(from: trimmed, seeds: seeds)
         guard !cards.isEmpty else { throw GeneratorError.noValidItems }
 
+        // Soft coverage diagnostics only — never drop cards or auto-retry (K7).
+        // Pack path: seedFronts = ALL pack seed fronts (co-seed content is legal by K3).
+        PracticeScaffoldValidator.logCoverageForCards(
+            cards,
+            knownFronts: knownFronts,
+            seedFronts: seeds.map(\.front),
+            onLog: apiManager.onLog
+        )
+
         return PracticePack(sourceDueCount: seeds.count, cards: cards)
     }
 
@@ -119,6 +128,15 @@ enum PracticeCardGenerator {
 
         let cards = try parsePracticeCards(from: trimmed, seeds: [seed])
         guard let card = cards.first else { throw GeneratorError.noValidItems }
+
+        // Soft coverage diagnostics only — regenerate seedFronts = that one seed.
+        PracticeScaffoldValidator.logCoverageForCards(
+            [card],
+            knownFronts: knownFronts,
+            seedFronts: [seed.front],
+            onLog: apiManager.onLog
+        )
+
         return card
     }
 
