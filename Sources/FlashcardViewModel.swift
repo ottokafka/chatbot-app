@@ -714,6 +714,13 @@ final class FlashcardViewModel: ObservableObject {
         let resolvedModel = lastPracticeLLMModel ?? "default"
         let sourceName = source.analyticsName
 
+        // PR1: resolve known scaffold fronts (count logged only; prompts wired in PR2).
+        let knownFronts = PracticeKnownVocabulary.resolve(
+            from: flashcards,
+            seedFrontsForScriptHint: seeds.map(\.front)
+        )
+        onLog?("Practice known scaffold fronts: \(knownFronts.count)")
+
         practiceGenerationTask = Task { [weak self] in
             guard let self else { return }
             do {

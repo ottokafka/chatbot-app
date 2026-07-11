@@ -362,7 +362,7 @@ enum PracticeCardGenerator {
     }
 
     private static func normalizeKey(_ value: String) -> String {
-        value.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        PracticeScaffolding.normalizeFrontKey(value)
     }
 
     private static func resolveParent(

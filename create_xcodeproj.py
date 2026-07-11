@@ -31,6 +31,7 @@ def main():
         "Platform+Colors.swift",
         "PracticeCardGenerator.swift",
         "PracticePack.swift",
+        "PracticeScaffolding.swift",
         "PracticePreviewSheet.swift",
         "PracticeSessionView.swift",
         "SelectableMessageText.swift",
