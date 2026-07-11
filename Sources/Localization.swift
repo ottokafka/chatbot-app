@@ -621,6 +621,16 @@ enum L10n {
         lang == .zh ? "第 \(current) / \(total) 张" : "Card \(current) of \(total)"
     }
 
+    static func autoPlayAudio(_ lang: AppLanguage) -> String {
+        lang == .zh ? "自动播放" : "Auto-play"
+    }
+
+    static func autoPlayAudioHelp(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "自动朗读每张卡片的正面"
+            : "Automatically play the front of each card"
+    }
+
     static func tapToReveal(_ lang: AppLanguage) -> String {
         lang == .zh ? "点击显示答案" : "Tap to reveal"
     }

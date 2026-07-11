@@ -24,6 +24,19 @@ struct PracticeSessionView: View {
         }
         .frame(minWidth: 560, minHeight: 520)
         .background(Color.platformControlBackground)
+        .onAppear {
+            autoPlayFrontIfNeeded()
+        }
+        .onChange(of: flashcardVM.currentPracticeIndex) { _, _ in
+            autoPlayFrontIfNeeded()
+        }
+        .onChange(of: chatVM.isFlashcardAutoPlayEnabled) { _, enabled in
+            if enabled {
+                autoPlayFrontIfNeeded()
+            } else {
+                chatVM.stopPlayback()
+            }
+        }
         .onDisappear {
             chatVM.clearEphemeralAudioCache()
         }
@@ -59,6 +72,8 @@ struct PracticeSessionView: View {
 
             Spacer()
 
+            autoPlayToggleButton
+
             Button(L10n.done(lang)) {
                 flashcardVM.discardPracticePack()
                 dismiss()
@@ -67,6 +82,47 @@ struct PracticeSessionView: View {
         }
         .padding()
         .background(Color.platformWindowBackground)
+    }
+
+    private var autoPlayToggleButton: some View {
+        Button {
+            chatVM.isFlashcardAutoPlayEnabled.toggle()
+        } label: {
+            Image(systemName: chatVM.isFlashcardAutoPlayEnabled
+                  ? "speaker.wave.2.fill"
+                  : "speaker.slash")
+                .font(.body)
+                .foregroundColor(chatVM.isFlashcardAutoPlayEnabled ? .accentColor : .secondary)
+                .frame(width: 28, height: 28)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.borderless)
+        .help(L10n.autoPlayAudioHelp(lang))
+        .accessibilityLabel(L10n.autoPlayAudio(lang))
+        .accessibilityValue(
+            chatVM.isFlashcardAutoPlayEnabled
+                ? Text(lang == .zh ? "开" : "On")
+                : Text(lang == .zh ? "关" : "Off")
+        )
+        .accessibilityHint(L10n.autoPlayAudioHelp(lang))
+    }
+
+    /// Speaks the current practice card's front when auto-play is enabled.
+    private func autoPlayFrontIfNeeded() {
+        guard chatVM.isFlashcardAutoPlayEnabled else { return }
+        guard !flashcardVM.practiceComplete else { return }
+        guard let card = flashcardVM.currentPracticeCard else { return }
+
+        let front = card.front.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !front.isEmpty else { return }
+
+        let playbackId = "practice-\(card.id)-front"
+        if chatVM.isPlayingEphemeralAudio(id: playbackId)
+            || chatVM.isGeneratingEphemeralAudio(id: playbackId) {
+            return
+        }
+
+        chatVM.playEphemeralSpeech(text: front, playbackId: playbackId)
     }
 
     private func practiceCardView(_ card: PracticeCard) -> some View {

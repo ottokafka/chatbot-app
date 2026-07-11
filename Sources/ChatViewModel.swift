@@ -91,6 +91,10 @@ class ChatViewModel: ObservableObject {
     @Published var isPhonicsEnabled: Bool {
         didSet { UserDefaults.standard.set(isPhonicsEnabled, forKey: "isPhonicsEnabled") }
     }
+    /// When true, flashcard study/practice auto-plays the front of each card.
+    @Published var isFlashcardAutoPlayEnabled: Bool {
+        didSet { UserDefaults.standard.set(isFlashcardAutoPlayEnabled, forKey: "isFlashcardAutoPlayEnabled") }
+    }
     /// Voice pipeline: direct STT only, or STT + LLM correction/practice.
     @Published var speechPipelineMode: SpeechPipelineMode {
         didSet {
@@ -132,6 +136,7 @@ class ChatViewModel: ObservableObject {
         
         self.isTranslationEnabled = UserDefaults.standard.object(forKey: "isTranslationEnabled") as? Bool ?? true
         self.isPhonicsEnabled = UserDefaults.standard.object(forKey: "isPhonicsEnabled") as? Bool ?? true
+        self.isFlashcardAutoPlayEnabled = UserDefaults.standard.object(forKey: "isFlashcardAutoPlayEnabled") as? Bool ?? true
         if let savedMode = UserDefaults.standard.string(forKey: "speechPipelineMode"),
            let mode = SpeechPipelineMode(rawValue: savedMode) {
             self.speechPipelineMode = mode
