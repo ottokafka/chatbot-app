@@ -714,12 +714,20 @@ final class FlashcardViewModel: ObservableObject {
         let resolvedModel = lastPracticeLLMModel ?? "default"
         let sourceName = source.analyticsName
 
-        // PR1: resolve known scaffold fronts (count logged only; prompts wired in PR2).
+        // PR1: resolve known scaffold fronts (logged only; prompts wired in PR2).
         let knownFronts = PracticeKnownVocabulary.resolve(
             from: flashcards,
             seedFrontsForScriptHint: seeds.map(\.front)
         )
-        onLog?("Practice known scaffold fronts: \(knownFronts.count)")
+        // Approx char total matches resolve budget (+1 separator slack between items).
+        let knownChars = knownFronts.isEmpty
+            ? 0
+            : knownFronts.reduce(0) { $0 + $1.count } + (knownFronts.count - 1)
+        let sparse = knownFronts.count < PracticeGenerationConfig.minKnownForRichScaffold
+        // style hardcodes .comprehensible until PR2 plumbs PracticeSentenceStyle into generatePack.
+        onLog?(
+            "Practice known scaffold fronts: \(knownFronts.count), knownChars=\(knownChars), style=comprehensible, sparse=\(sparse)"
+        )
 
         practiceGenerationTask = Task { [weak self] in
             guard let self else { return }

@@ -76,10 +76,14 @@ enum PracticeKnownVocabulary {
         limit: Int = PracticeGenerationConfig.maxKnownScaffoldWords,
         maxChars: Int = PracticeGenerationConfig.maxKnownScaffoldChars
     ) -> [String] {
+        // Custom/test callers may pass limit <= 0; do not emit a free first front.
+        guard limit > 0 else { return [] }
+
         let vocab = flashcards.filter { $0.kind == .vocab }
         let known = vocab.filter { card in
             card.fsrsCard.state != .new || card.fsrsCard.reps >= 1
         }
+
         let ranked = known.sorted { a, b in
             if a.fsrsCard.stability != b.fsrsCard.stability {
                 return a.fsrsCard.stability > b.fsrsCard.stability
@@ -87,8 +91,11 @@ enum PracticeKnownVocabulary {
             if a.fsrsCard.reps != b.fsrsCard.reps {
                 return a.fsrsCard.reps > b.fsrsCard.reps
             }
-            if a.front.count != b.front.count {
-                return a.front.count < b.front.count
+            // Rank by trimmed length so length order matches emitted scaffold tokens.
+            let aLen = a.front.trimmingCharacters(in: .whitespacesAndNewlines).count
+            let bLen = b.front.trimmingCharacters(in: .whitespacesAndNewlines).count
+            if aLen != bLen {
+                return aLen < bLen
             }
             return PracticeScaffolding.normalizeFrontKey(a.front)
                 < PracticeScaffolding.normalizeFrontKey(b.front)
@@ -104,6 +111,7 @@ enum PracticeKnownVocabulary {
         fronts.reserveCapacity(min(limit, ordered.count))
 
         for card in ordered {
+            if fronts.count >= limit { break }
             let front = card.front.trimmingCharacters(in: .whitespacesAndNewlines)
             guard PracticeScaffolding.isEligibleKnownFront(front) else { continue }
             let key = PracticeScaffolding.normalizeFrontKey(front)
@@ -113,7 +121,6 @@ enum PracticeKnownVocabulary {
             if charBudget + added > maxChars { continue }
             fronts.append(front)
             charBudget += added
-            if fronts.count >= limit { break }
         }
         return fronts
     }

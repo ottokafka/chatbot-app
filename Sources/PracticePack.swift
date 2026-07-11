@@ -52,10 +52,9 @@ struct PracticePack: Identifiable, Equatable {
 }
 
 /// How strictly practice sentences should stay simple / scaffolded.
-/// v1 / PR2: only `.comprehensible` is used in prompts.
-/// `.natural` is a stub for PR4 (full opt-out of baby + known constraints).
+/// Forward declaration: PR2 wires `.comprehensible` into prompts; PR4 adds `.natural` opt-out.
 enum PracticeSentenceStyle: String, CaseIterable, Equatable {
-    /// A0–A1 structure + prefer known vocab (default product behavior).
+    /// A0–A1 structure + prefer known vocab (default product behavior). Unused until PR2.
     case comprehensible
     /// Legacy natural sentences — full opt-out; prompt branch lands in PR4 only.
     case natural
@@ -71,11 +70,12 @@ enum PracticeGenerationConfig {
     /// Smaller budget when regenerating a single practice example.
     static let singleExampleMaxTokens = 500
 
-    /// Max known fronts injected into the prompt (count cap).
+    /// Max known fronts injected into the prompt (count cap). Used by PR1 resolver.
     static let maxKnownScaffoldWords = 80
-    /// Secondary cap on total characters of known fronts after ranking (input budget).
+    /// Secondary cap on total characters of known fronts after ranking (input budget). Used by PR1 resolver.
     static let maxKnownScaffoldChars = 1500
     /// Below this count, prompts emphasize baby language + sparse content-word escape.
+    /// Used by PR1 sparse logging; PR2 also uses it in prompt branching.
     static let minKnownForRichScaffold = 8
     /// CJK front max length (characters).
     static let maxKnownFrontCharacterCountCJK = 12
@@ -83,9 +83,9 @@ enum PracticeGenerationConfig {
     static let maxKnownFrontCharacterCountLatin = 24
     /// Latin / non-CJK front max whitespace-separated tokens.
     static let maxKnownFrontTokenCountLatin = 3
-    /// Soft target length for generated Chinese sentences (prompt interpolation).
+    /// Soft target length for generated Chinese sentences (prompt interpolation). Unused until PR2.
     static let babyLanguageMaxCharsChinese = 20
-    /// Soft target length for generated English sentences (prompt interpolation).
+    /// Soft target length for generated English sentences (prompt interpolation). Unused until PR2.
     static let babyLanguageMaxWordsEnglish = 10
 }
 
