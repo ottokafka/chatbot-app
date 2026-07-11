@@ -125,3 +125,25 @@ enum PracticeKnownVocabulary {
         return fronts
     }
 }
+
+/// Sparse-escape beginner content words (K5) for prompts; PR3 also uses these in soft validation.
+enum PracticeUltraCommonBeginnerContent {
+    /// Ultra-high-frequency English content words for a basic SVO frame when known is sparse.
+    static let english: [String] = [
+        "water", "person", "people", "eat", "go", "want", "like", "see",
+        "come", "have", "good", "bad", "big", "small", "day", "home",
+        "food", "book", "friend", "time", "make", "say", "know", "think"
+    ]
+
+    /// Ultra-high-frequency Chinese content words for a basic SVO frame when known is sparse.
+    static let chinese: [String] = [
+        "水", "人", "吃", "去", "要", "看", "来", "有", "好", "大",
+        "小", "天", "家", "书", "朋友", "说", "会", "很", "不", "在"
+    ]
+
+    /// Comma-separated list for interpolating into sparse system-prompt bullets.
+    static func promptList(for appLanguage: AppLanguage) -> String {
+        let words = appLanguage == .zh ? chinese : english
+        return words.joined(separator: appLanguage == .zh ? "、" : ", ")
+    }
+}

@@ -708,13 +708,11 @@ final class FlashcardViewModel: ObservableObject {
         practicePack = nil
         selectedPracticeCardIds = []
         savedPracticeCardIds = []
-        logPracticeGenerationStart(source: source, seedCards: seedCards, endpoint: endpoint)
-
         let seeds = seedCards
         let resolvedModel = lastPracticeLLMModel ?? "default"
         let sourceName = source.analyticsName
 
-        // PR1: resolve known scaffold fronts (logged only; prompts wired in PR2).
+        // Resolve known scaffold fronts (no seed-id exclusion — multi-seed co-occurrence is legal).
         let knownFronts = PracticeKnownVocabulary.resolve(
             from: flashcards,
             seedFrontsForScriptHint: seeds.map(\.front)
@@ -724,9 +722,13 @@ final class FlashcardViewModel: ObservableObject {
             ? 0
             : knownFronts.reduce(0) { $0 + $1.count } + (knownFronts.count - 1)
         let sparse = knownFronts.count < PracticeGenerationConfig.minKnownForRichScaffold
-        // style hardcodes .comprehensible until PR2 plumbs PracticeSentenceStyle into generatePack.
-        onLog?(
-            "Practice known scaffold fronts: \(knownFronts.count), knownChars=\(knownChars), style=comprehensible, sparse=\(sparse)"
+        logPracticeGenerationStart(
+            source: source,
+            seedCards: seedCards,
+            endpoint: endpoint,
+            knownCount: knownFronts.count,
+            knownChars: knownChars,
+            sparse: sparse
         )
 
         practiceGenerationTask = Task { [weak self] in
@@ -734,6 +736,8 @@ final class FlashcardViewModel: ObservableObject {
             do {
                 let pack = try await PracticeCardGenerator.generatePack(
                     from: seeds,
+                    knownFronts: knownFronts,
+                    style: .comprehensible,
                     endpoint: endpoint,
                     model: resolvedModel,
                     appLanguage: appLanguage,
@@ -881,10 +885,21 @@ final class FlashcardViewModel: ObservableObject {
         let appLanguage = lastPracticeAppLanguage
         let avoid = pack.cards.map(\.front)
 
+        // Fresh known set at regenerate time; do not exclude seed id.
+        let knownFronts = PracticeKnownVocabulary.resolve(
+            from: flashcards,
+            seedFrontsForScriptHint: [seed.front]
+        )
+        let knownChars = knownFronts.isEmpty
+            ? 0
+            : knownFronts.reduce(0) { $0 + $1.count } + (knownFronts.count - 1)
+
         cancelItemRegeneration(id: id)
         regeneratingPracticeCardIds.insert(id)
         practiceError = nil
-        onLog?("Practice single regenerate started for parent \"\(seed.front)\"")
+        onLog?(
+            "Practice single regenerate started for parent \"\(seed.front)\", known=\(knownFronts.count) knownChars=\(knownChars) style=comprehensible"
+        )
 
         let task = Task { [weak self] in
             guard let self else { return }
@@ -896,6 +911,8 @@ final class FlashcardViewModel: ObservableObject {
                 let generated = try await PracticeCardGenerator.regenerateExample(
                     seed: seed,
                     existingSentences: avoid,
+                    knownFronts: knownFronts,
+                    style: .comprehensible,
                     endpoint: endpoint,
                     model: model,
                     appLanguage: appLanguage,
@@ -1171,10 +1188,13 @@ final class FlashcardViewModel: ObservableObject {
     private func logPracticeGenerationStart(
         source: PracticeSeedSource,
         seedCards: [Flashcard],
-        endpoint: String
+        endpoint: String,
+        knownCount: Int,
+        knownChars: Int,
+        sparse: Bool
     ) {
-        // Canonical analytics-style line (phase 3).
-        var detail = "Practice generation from \(source.analyticsName) (\(seedCards.count) seeds)"
+        // Canonical analytics-style line (known scaffold + style).
+        var detail = "Practice generation from \(source.analyticsName) (\(seedCards.count) seeds), \(knownCount) known-scaffold words, knownChars=\(knownChars), style=comprehensible, sparse=\(sparse)"
         if source == .lastStudySession, let session = lastStudySession {
             let weakIds = Set(session.gradedEntries.filter(\.isWeak).map(\.id))
             let weakInSeeds = seedCards.filter { weakIds.contains($0.id) }.count

@@ -805,8 +805,8 @@ enum L10n {
 
     static func practicePreviewAINote(_ lang: AppLanguage) -> String {
         lang == .zh
-            ? "由 AI 根据词汇生成。可编辑、重生成；保存会进入「例句」库，不会写入词汇。"
-            : "AI-generated from vocabulary. Edit or regenerate; saves go to Examples, not Vocabulary."
+            ? "由 AI 用你已学的词生成简单练习句。可编辑、重生成；保存会进入「例句」库，不会写入词汇。"
+            : "AI-generated simple practice using words you know. Edit or regenerate; saves go to Examples, not Vocabulary."
     }
 
     static func practiceSelectAll(_ lang: AppLanguage) -> String {

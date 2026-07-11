@@ -52,9 +52,9 @@ struct PracticePack: Identifiable, Equatable {
 }
 
 /// How strictly practice sentences should stay simple / scaffolded.
-/// Forward declaration: PR2 wires `.comprehensible` into prompts; PR4 adds `.natural` opt-out.
+/// PR2: only `.comprehensible` is implemented in prompts; PR4 adds `.natural` opt-out.
 enum PracticeSentenceStyle: String, CaseIterable, Equatable {
-    /// A0–A1 structure + prefer known vocab (default product behavior). Unused until PR2.
+    /// A0–A1 structure + prefer known vocab (default product behavior).
     case comprehensible
     /// Legacy natural sentences — full opt-out; prompt branch lands in PR4 only.
     case natural
@@ -83,9 +83,9 @@ enum PracticeGenerationConfig {
     static let maxKnownFrontCharacterCountLatin = 24
     /// Latin / non-CJK front max whitespace-separated tokens.
     static let maxKnownFrontTokenCountLatin = 3
-    /// Soft target length for generated Chinese sentences (prompt interpolation). Unused until PR2.
+    /// Soft target length for generated Chinese sentences (prompt interpolation).
     static let babyLanguageMaxCharsChinese = 20
-    /// Soft target length for generated English sentences (prompt interpolation). Unused until PR2.
+    /// Soft target length for generated English sentences (prompt interpolation).
     static let babyLanguageMaxWordsEnglish = 10
 }
 
