@@ -147,7 +147,8 @@ final class SpeakingSessionViewModel: ObservableObject {
         targets: [Flashcard],
         knownFronts: [String],
         topicHint: String,
-        encourageTargetCoverage: Bool
+        encourageTargetCoverage: Bool,
+        forceTargetCoverage: Bool = false
     ) {
         pendingConfig = SpeakingSessionConfig(
             seedSource: seedSource,
@@ -155,6 +156,7 @@ final class SpeakingSessionViewModel: ObservableObject {
             knownFronts: knownFronts,
             topicHint: topicHint,
             encourageTargetCoverage: encourageTargetCoverage,
+            forceTargetCoverage: forceTargetCoverage,
             maxAssistantCharsChinese: PracticeGenerationConfig.babyLanguageMaxCharsChinese,
             maxAssistantWordsEnglish: PracticeGenerationConfig.babyLanguageMaxWordsEnglish,
             appLanguage: appLanguage,
@@ -162,7 +164,7 @@ final class SpeakingSessionViewModel: ObservableObject {
             speechCorrectionEnabled: true
         )
         pendingUserText = nil
-        log("Speaking: prepareSetup source=\(seedSource.analyticsName) targets=\(targets.count) known=\(knownFronts.count) encourage=\(encourageTargetCoverage)")
+        log("Speaking: prepareSetup source=\(seedSource.analyticsName) targets=\(targets.count) known=\(knownFronts.count) encourage=\(encourageTargetCoverage) force=\(forceTargetCoverage)")
     }
 
     // MARK: - Session lifecycle
@@ -548,11 +550,18 @@ final class SpeakingSessionViewModel: ObservableObject {
             targets: targets,
             script: current.config.script
         )
+        let previouslyUncovered = current.uncoveredTargetFronts.count
         let covered = Set(current.coveredTargetFronts + hits)
         current.uncoveredTargetFronts = SpeakingTargetTracker.remaining(
             targets: targets,
             covered: covered
         )
+        if current.config.forceTargetCoverage,
+           !targets.isEmpty,
+           current.uncoveredTargetFronts.isEmpty,
+           previouslyUncovered > 0 {
+            log("Speaking: force coverage complete — all \(targets.count) targets used by learner")
+        }
         let userTurn = SpeakingTurn(
             role: .user,
             content: content,

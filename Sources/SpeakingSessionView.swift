@@ -147,6 +147,12 @@ struct SpeakingSessionView: View {
                 .padding(.horizontal)
                 .padding(.vertical, 8)
 
+            if session.config.forceTargetCoverage, session.allTargetsCoveredByUser {
+                challengeCompleteBanner(total: session.config.targetFronts.count)
+                    .padding(.horizontal)
+                    .padding(.bottom, 6)
+            }
+
             if session.turns.count >= SpeakingSessionLimits.softLengthHintTurns {
                 Text(L10n.speakLengthHint(lang, turns: SpeakingSessionLimits.softLengthHintTurns))
                     .font(.caption)
@@ -212,6 +218,22 @@ struct SpeakingSessionView: View {
                 }
             }
         }
+    }
+
+    private func challengeCompleteBanner(total: Int) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: "checkmark.seal.fill")
+                .foregroundStyle(.green)
+            Text(L10n.speakChallengeCompleteBanner(lang, total: total))
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .foregroundStyle(.primary)
+            Spacer(minLength: 0)
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.green.opacity(0.15))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
     private func errorBanner(_ message: String, session: SpeakingSession) -> some View {
@@ -472,18 +494,32 @@ struct SpeakingSessionView: View {
         let total = session?.config.targetFronts.count ?? 0
         let turnCount = session?.turns.count ?? 0
         let uncovered = session?.uncoveredTargetFronts ?? []
+        let forceMode = session?.config.forceTargetCoverage == true
+        let allCovered = session?.allTargetsCoveredByUser == true
 
         return VStack(alignment: .leading, spacing: 16) {
             Text(L10n.speakSummaryTitle(lang))
                 .font(.title2)
                 .fontWeight(.bold)
 
-            Text(L10n.speakSummarySubtitle(lang))
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+            if forceMode, allCovered {
+                Text(L10n.speakSummaryChallengeCompleteSubtitle(lang))
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.green)
+            } else {
+                Text(L10n.speakSummarySubtitle(lang))
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
 
-            Text(L10n.speakSummaryCoverage(lang, covered: covered, total: total))
-                .font(.body)
+            if forceMode, !allCovered, total > 0 {
+                Text(L10n.speakSummaryForceIncomplete(lang, covered: covered, total: total))
+                    .font(.body)
+            } else {
+                Text(L10n.speakSummaryCoverage(lang, covered: covered, total: total))
+                    .font(.body)
+            }
 
             if !uncovered.isEmpty, covered < total {
                 Text(L10n.speakSummaryUncovered(lang, words: uncovered))

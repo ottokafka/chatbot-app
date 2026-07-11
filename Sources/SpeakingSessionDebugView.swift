@@ -10,6 +10,7 @@ struct SpeakingSessionDebugView: View {
     @State private var knownCSV: String = "hello, water, food, I, you, want, like, eat, drink"
     @State private var topicHint: String = "daily life"
     @State private var encourageCoverage: Bool = true
+    @State private var forceTargetCoverage: Bool = false
     @State private var draftInput: String = ""
 
     var body: some View {
@@ -47,6 +48,7 @@ struct SpeakingSessionDebugView: View {
                 TextField("Known fronts", text: $knownCSV)
                 TextField("Topic hint", text: $topicHint)
                 Toggle("Encourage target coverage", isOn: $encourageCoverage)
+                Toggle("Challenge: use all targets (force)", isOn: $forceTargetCoverage)
                 Toggle("Auto-play assistant TTS", isOn: $speakingVM.autoPlayTTS)
             }
             Section {
@@ -248,7 +250,8 @@ struct SpeakingSessionDebugView: View {
             targets: cards,
             knownFronts: knownFronts,
             topicHint: topicHint,
-            encourageTargetCoverage: encourageCoverage
+            encourageTargetCoverage: encourageCoverage,
+            forceTargetCoverage: forceTargetCoverage
         )
         Task {
             await speakingVM.startSession()

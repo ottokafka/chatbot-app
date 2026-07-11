@@ -40,6 +40,8 @@ struct SpeakingSessionConfig: Equatable {
     var topicHint: String
     /// Soft goal: encourage production of target words (not hard fail). Default **true**.
     var encourageTargetCoverage: Bool
+    /// Hard goal: AI more assertive about remaining targets; celebrate full user coverage. Default **off**.
+    var forceTargetCoverage: Bool
     /// Baby-language length: copied from `PracticeGenerationConfig` at launch.
     var maxAssistantCharsChinese: Int
     var maxAssistantWordsEnglish: Int
@@ -61,12 +63,18 @@ struct SpeakingSessionConfig: Equatable {
         SpeakingScript.resolve(from: targetFronts)
     }
 
+    /// Whether uncovered-target steering should be injected into the system prompt.
+    var steersUncoveredTargets: Bool {
+        forceTargetCoverage || encourageTargetCoverage
+    }
+
     init(
         seedSource: PracticeSeedSource,
         targetCards: [Flashcard],
         knownFronts: [String],
         topicHint: String = "",
         encourageTargetCoverage: Bool = true,
+        forceTargetCoverage: Bool = false,
         maxAssistantCharsChinese: Int = PracticeGenerationConfig.babyLanguageMaxCharsChinese,
         maxAssistantWordsEnglish: Int = PracticeGenerationConfig.babyLanguageMaxWordsEnglish,
         appLanguage: AppLanguage = .en,
@@ -78,6 +86,7 @@ struct SpeakingSessionConfig: Equatable {
         self.knownFronts = knownFronts
         self.topicHint = topicHint
         self.encourageTargetCoverage = encourageTargetCoverage
+        self.forceTargetCoverage = forceTargetCoverage
         self.maxAssistantCharsChinese = maxAssistantCharsChinese
         self.maxAssistantWordsEnglish = maxAssistantWordsEnglish
         self.appLanguage = appLanguage
@@ -189,5 +198,10 @@ struct SpeakingSession: Identifiable, Equatable {
         return config.targetFronts.filter {
             !uncoveredKeys.contains(PracticeScaffolding.normalizeFrontKey($0))
         }
+    }
+
+    /// True when there is at least one target and the learner has produced every target once.
+    var allTargetsCoveredByUser: Bool {
+        !config.targetFronts.isEmpty && uncoveredTargetFronts.isEmpty
     }
 }

@@ -1119,6 +1119,17 @@ enum L10n {
         lang == .zh ? "鼓励我使用目标词" : "Encourage me to use target words"
     }
 
+    /// Optional hard coverage challenge (PR5); default off.
+    static func speakSetupForceCoverage(_ lang: AppLanguage) -> String {
+        lang == .zh ? "挑战：用上全部目标词" : "Challenge: use all target words"
+    }
+
+    static func speakSetupForceCoverageHelp(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "AI 会更主动引导剩余目标词；用全后会提示完成。"
+            : "AI steers remaining targets more firmly; celebrate when you’ve used them all."
+    }
+
     static func speakSetupTargetsLabel(_ lang: AppLanguage) -> String {
         lang == .zh ? "目标词" : "Targets"
     }
@@ -1208,6 +1219,21 @@ enum L10n {
             : "Nice work — you practiced these words in real conversation."
     }
 
+    /// In-session banner when force mode and every target was produced by the learner.
+    static func speakChallengeCompleteBanner(_ lang: AppLanguage, total: Int) -> String {
+        if lang == .zh {
+            return "挑战完成！你用上了全部 \(total) 个目标词。"
+        }
+        return "Challenge complete — you used all \(total) target word\(total == 1 ? "" : "s")!"
+    }
+
+    /// Summary subtitle when force mode and all targets covered.
+    static func speakSummaryChallengeCompleteSubtitle(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "挑战达成 — 每个目标词你都在对话里说出来了。"
+            : "Challenge complete — you produced every target word in conversation."
+    }
+
     static func speakSummaryCoverage(_ lang: AppLanguage, covered: Int, total: Int) -> String {
         if total <= 0 {
             return lang == .zh
@@ -1230,6 +1256,14 @@ enum L10n {
             return "你在对话中用了 \(covered)/\(total) 个目标词。"
         }
         return "You used \(covered) of \(total) target words."
+    }
+
+    /// Summary coverage line when force mode was on and some targets remain.
+    static func speakSummaryForceIncomplete(_ lang: AppLanguage, covered: Int, total: Int) -> String {
+        if lang == .zh {
+            return "挑战进度：\(covered)/\(total) 个目标词 — 还可以继续练剩余的词。"
+        }
+        return "Challenge progress: \(covered) of \(total) targets — keep practicing the rest."
     }
 
     static func speakSummaryUncovered(_ lang: AppLanguage, words: [String]) -> String {

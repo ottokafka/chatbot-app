@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Pre-start config for Speak with AI: seeds, known count, topic, encourage coverage (D7, D22).
+/// Pre-start config for Speak with AI: seeds, known count, topic, encourage + optional force coverage (D7, D22, PR5).
 /// No 文/译 chrome in MVP.
 struct SpeakingSetupSheet: View {
     @ObservedObject var speakingVM: SpeakingSessionViewModel
@@ -10,6 +10,7 @@ struct SpeakingSetupSheet: View {
 
     @State private var topicHint: String = ""
     @State private var encourageCoverage: Bool = true
+    @State private var forceTargetCoverage: Bool = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -35,11 +36,12 @@ struct SpeakingSetupSheet: View {
             }
         }
         .padding(24)
-        .frame(minWidth: 440, minHeight: 420)
+        .frame(minWidth: 440, minHeight: 460)
         .onAppear {
             if let config = speakingVM.pendingConfig {
                 topicHint = config.topicHint
                 encourageCoverage = config.encourageTargetCoverage
+                forceTargetCoverage = config.forceTargetCoverage
             }
         }
     }
@@ -83,6 +85,20 @@ struct SpeakingSetupSheet: View {
 
         Toggle(isOn: $encourageCoverage) {
             Text(L10n.speakSetupEncourageCoverage(lang))
+        }
+        #if os(macOS)
+        .toggleStyle(.checkbox)
+        #else
+        .toggleStyle(.switch)
+        #endif
+
+        Toggle(isOn: $forceTargetCoverage) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(L10n.speakSetupForceCoverage(lang))
+                Text(L10n.speakSetupForceCoverageHelp(lang))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
         }
         #if os(macOS)
         .toggleStyle(.checkbox)
@@ -151,7 +167,8 @@ struct SpeakingSetupSheet: View {
             targets: config.targetCards,
             knownFronts: config.knownFronts,
             topicHint: topicHint.trimmingCharacters(in: .whitespacesAndNewlines),
-            encourageTargetCoverage: encourageCoverage
+            encourageTargetCoverage: encourageCoverage,
+            forceTargetCoverage: forceTargetCoverage
         )
         Task {
             await speakingVM.startSession()

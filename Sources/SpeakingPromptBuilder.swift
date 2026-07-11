@@ -12,7 +12,7 @@ enum SpeakingPromptBuilder {
     ) -> [ChatMessage] {
         let system = buildSystemPrompt(
             config: config,
-            uncoveredTargets: config.encourageTargetCoverage ? config.targetFronts : [],
+            uncoveredTargets: config.steersUncoveredTargets ? config.targetFronts : [],
             isOpening: true
         )
         let kickoff = openingKickoffUserMessage(config: config)
@@ -30,7 +30,7 @@ enum SpeakingPromptBuilder {
         historyLimit: Int = defaultHistoryLimit
     ) -> [ChatMessage] {
         let uncoveredForPrompt: [String]
-        if config.encourageTargetCoverage {
+        if config.steersUncoveredTargets {
             uncoveredForPrompt = uncoveredTargets
         } else {
             uncoveredForPrompt = []
@@ -72,7 +72,8 @@ enum SpeakingPromptBuilder {
             forSeedFronts: config.targetFronts,
             appLanguage: config.appLanguage
         )
-        let includeUncovered = config.encourageTargetCoverage
+        let includeUncovered = config.steersUncoveredTargets
+        let forceCoverage = config.forceTargetCoverage
         let uncoveredJSON = encodeStringArray(uncoveredTargets)
 
         if config.appLanguage == .zh {
@@ -83,6 +84,7 @@ enum SpeakingPromptBuilder {
                 targetJSON: targetJSON,
                 uncoveredJSON: uncoveredJSON,
                 includeUncovered: includeUncovered,
+                forceCoverage: forceCoverage,
                 topic: topic,
                 sparse: sparse,
                 beginnerList: beginnerList,
@@ -96,6 +98,7 @@ enum SpeakingPromptBuilder {
             targetJSON: targetJSON,
             uncoveredJSON: uncoveredJSON,
             includeUncovered: includeUncovered,
+            forceCoverage: forceCoverage,
             topic: topic,
             sparse: sparse,
             beginnerList: beginnerList,
@@ -110,6 +113,7 @@ enum SpeakingPromptBuilder {
         targetJSON: String,
         uncoveredJSON: String,
         includeUncovered: Bool,
+        forceCoverage: Bool,
         topic: String,
         sparse: Bool,
         beginnerList: String,
@@ -124,10 +128,17 @@ enum SpeakingPromptBuilder {
         - Prefer TARGET_WORDS situations.
         """
         if includeUncovered {
-            s += """
+            if forceCoverage {
+                s += """
 
-            - Gently try to create situations where the learner can use still-uncovered targets; never dump a vocabulary quiz list as dialogue.
-            """
+                - CHALLENGE MODE: deliberately create natural situations so the learner can use each still-uncovered target word at least once. Prioritize remaining UNCOVERED_TARGETS with clear, simple questions or choices that make those words useful. Never dump a vocabulary quiz list as dialogue.
+                """
+            } else {
+                s += """
+
+                - Gently try to create situations where the learner can use still-uncovered targets; never dump a vocabulary quiz list as dialogue.
+                """
+            }
         }
         s += """
 
@@ -142,12 +153,21 @@ enum SpeakingPromptBuilder {
         \(targetJSON)
         """
         if includeUncovered {
-            s += """
+            if forceCoverage {
+                s += """
 
 
-            UNCOVERED_TARGETS (soft, learner has not produced yet):
-            \(uncoveredJSON)
-            """
+                UNCOVERED_TARGETS (challenge: steer each remaining word into the situation until used by the learner):
+                \(uncoveredJSON)
+                """
+            } else {
+                s += """
+
+
+                UNCOVERED_TARGETS (soft, learner has not produced yet):
+                \(uncoveredJSON)
+                """
+            }
         }
         s += """
 
@@ -178,11 +198,19 @@ enum SpeakingPromptBuilder {
         }
         if isOpening {
             if includeUncovered {
-                s += """
+                if forceCoverage {
+                    s += """
 
 
-                Your task now: open the conversation with one short greeting and a simple question that invites the learner to use a target word. Plain text only.
-                """
+                    Your task now: open with one short greeting and a simple question that makes an uncovered target natural to say. Plain text only.
+                    """
+                } else {
+                    s += """
+
+
+                    Your task now: open the conversation with one short greeting and a simple question that invites the learner to use a target word. Plain text only.
+                    """
+                }
             } else {
                 s += """
 
@@ -191,11 +219,19 @@ enum SpeakingPromptBuilder {
                 """
             }
         } else if includeUncovered {
-            s += """
+            if forceCoverage {
+                s += """
 
 
-            Continue the conversation with one short reply (plain text only). Prefer questions that invite reuse of targets.
-            """
+                Continue with one short reply (plain text only). If UNCOVERED_TARGETS is non-empty, prioritize a situation or question that invites one of those remaining words; if empty, free constrained chat.
+                """
+            } else {
+                s += """
+
+
+                Continue the conversation with one short reply (plain text only). Prefer questions that invite reuse of targets.
+                """
+            }
         } else {
             s += """
 
@@ -213,6 +249,7 @@ enum SpeakingPromptBuilder {
         targetJSON: String,
         uncoveredJSON: String,
         includeUncovered: Bool,
+        forceCoverage: Bool,
         topic: String,
         sparse: Bool,
         beginnerList: String,
@@ -227,10 +264,17 @@ enum SpeakingPromptBuilder {
         - 优先围绕 TARGET_WORDS 创设情境。
         """
         if includeUncovered {
-            s += """
+            if forceCoverage {
+                s += """
 
-            - 温和引导学习者使用尚未产出的目标词；绝不要把词汇测验清单当作对话内容。
-            """
+                - 挑战模式：主动创设自然情境，让学习者至少使用每个尚未产出的目标词一次。优先围绕 UNCOVERED_TARGETS，用清晰简单的问句或选择问，让这些词自然可用。绝不要把词汇测验清单当作对话内容。
+                """
+            } else {
+                s += """
+
+                - 温和引导学习者使用尚未产出的目标词；绝不要把词汇测验清单当作对话内容。
+                """
+            }
         }
         s += """
 
@@ -245,12 +289,21 @@ enum SpeakingPromptBuilder {
         \(targetJSON)
         """
         if includeUncovered {
-            s += """
+            if forceCoverage {
+                s += """
 
 
-            UNCOVERED_TARGETS（软目标，学习者尚未产出）：
-            \(uncoveredJSON)
-            """
+                UNCOVERED_TARGETS（挑战：引导每个剩余词进入情境，直到学习者产出）：
+                \(uncoveredJSON)
+                """
+            } else {
+                s += """
+
+
+                UNCOVERED_TARGETS（软目标，学习者尚未产出）：
+                \(uncoveredJSON)
+                """
+            }
         }
         s += """
 
@@ -281,11 +334,19 @@ enum SpeakingPromptBuilder {
         }
         if isOpening {
             if includeUncovered {
-                s += """
+                if forceCoverage {
+                    s += """
 
 
-                你的任务：用一句简短问候和简单问句开启对话，引导学习者使用某个目标词。仅纯文本。
-                """
+                    你的任务：用一句简短问候和简单问句开启对话，让某个未覆盖目标词自然可说。仅纯文本。
+                    """
+                } else {
+                    s += """
+
+
+                    你的任务：用一句简短问候和简单问句开启对话，引导学习者使用某个目标词。仅纯文本。
+                    """
+                }
             } else {
                 s += """
 
@@ -294,11 +355,19 @@ enum SpeakingPromptBuilder {
                 """
             }
         } else if includeUncovered {
-            s += """
+            if forceCoverage {
+                s += """
 
 
-            继续对话，用一句短回复（仅纯文本）。优先用能邀请复用目标词的问句。
-            """
+                继续对话，用一句短回复（仅纯文本）。若 UNCOVERED_TARGETS 非空，优先创设能邀请其中一个剩余词的情境或问句；若已空，则自由约束对话。
+                """
+            } else {
+                s += """
+
+
+                继续对话，用一句短回复（仅纯文本）。优先用能邀请复用目标词的问句。
+                """
+            }
         } else {
             s += """
 
