@@ -494,8 +494,11 @@ struct ContentView: View {
                     .environment(\.appLanguage, viewModel.appLanguage)
             }
             .sheet(isPresented: $speakingVM.isShowingSetup, onDismiss: {
-                // Cancelled setup (no session started) — clear draft config.
-                if !speakingVM.isShowingSession && speakingVM.session == nil {
+                // Mirror Practice preview→session: present session only after setup fully dismisses.
+                if speakingVM.pendingSessionStart {
+                    speakingVM.presentPendingSessionIfNeeded()
+                } else if !speakingVM.isShowingSession && speakingVM.session == nil {
+                    // Cancelled setup (no session started) — clear draft config.
                     speakingVM.discardSession()
                 }
             }) {
@@ -631,6 +634,8 @@ struct ContentView: View {
     private func endSpeakingForPractice() {
         if speakingVM.isShowingSetup
             || speakingVM.isShowingSession
+            || speakingVM.pendingSessionStart
+            || speakingVM.isStartingSession
             || speakingVM.session != nil
             || speakingVM.pendingConfig != nil {
             speakingVM.endSession()

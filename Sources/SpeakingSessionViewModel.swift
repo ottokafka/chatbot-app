@@ -34,6 +34,10 @@ final class SpeakingSessionViewModel: ObservableObject {
 
     @Published var isShowingSetup = false
     @Published var isShowingSession = false
+    /// Mirrors Practice's deferred preview→session handoff: set when setup dismisses, present session in `onDismiss`.
+    @Published private(set) var pendingSessionStart = false
+    /// True while `startSession` is in flight (guards double-submit on Start).
+    @Published private(set) var isStartingSession = false
     @Published private(set) var session: SpeakingSession?
 
     /// Last user utterance that failed mid-turn LLM reply. Cleared on success.
@@ -48,6 +52,16 @@ final class SpeakingSessionViewModel: ObservableObject {
     @Published private(set) var isSpeakingSTTConnected = false
     /// Auto-play assistant TTS (MVP default on).
     @Published var autoPlayTTS = true
+
+    /// Observation-friendly feature flag for deck chrome. Syncs to `SpeakingFeature` / UserDefaults.
+    /// DEBUG toggle and runtime kill-switch update this so views re-render without process restart.
+    @Published var isFeatureEnabled: Bool = SpeakingFeature.isEnabled {
+        didSet {
+            if SpeakingFeature.isEnabled != isFeatureEnabled {
+                SpeakingFeature.isEnabled = isFeatureEnabled
+            }
+        }
+    }
 
     // MARK: Endpoints (wired from ChatViewModel; frozen languages also live on config)
 
@@ -152,19 +166,28 @@ final class SpeakingSessionViewModel: ObservableObject {
     // MARK: - Session lifecycle
 
     /// Creates session from pending config, yields chat audio hardware, starts session STT, opening turn.
+    /// When setup is open, defers presenting the session sheet until setup's `onDismiss` (mirrors Practice).
     func startSession() async {
+        guard !isStartingSession else {
+            log("Speaking: startSession ignored — already starting")
+            return
+        }
+        guard session == nil else {
+            log("Speaking: startSession ignored — session already exists")
+            return
+        }
         guard let config = pendingConfig else {
             log("Speaking: startSession aborted — no pendingConfig")
             return
         }
+        isStartingSession = true
+        defer { isStartingSession = false }
+
         generationTask?.cancel()
         generationTask = nil
         ttsWatchTask?.cancel()
         ttsWatchTask = nil
         inFlightTTSPlaybackId = nil
-
-        isShowingSetup = false
-        isShowingSession = true
         pendingUserText = nil
 
         var newSession = SpeakingSession(config: config, status: .ready)
@@ -172,11 +195,36 @@ final class SpeakingSessionViewModel: ObservableObject {
         session = newSession
         log("Speaking: startSession id=\(newSession.id)")
 
+        // Deferred sheet handoff (mirror Practice preview→session): dismiss setup first;
+        // ContentView presents session from setup `onDismiss` via `presentPendingSessionIfNeeded`.
+        // Debug / non-sheet callers (setup not showing) present immediately.
+        let wasShowingSetup = isShowingSetup
+        if wasShowingSetup {
+            pendingSessionStart = true
+            isShowingSetup = false
+        } else {
+            pendingSessionStart = false
+            isShowingSession = true
+        }
+
         // D11: force-stop chat mic + player without re-arming chat mic.
         yieldHardware?()
         connectSpeakingSTT(language: config.sttLanguage)
 
         await generateOpening()
+    }
+
+    /// Called after the setup sheet fully dismisses when the user chose Start speaking.
+    func presentPendingSessionIfNeeded() {
+        guard pendingSessionStart else { return }
+        pendingSessionStart = false
+        guard session != nil else {
+            log("Speaking: pending session present aborted — no session")
+            discardSession()
+            return
+        }
+        isShowingSession = true
+        log("Speaking: session sheet presented (deferred handoff)")
     }
 
     /// Opening LLM failure recovery (D24): stays `ready`, keeps banner + Retry.
@@ -278,6 +326,8 @@ final class SpeakingSessionViewModel: ObservableObject {
             session = current
         }
         pendingUserText = nil
+        pendingSessionStart = false
+        isStartingSession = false
         isShowingSession = false
         isShowingSetup = false
         log("Speaking: endSession")
@@ -295,6 +345,8 @@ final class SpeakingSessionViewModel: ObservableObject {
         session = nil
         pendingUserText = nil
         pendingConfig = nil
+        pendingSessionStart = false
+        isStartingSession = false
         isShowingSession = false
         isShowingSetup = false
     }

@@ -56,11 +56,12 @@ struct SpeakingSessionDebugView: View {
                 .disabled(parseFronts(targetsCSV).isEmpty)
             }
             Section("Flag") {
-                Text("speaking.enabled = \(SpeakingFeature.isEnabled ? "true" : "false")")
+                Text("speaking.enabled = \(speakingVM.isFeatureEnabled ? "true" : "false")")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                Button(SpeakingFeature.isEnabled ? "Disable flag" : "Enable flag") {
-                    SpeakingFeature.isEnabled.toggle()
+                Button(speakingVM.isFeatureEnabled ? "Disable flag" : "Enable flag") {
+                    // Toggle via VM so deck chrome (@Published) re-renders without restart.
+                    speakingVM.isFeatureEnabled.toggle()
                 }
             }
         }

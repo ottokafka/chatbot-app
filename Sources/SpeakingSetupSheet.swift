@@ -84,7 +84,11 @@ struct SpeakingSetupSheet: View {
         Toggle(isOn: $encourageCoverage) {
             Text(L10n.speakSetupEncourageCoverage(lang))
         }
+        #if os(macOS)
         .toggleStyle(.checkbox)
+        #else
+        .toggleStyle(.switch)
+        #endif
 
         VStack(alignment: .leading, spacing: 6) {
             Text(L10n.speakSetupTargetsLabel(lang))
@@ -113,19 +117,35 @@ struct SpeakingSetupSheet: View {
                 dismiss()
             }
             .keyboardShortcut(.cancelAction)
+            .disabled(speakingVM.isStartingSession)
 
             Spacer()
 
-            Button(L10n.speakStart(lang)) {
+            Button {
                 reapplyPendingAndStart(from: config)
+            } label: {
+                if speakingVM.isStartingSession {
+                    ProgressView()
+                        .controlSize(.small)
+                } else {
+                    Text(L10n.speakStart(lang))
+                }
             }
             .buttonStyle(.borderedProminent)
             .keyboardShortcut(.defaultAction)
-            .disabled(targets.isEmpty)
+            .disabled(!canStart(targets: targets))
         }
     }
 
+    private func canStart(targets: [Flashcard]) -> Bool {
+        !targets.isEmpty
+            && !speakingVM.isStartingSession
+            && speakingVM.session == nil
+            && !speakingVM.pendingSessionStart
+    }
+
     private func reapplyPendingAndStart(from config: SpeakingSessionConfig) {
+        guard canStart(targets: config.targetCards) else { return }
         speakingVM.prepareSetup(
             seedSource: config.seedSource,
             targets: config.targetCards,

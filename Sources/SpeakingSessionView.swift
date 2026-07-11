@@ -368,15 +368,10 @@ struct SpeakingSessionView: View {
 
             Spacer()
 
+            // Single exit control (matches Practice completion). Saves already applied to Examples;
+            // session transcript remains ephemeral either way.
             HStack {
-                Button(L10n.speakDiscard(lang)) {
-                    speakingVM.discardSession()
-                    dismiss()
-                }
-                .keyboardShortcut(.cancelAction)
-
                 Spacer()
-
                 Button(L10n.done(lang)) {
                     speakingVM.discardSession()
                     dismiss()
@@ -437,6 +432,11 @@ struct SpeakingSessionView: View {
                 }
                 TextField(L10n.speakMeaningPlaceholder(lang), text: $saveBack)
                     .textFieldStyle(.roundedBorder)
+                    .onChange(of: saveBack) { _, newValue in
+                        if !newValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                            isTranslatingSave = false
+                        }
+                    }
 
                 Button {
                     saveSelectedPhrase(turn: turn, session: session)
@@ -459,10 +459,12 @@ struct SpeakingSessionView: View {
         #if canImport(Translation) && !targetEnvironment(simulator)
         .translationTask(translationConfiguration) { session in
             guard let turn = speakingVM.session?.turns.first(where: { $0.id == selectedTurnId }) else {
+                await MainActor.run { isTranslatingSave = false }
                 return
             }
             let front = turn.content.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !front.isEmpty, saveBack.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                await MainActor.run { isTranslatingSave = false }
                 return
             }
             await MainActor.run { isTranslatingSave = true }
@@ -536,16 +538,18 @@ struct SpeakingSessionView: View {
         #if canImport(Translation) && !targetEnvironment(simulator)
         if #available(macOS 15.0, iOS 17.4, *) {
             guard let turn = speakingVM.session?.turns.first(where: { $0.id == selectedTurnId }) else {
-                translationConfiguration = nil
+                clearSaveTranslation()
                 return
             }
             let front = turn.content.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !front.isEmpty,
                   saveBack.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
                   let pair = FlashcardTranslator.translationConfiguration(for: front) else {
-                translationConfiguration = nil
+                clearSaveTranslation()
                 return
             }
+            // Show spinner only when a translation task will run; task clears the flag on
+            // every early-return / cancel / completion path (never leave Save permanently disabled).
             isTranslatingSave = true
             translationConfiguration = TranslationSession.Configuration(
                 source: Locale.Language(identifier: pair.source),
@@ -553,5 +557,12 @@ struct SpeakingSessionView: View {
             )
         }
         #endif
+    }
+
+    private func clearSaveTranslation() {
+        #if canImport(Translation) && !targetEnvironment(simulator)
+        translationConfiguration = nil
+        #endif
+        isTranslatingSave = false
     }
 }

@@ -67,13 +67,16 @@ struct FlashcardDeckView: View {
                     .foregroundColor(.secondary)
             }
 
-            Spacer()
+            Spacer(minLength: 8)
 
-            HStack(spacing: 10) {
-                if flashcardVM.isSelectingVocabForPractice {
-                    selectionModeHeaderActions
-                } else {
-                    defaultHeaderActions
+            // Horizontal scroll avoids clipping when Practice + Speak + Study crowd iPhone widths.
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    if flashcardVM.isSelectingVocabForPractice {
+                        selectionModeHeaderActions
+                    } else {
+                        defaultHeaderActions
+                    }
                 }
             }
         }
@@ -132,7 +135,8 @@ struct FlashcardDeckView: View {
 
         practiceWithAIControl
 
-        if SpeakingFeature.isEnabled {
+        // Use observation-friendly flag on speakingVM so DEBUG runtime toggle re-renders deck chrome.
+        if speakingVM.isFeatureEnabled {
             speakWithAIControl
         }
 
@@ -274,7 +278,7 @@ struct FlashcardDeckView: View {
     }
 
     private func startDeckSpeaking(source: PracticeSeedSource) {
-        guard SpeakingFeature.isEnabled else { return }
+        guard speakingVM.isFeatureEnabled else { return }
         guard let resolved = flashcardVM.resolveSpeakingLaunch(seedSource: source) else {
             speakingError = L10n.speakNoSeeds(lang)
             return
@@ -292,7 +296,7 @@ struct FlashcardDeckView: View {
     }
 
     private func startSpeakingFromSelection() {
-        guard SpeakingFeature.isEnabled else { return }
+        guard speakingVM.isFeatureEnabled else { return }
         let seeds = flashcardVM.resolveSelectedVocabForSpeaking()
         guard !seeds.isEmpty else {
             speakingError = L10n.speakNoSeeds(lang)
@@ -380,7 +384,7 @@ struct FlashcardDeckView: View {
         .disabled(!flashcardVM.hasSelectedVocabSeeds || flashcardVM.isGeneratingPractice)
         .help(L10n.practiceSelectedWithAIHelp(lang))
 
-        if SpeakingFeature.isEnabled {
+        if speakingVM.isFeatureEnabled {
             Button {
                 startSpeakingFromSelection()
             } label: {
