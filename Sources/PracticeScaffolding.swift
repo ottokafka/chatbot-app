@@ -194,6 +194,16 @@ enum PracticeScaffoldValidator {
         "when", "who", "how", "can", "will", "want", "have", "has", "had", "from", "by", "as", "if", "so"
     ]
 
+    /// Common apostrophe contractions (straight `'`). Curly `’` tokens are normalized before lookup.
+    static let englishContractions: Set<String> = [
+        "don't", "doesn't", "didn't", "isn't", "aren't", "wasn't", "weren't",
+        "can't", "won't", "shouldn't", "couldn't", "wouldn't", "mustn't",
+        "i'm", "you're", "he's", "she's", "it's", "we're", "they're",
+        "i've", "you've", "we've", "they've", "i'll", "you'll", "he'll", "she'll", "we'll", "they'll",
+        "i'd", "you'd", "he'd", "she'd", "we'd", "they'd", "let's",
+        "that's", "what's", "who's", "there's", "here's", "where's", "how's"
+    ]
+
     /// Closed-class / ultra-common particles & pronouns for CJK coverage matching.
     static let chineseParticles: Set<String> = [
         "的", "了", "吗", "呢", "吧", "啊", "不", "没", "是", "在", "有",
@@ -202,13 +212,14 @@ enum PracticeScaffoldValidator {
     ]
 
     /// Shared with sparse-prompt escape — do not duplicate word lists.
-    static var ultraCommonBeginnerContentEnglish: Set<String> {
-        Set(PracticeUltraCommonBeginnerContent.english.map { $0.lowercased() })
-    }
+    /// Cached once; still single source of truth via `PracticeUltraCommonBeginnerContent`.
+    static let ultraCommonBeginnerContentEnglish: Set<String> = Set(
+        PracticeUltraCommonBeginnerContent.english.map { $0.lowercased() }
+    )
 
-    static var ultraCommonBeginnerContentChinese: Set<String> {
-        Set(PracticeUltraCommonBeginnerContent.chinese)
-    }
+    static let ultraCommonBeginnerContentChinese: Set<String> = Set(
+        PracticeUltraCommonBeginnerContent.chinese
+    )
 
     /// Auto-detect: CJK in sentence → Chinese greedy match; else English tokens.
     static func diagnose(
@@ -246,15 +257,17 @@ enum PracticeScaffoldValidator {
             )
         }
 
-        var allow = englishFunctionWords.union(ultraCommonBeginnerContentEnglish)
+        var allow = englishFunctionWords
+            .union(englishContractions)
+            .union(ultraCommonBeginnerContentEnglish)
         for front in knownFronts + seedFronts {
             for token in englishTokens(from: front) {
-                allow.insert(token)
+                allow.insert(normalizeEnglishToken(token))
             }
         }
 
         let covered = tokens.reduce(0) { count, token in
-            count + (allow.contains(token) ? 1 : 0)
+            count + (allow.contains(normalizeEnglishToken(token)) ? 1 : 0)
         }
         let estimate = Double(covered) / Double(tokens.count)
         return PracticeSentenceDiagnostics(
@@ -286,7 +299,12 @@ enum PracticeScaffoldValidator {
         for front in knownFronts + seedFronts {
             let trimmed = front.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmed.isEmpty, PracticeScaffolding.containsCJK(trimmed) else { continue }
+            // Whole front (for pure-CJK keys) plus pure CJK runs so mixed fronts
+            // like "你好！" / "apple苹果" still match sentence CJK runs.
             matchKeys.insert(trimmed)
+            for run in cjkRuns(from: trimmed) {
+                matchKeys.insert(run)
+            }
         }
         // Longest-first is critical (学习 before 学).
         let sortedKeys = matchKeys.sorted { $0.count > $1.count }
@@ -314,7 +332,12 @@ enum PracticeScaffoldValidator {
         let sparse = knownFrontsCount < PracticeGenerationConfig.minKnownForRichScaffold
         let sparseTag = sparse ? " sparse=true" : ""
         let snippet = truncatedForLog(diagnostics.sentence)
-        let coverage = String(format: "%.2f", diagnostics.coverageEstimate)
+        // Fixed locale so logs always use `.` decimal separator (not locale-dependent `,`).
+        let coverage = String(
+            format: "%.2f",
+            locale: Locale(identifier: "en_US_POSIX"),
+            diagnostics.coverageEstimate
+        )
         onLog?(
             "Practice scaffold warn: low coverage (\(coverage))\(sparseTag) for \"\(snippet)\""
         )
@@ -341,13 +364,17 @@ enum PracticeScaffoldValidator {
 
     // MARK: - Token / match helpers
 
-    /// Letter-runs only (whitespace + punctuation split). Lowercased. Pure digits never appear.
+    /// Letter-runs (whitespace + punctuation split). Lowercased. Pure digits never appear.
+    /// Apostrophe (`'` / `’`) is intra-token so contractions like "don't" stay one piece.
     static func englishTokens(from text: String) -> [String] {
         let lower = text.lowercased()
         var tokens: [String] = []
         var current = ""
         for ch in lower {
             if ch.isLetter {
+                current.append(ch)
+            } else if isApostrophe(ch), !current.isEmpty {
+                // Keep apostrophe inside the token (don't / don’t).
                 current.append(ch)
             } else if !current.isEmpty {
                 tokens.append(current)
@@ -360,12 +387,21 @@ enum PracticeScaffoldValidator {
         return tokens
     }
 
-    /// Contiguous CJK Unified / Ext A / Compatibility runs (same ranges as `containsChineseCharacters`).
+    private static func isApostrophe(_ ch: Character) -> Bool {
+        ch == "'" || ch == "\u{2019}" // straight + right single quotation (curly)
+    }
+
+    /// Map curly apostrophes to straight so contraction allowlist matches tokenizer output.
+    private static func normalizeEnglishToken(_ token: String) -> String {
+        token.replacingOccurrences(of: "\u{2019}", with: "'")
+    }
+
+    /// Contiguous CJK runs via shared `Unicode.Scalar.isCJKIdeograph` (same as `containsChineseCharacters`).
     static func cjkRuns(from text: String) -> [String] {
         var runs: [String] = []
         var current = ""
         for ch in text {
-            if isCJKCharacter(ch) {
+            if ch.unicodeScalars.contains(where: \.isCJKIdeograph) {
                 current.append(ch)
             } else if !current.isEmpty {
                 runs.append(current)
@@ -376,18 +412,6 @@ enum PracticeScaffoldValidator {
             runs.append(current)
         }
         return runs
-    }
-
-    private static func isCJKCharacter(_ ch: Character) -> Bool {
-        for scalar in ch.unicodeScalars {
-            let value = scalar.value
-            if (value >= 0x4E00 && value <= 0x9FFF)
-                || (value >= 0x3400 && value <= 0x4DBF)
-                || (value >= 0xF900 && value <= 0xFAFF) {
-                return true
-            }
-        }
-        return false
     }
 
     /// Walk one CJK run left-to-right; return count of covered characters.
