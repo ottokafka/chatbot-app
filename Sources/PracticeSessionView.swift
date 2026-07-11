@@ -238,6 +238,8 @@ struct PracticeSessionView: View {
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
+                    .keyboardShortcut(.space, modifiers: [])
+                    .help(L10n.spaceToAdvancePractice(lang))
                 }
                 .padding(.horizontal, 32)
             } else {
@@ -246,6 +248,8 @@ struct PracticeSessionView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
+                .keyboardShortcut(.space, modifiers: [])
+                .help(L10n.spaceToReveal(lang))
             }
 
             Spacer(minLength: 24)

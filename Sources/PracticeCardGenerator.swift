@@ -1,6 +1,6 @@
 import Foundation
 
-/// Generates ephemeral practice cards from due flashcards via the chat-completions LLM.
+/// Generates ephemeral practice cards from vocabulary seed flashcards via the chat-completions LLM.
 enum PracticeCardGenerator {
     enum GeneratorError: LocalizedError {
         case noSeeds
@@ -11,7 +11,7 @@ enum PracticeCardGenerator {
         var errorDescription: String? {
             switch self {
             case .noSeeds:
-                return "No due cards to generate practice from"
+                return "No seed cards to generate practice from"
             case .emptyResponse:
                 return "The model returned an empty response"
             case .invalidJSON(let detail):
@@ -44,7 +44,7 @@ enum PracticeCardGenerator {
     /// Builds an in-memory practice pack by calling the OpenAI-compatible text-gen endpoint.
     @MainActor
     static func generatePack(
-        from dueCards: [Flashcard],
+        from seedCards: [Flashcard],
         endpoint: String,
         model: String,
         appLanguage: AppLanguage,
@@ -53,7 +53,7 @@ enum PracticeCardGenerator {
         examplesPerCard: Int = PracticeGenerationConfig.examplesPerCard,
         maxTokens: Int = PracticeGenerationConfig.maxTokens
     ) async throws -> PracticePack {
-        let seeds = Array(dueCards.prefix(maxSeeds))
+        let seeds = Array(seedCards.prefix(maxSeeds))
         guard !seeds.isEmpty else { throw GeneratorError.noSeeds }
 
         let messages = buildMessages(
@@ -139,7 +139,7 @@ enum PracticeCardGenerator {
         let system: String
         if appLanguage == .zh {
             system = """
-            你是语言学习助教。根据学生到期的闪卡，生成自然的例句练习。
+            你是语言学习助教。根据学生的词汇闪卡，生成自然的例句练习。
             只输出合法 JSON，不要 markdown 代码块，不要解释。
             JSON 结构：
             {"items":[{"parent_id":"...","parent_front":"...","sentence":"...","translation":"...","phonics":"..."}]}
@@ -154,7 +154,7 @@ enum PracticeCardGenerator {
             """
         } else {
             system = """
-            You are a language-learning tutor. Given the student's due flashcards, create natural example-sentence practice cards.
+            You are a language-learning tutor. Given the student's vocabulary flashcards, create natural example-sentence practice cards.
             Output valid JSON only — no markdown fences, no commentary.
             Schema:
             {"items":[{"parent_id":"...","parent_front":"...","sentence":"...","translation":"...","phonics":"..."}]}
@@ -172,12 +172,12 @@ enum PracticeCardGenerator {
         let user: String
         if appLanguage == .zh {
             user = """
-            请为以下到期闪卡生成练习例句（每卡 \(examplesPerCard) 条）：
+            请为以下词汇闪卡生成练习例句（每卡 \(examplesPerCard) 条）：
             \(seedsJSON)
             """
         } else {
             user = """
-            Generate practice example sentences for these due flashcards (\(examplesPerCard) per card):
+            Generate practice example sentences for these vocabulary flashcards (\(examplesPerCard) per card):
             \(seedsJSON)
             """
         }

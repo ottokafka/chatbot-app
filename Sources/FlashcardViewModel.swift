@@ -20,6 +20,116 @@ enum AppSection: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
+/// Where practice-pack generation draws its vocabulary seeds from.
+enum PracticeSeedSource: Equatable {
+    /// Current FSRS-due vocabulary (deck catch-up path).
+    case dueVocab
+    /// Vocabulary graded in the most recent study session.
+    case lastStudySession
+    /// Explicit user multi-select on the Vocabulary tab.
+    case selectedVocab(ids: [String])
+
+    /// Stable label for logs / analytics (no associated-value noise).
+    var analyticsName: String {
+        switch self {
+        case .dueVocab: return "dueVocab"
+        case .lastStudySession: return "lastStudySession"
+        case .selectedVocab: return "selectedVocab"
+        }
+    }
+}
+
+/// One graded card from a study session (used for weak-first practice seeding).
+struct StudySessionGradedEntry: Equatable, Codable {
+    let id: String
+    /// `Rating.rawValue` from FSRS (`again=1`, `hard=2`, `good=3`, `easy=4`).
+    let gradeRawValue: Int
+
+    init(id: String, grade: Rating) {
+        self.id = id
+        self.gradeRawValue = grade.rawValue
+    }
+
+    var rating: Rating? {
+        Rating(rawValue: gradeRawValue)
+    }
+
+    /// Again / Hard — prefer these when capping seeds for practice.
+    var isWeak: Bool {
+        switch rating {
+        case .again, .hard: return true
+        default: return false
+        }
+    }
+}
+
+/// Record of cards graded during a study session (for post-study practice).
+/// Persisted briefly in UserDefaults so practice survives app relaunch.
+struct StudySessionSnapshot: Equatable, Codable {
+    let kind: FlashcardKind
+    var gradedEntries: [StudySessionGradedEntry]
+    var completedAt: Date
+
+    var gradedCardIds: [String] {
+        gradedEntries.map(\.id)
+    }
+
+    var weakGradeCount: Int {
+        gradedEntries.filter(\.isWeak).count
+    }
+
+    init(kind: FlashcardKind, gradedEntries: [StudySessionGradedEntry] = [], completedAt: Date = Date()) {
+        self.kind = kind
+        self.gradedEntries = gradedEntries
+        self.completedAt = completedAt
+    }
+}
+
+/// UserDefaults persistence for the last study session (TTL-based).
+enum StudySessionStore {
+    static let defaultsKey = "flashcard.lastStudySession.v1"
+    /// How long a finished study session remains available for practice after app relaunch.
+    static let ttl: TimeInterval = 24 * 60 * 60
+
+    static func save(_ snapshot: StudySessionSnapshot?) {
+        let defaults = UserDefaults.standard
+        guard let snapshot, !snapshot.gradedEntries.isEmpty else {
+            defaults.removeObject(forKey: defaultsKey)
+            return
+        }
+        do {
+            let data = try JSONEncoder().encode(snapshot)
+            defaults.set(data, forKey: defaultsKey)
+        } catch {
+            defaults.removeObject(forKey: defaultsKey)
+        }
+    }
+
+    static func load(now: Date = Date()) -> StudySessionSnapshot? {
+        let defaults = UserDefaults.standard
+        guard let data = defaults.data(forKey: defaultsKey) else { return nil }
+        do {
+            let snapshot = try JSONDecoder().decode(StudySessionSnapshot.self, from: data)
+            if now.timeIntervalSince(snapshot.completedAt) > ttl {
+                defaults.removeObject(forKey: defaultsKey)
+                return nil
+            }
+            if snapshot.gradedEntries.isEmpty {
+                defaults.removeObject(forKey: defaultsKey)
+                return nil
+            }
+            return snapshot
+        } catch {
+            defaults.removeObject(forKey: defaultsKey)
+            return nil
+        }
+    }
+
+    static func clear() {
+        UserDefaults.standard.removeObject(forKey: defaultsKey)
+    }
+}
+
 @MainActor
 final class FlashcardViewModel: ObservableObject {
     private let dbManager = DatabaseManager()
@@ -34,6 +144,10 @@ final class FlashcardViewModel: ObservableObject {
     /// Active library tab: Vocabulary (library) vs Examples (gym).
     @Published var selectedDeckKind: FlashcardKind = .vocab
     @Published var searchText: String = ""
+    /// Multi-select mode on Vocabulary for manual practice seeds.
+    @Published var isSelectingVocabForPractice = false
+    /// Ordered vocab card ids chosen as practice seeds (max `PracticeGenerationConfig.maxDueSeeds`).
+    @Published var selectedVocabSeedIds: [String] = []
     @Published var draft: FlashcardDraft?
     @Published var editingFlashcardId: String?
     @Published var isShowingCreateSheet = false
@@ -46,6 +160,10 @@ final class FlashcardViewModel: ObservableObject {
     @Published var currentReviewIndex = 0
     @Published var isAnswerRevealed = false
     @Published var reviewComplete = false
+    /// Kind of the active (or just finished) review session.
+    @Published private(set) var currentReviewKind: FlashcardKind = .vocab
+    /// Graded cards from the latest study session; survives dismiss for post-study practice.
+    @Published private(set) var lastStudySession: StudySessionSnapshot?
 
     // MARK: Practice pack (ephemeral; not part of the main deck)
 
@@ -72,6 +190,8 @@ final class FlashcardViewModel: ObservableObject {
     private var lastPracticeLLMEndpoint: String?
     private var lastPracticeLLMModel: String?
     private var lastPracticeAppLanguage: AppLanguage = .en
+    /// Seed source used for the current/last pack generation (for regenerate).
+    private var lastPracticeSeedSource: PracticeSeedSource = .dueVocab
     private var itemRegenerationTasks: [String: Task<Void, Never>] = [:]
 
     var onLog: ((String) -> Void)? {
@@ -94,8 +214,71 @@ final class FlashcardViewModel: ObservableObject {
 
     var isEditing: Bool { editingFlashcardId != nil }
 
+    /// True when due vocab, last study session, or a manual selection can seed practice.
     var canStartPractice: Bool {
-        vocabDueCount > 0 && !isGeneratingPractice
+        !isGeneratingPractice
+            && (vocabDueCount > 0 || hasLastStudySessionSeeds || hasSelectedVocabSeeds)
+    }
+
+    /// Resolved vocab cards from the last study session (missing ids dropped).
+    var hasLastStudySessionSeeds: Bool {
+        !resolveLastStudySessionCards().isEmpty
+    }
+
+    var lastStudySessionSeedCount: Int {
+        resolveLastStudySessionCards().count
+    }
+
+    var selectedVocabSeedCount: Int {
+        selectedVocabSeedIds.count
+    }
+
+    var hasSelectedVocabSeeds: Bool {
+        !resolveSelectedVocabCards().isEmpty
+    }
+
+    /// At the hard cap for manual practice seeds.
+    var isVocabSeedSelectionAtLimit: Bool {
+        selectedVocabSeedIds.count >= PracticeGenerationConfig.maxDueSeeds
+    }
+
+    /// Completion-screen CTA: vocab session with at least one graded card still in the deck.
+    var canOfferPostStudyPractice: Bool {
+        guard currentReviewKind == .vocab else { return false }
+        return hasLastStudySessionSeeds
+    }
+
+    /// Deck button default: prefer due when available, else last study session.
+    /// Manual selection uses an explicit "Practice selected" action instead.
+    var preferredDeckPracticeSeedSource: PracticeSeedSource {
+        vocabDueCount > 0 ? .dueVocab : .lastStudySession
+    }
+
+    /// Seed sources available from the deck Practice control (not manual multi-select).
+    var availableDeckPracticeSeedSources: [PracticeSeedSource] {
+        var sources: [PracticeSeedSource] = []
+        if !resolvePracticeSeeds(source: .dueVocab).isEmpty {
+            sources.append(.dueVocab)
+        }
+        if hasLastStudySessionSeeds {
+            sources.append(.lastStudySession)
+        }
+        return sources
+    }
+
+    /// Show a seed-source menu when more than one automatic source is available.
+    var showsPracticeSeedMenu: Bool {
+        availableDeckPracticeSeedSources.count > 1
+    }
+
+    /// Seed source for the current manual vocabulary selection.
+    var selectedVocabPracticeSeedSource: PracticeSeedSource {
+        .selectedVocab(ids: selectedVocabSeedIds)
+    }
+
+    /// Count of seeds that would be used for a deck source (after resolve + cap).
+    func practiceSeedCount(for source: PracticeSeedSource) -> Int {
+        resolvePracticeSeeds(source: source).count
     }
 
     var selectedPracticeCards: [PracticeCard] {
@@ -138,7 +321,14 @@ final class FlashcardViewModel: ObservableObject {
     }
 
     init() {
+        lastStudySession = StudySessionStore.load()
         loadFlashcards()
+        // Drop persisted session if every card was deleted while the app was closed.
+        if let session = lastStudySession, session.kind == .vocab,
+           resolveLastStudySessionCards().isEmpty {
+            lastStudySession = nil
+            StudySessionStore.clear()
+        }
     }
 
     func loadFlashcards() {
@@ -148,6 +338,88 @@ final class FlashcardViewModel: ObservableObject {
         vocabDueCount = FSRSManager.shared.dueCards(from: vocab).count
         exampleDueCount = FSRSManager.shared.dueCards(from: examples).count
         dueCount = vocabDueCount
+        pruneSelectedVocabSeedIds(validVocabIds: Set(vocab.map(\.id)))
+        pruneLastStudySessionIfNeeded(validVocabIds: Set(vocab.map(\.id)))
+    }
+
+    // MARK: - Vocab multi-select (manual practice seeds)
+
+    func beginVocabPracticeSelection() {
+        guard selectedDeckKind == .vocab else { return }
+        isSelectingVocabForPractice = true
+    }
+
+    func cancelVocabPracticeSelection() {
+        isSelectingVocabForPractice = false
+        selectedVocabSeedIds = []
+    }
+
+    func isVocabSeedSelected(_ id: String) -> Bool {
+        selectedVocabSeedIds.contains(id)
+    }
+
+    /// Toggles selection. Returns `false` when the user tried to add past the seed cap.
+    @discardableResult
+    func toggleVocabSeedSelection(id: String) -> Bool {
+        if let index = selectedVocabSeedIds.firstIndex(of: id) {
+            selectedVocabSeedIds.remove(at: index)
+            return true
+        }
+        guard selectedVocabSeedIds.count < PracticeGenerationConfig.maxDueSeeds else {
+            return false
+        }
+        // Only allow vocabulary cards that still exist.
+        guard flashcards.contains(where: { $0.id == id && $0.kind == .vocab }) else {
+            return false
+        }
+        selectedVocabSeedIds.append(id)
+        return true
+    }
+
+    /// Selects visible vocab cards up to the seed cap, preserving list order then existing order.
+    func selectVisibleVocabSeeds(from cards: [Flashcard]) {
+        let existing = Set(selectedVocabSeedIds)
+        var next = selectedVocabSeedIds
+        for card in cards where card.kind == .vocab {
+            guard next.count < PracticeGenerationConfig.maxDueSeeds else { break }
+            if !existing.contains(card.id) {
+                next.append(card.id)
+            }
+        }
+        selectedVocabSeedIds = next
+    }
+
+    func deselectAllVocabSeeds() {
+        selectedVocabSeedIds = []
+    }
+
+    /// Starts practice from the current manual selection, then exits selection mode on success path.
+    func beginPracticeFromSelectedVocab(
+        appLanguage: AppLanguage,
+        llmEndpoint: String,
+        llmModel: String
+    ) {
+        let ids = selectedVocabSeedIds
+        guard !ids.isEmpty else {
+            practiceError = L10n.practiceNoSeeds(appLanguage)
+            return
+        }
+        beginPracticeGeneration(
+            appLanguage: appLanguage,
+            llmEndpoint: llmEndpoint,
+            llmModel: llmModel,
+            seedSource: .selectedVocab(ids: ids)
+        )
+        // Leave multi-select after kicking off generation (selection is retained in seed source).
+        isSelectingVocabForPractice = false
+        selectedVocabSeedIds = []
+    }
+
+    private func pruneSelectedVocabSeedIds(validVocabIds: Set<String>) {
+        let pruned = selectedVocabSeedIds.filter { validVocabIds.contains($0) }
+        if pruned.count != selectedVocabSeedIds.count {
+            selectedVocabSeedIds = pruned
+        }
     }
 
     func dueLabel(for card: Flashcard, language: AppLanguage) -> String {
@@ -344,6 +616,10 @@ final class FlashcardViewModel: ObservableObject {
     /// Starts an FSRS review for the given kind (defaults to the active dashboard tab).
     func startReviewSession(kind: FlashcardKind? = nil) {
         let reviewKind = kind ?? selectedDeckKind
+        currentReviewKind = reviewKind
+        // Fresh session snapshot; previous last-session seeds (including persisted) are replaced.
+        lastStudySession = StudySessionSnapshot(kind: reviewKind)
+        StudySessionStore.clear()
         reviewQueue = dbManager.fetchDueFlashcards(kind: reviewKind)
         currentReviewIndex = 0
         isAnswerRevealed = false
@@ -368,6 +644,8 @@ final class FlashcardViewModel: ObservableObject {
             return
         }
 
+        recordGradedCardInStudySession(card, grade: grade)
+
         currentReviewIndex += 1
         isAnswerRevealed = false
 
@@ -383,26 +661,27 @@ final class FlashcardViewModel: ObservableObject {
         currentReviewIndex = 0
         isAnswerRevealed = false
         reviewComplete = false
+        // Keep lastStudySession so post-study practice can still seed from graded cards.
         loadFlashcards()
     }
 
     // MARK: - Practice Pack (session-scoped; no FSRS / no deck inserts)
 
-    /// Generates a practice pack from current due cards via the LLM and opens the preview sheet.
+    /// Generates a practice pack from vocabulary seeds via the LLM and opens the preview sheet.
+    /// - Parameter seedSource: Defaults to the deck preference (due if any, else last study session).
     func beginPracticeGeneration(
         appLanguage: AppLanguage,
         llmEndpoint: String,
-        llmModel: String
+        llmModel: String,
+        seedSource: PracticeSeedSource? = nil
     ) {
         guard !isGeneratingPractice else { return }
 
-        // Practice seeds from vocabulary due only (library), never from examples.
-        let dueCards = FSRSManager.shared.dueCards(
-            from: flashcards.filter { $0.kind == .vocab }
-        )
-        guard !dueCards.isEmpty else {
-            practiceError = L10n.practiceNoDueCards(appLanguage)
-            onLog?("Practice generation skipped: no due vocabulary cards")
+        let source = seedSource ?? preferredDeckPracticeSeedSource
+        let seedCards = resolvePracticeSeeds(source: source)
+        guard !seedCards.isEmpty else {
+            practiceError = L10n.practiceNoSeeds(appLanguage)
+            onLog?("Practice generation skipped: no seeds for \(source.analyticsName)")
             return
         }
 
@@ -417,6 +696,7 @@ final class FlashcardViewModel: ObservableObject {
         lastPracticeLLMEndpoint = endpoint
         lastPracticeLLMModel = model.isEmpty ? "default" : model
         lastPracticeAppLanguage = appLanguage
+        lastPracticeSeedSource = source
 
         practiceGenerationTask?.cancel()
         cancelAllItemRegenerations()
@@ -428,10 +708,11 @@ final class FlashcardViewModel: ObservableObject {
         practicePack = nil
         selectedPracticeCardIds = []
         savedPracticeCardIds = []
-        onLog?("Practice generation started from \(dueCards.count) due card(s) via \(endpoint)")
+        logPracticeGenerationStart(source: source, seedCards: seedCards, endpoint: endpoint)
 
-        let seeds = dueCards
+        let seeds = seedCards
         let resolvedModel = lastPracticeLLMModel ?? "default"
+        let sourceName = source.analyticsName
 
         practiceGenerationTask = Task { [weak self] in
             guard let self else { return }
@@ -452,7 +733,7 @@ final class FlashcardViewModel: ObservableObject {
                 self.isGeneratingPractice = false
                 self.isShowingPracticePreview = true
                 self.onLog?(
-                    "Practice pack ready: \(pack.cards.count) card(s) from \(pack.sourceDueCount) due seed(s)"
+                    "Practice pack ready: \(pack.cards.count) card(s) from \(pack.sourceDueCount) seed(s) (\(sourceName))"
                 )
             } catch is CancellationError {
                 self.isGeneratingPractice = false
@@ -474,7 +755,7 @@ final class FlashcardViewModel: ObservableObject {
         }
     }
 
-    /// Regenerates the pack using the last LLM settings (from preview or after a failure).
+    /// Regenerates the pack using the last LLM settings and seed source.
     func regeneratePracticePack() {
         guard let endpoint = lastPracticeLLMEndpoint else {
             practiceError = L10n.practiceMissingLLMEndpoint(lastPracticeAppLanguage)
@@ -483,8 +764,26 @@ final class FlashcardViewModel: ObservableObject {
         beginPracticeGeneration(
             appLanguage: lastPracticeAppLanguage,
             llmEndpoint: endpoint,
-            llmModel: lastPracticeLLMModel ?? "default"
+            llmModel: lastPracticeLLMModel ?? "default",
+            seedSource: lastPracticeSeedSource
         )
+    }
+
+    /// Resolves vocabulary seeds for practice generation (examples never seed practice).
+    /// Results are capped at `PracticeGenerationConfig.maxDueSeeds`.
+    func resolvePracticeSeeds(source: PracticeSeedSource) -> [Flashcard] {
+        let maxSeeds = PracticeGenerationConfig.maxDueSeeds
+        switch source {
+        case .dueVocab:
+            let due = FSRSManager.shared.dueCards(
+                from: flashcards.filter { $0.kind == .vocab }
+            )
+            return Array(due.prefix(maxSeeds))
+        case .lastStudySession:
+            return resolveLastStudySessionCards(cappedTo: maxSeeds)
+        case .selectedVocab(let ids):
+            return Array(resolveSelectedVocabCards(ids: ids).prefix(maxSeeds))
+        }
     }
 
     func removePracticeCard(id: String) {
@@ -792,6 +1091,94 @@ final class FlashcardViewModel: ObservableObject {
 
         _ = appLanguage // reserved for localized logging if needed later
         return result
+    }
+
+    private func recordGradedCardInStudySession(_ card: Flashcard, grade: Rating) {
+        let entry = StudySessionGradedEntry(id: card.id, grade: grade)
+        if var session = lastStudySession {
+            if let index = session.gradedEntries.firstIndex(where: { $0.id == card.id }) {
+                session.gradedEntries[index] = entry
+            } else {
+                session.gradedEntries.append(entry)
+            }
+            session.completedAt = Date()
+            lastStudySession = session
+        } else {
+            lastStudySession = StudySessionSnapshot(
+                kind: currentReviewKind,
+                gradedEntries: [entry],
+                completedAt: Date()
+            )
+        }
+        // Only vocab sessions seed practice; still persist kind so Examples sessions don't revive later.
+        if lastStudySession?.kind == .vocab {
+            StudySessionStore.save(lastStudySession)
+        } else {
+            StudySessionStore.clear()
+        }
+    }
+
+    /// Vocab cards from the last study session.
+    /// Prefer Again/Hard (weak) first when capping; preserve relative study order within each tier.
+    private func resolveLastStudySessionCards(
+        cappedTo maxSeeds: Int = PracticeGenerationConfig.maxDueSeeds
+    ) -> [Flashcard] {
+        guard let session = lastStudySession, session.kind == .vocab else { return [] }
+        let byId = Dictionary(uniqueKeysWithValues: flashcards.map { ($0.id, $0) })
+
+        var weak: [Flashcard] = []
+        var strong: [Flashcard] = []
+        for entry in session.gradedEntries {
+            guard let card = byId[entry.id], card.kind == .vocab else { continue }
+            if entry.isWeak {
+                weak.append(card)
+            } else {
+                strong.append(card)
+            }
+        }
+        return Array((weak + strong).prefix(maxSeeds))
+    }
+
+    private func pruneLastStudySessionIfNeeded(validVocabIds: Set<String>) {
+        guard var session = lastStudySession, session.kind == .vocab else { return }
+        let before = session.gradedEntries.count
+        session.gradedEntries.removeAll { !validVocabIds.contains($0.id) }
+        guard session.gradedEntries.count != before else { return }
+        if session.gradedEntries.isEmpty {
+            lastStudySession = nil
+            StudySessionStore.clear()
+        } else {
+            lastStudySession = session
+            StudySessionStore.save(session)
+        }
+    }
+
+    private func logPracticeGenerationStart(
+        source: PracticeSeedSource,
+        seedCards: [Flashcard],
+        endpoint: String
+    ) {
+        // Canonical analytics-style line (phase 3).
+        var detail = "Practice generation from \(source.analyticsName) (\(seedCards.count) seeds)"
+        if source == .lastStudySession, let session = lastStudySession {
+            let weakIds = Set(session.gradedEntries.filter(\.isWeak).map(\.id))
+            let weakInSeeds = seedCards.filter { weakIds.contains($0.id) }.count
+            if weakInSeeds > 0 {
+                detail += ", \(weakInSeeds) weak-first"
+            }
+        }
+        onLog?(detail)
+        onLog?("Practice generation endpoint: \(endpoint)")
+    }
+
+    /// Manual selection resolved in selection order; drops missing / non-vocab ids.
+    private func resolveSelectedVocabCards(ids: [String]? = nil) -> [Flashcard] {
+        let orderedIds = ids ?? selectedVocabSeedIds
+        let byId = Dictionary(uniqueKeysWithValues: flashcards.map { ($0.id, $0) })
+        return orderedIds.compactMap { id -> Flashcard? in
+            guard let card = byId[id], card.kind == .vocab else { return nil }
+            return card
+        }
     }
 
     private func resolveSeed(for practiceCard: PracticeCard) -> Flashcard? {

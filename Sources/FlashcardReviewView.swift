@@ -177,6 +177,8 @@ struct FlashcardReviewView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
+                .keyboardShortcut(.space, modifiers: [])
+                .help(L10n.spaceToReveal(lang))
             }
 
             Spacer(minLength: 24)
@@ -223,7 +225,12 @@ struct FlashcardReviewView: View {
                 chatVM.stopPlayback()
                 flashcardVM.gradeCurrentCard(.hard)
             }
-            GradeButton(title: L10n.gradeGood(lang), color: .green) {
+            GradeButton(
+                title: L10n.gradeGood(lang),
+                color: .green,
+                shortcut: .space,
+                help: L10n.spaceToGradeGood(lang)
+            ) {
                 chatVM.stopPlayback()
                 flashcardVM.gradeCurrentCard(.good)
             }
@@ -247,27 +254,79 @@ struct FlashcardReviewView: View {
                 .font(.title2)
                 .fontWeight(.bold)
 
-            if flashcardVM.dueCountForSelectedKind == 0 {
-                Text(L10n.noCardsDue(lang))
-                    .foregroundColor(.secondary)
-            }
+            if flashcardVM.canOfferPostStudyPractice {
+                Text(L10n.practiceAfterStudySubtitle(
+                    lang,
+                    count: flashcardVM.lastStudySessionSeedCount
+                ))
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
 
-            Button(L10n.done(lang)) {
-                flashcardVM.endReviewSession()
-                dismiss()
+                Button {
+                    startPostStudyPractice()
+                } label: {
+                    HStack(spacing: 6) {
+                        if flashcardVM.isGeneratingPractice {
+                            ProgressView()
+                                .controlSize(.small)
+                        } else {
+                            Image(systemName: "sparkles")
+                        }
+                        Text(flashcardVM.isGeneratingPractice
+                             ? L10n.practiceGenerating(lang)
+                             : L10n.practiceTheseWithAI(lang))
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .disabled(flashcardVM.isGeneratingPractice)
+
+                Button(L10n.done(lang)) {
+                    flashcardVM.endReviewSession()
+                    dismiss()
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+                .disabled(flashcardVM.isGeneratingPractice)
+            } else {
+                if flashcardVM.dueCountForSelectedKind == 0 {
+                    Text(L10n.noCardsDue(lang))
+                        .foregroundColor(.secondary)
+                }
+
+                Button(L10n.done(lang)) {
+                    flashcardVM.endReviewSession()
+                    dismiss()
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
 
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    /// Ends the review sheet and kicks off practice from the just-studied vocab seeds.
+    private func startPostStudyPractice() {
+        flashcardVM.beginPracticeGeneration(
+            appLanguage: lang,
+            llmEndpoint: chatVM.llmURL,
+            llmModel: chatVM.llmModel,
+            seedSource: .lastStudySession
+        )
+        flashcardVM.endReviewSession()
+        dismiss()
     }
 }
 
 private struct GradeButton: View {
     let title: String
     let color: Color
+    var shortcut: KeyEquivalent? = nil
+    var help: String? = nil
     let action: () -> Void
 
     var body: some View {
@@ -280,5 +339,34 @@ private struct GradeButton: View {
         }
         .buttonStyle(.borderedProminent)
         .tint(color)
+        .modifier(OptionalKeyboardShortcut(shortcut: shortcut))
+        .modifier(OptionalHelp(help: help))
+    }
+}
+
+/// Applies `.keyboardShortcut` only when a key is provided.
+private struct OptionalKeyboardShortcut: ViewModifier {
+    let shortcut: KeyEquivalent?
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if let shortcut {
+            content.keyboardShortcut(shortcut, modifiers: [])
+        } else {
+            content
+        }
+    }
+}
+
+private struct OptionalHelp: ViewModifier {
+    let help: String?
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if let help {
+            content.help(help)
+        } else {
+            content
+        }
     }
 }

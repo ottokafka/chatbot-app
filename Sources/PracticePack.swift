@@ -1,6 +1,6 @@
 import Foundation
 
-/// Ephemeral practice item derived from a due flashcard.
+/// Ephemeral practice item derived from a vocabulary seed flashcard.
 /// Not stored in the main deck; discarded when the practice pack ends.
 struct PracticeCard: Identifiable, Equatable, Hashable {
     let id: String
@@ -34,7 +34,7 @@ struct PracticeCard: Identifiable, Equatable, Hashable {
 struct PracticePack: Identifiable, Equatable {
     let id: String
     let createdAt: Date
-    /// How many due deck cards seeded generation.
+    /// How many vocabulary seed cards were used for generation (legacy name: sourceDueCount).
     var sourceDueCount: Int
     var cards: [PracticeCard]
 
@@ -52,7 +52,7 @@ struct PracticePack: Identifiable, Equatable {
 }
 
 enum PracticeGenerationConfig {
-    /// Max due cards used as seeds for one pack.
+    /// Max vocabulary seed cards used for one pack.
     static let maxDueSeeds = 10
     /// Example usages generated per seed card.
     static let examplesPerCard = 2

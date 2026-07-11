@@ -632,11 +632,23 @@ enum L10n {
     }
 
     static func tapToReveal(_ lang: AppLanguage) -> String {
-        lang == .zh ? "点击显示答案" : "Tap to reveal"
+        lang == .zh ? "点击或按空格显示答案" : "Tap or press Space to reveal"
     }
 
     static func revealAnswer(_ lang: AppLanguage) -> String {
         lang == .zh ? "显示答案" : "Reveal Answer"
+    }
+
+    static func spaceToReveal(_ lang: AppLanguage) -> String {
+        lang == .zh ? "空格：显示答案" : "Space: reveal answer"
+    }
+
+    static func spaceToGradeGood(_ lang: AppLanguage) -> String {
+        lang == .zh ? "空格：良好" : "Space: Good"
+    }
+
+    static func spaceToAdvancePractice(_ lang: AppLanguage) -> String {
+        lang == .zh ? "空格：下一张" : "Space: Next"
     }
 
     static func reviewComplete(_ lang: AppLanguage) -> String {
@@ -673,10 +685,107 @@ enum L10n {
         lang == .zh ? "AI 练习" : "Practice with AI"
     }
 
-    static func practiceWithAIHelp(_ lang: AppLanguage) -> String {
+    static func practiceTheseWithAI(_ lang: AppLanguage) -> String {
+        lang == .zh ? "用 AI 练习这些词" : "Practice these with AI"
+    }
+
+    static func practiceSelectCards(_ lang: AppLanguage) -> String {
+        lang == .zh ? "选择" : "Select"
+    }
+
+    static func practiceSelectCardsHelp(_ lang: AppLanguage) -> String {
         lang == .zh
-            ? "根据到期词汇生成练习例句；默认不保存，保存则进入例句库"
-            : "Generate practice from due vocabulary; ephemeral unless saved to Examples"
+            ? "选择词汇卡生成 AI 练习（最多 \(PracticeGenerationConfig.maxDueSeeds) 张）"
+            : "Choose vocabulary cards for AI practice (up to \(PracticeGenerationConfig.maxDueSeeds))"
+    }
+
+    static func practiceCancelSelection(_ lang: AppLanguage) -> String {
+        lang == .zh ? "取消选择" : "Cancel selection"
+    }
+
+    static func practiceSelectedWithAI(_ lang: AppLanguage, count: Int) -> String {
+        if lang == .zh {
+            return count > 0 ? "练习所选 (\(count))" : "练习所选"
+        }
+        return count > 0 ? "Practice selected (\(count))" : "Practice selected"
+    }
+
+    static func practiceSelectedWithAIHelp(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "根据所选词汇生成例句；不影响复习进度，保存则进入例句库"
+            : "Generate examples from selected vocabulary; does not affect schedule; saves go to Examples"
+    }
+
+    static func practiceSelectionCount(
+        _ lang: AppLanguage,
+        selected: Int,
+        max: Int
+    ) -> String {
+        if lang == .zh {
+            return "已选 \(selected)/\(max)"
+        }
+        return "\(selected)/\(max) selected"
+    }
+
+    static func practiceSelectionLimitReached(_ lang: AppLanguage, max: Int) -> String {
+        if lang == .zh {
+            return "最多选择 \(max) 张卡作为练习种子"
+        }
+        return "You can select up to \(max) cards for practice"
+    }
+
+    static func practiceSelectAllVisible(_ lang: AppLanguage) -> String {
+        lang == .zh ? "全选可见" : "Select visible"
+    }
+
+    static func practiceAfterStudySubtitle(_ lang: AppLanguage, count: Int) -> String {
+        if lang == .zh {
+            return "把刚学过的 \(count) 个词变成例句练习（不影响复习进度）"
+        }
+        let word = count == 1 ? "word" : "words"
+        return "Turn the \(count) \(word) you just studied into example sentences (does not affect your schedule)"
+    }
+
+    static func practiceWithAIHelp(
+        _ lang: AppLanguage,
+        hasDueVocab: Bool = true,
+        lastSessionCount: Int = 0
+    ) -> String {
+        if hasDueVocab {
+            return lang == .zh
+                ? "根据到期词汇生成练习例句；默认不保存，保存则进入例句库"
+                : "Generate practice from due vocabulary; ephemeral unless saved to Examples"
+        }
+        if lastSessionCount > 0 {
+            if lang == .zh {
+                return "没有到期卡 — 根据上次学习的 \(lastSessionCount) 个词生成例句；保存则进入例句库"
+            }
+            let word = lastSessionCount == 1 ? "word" : "words"
+            return "No cards due — practice example sentences from your last study session (\(lastSessionCount) \(word)); saves go to Examples"
+        }
+        return lang == .zh
+            ? "根据词汇生成练习例句；默认不保存，保存则进入例句库"
+            : "Generate practice from vocabulary; ephemeral unless saved to Examples"
+    }
+
+    static func practiceWithAIMenuHelp(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "点击用默认来源生成练习；打开菜单可在到期词汇与上次学习之间选择"
+            : "Click to practice from the default source; open the menu to choose due vocabulary or your last study session"
+    }
+
+    static func practiceFromDueVocab(_ lang: AppLanguage, count: Int) -> String {
+        if lang == .zh {
+            return "到期词汇 (\(count))"
+        }
+        return "Due vocabulary (\(count))"
+    }
+
+    static func practiceFromLastStudySession(_ lang: AppLanguage, count: Int) -> String {
+        if lang == .zh {
+            return "上次学习 (\(count))"
+        }
+        return "Last study session (\(count))"
     }
 
     static func practiceGenerating(_ lang: AppLanguage) -> String {
@@ -689,15 +798,15 @@ enum L10n {
 
     static func practicePreviewSummary(_ lang: AppLanguage, cards: Int, seeds: Int) -> String {
         if lang == .zh {
-            return "基于 \(seeds) 张到期卡生成了 \(cards) 条例句"
+            return "基于 \(seeds) 张词汇卡生成了 \(cards) 条例句"
         }
-        return "\(cards) examples from \(seeds) due card\(seeds == 1 ? "" : "s")"
+        return "\(cards) examples from \(seeds) seed card\(seeds == 1 ? "" : "s")"
     }
 
     static func practicePreviewAINote(_ lang: AppLanguage) -> String {
         lang == .zh
-            ? "由 AI 根据到期词汇生成。可编辑、重生成；保存会进入「例句」库，不会写入词汇。"
-            : "AI-generated from due vocabulary. Edit or regenerate; saves go to Examples, not Vocabulary."
+            ? "由 AI 根据词汇生成。可编辑、重生成；保存会进入「例句」库，不会写入词汇。"
+            : "AI-generated from vocabulary. Edit or regenerate; saves go to Examples, not Vocabulary."
     }
 
     static func practiceSelectAll(_ lang: AppLanguage) -> String {
@@ -841,7 +950,13 @@ enum L10n {
     }
 
     static func practiceNoDueCards(_ lang: AppLanguage) -> String {
-        lang == .zh ? "没有到期的闪卡可练习" : "No due cards to practice from"
+        practiceNoSeeds(lang)
+    }
+
+    static func practiceNoSeeds(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "没有可练习的词汇。请先学习一些卡片，或等到有卡片到期。"
+            : "No vocabulary available to practice. Study some cards first, or wait until cards are due."
     }
 
     static func practiceGenerationFailed(_ lang: AppLanguage) -> String {
