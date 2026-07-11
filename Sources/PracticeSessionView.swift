@@ -173,6 +173,10 @@ struct PracticeSessionView: View {
                     Text(L10n.tapToReveal(lang))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            flashcardVM.revealPracticeAnswer()
+                        }
                 } else {
                     Divider()
                         .padding(.horizontal, 40)
@@ -200,12 +204,6 @@ struct PracticeSessionView: View {
                     .shadow(color: .black.opacity(0.06), radius: 8, y: 2)
             )
             .padding(.horizontal, 32)
-            .contentShape(Rectangle())
-            .onTapGesture {
-                if !flashcardVM.isPracticeAnswerRevealed {
-                    flashcardVM.revealPracticeAnswer()
-                }
-            }
 
             Spacer()
 
@@ -261,6 +259,8 @@ struct PracticeSessionView: View {
             .font(.system(.title3, design: .monospaced))
             .foregroundColor(.secondary)
             .italic()
+            .multilineTextAlignment(.center)
+            .textSelection(.enabled)
     }
 
     private func practiceTextRow(
@@ -275,6 +275,7 @@ struct PracticeSessionView: View {
                 .font(font)
                 .foregroundColor(foreground)
                 .multilineTextAlignment(.center)
+                .textSelection(.enabled)
                 .frame(maxWidth: .infinity)
 
             MessageAudioButton(

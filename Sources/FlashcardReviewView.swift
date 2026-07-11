@@ -133,6 +133,10 @@ struct FlashcardReviewView: View {
                     Text(L10n.tapToReveal(lang))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            flashcardVM.revealAnswer()
+                        }
                 } else {
                     Divider()
                         .padding(.horizontal, 40)
@@ -160,12 +164,6 @@ struct FlashcardReviewView: View {
                     .shadow(color: .black.opacity(0.06), radius: 8, y: 2)
             )
             .padding(.horizontal, 32)
-            .contentShape(Rectangle())
-            .onTapGesture {
-                if !flashcardVM.isAnswerRevealed {
-                    flashcardVM.revealAnswer()
-                }
-            }
 
             Spacer()
 
@@ -190,6 +188,8 @@ struct FlashcardReviewView: View {
             .font(.system(.title3, design: .monospaced))
             .foregroundColor(.secondary)
             .italic()
+            .multilineTextAlignment(.center)
+            .textSelection(.enabled)
     }
 
     private func flashcardTextRow(
@@ -204,6 +204,7 @@ struct FlashcardReviewView: View {
                 .font(font)
                 .foregroundColor(foreground)
                 .multilineTextAlignment(.center)
+                .textSelection(.enabled)
                 .frame(maxWidth: .infinity)
 
             MessageAudioButton(
