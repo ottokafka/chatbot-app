@@ -397,9 +397,9 @@ enum SpeakingTargetTracker {
 
 | Script | Rule |
 |--------|------|
-| **English** | Normalize via `PracticeScaffolding.normalizeFrontKey`. Match multi-word fronts as substring on normalized text; single tokens with **word boundaries** (not raw substring inside longer words). |
-| **Chinese** | Normalize via `normalizeFrontKey`. Sort targets **longest-front-first**. Match as substring only for fronts with **length > 1**. Length-1 targets (是, 在, 好, …): mark hit only if matched as a standalone particle/word with adjacent non-Han or string boundary **or** skip auto-hit and rely on soft AI only — **prefer: require length ≥ 2 for auto chip credit; log length-1 as “soft only”**. |
-| **Mixed** | Use script majority of targets (same spirit as K12). |
+| **English** | Normalize via `PracticeScaffolding.normalizeFrontKey`. Single tokens: **word-boundary / letter-run token** membership (not raw substring inside longer words). Multi-word **and hyphenated** fronts (`self-study`, `ice cream`): **contiguous token-sequence** match after treating hyphen/en-dash/em-dash as separators (not raw normalized substring — avoids `"in the"` ⊆ `"within the"`). |
+| **Chinese** | Normalize via `normalizeFrontKey`. Match as substring only for fronts with **length > 1**. Length-1 targets (是, 在, 好, …): skip auto-hit (soft AI only). Hits are non-exclusive (nested fronts like 图书馆 + 图书 both credit if both are targets). |
+| **Mixed** | **Per-target script**: CJK front → Chinese rules; otherwise English. Session majority (`SpeakingScript.resolve`) still steers content language / AI speech; it does **not** force all chips through one matcher (so bilingual seeds do not silently mis-score). |
 
 **Do not** reuse `PracticeScaffoldValidator.diagnose` for user target hits — that scores **coverage of a sentence by an allowlist** (assistant leakage), not “did each target appear in user text.”
 

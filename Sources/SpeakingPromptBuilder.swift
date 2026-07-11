@@ -177,16 +177,30 @@ enum SpeakingPromptBuilder {
             """
         }
         if isOpening {
+            if includeUncovered {
+                s += """
+
+
+                Your task now: open the conversation with one short greeting and a simple question that invites the learner to use a target word. Plain text only.
+                """
+            } else {
+                s += """
+
+
+                Your task now: open the conversation with one short greeting and a simple question about the topic / TARGET_WORDS situation. Plain text only.
+                """
+            }
+        } else if includeUncovered {
             s += """
 
 
-            Your task now: open the conversation with one short greeting and a simple question that invites the learner to use a target word. Plain text only.
+            Continue the conversation with one short reply (plain text only). Prefer questions that invite reuse of targets.
             """
         } else {
             s += """
 
 
-            Continue the conversation with one short reply (plain text only). Prefer questions that invite reuse of targets.
+            Continue the conversation with one short reply (plain text only). Stay near the topic / TARGET_WORDS situation.
             """
         }
         return s
@@ -266,16 +280,30 @@ enum SpeakingPromptBuilder {
             """
         }
         if isOpening {
+            if includeUncovered {
+                s += """
+
+
+                你的任务：用一句简短问候和简单问句开启对话，引导学习者使用某个目标词。仅纯文本。
+                """
+            } else {
+                s += """
+
+
+                你的任务：用一句简短问候和简单问句开启对话，贴近话题 / TARGET_WORDS 情境。仅纯文本。
+                """
+            }
+        } else if includeUncovered {
             s += """
 
 
-            你的任务：用一句简短问候和简单问句开启对话，引导学习者使用某个目标词。仅纯文本。
+            继续对话，用一句短回复（仅纯文本）。优先用能邀请复用目标词的问句。
             """
         } else {
             s += """
 
 
-            继续对话，用一句短回复（仅纯文本）。优先用能邀请复用目标词的问句。
+            继续对话，用一句短回复（仅纯文本）。保持贴近话题 / TARGET_WORDS 情境。
             """
         }
         return s
@@ -296,10 +324,13 @@ enum SpeakingPromptBuilder {
     }
 
     private static func encodeTargetWords(_ cards: [Flashcard]) -> String {
-        let payloads = cards.map {
-            TargetWordPayload(
-                front: $0.front.trimmingCharacters(in: .whitespacesAndNewlines),
-                back: $0.back.trimmingCharacters(in: .whitespacesAndNewlines)
+        // Same non-empty-front filter as `SpeakingSessionConfig.targetFronts` / coverage lists.
+        let payloads = cards.compactMap { card -> TargetWordPayload? in
+            let front = card.front.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !front.isEmpty else { return nil }
+            return TargetWordPayload(
+                front: front,
+                back: card.back.trimmingCharacters(in: .whitespacesAndNewlines)
             )
         }
         return encodeJSONArray(payloads)

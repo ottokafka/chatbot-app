@@ -8,9 +8,15 @@ import Foundation
 enum SpeakingTargetTracker {
     /// Returns the subset of `targets` found in `userText` (order-preserving).
     ///
-    /// - English: multi-word fronts = substring on normalized text; single tokens = word-boundary / token match.
-    /// - Chinese: longest-first substring; auto-hit only for fronts with **length > 1**
+    /// Matching is **per target front** (not session majority alone):
+    /// - **CJK** fronts → Chinese rules: substring; auto-hit only for length > 1
     ///   (avoids false positives on 是 / 在 / 好).
+    /// - **Else** → English rules: single token = set membership on letter-run tokens;
+    ///   multi-word / hyphenated = contiguous token-sequence match (word boundaries).
+    ///
+    /// `script` is retained for call-site majority context (content steering, logging);
+    /// hit detection does not force every front through one rule set so bilingual
+    /// decks still score each chip correctly.
     static func hits(
         in userText: String,
         targets: [String],
@@ -18,48 +24,36 @@ enum SpeakingTargetTracker {
     ) -> [String] {
         let trimmedUser = userText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedUser.isEmpty else { return [] }
+        // `script` remains part of the public API (session majority / content steering);
+        // chip hits use per-front rules below so mixed decks still score correctly.
+        let _ = script
+
+        let normalizedText = PracticeScaffolding.normalizeFrontKey(trimmedUser)
+        let tokenList = PracticeScaffoldValidator.englishTokens(from: trimmedUser).map {
+            PracticeScaffolding.normalizeFrontKey($0)
+        }
+        let tokenSet = Set(tokenList)
 
         var found: [String] = []
         var seenKeys = Set<String>()
 
-        switch script {
-        case .english:
-            let normalizedText = PracticeScaffolding.normalizeFrontKey(trimmedUser)
-            let tokens = Set(
-                PracticeScaffoldValidator.englishTokens(from: trimmedUser).map {
-                    PracticeScaffolding.normalizeFrontKey($0)
-                }
-            )
-            for target in targets {
-                let key = PracticeScaffolding.normalizeFrontKey(target)
-                guard !key.isEmpty, seenKeys.insert(key).inserted else { continue }
-                if englishMatches(normalizedText: normalizedText, tokens: tokens, targetKey: key) {
+        for target in targets {
+            let key = PracticeScaffolding.normalizeFrontKey(target)
+            guard !key.isEmpty, seenKeys.insert(key).inserted else { continue }
+
+            if PracticeScaffolding.containsCJK(target) {
+                // Chinese: length > 1 substring on normalized text.
+                // Scan order does not change the hit set (non-exclusive contains);
+                // nested fronts (图书馆 + 图书) both credit if both are targets.
+                guard key.count > 1 else { continue }
+                if normalizedText.contains(key) {
                     found.append(target)
                 }
-            }
-        case .chinese:
-            let normalizedText = PracticeScaffolding.normalizeFrontKey(trimmedUser)
-            // Longest-first matching avoids partial credit issues; still report original order.
-            let candidates = targets.compactMap { target -> (original: String, key: String)? in
-                let key = PracticeScaffolding.normalizeFrontKey(target)
-                guard !key.isEmpty else { return nil }
-                return (target, key)
-            }
-            // Prefer longer keys when scanning; emit unique hits in original target order later.
-            var hitKeys = Set<String>()
-            let longestFirst = candidates.sorted { $0.key.count > $1.key.count }
-            for item in longestFirst {
-                // Auto-hit only for fronts length > 1 (skip 是/在/好 single-char false positives).
-                guard item.key.count > 1 else { continue }
-                if normalizedText.contains(item.key) {
-                    hitKeys.insert(item.key)
-                }
-            }
-            for target in targets {
-                let key = PracticeScaffolding.normalizeFrontKey(target)
-                guard !key.isEmpty, hitKeys.contains(key), seenKeys.insert(key).inserted else {
-                    continue
-                }
+            } else if englishMatches(
+                tokenList: tokenList,
+                tokenSet: tokenSet,
+                targetKey: key
+            ) {
                 found.append(target)
             }
         }
@@ -84,16 +78,64 @@ enum SpeakingTargetTracker {
 
     // MARK: - English matching
 
-    /// Multi-word: substring on normalized text. Single token: exact token match (word boundary).
+    /// Hyphen / en-dash / em-dash count as multi-word separators (e.g. `self-study` →
+    /// contiguous tokens `self` + `study`). Multi-word keys require a whole-token
+    /// contiguous subsequence — not raw substring (`"in the"` ⊄ `"within the"`).
+    /// Single tokens use set membership (word-boundary equivalent).
     private static func englishMatches(
-        normalizedText: String,
-        tokens: Set<String>,
+        tokenList: [String],
+        tokenSet: Set<String>,
         targetKey: String
     ) -> Bool {
-        let hasWhitespace = targetKey.contains { $0.isWhitespace }
-        if hasWhitespace {
-            return normalizedText.contains(targetKey)
+        let parts = englishTargetParts(targetKey)
+        guard !parts.isEmpty else { return false }
+        if parts.count == 1 {
+            return tokenSet.contains(parts[0])
         }
-        return tokens.contains(targetKey)
+        return containsContiguousTokenSequence(haystack: tokenList, needle: parts)
+    }
+
+    /// Split a normalized English front on whitespace and hyphen-like dashes.
+    private static func englishTargetParts(_ targetKey: String) -> [String] {
+        var parts: [String] = []
+        var current = ""
+        for ch in targetKey {
+            if ch.isWhitespace || isHyphenLikeSeparator(ch) {
+                if !current.isEmpty {
+                    parts.append(current)
+                    current = ""
+                }
+            } else {
+                current.append(ch)
+            }
+        }
+        if !current.isEmpty {
+            parts.append(current)
+        }
+        return parts
+    }
+
+    private static func isHyphenLikeSeparator(_ ch: Character) -> Bool {
+        // ASCII hyphen-minus, en dash, em dash.
+        ch == "-" || ch == "\u{2013}" || ch == "\u{2014}"
+    }
+
+    private static func containsContiguousTokenSequence(
+        haystack: [String],
+        needle: [String]
+    ) -> Bool {
+        guard !needle.isEmpty, haystack.count >= needle.count else { return false }
+        let lastStart = haystack.count - needle.count
+        for start in 0...lastStart {
+            var matched = true
+            for offset in 0..<needle.count {
+                if haystack[start + offset] != needle[offset] {
+                    matched = false
+                    break
+                }
+            }
+            if matched { return true }
+        }
+        return false
     }
 }
