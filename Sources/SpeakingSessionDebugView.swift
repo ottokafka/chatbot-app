@@ -1,7 +1,7 @@
 #if DEBUG
 import SwiftUI
 
-/// Minimal DEBUG sheet to exercise the typed speaking loop without deck UI / mic.
+/// Minimal DEBUG sheet to exercise the speaking loop (typed + session STT/TTS) without deck UI.
 struct SpeakingSessionDebugView: View {
     @ObservedObject var speakingVM: SpeakingSessionViewModel
     @Environment(\.dismiss) private var dismiss
@@ -22,7 +22,7 @@ struct SpeakingSessionDebugView: View {
                 }
             }
             .padding()
-            .navigationTitle("Speaking Debug (typed)")
+            .navigationTitle("Speaking Debug")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -35,7 +35,7 @@ struct SpeakingSessionDebugView: View {
                 }
             }
         }
-        .frame(minWidth: 420, minHeight: 480)
+        .frame(minWidth: 420, minHeight: 520)
     }
 
     // MARK: - Setup
@@ -47,9 +47,10 @@ struct SpeakingSessionDebugView: View {
                 TextField("Known fronts", text: $knownCSV)
                 TextField("Topic hint", text: $topicHint)
                 Toggle("Encourage target coverage", isOn: $encourageCoverage)
+                Toggle("Auto-play assistant TTS", isOn: $speakingVM.autoPlayTTS)
             }
             Section {
-                Button("Start typed session") {
+                Button("Start session (voice + typed)") {
                     startDebugSession()
                 }
                 .disabled(parseFronts(targetsCSV).isEmpty)
@@ -71,6 +72,7 @@ struct SpeakingSessionDebugView: View {
         VStack(alignment: .leading, spacing: 10) {
             if let session = speakingVM.session {
                 statusRow(session)
+                voiceStatusRow
                 if let err = session.lastError, !err.isEmpty {
                     errorBanner(err, session: session)
                 }
@@ -83,6 +85,12 @@ struct SpeakingSessionDebugView: View {
                     speakingVM.endSession()
                 }
                 Spacer()
+                Toggle("Auto TTS", isOn: $speakingVM.autoPlayTTS)
+                    .toggleStyle(.switch)
+                    .labelsHidden()
+                Text("Auto TTS")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         }
     }
@@ -92,10 +100,39 @@ struct SpeakingSessionDebugView: View {
             Text("Status: \(String(describing: session.status))")
                 .font(.headline)
             Spacer()
-            if session.status == .generatingReply {
+            if isBusy(session.status) {
                 ProgressView()
                     .controlSize(.small)
             }
+        }
+    }
+
+    private var voiceStatusRow: some View {
+        HStack(spacing: 12) {
+            Label(
+                speakingVM.isSpeakingMicActive ? "Mic on" : "Mic off",
+                systemImage: speakingVM.isSpeakingMicActive ? "mic.fill" : "mic.slash"
+            )
+            .font(.caption)
+            .foregroundStyle(speakingVM.isSpeakingMicActive ? .green : .secondary)
+
+            Label(
+                speakingVM.isSpeakingSTTConnected ? "STT connected" : "STT idle",
+                systemImage: speakingVM.isSpeakingSTTConnected ? "antenna.radiowaves.left.and.right" : "antenna.radiowaves.left.and.right.slash"
+            )
+            .font(.caption)
+            .foregroundStyle(speakingVM.isSpeakingSTTConnected ? .blue : .secondary)
+
+            Spacer()
+        }
+    }
+
+    private func isBusy(_ status: SpeakingSessionStatus) -> Bool {
+        switch status {
+        case .generatingReply, .correctingSpeech, .playingTTS:
+            return true
+        case .ready, .waitingUser, .ended:
+            return false
         }
     }
 
@@ -150,6 +187,16 @@ struct SpeakingSessionDebugView: View {
                             .foregroundStyle(.secondary)
                         Text(turn.content)
                             .font(.body)
+                        if let raw = turn.rawASR, !raw.isEmpty, raw != turn.content {
+                            Text("ASR: \(raw)")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                        if let tip = turn.tutorFeedback, !tip.isEmpty {
+                            Text("↳ \(tip)")
+                                .font(.caption2)
+                                .foregroundStyle(.orange)
+                        }
                         if !turn.targetHits.isEmpty {
                             Text("hits: \(turn.targetHits.joined(separator: ", "))")
                                 .font(.caption2)
@@ -172,9 +219,12 @@ struct SpeakingSessionDebugView: View {
 
     private func inputRow(_ session: SpeakingSession) -> some View {
         HStack {
-            TextField("Type a reply…", text: $draftInput)
-                .textFieldStyle(.roundedBorder)
-                .disabled(session.status != .waitingUser)
+            TextField(
+                session.status == .waitingUser ? "Speak or type a reply…" : "Waiting…",
+                text: $draftInput
+            )
+            .textFieldStyle(.roundedBorder)
+            .disabled(session.status != .waitingUser)
             Button("Send") {
                 let text = draftInput
                 draftInput = ""

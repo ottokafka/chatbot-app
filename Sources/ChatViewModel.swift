@@ -362,6 +362,28 @@ class ChatViewModel: ObservableObject {
         webSocketManager?.disconnect()
         webSocketManager = nil
     }
+
+    /// Hand audio hardware to an external session (e.g. Speak with AI).
+    ///
+    /// Ordering (D11 / mic isolation):
+    /// 1. Stop the **chat** mic pipeline first so `isMicrophoneActive` is false
+    ///    (chat recorder stopped, STT WS disconnected).
+    /// 2. Then stop the shared player **without** re-arming the chat mic.
+    ///
+    /// Bare `stopPlayback()` is unsafe while chat mic is still marked active —
+    /// it restarts chat's recorder after stopping the player.
+    func yieldAudioHardwareForExternalSession() {
+        log("Yielding audio hardware for external session (stop chat mic, then player).", tag: "SYSTEM")
+        // 1. Chat mic off first — no re-arm path can fire afterward.
+        stopMicrophonePipeline()
+        // 2. Stop shared player without calling stopPlayback() (that re-arms mic when active).
+        audioPlayer.stop()
+        isPlayingAudio = false
+        currentlyPlayingMessageId = nil
+        currentlyPlayingEphemeralId = nil
+        generatingEphemeralId = nil
+        updateGeneratingSpeechState()
+    }
     
     func stopPlayback() {
         log("Stopping playback requested by user.", tag: "AUDIO")

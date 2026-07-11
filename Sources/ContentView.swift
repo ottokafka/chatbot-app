@@ -114,7 +114,7 @@ struct ContentView: View {
                     .padding(.bottom, 8)
 
                 #if DEBUG
-                // PR2a: exercise typed speaking loop without full deck Speak UI.
+                // PR2b: exercise speaking loop (typed + session STT/TTS) without full deck UI.
                 Button {
                     speakingVM.configureEndpoints(
                         llmURL: viewModel.llmURL,
@@ -125,6 +125,25 @@ struct ContentView: View {
                         appLanguage: viewModel.appLanguage,
                         sttLanguage: viewModel.sttLanguage,
                         onLog: { viewModel.log($0) }
+                    )
+                    let chat = viewModel
+                    speakingVM.configureChatAudio(
+                        yieldHardware: {
+                            chat.yieldAudioHardwareForExternalSession()
+                        },
+                        playEphemeralSpeech: { text, playbackId in
+                            chat.playEphemeralSpeech(text: text, playbackId: playbackId)
+                        },
+                        isGeneratingEphemeral: { id in
+                            chat.isGeneratingEphemeralAudio(id: id)
+                        },
+                        isPlayingEphemeral: { id in
+                            chat.isPlayingEphemeralAudio(id: id)
+                        },
+                        stopPlayback: {
+                            // Chat mic already yielded off — safe; does not re-arm when inactive.
+                            chat.stopPlayback()
+                        }
                     )
                     isShowingSpeakingDebug = true
                 } label: {
@@ -138,7 +157,7 @@ struct ContentView: View {
                 .buttonStyle(.borderless)
                 .padding(.horizontal)
                 .padding(.bottom, 8)
-                .help("DEBUG: typed Speaking with AI session loop")
+                .help("DEBUG: Speaking with AI (typed + voice STT/TTS)")
                 #endif
             }
             .navigationTitle(appSection == .conversations ? L10n.conversations(lang) : L10n.flashcards(lang))
