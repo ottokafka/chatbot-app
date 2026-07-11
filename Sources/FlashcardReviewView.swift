@@ -4,6 +4,12 @@ import FSRS
 struct FlashcardReviewView: View {
     @ObservedObject var flashcardVM: FlashcardViewModel
     @ObservedObject var chatVM: ChatViewModel
+    /// Optional: post-study Speak CTA (PR4). Nil hides the Speak button.
+    @ObservedObject var speakingVM: SpeakingSessionViewModel
+    /// Wire chat endpoints / audio hooks into speakingVM before launch.
+    var configureSpeaking: () -> Void
+    /// D21: dismiss practice sheets before presenting Speak.
+    var dismissPracticeForSpeaking: () -> Void
     @Environment(\.appLanguage) private var lang
     @Environment(\.dismiss) private var dismiss
 
@@ -272,24 +278,45 @@ struct FlashcardReviewView: View {
                     maxWidth: 220
                 )
 
-                Button {
-                    startPostStudyPractice()
-                } label: {
-                    HStack(spacing: 6) {
-                        if flashcardVM.isGeneratingPractice {
-                            ProgressView()
-                                .controlSize(.small)
-                        } else {
-                            Image(systemName: "sparkles")
+                // Practice + Speak side by side (PR4: Speak secondary next to Practice).
+                HStack(spacing: 12) {
+                    Button {
+                        startPostStudyPractice()
+                    } label: {
+                        HStack(spacing: 6) {
+                            if flashcardVM.isGeneratingPractice {
+                                ProgressView()
+                                    .controlSize(.small)
+                            } else {
+                                Image(systemName: "sparkles")
+                            }
+                            Text(flashcardVM.isGeneratingPractice
+                                 ? L10n.practiceGenerating(lang)
+                                 : L10n.practiceTheseWithAI(lang))
                         }
-                        Text(flashcardVM.isGeneratingPractice
-                             ? L10n.practiceGenerating(lang)
-                             : L10n.practiceTheseWithAI(lang))
+                        .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    .disabled(flashcardVM.isGeneratingPractice)
+
+                    if speakingVM.isFeatureEnabled {
+                        Button {
+                            startPostStudySpeaking()
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "waveform")
+                                Text(L10n.speakTheseWithAI(lang))
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.large)
+                        .disabled(flashcardVM.isGeneratingPractice)
+                        .help(L10n.speakTheseWithAIHelp(lang))
                     }
                 }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                .disabled(flashcardVM.isGeneratingPractice)
+                .padding(.horizontal, 32)
 
                 Button(L10n.done(lang)) {
                     flashcardVM.endReviewSession()
@@ -325,6 +352,27 @@ struct FlashcardReviewView: View {
             llmModel: chatVM.llmModel,
             seedSource: .lastStudySession
         )
+        flashcardVM.endReviewSession()
+        dismiss()
+    }
+
+    /// Prepare Speak with last study session seeds; setup sheet presents after review dismisses (PR4).
+    private func startPostStudySpeaking() {
+        guard speakingVM.isFeatureEnabled else { return }
+        guard let resolved = flashcardVM.resolveSpeakingLaunch(seedSource: .lastStudySession) else {
+            return
+        }
+        configureSpeaking()
+        dismissPracticeForSpeaking()
+        speakingVM.prepareSetup(
+            seedSource: .lastStudySession,
+            targets: resolved.targets,
+            knownFronts: resolved.knownFronts,
+            topicHint: "",
+            encourageTargetCoverage: true
+        )
+        // Defer setup sheet until review fully dismisses (avoids stacked-sheet races).
+        speakingVM.pendingSetupAfterHostDismiss = true
         flashcardVM.endReviewSession()
         dismiss()
     }

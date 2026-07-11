@@ -36,6 +36,8 @@ final class SpeakingSessionViewModel: ObservableObject {
     @Published var isShowingSession = false
     /// Mirrors Practice's deferred preview→session handoff: set when setup dismisses, present session in `onDismiss`.
     @Published private(set) var pendingSessionStart = false
+    /// Post-study Speak: present setup after the review sheet fully dismisses.
+    @Published var pendingSetupAfterHostDismiss = false
     /// True while `startSession` is in flight (guards double-submit on Start).
     @Published private(set) var isStartingSession = false
     @Published private(set) var session: SpeakingSession?
@@ -327,6 +329,7 @@ final class SpeakingSessionViewModel: ObservableObject {
         }
         pendingUserText = nil
         pendingSessionStart = false
+        pendingSetupAfterHostDismiss = false
         isStartingSession = false
         isShowingSession = false
         isShowingSetup = false
@@ -346,9 +349,25 @@ final class SpeakingSessionViewModel: ObservableObject {
         pendingUserText = nil
         pendingConfig = nil
         pendingSessionStart = false
+        pendingSetupAfterHostDismiss = false
         isStartingSession = false
         isShowingSession = false
         isShowingSetup = false
+    }
+
+    /// On-demand L1 gloss / phonics for a turn (Phase 2 / PR4). Does not affect dialogue history.
+    func setTurnHelp(turnId: String, translation: String? = nil, phonics: String? = nil) {
+        guard var current = session,
+              let idx = current.turns.firstIndex(where: { $0.id == turnId }) else { return }
+        if let translation {
+            let trimmed = translation.trimmingCharacters(in: .whitespacesAndNewlines)
+            current.turns[idx].translation = trimmed.isEmpty ? nil : trimmed
+        }
+        if let phonics {
+            let trimmed = phonics.trimmingCharacters(in: .whitespacesAndNewlines)
+            current.turns[idx].phonics = trimmed.isEmpty ? nil : trimmed
+        }
+        session = current
     }
 
     // MARK: - Speech correction history

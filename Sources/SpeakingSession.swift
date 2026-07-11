@@ -146,6 +146,12 @@ enum SpeakingSessionStatus: Equatable {
     case ended
 }
 
+/// Soft UI limits (Q4). No hard stop in MVP.
+enum SpeakingSessionLimits {
+    /// Soft length hint around this many turns; conversation can continue.
+    static let softLengthHintTurns = 20
+}
+
 struct SpeakingSession: Identifiable, Equatable {
     let id: String
     let startedAt: Date

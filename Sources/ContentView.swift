@@ -473,9 +473,26 @@ struct ContentView: View {
             }
             .sheet(isPresented: $flashcardVM.isShowingReviewSession, onDismiss: {
                 flashcardVM.endReviewSession()
+                // PR4: post-study Speak — present setup only after review sheet is gone.
+                if speakingVM.pendingSetupAfterHostDismiss {
+                    speakingVM.pendingSetupAfterHostDismiss = false
+                    if speakingVM.pendingConfig != nil {
+                        speakingVM.isShowingSetup = true
+                    }
+                }
             }) {
-                FlashcardReviewView(flashcardVM: flashcardVM, chatVM: viewModel)
-                    .environment(\.appLanguage, viewModel.appLanguage)
+                FlashcardReviewView(
+                    flashcardVM: flashcardVM,
+                    chatVM: viewModel,
+                    speakingVM: speakingVM,
+                    configureSpeaking: {
+                        configureSpeakingFromChat()
+                    },
+                    dismissPracticeForSpeaking: {
+                        dismissPracticeForSpeaking()
+                    }
+                )
+                .environment(\.appLanguage, viewModel.appLanguage)
             }
             .sheet(isPresented: $flashcardVM.isShowingPracticePreview, onDismiss: {
                 if flashcardVM.pendingPracticeSessionStart {

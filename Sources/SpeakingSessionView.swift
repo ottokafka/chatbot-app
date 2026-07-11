@@ -18,9 +18,15 @@ struct SpeakingSessionView: View {
     @State private var isSaving = false
     @State private var saveMessage: String?
     @State private var isTranslatingSave = false
+    /// Turn ids whose on-demand help (meaning/phonics) is expanded.
+    @State private var expandedHelpTurnIds: Set<String> = []
+    /// Turn currently being translated for on-demand meaning.
+    @State private var meaningTurnId: String?
+    @State private var isTranslatingMeaning = false
 
     #if canImport(Translation) && !targetEnvironment(simulator)
     @State private var translationConfiguration: TranslationSession.Configuration?
+    @State private var meaningTranslationConfiguration: TranslationSession.Configuration?
     #endif
 
     var body: some View {
@@ -141,6 +147,15 @@ struct SpeakingSessionView: View {
                 .padding(.horizontal)
                 .padding(.vertical, 8)
 
+            if session.turns.count >= SpeakingSessionLimits.softLengthHintTurns {
+                Text(L10n.speakLengthHint(lang, turns: SpeakingSessionLimits.softLengthHintTurns))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.leading)
+                    .padding(.horizontal)
+                    .padding(.bottom, 6)
+            }
+
             if let err = session.lastError, !err.isEmpty {
                 errorBanner(err, session: session)
                     .padding(.horizontal)
@@ -151,6 +166,33 @@ struct SpeakingSessionView: View {
             Divider()
             statusAndInput(session)
         }
+        #if canImport(Translation) && !targetEnvironment(simulator)
+        .translationTask(meaningTranslationConfiguration) { translationSession in
+            guard let turnId = meaningTurnId,
+                  let turn = speakingVM.session?.turns.first(where: { $0.id == turnId }) else {
+                await MainActor.run { isTranslatingMeaning = false }
+                return
+            }
+            let text = turn.content.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !text.isEmpty else {
+                await MainActor.run { isTranslatingMeaning = false }
+                return
+            }
+            do {
+                let response = try await translationSession.translate(text)
+                await MainActor.run {
+                    speakingVM.setTurnHelp(turnId: turnId, translation: response.targetText)
+                    isTranslatingMeaning = false
+                    meaningTurnId = nil
+                }
+            } catch {
+                await MainActor.run {
+                    isTranslatingMeaning = false
+                    meaningTurnId = nil
+                }
+            }
+        }
+        #endif
     }
 
     private func coverageChips(_ session: SpeakingSession) -> some View {
@@ -223,6 +265,8 @@ struct SpeakingSessionView: View {
 
     private func turnBubble(_ turn: SpeakingTurn) -> some View {
         let isSelected = selectedTurnId == turn.id
+        let helpExpanded = expandedHelpTurnIds.contains(turn.id)
+        let isTranslatingThis = isTranslatingMeaning && meaningTurnId == turn.id
         return VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Text(turn.role == .user ? L10n.speakYou(lang) : L10n.speakAI(lang))
@@ -262,6 +306,45 @@ struct SpeakingSessionView: View {
                     .font(.caption2)
                     .foregroundStyle(.green)
             }
+
+            // On-demand meaning / phonics (PR4).
+            if helpExpanded {
+                if let phonics = FlashcardTranslator.displayPhonics(
+                    for: turn.content,
+                    storedPhonics: turn.phonics
+                ) {
+                    Text(phonics)
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundStyle(.secondary)
+                        .italic()
+                        .textSelection(.enabled)
+                }
+                if isTranslatingThis {
+                    HStack(spacing: 6) {
+                        ProgressView()
+                            .controlSize(.mini)
+                        Text(L10n.speakMeaningLoading(lang))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                } else if let translation = turn.translation, !translation.isEmpty {
+                    Text(translation)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .textSelection(.enabled)
+                }
+                Button(L10n.speakHideMeaning(lang)) {
+                    expandedHelpTurnIds.remove(turn.id)
+                }
+                .font(.caption2)
+                .buttonStyle(.borderless)
+            } else {
+                Button(L10n.speakShowMeaning(lang)) {
+                    showMeaning(for: turn)
+                }
+                .font(.caption2)
+                .buttonStyle(.borderless)
+            }
         }
         .padding(10)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -283,6 +366,44 @@ struct SpeakingSessionView: View {
             saveBack = ""
             updateSaveTranslationConfiguration()
         }
+    }
+
+    /// Expand help chrome and fill phonics / TranslationSession meaning for a turn.
+    private func showMeaning(for turn: SpeakingTurn) {
+        expandedHelpTurnIds.insert(turn.id)
+
+        // Phonics immediately when useful (CJK); store on turn for reuse / save.
+        let autoPhonics = FlashcardTranslator.autoFillPhonics(for: turn.content)
+        if !autoPhonics.isEmpty, turn.phonics == nil {
+            speakingVM.setTurnHelp(turnId: turn.id, phonics: autoPhonics)
+        }
+
+        // Already have a translation — just expand.
+        if let existing = turn.translation?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !existing.isEmpty {
+            return
+        }
+
+        #if canImport(Translation) && !targetEnvironment(simulator)
+        if #available(macOS 15.0, iOS 17.4, *) {
+            let text = turn.content.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !text.isEmpty,
+                  let pair = FlashcardTranslator.translationConfiguration(for: text) else {
+                return
+            }
+            meaningTurnId = turn.id
+            isTranslatingMeaning = true
+            // Force a new translationTask run when switching turns.
+            if meaningTranslationConfiguration != nil {
+                meaningTranslationConfiguration?.invalidate()
+            }
+            meaningTranslationConfiguration = TranslationSession.Configuration(
+                source: Locale.Language(identifier: pair.source),
+                target: Locale.Language(identifier: pair.target)
+            )
+            return
+        }
+        #endif
     }
 
     private func statusAndInput(_ session: SpeakingSession) -> some View {
@@ -350,17 +471,35 @@ struct SpeakingSessionView: View {
         let covered = session?.coveredTargetFronts.count ?? 0
         let total = session?.config.targetFronts.count ?? 0
         let turnCount = session?.turns.count ?? 0
+        let uncovered = session?.uncoveredTargetFronts ?? []
 
         return VStack(alignment: .leading, spacing: 16) {
             Text(L10n.speakSummaryTitle(lang))
                 .font(.title2)
                 .fontWeight(.bold)
 
+            Text(L10n.speakSummarySubtitle(lang))
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+
             Text(L10n.speakSummaryCoverage(lang, covered: covered, total: total))
                 .font(.body)
+
+            if !uncovered.isEmpty, covered < total {
+                Text(L10n.speakSummaryUncovered(lang, words: uncovered))
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+
             Text(L10n.speakSummaryTurns(lang, count: turnCount))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
+
+            if turnCount >= SpeakingSessionLimits.softLengthHintTurns {
+                Text(L10n.speakLengthHint(lang, turns: SpeakingSessionLimits.softLengthHintTurns))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
 
             if let session, !session.turns.isEmpty {
                 saveHighlightSection(session)

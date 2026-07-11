@@ -689,6 +689,16 @@ enum L10n {
         lang == .zh ? "用 AI 练习这些词" : "Practice these with AI"
     }
 
+    static func speakTheseWithAI(_ lang: AppLanguage) -> String {
+        lang == .zh ? "用这些词练口语" : "Speak with these words"
+    }
+
+    static func speakTheseWithAIHelp(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "用刚学过的词进行受限口语对话；不影响复习进度"
+            : "Start a constrained speaking session with the words you just studied; does not affect your schedule"
+    }
+
     static func practiceSelectCards(_ lang: AppLanguage) -> String {
         lang == .zh ? "选择" : "Select"
     }
@@ -1192,18 +1202,68 @@ enum L10n {
         lang == .zh ? "口语小结" : "Speaking summary"
     }
 
+    static func speakSummarySubtitle(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "很好 — 你在真实对话中练习了这些词。"
+            : "Nice work — you practiced these words in real conversation."
+    }
+
     static func speakSummaryCoverage(_ lang: AppLanguage, covered: Int, total: Int) -> String {
+        if total <= 0 {
+            return lang == .zh
+                ? "这次没有设定目标词。"
+                : "No target words were set for this session."
+        }
+        if covered >= total {
+            if lang == .zh {
+                return "太棒了！你用上了全部 \(total) 个目标词。"
+            }
+            return "Great job — you used all \(total) target word\(total == 1 ? "" : "s")."
+        }
+        if covered == 0 {
+            if lang == .zh {
+                return "你还没用上 \(total) 个目标词 — 下次可以说得更多一点。"
+            }
+            return "You haven’t used the \(total) target word\(total == 1 ? "" : "s") yet — try weaving them in next time."
+        }
         if lang == .zh {
             return "你在对话中用了 \(covered)/\(total) 个目标词。"
         }
         return "You used \(covered) of \(total) target words."
     }
 
+    static func speakSummaryUncovered(_ lang: AppLanguage, words: [String]) -> String {
+        let joined = words.joined(separator: " · ")
+        if lang == .zh {
+            return "还可以再练：\(joined)"
+        }
+        return "Still to try: \(joined)"
+    }
+
     static func speakSummaryTurns(_ lang: AppLanguage, count: Int) -> String {
         if lang == .zh {
             return "共 \(count) 轮对话"
         }
-        return "\(count) turn\(count == 1 ? "" : "s")"
+        return "\(count) turn\(count == 1 ? "" : "s") in this session"
+    }
+
+    static func speakShowMeaning(_ lang: AppLanguage) -> String {
+        lang == .zh ? "显示释义" : "Show meaning"
+    }
+
+    static func speakHideMeaning(_ lang: AppLanguage) -> String {
+        lang == .zh ? "隐藏释义" : "Hide meaning"
+    }
+
+    static func speakMeaningLoading(_ lang: AppLanguage) -> String {
+        lang == .zh ? "正在翻译…" : "Translating…"
+    }
+
+    static func speakLengthHint(_ lang: AppLanguage, turns: Int = SpeakingSessionLimits.softLengthHintTurns) -> String {
+        if lang == .zh {
+            return "已经聊了大约 \(turns) 轮 — 可以随时点「完成」小结，也可以继续。"
+        }
+        return "About \(turns) turns in — tap Done anytime for a summary, or keep going."
     }
 
     static func speakDiscard(_ lang: AppLanguage) -> String {
