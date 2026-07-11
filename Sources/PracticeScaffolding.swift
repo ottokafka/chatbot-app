@@ -28,12 +28,12 @@ enum PracticeScaffolding {
         return trimmed.count <= PracticeGenerationConfig.maxKnownFrontCharacterCountLatin
     }
 
-    /// Soft script preference: congruent with majority seed-front script class first.
-    /// Ties (equal CJK vs Latin seed counts) leave order unchanged. Incongruent fronts
-    /// remain included after congruent ones (not hard-dropped).
-    static func preferScriptCongruent(_ cards: [Flashcard], seedFronts: [String]) -> [Flashcard] {
-        guard !seedFronts.isEmpty, !cards.isEmpty else { return cards }
-
+    /// Majority seed-front script class (K12).
+    /// - `true` when CJK seeds strictly outnumber Latin
+    /// - `false` when Latin seeds strictly outnumber CJK
+    /// - `nil` when `seedFronts` is empty or counts are tied (mixed / ambiguous)
+    static func majoritySeedFrontsPreferCJK(_ seedFronts: [String]) -> Bool? {
+        guard !seedFronts.isEmpty else { return nil }
         var cjkSeedCount = 0
         var latinSeedCount = 0
         for front in seedFronts {
@@ -43,9 +43,18 @@ enum PracticeScaffolding {
                 latinSeedCount += 1
             }
         }
-        guard cjkSeedCount != latinSeedCount else { return cards }
+        guard cjkSeedCount != latinSeedCount else { return nil }
+        return cjkSeedCount > latinSeedCount
+    }
 
-        let preferCJK = cjkSeedCount > latinSeedCount
+    /// Soft script preference: congruent with majority seed-front script class first.
+    /// Ties (equal CJK vs Latin seed counts) leave order unchanged. Incongruent fronts
+    /// remain included after congruent ones (not hard-dropped).
+    static func preferScriptCongruent(_ cards: [Flashcard], seedFronts: [String]) -> [Flashcard] {
+        guard !cards.isEmpty, let preferCJK = majoritySeedFrontsPreferCJK(seedFronts) else {
+            return cards
+        }
+
         var congruent: [Flashcard] = []
         var incongruent: [Flashcard] = []
         congruent.reserveCapacity(cards.count)
@@ -141,9 +150,24 @@ enum PracticeUltraCommonBeginnerContent {
         "小", "天", "家", "书", "朋友", "说", "会", "很", "不", "在"
     ]
 
-    /// Comma-separated list for interpolating into sparse system-prompt bullets.
-    static func promptList(for appLanguage: AppLanguage) -> String {
-        let words = appLanguage == .zh ? chinese : english
-        return words.joined(separator: appLanguage == .zh ? "、" : ", ")
+    /// Sparse-escape beginner examples keyed by **majority seed-front script** (K12), not UI language.
+    ///
+    /// - CJK-majority seeds → Chinese list
+    /// - Latin-majority seeds → English list
+    /// - Empty / tied (mixed) → both lists (separated by ` · `)
+    ///
+    /// `appLanguage` only controls list-separator style in the prompt wrapper language
+    /// (、vs `, `). PR3 allowlists can still use `english` / `chinese` sets directly.
+    static func promptList(forSeedFronts seedFronts: [String], appLanguage: AppLanguage) -> String {
+        let sep = appLanguage == .zh ? "、" : ", "
+        switch PracticeScaffolding.majoritySeedFrontsPreferCJK(seedFronts) {
+        case .some(true):
+            return chinese.joined(separator: sep)
+        case .some(false):
+            return english.joined(separator: sep)
+        case .none:
+            // Mixed or empty: expose both sets so the model can pick script-congruent words.
+            return english.joined(separator: sep) + " · " + chinese.joined(separator: sep)
+        }
     }
 }

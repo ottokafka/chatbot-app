@@ -145,7 +145,11 @@ enum PracticeCardGenerator {
         let maxWords = PracticeGenerationConfig.babyLanguageMaxWordsEnglish
         let maxChars = PracticeGenerationConfig.babyLanguageMaxCharsChinese
         let sparse = knownFronts.count < PracticeGenerationConfig.minKnownForRichScaffold
-        let beginnerList = PracticeUltraCommonBeginnerContent.promptList(for: appLanguage)
+        let seedFronts = seeds.map(\.front)
+        let beginnerList = PracticeUltraCommonBeginnerContent.promptList(
+            forSeedFronts: seedFronts,
+            appLanguage: appLanguage
+        )
 
         let system: String
         if appLanguage == .zh {
@@ -293,7 +297,10 @@ enum PracticeCardGenerator {
         let maxWords = PracticeGenerationConfig.babyLanguageMaxWordsEnglish
         let maxChars = PracticeGenerationConfig.babyLanguageMaxCharsChinese
         let sparse = knownFronts.count < PracticeGenerationConfig.minKnownForRichScaffold
-        let beginnerList = PracticeUltraCommonBeginnerContent.promptList(for: appLanguage)
+        let beginnerList = PracticeUltraCommonBeginnerContent.promptList(
+            forSeedFronts: [seed.front],
+            appLanguage: appLanguage
+        )
 
         let system: String
         if appLanguage == .zh {
@@ -323,7 +330,7 @@ enum PracticeCardGenerator {
             1. 必须使用种子 front 作为目标词。
             2. 非目标实词优先来自 KNOWN_VOCAB。
             3. 可以始终使用列表外的超常见虚词/功能词（助词、代词、系词、否定、疑问、基本介词/助动词等）。
-            4. SEED_CARDS 中出现的任一 front，都可以作为内容词。
+            4. 该闪卡的 front 可以作为内容词。
             5. 避免生僻或专业领域实词；不要引入新的学习目标词。
             6. 脚手架用词尽量与种子 front 同一语言/文字系统。
 
@@ -367,7 +374,7 @@ enum PracticeCardGenerator {
             1. Use the seed front as the target.
             2. Prefer non-target content words from KNOWN_VOCAB.
             3. You MAY always use ultra-common function words not on the list.
-            4. Any front appearing in SEED_CARDS may appear as content.
+            4. This flashcard's front may appear as content.
             5. Avoid rare or domain-specific content words; do not introduce new learning targets.
             6. Scaffold with KNOWN_VOCAB items written in the same language/script as the seed front.
 
