@@ -150,7 +150,13 @@ public struct ContentView: View {
 
     // MARK: - Compact column presentation (iOS only)
 
+    /// NAV tag logger for column presentation (preferDetail / preferSidebar).
+    private func logNavPresentation(_ message: String) {
+        viewModel.log(message, tag: "NAV")
+    }
+
     /// Show the detail column on compact width. No-op on macOS.
+    /// Logs `Nav: preferDetail` (or `Nav: preferSidebar` under DEBUG sidebar-first) on each call.
     private func preferDetailColumn() {
         #if os(iOS)
         #if DEBUG
@@ -164,11 +170,17 @@ public struct ContentView: View {
                     tag: "NAV"
                 )
             }
-            AppNavigationPresentation.preferSidebar(column: $preferredCompactColumn)
+            AppNavigationPresentation.preferSidebar(
+                column: $preferredCompactColumn,
+                onLog: logNavPresentation
+            )
             return
         }
         #endif
-        AppNavigationPresentation.preferDetail(column: $preferredCompactColumn)
+        AppNavigationPresentation.preferDetail(
+            column: $preferredCompactColumn,
+            onLog: logNavPresentation
+        )
         #endif
     }
 
@@ -179,9 +191,13 @@ public struct ContentView: View {
 
     // PR-2: CompactFeatureChrome toolbar/back will call this to reveal the sidebar.
     /// Reveal the sidebar column on compact width. No-op on macOS.
+    /// Logs `Nav: preferSidebar` on each call.
     private func preferSidebarColumn() {
         #if os(iOS)
-        AppNavigationPresentation.preferSidebar(column: $preferredCompactColumn)
+        AppNavigationPresentation.preferSidebar(
+            column: $preferredCompactColumn,
+            onLog: logNavPresentation
+        )
         #endif
     }
 
