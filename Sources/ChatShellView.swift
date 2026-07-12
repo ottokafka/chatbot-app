@@ -6,14 +6,20 @@ import Translation
 /// Chat feature detail shell: conversation chrome, messages, input, and macOS log console.
 /// Sheets for prompts/endpoints stay hosted on `ContentView` (root).
 struct ChatShellView: View {
+    @ObservedObject var nav: AppNavigationModel
     @ObservedObject var viewModel: ChatViewModel
     @ObservedObject var flashcardVM: FlashcardViewModel
     @Binding var isShowingPromptModal: Bool
     @Binding var isShowingEndpointModal: Bool
     @Binding var isLogsExpanded: Bool
     @Binding var logsHeight: CGFloat
+    /// Compact iOS: reveal the split-view sidebar column.
+    var onPreferSidebar: () -> Void = {}
 
     @Environment(\.appLanguage) private var lang
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    #endif
 
     @State private var textInput = ""
     @State private var isPromptHovered = false
@@ -48,14 +54,37 @@ struct ChatShellView: View {
                         StatusIndicator(title: "AUDIO", isActive: viewModel.isPlayingAudio, activeColor: .orange, showTitle: false)
                     }
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    ChatToolsMenuButton(
-                        viewModel: viewModel,
-                        isShowingPromptModal: $isShowingPromptModal,
-                        isShowingEndpointModal: $isShowingEndpointModal
-                    )
+                // Regular width: tools live here. Compact: tools ride in compactFeatureChrome
+                // extraTrailing after the Apps Menu so order is Apps → tools.
+                if horizontalSizeClass != .compact {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        ChatToolsMenuButton(
+                            viewModel: viewModel,
+                            isShowingPromptModal: $isShowingPromptModal,
+                            isShowingEndpointModal: $isShowingEndpointModal
+                        )
+                    }
                 }
             }
+            #endif
+        }
+        // Empty + active both get Apps Menu on compact (K5a). Tools only when active.
+        .compactFeatureChrome(
+            nav: nav,
+            lang: lang,
+            dueCount: flashcardVM.dueCount,
+            onPreferSidebar: onPreferSidebar
+        ) {
+            #if os(iOS)
+            if viewModel.activeConversation != nil {
+                ChatToolsMenuButton(
+                    viewModel: viewModel,
+                    isShowingPromptModal: $isShowingPromptModal,
+                    isShowingEndpointModal: $isShowingEndpointModal
+                )
+            }
+            #else
+            EmptyView()
             #endif
         }
     }

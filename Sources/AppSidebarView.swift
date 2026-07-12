@@ -21,26 +21,17 @@ struct AppSidebarView: View {
         VStack(alignment: .leading, spacing: 0) {
             List {
                 Section {
-                    sidebarRouteRow(
-                        .home,
-                        title: L10n.home(lang),
-                        systemImage: "square.grid.2x2"
-                    )
-                    sidebarRouteRow(
-                        .lifePath,
-                        title: L10n.lifePathTitle(lang),
-                        systemImage: "figure.and.child.holdinghands"
-                    )
-                    sidebarRouteRow(
-                        .flashcards,
-                        title: L10n.flashcardsWithDue(lang, due: flashcardVM.dueCount),
-                        systemImage: "rectangle.on.rectangle.angled"
-                    )
-                    sidebarRouteRow(
-                        .chat,
-                        title: L10n.conversations(lang),
-                        systemImage: "bubble.left.and.bubble.right"
-                    )
+                    ForEach(AppRoute.allCases) { route in
+                        sidebarRouteRow(
+                            route,
+                            title: AppRouteChrome.title(
+                                route,
+                                lang: lang,
+                                dueCount: route == .flashcards ? flashcardVM.dueCount : nil
+                            ),
+                            systemImage: AppRouteChrome.systemImage(route)
+                        )
+                    }
                 } header: {
                     Text(L10n.appsSection(lang))
                 }
@@ -102,12 +93,7 @@ struct AppSidebarView: View {
     }
 
     private var sidebarTitle: String {
-        switch nav.route {
-        case .home: return L10n.home(lang)
-        case .lifePath: return L10n.lifePathTitle(lang)
-        case .flashcards: return L10n.flashcards(lang)
-        case .chat: return L10n.conversations(lang)
-        }
+        AppRouteChrome.title(nav.route, lang: lang)
     }
 
     @ViewBuilder

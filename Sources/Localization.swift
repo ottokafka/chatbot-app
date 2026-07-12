@@ -43,6 +43,16 @@ enum L10n {
         lang == .zh ? "功能" : "Apps"
     }
 
+    /// a11y: compact leading control that reveals the NavigationSplitView sidebar.
+    static func showSidebar(_ lang: AppLanguage) -> String {
+        lang == .zh ? "显示侧边栏" : "Show Sidebar"
+    }
+
+    /// a11y: compact trailing Apps Menu (feature switcher).
+    static func appsMenu(_ lang: AppLanguage) -> String {
+        lang == .zh ? "功能菜单" : "Apps Menu"
+    }
+
     static func backToHome(_ lang: AppLanguage) -> String {
         lang == .zh ? "主页" : "Home"
     }

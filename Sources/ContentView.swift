@@ -59,31 +59,42 @@ public struct ContentView: View {
         Group {
             switch nav.route {
             case .home:
-                HomeHubView(nav: nav, flashcardVM: flashcardVM, chatVM: viewModel)
-            case .lifePath:
-                LifePathRootView(
+                HomeHubView(
+                    nav: nav,
                     flashcardVM: flashcardVM,
                     chatVM: viewModel,
-                    onExit: { nav.goHome(source: .done) }
+                    onPreferSidebar: { preferSidebarColumn() }
+                )
+            case .lifePath:
+                LifePathRootView(
+                    nav: nav,
+                    flashcardVM: flashcardVM,
+                    chatVM: viewModel,
+                    onExit: { nav.goHome(source: .done) },
+                    onPreferSidebar: { preferSidebarColumn() }
                 )
             case .flashcards:
                 FlashcardsShellView(
+                    nav: nav,
                     flashcardVM: flashcardVM,
                     speakingVM: speakingVM,
                     llmEndpoint: viewModel.llmURL,
                     llmModel: viewModel.llmModel,
                     configureSpeaking: { configureSpeakingFromChat() },
                     dismissPracticeForSpeaking: { dismissPracticeForSpeaking() },
-                    endSpeakingForPractice: { endSpeakingForPractice() }
+                    endSpeakingForPractice: { endSpeakingForPractice() },
+                    onPreferSidebar: { preferSidebarColumn() }
                 )
             case .chat:
                 ChatShellView(
+                    nav: nav,
                     viewModel: viewModel,
                     flashcardVM: flashcardVM,
                     isShowingPromptModal: $isShowingPromptModal,
                     isShowingEndpointModal: $isShowingEndpointModal,
                     isLogsExpanded: $isLogsExpanded,
-                    logsHeight: $logsHeight
+                    logsHeight: $logsHeight,
+                    onPreferSidebar: { preferSidebarColumn() }
                 )
             }
         }

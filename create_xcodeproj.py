@@ -15,6 +15,7 @@ def main():
         "App.swift",
         "AppNavigation.swift",
         "AppNavigationPresentation.swift",
+        "AppRoute+Chrome.swift",
         "AppSidebarView.swift",
         "AudioPlayer.swift",
         "AudioRecorder.swift",

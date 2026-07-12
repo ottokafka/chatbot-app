@@ -5,6 +5,8 @@ struct HomeHubView: View {
     @ObservedObject var nav: AppNavigationModel
     @ObservedObject var flashcardVM: FlashcardViewModel
     @ObservedObject var chatVM: ChatViewModel
+    /// Compact iOS: reveal the split-view sidebar column.
+    var onPreferSidebar: () -> Void = {}
     @Environment(\.appLanguage) private var lang
 
     private var columns: [GridItem] {
@@ -31,19 +33,19 @@ struct HomeHubView: View {
                     featureCard(
                         title: L10n.lifePathTitle(lang),
                         subtitle: L10n.lifePathBrowseHelp(lang),
-                        systemImage: "figure.and.child.holdinghands",
+                        systemImage: AppRouteChrome.systemImage(.lifePath),
                         route: .lifePath
                     )
                     featureCard(
                         title: L10n.flashcards(lang),
                         subtitle: L10n.flashcardsWithDue(lang, due: flashcardVM.dueCount),
-                        systemImage: "rectangle.on.rectangle.angled",
+                        systemImage: AppRouteChrome.systemImage(.flashcards),
                         route: .flashcards
                     )
                     featureCard(
                         title: L10n.conversations(lang),
                         subtitle: chatSubtitle,
-                        systemImage: "bubble.left.and.bubble.right",
+                        systemImage: AppRouteChrome.systemImage(.chat),
                         route: .chat
                     )
                 }
@@ -55,6 +57,12 @@ struct HomeHubView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.platformControlBackground)
+        .compactFeatureChrome(
+            nav: nav,
+            lang: lang,
+            dueCount: flashcardVM.dueCount,
+            onPreferSidebar: onPreferSidebar
+        )
     }
 
     private var restoreLastAppSection: some View {
