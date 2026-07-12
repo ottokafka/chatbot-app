@@ -14,6 +14,7 @@ def main():
         "APIManager.swift",
         "App.swift",
         "AppNavigation.swift",
+        "AppNavigationPresentation.swift",
         "AppSidebarView.swift",
         "AudioPlayer.swift",
         "AudioRecorder.swift",

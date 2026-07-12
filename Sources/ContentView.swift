@@ -14,24 +14,43 @@ public struct ContentView: View {
     @State private var isLogsExpanded = true
     @State private var logsHeight: CGFloat = 160
     @State private var selectedFlashcard: Flashcard?
+    #if os(iOS)
+    /// Compact iOS only: which column to show. Unbound on macOS.
+    @State private var preferredCompactColumn: NavigationSplitViewColumn = .detail
+    #endif
 
     public var body: some View {
-        NavigationSplitView {
-            AppSidebarView(
-                nav: nav,
-                viewModel: viewModel,
-                flashcardVM: flashcardVM,
-                speakingVM: speakingVM,
-                selectedFlashcard: $selectedFlashcard,
-                configureSpeaking: { configureSpeakingFromChat() }
-            )
+        #if os(iOS)
+        NavigationSplitView(preferredCompactColumn: $preferredCompactColumn) {
+            sidebar
         } detail: {
             detailColumn
         }
         .environment(\.appLanguage, viewModel.appLanguage)
-        #if os(macOS)
+        #else
+        // macOS: keep unbound split — avoid behavioral drift from binding column state
+        NavigationSplitView {
+            sidebar
+        } detail: {
+            detailColumn
+        }
+        .environment(\.appLanguage, viewModel.appLanguage)
         .frame(minWidth: 800, minHeight: 600)
         #endif
+    }
+
+    // MARK: - Sidebar
+
+    private var sidebar: some View {
+        AppSidebarView(
+            nav: nav,
+            viewModel: viewModel,
+            flashcardVM: flashcardVM,
+            speakingVM: speakingVM,
+            selectedFlashcard: $selectedFlashcard,
+            configureSpeaking: { configureSpeakingFromChat() },
+            onPreferDetail: { preferDetailColumn() }
+        )
     }
 
     // MARK: - Detail
@@ -90,9 +109,12 @@ public struct ContentView: View {
                     tag: "NAV"
                 )
             }
+            // Always prefer detail on cold start (initial route does not fire onChange).
+            preferDetailColumn()
         }
         .onChange(of: nav.route) { oldRoute, newRoute in
             prepareRouteChange(from: oldRoute, to: newRoute)
+            preferDetailColumn()
         }
         .onChange(of: flashcardVM.flashcards) { _, _ in
             if let selected = selectedFlashcard,
@@ -112,6 +134,29 @@ public struct ContentView: View {
         .navigationTitle("")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
+    }
+
+    // MARK: - Compact column presentation (iOS only)
+
+    /// Show the detail column on compact width. No-op on macOS.
+    private func preferDetailColumn() {
+        #if os(iOS)
+        #if DEBUG
+        // Force sidebar-first for repro of the original compact bug.
+        if UserDefaults.standard.bool(forKey: "app.navigation.debugCompactSidebarFirst") {
+            AppNavigationPresentation.preferSidebar(column: $preferredCompactColumn)
+            return
+        }
+        #endif
+        AppNavigationPresentation.preferDetail(column: $preferredCompactColumn)
+        #endif
+    }
+
+    /// Reveal the sidebar column on compact width. No-op on macOS.
+    private func preferSidebarColumn() {
+        #if os(iOS)
+        AppNavigationPresentation.preferSidebar(column: $preferredCompactColumn)
         #endif
     }
 

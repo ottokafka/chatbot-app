@@ -9,6 +9,8 @@ struct AppSidebarView: View {
     @Binding var selectedFlashcard: Flashcard?
     /// Wire chat audio into speakingVM before DEBUG sheet.
     var configureSpeaking: () -> Void
+    /// Compact iOS: show detail column after non-route actions / same-route re-tap.
+    var onPreferDetail: () -> Void = {}
 
     @Environment(\.appLanguage) private var lang
     #if DEBUG
@@ -137,6 +139,7 @@ struct AppSidebarView: View {
                 .contentShape(Rectangle())
                 .onTapGesture {
                     selectedFlashcard = card
+                    onPreferDetail()
                 }
                 .listRowBackground(
                     selectedFlashcard?.id == card.id
@@ -152,6 +155,7 @@ struct AppSidebarView: View {
         Section {
             Button {
                 viewModel.startNewConversation()
+                onPreferDetail()
             } label: {
                 Label(L10n.newChat(lang), systemImage: "plus.bubble")
                     .font(.headline)
@@ -176,6 +180,7 @@ struct AppSidebarView: View {
                 .contentShape(Rectangle())
                 .onTapGesture {
                     viewModel.selectConversation(conversation)
+                    onPreferDetail()
                 }
                 .listRowBackground(
                     viewModel.activeConversation?.id == conversation.id
@@ -189,11 +194,18 @@ struct AppSidebarView: View {
     @ViewBuilder
     private func sidebarRouteRow(_ route: AppRoute, title: String, systemImage: String) -> some View {
         Button {
-            nav.navigate(to: route, source: .switcher)
+            if nav.route == route {
+                // navigate() no-ops; onChange will not fire — still show detail on compact.
+                onPreferDetail()
+            } else {
+                nav.navigate(to: route, source: .switcher)
+                // preferDetail also runs from ContentView onChange(route) after successful navigate
+            }
         } label: {
             Label(title, systemImage: systemImage)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .fontWeight(nav.route == route ? .semibold : .regular)
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .listRowBackground(
