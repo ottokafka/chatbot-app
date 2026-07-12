@@ -45,6 +45,10 @@ struct ChatShellView: View {
         }
         .toolbar {
             #if os(iOS)
+            // In-detail conversation switcher (C2): reachable while a thread is active.
+            ToolbarItem(placement: .navigationBarTrailing) {
+                conversationSwitcherMenu
+            }
             if viewModel.activeConversation != nil {
                 ToolbarItem(placement: .principal) {
                     HStack(spacing: 6) {
@@ -332,52 +336,91 @@ struct ChatShellView: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: 16) {
-            Spacer(minLength: 0)
+        ScrollView {
+            VStack(spacing: 16) {
+                Image(systemName: "bubble.left.and.bubble.right")
+                    .font(.system(size: 64))
+                    .foregroundColor(.secondary)
+                Text(L10n.noConversationSelected(lang))
+                    .font(.title2)
+                    .fontWeight(.medium)
+                Text(L10n.emptyStateHint(lang))
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
 
-            Image(systemName: "bubble.left.and.bubble.right")
-                .font(.system(size: 64))
-                .foregroundColor(.secondary)
-            Text(L10n.noConversationSelected(lang))
-                .font(.title2)
-                .fontWeight(.medium)
-            Text(L10n.emptyStateHint(lang))
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
+                Button(L10n.startNewChat(lang)) {
+                    viewModel.startNewConversation()
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
 
-            Button(L10n.startNewChat(lang)) {
-                viewModel.startNewConversation()
+                #if os(iOS)
+                // iOS empty/select flow: list when a true empty active state coexists with rows.
+                if !viewModel.conversations.isEmpty {
+                    recentConversationsList
+                        .padding(.top, 8)
+                }
+                #endif
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
-
-            #if os(iOS)
-            // Compact: recent threads in-detail so switching does not require sidebar.
-            if !viewModel.conversations.isEmpty {
-                recentConversationsList
-                    .padding(.top, 8)
-            }
-            #endif
-
-            Spacer(minLength: 0)
+            .frame(maxWidth: .infinity)
+            .padding()
+            .padding(.top, 24)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding()
     }
 
     #if os(iOS)
-    /// Short recent list for empty/select flow (full list remains in sidebar).
+    /// Recent conversations capped for menus / empty-state list (full list remains in sidebar).
+    private var recentConversations: [Conversation] {
+        Array(viewModel.conversations.prefix(8))
+    }
+
+    /// Toolbar control: switch threads or start new without opening the sidebar.
+    private var conversationSwitcherMenu: some View {
+        Menu {
+            Button {
+                viewModel.startNewConversation()
+            } label: {
+                Label(L10n.startNewChat(lang), systemImage: "plus.bubble")
+            }
+
+            if !recentConversations.isEmpty {
+                Divider()
+                ForEach(recentConversations) { conversation in
+                    Button {
+                        viewModel.selectConversation(conversation)
+                    } label: {
+                        if viewModel.activeConversation?.id == conversation.id {
+                            Label(conversation.title, systemImage: "checkmark")
+                        } else {
+                            Text(conversation.title)
+                        }
+                    }
+                }
+            }
+        } label: {
+            Image(systemName: "bubble.left.and.bubble.right")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundStyle(.primary)
+                .padding(6)
+                .background(Circle().fill(Color.gray.opacity(0.12)))
+                .overlay(Circle().stroke(Color.gray.opacity(0.25), lineWidth: 1))
+        }
+        .accessibilityLabel(L10n.conversations(lang))
+        .accessibilityHint(L10n.emptyStateHint(lang))
+    }
+
+    /// Short recent list for empty/select flow when no conversation is active.
     private var recentConversationsList: some View {
-        let recent = Array(viewModel.conversations.prefix(8))
-        return VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 8) {
             Text(L10n.conversations(lang))
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 4)
 
             VStack(spacing: 0) {
-                ForEach(Array(recent.enumerated()), id: \.element.id) { index, conversation in
+                ForEach(Array(recentConversations.enumerated()), id: \.element.id) { index, conversation in
                     Button {
                         viewModel.selectConversation(conversation)
                     } label: {
@@ -397,7 +440,7 @@ struct ChatShellView: View {
                     }
                     .buttonStyle(.plain)
 
-                    if index < recent.count - 1 {
+                    if index < recentConversations.count - 1 {
                         Divider()
                             .padding(.leading, 44)
                     }
