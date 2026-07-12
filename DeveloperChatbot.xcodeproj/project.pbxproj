@@ -19,6 +19,10 @@
 		47B1E91D8CC745C8369CA661 /* EssentialVocabListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64CCF0E19E77DAC4DA249B52 /* EssentialVocabListView.swift */; };
 		AE78D2D028159214702F2FDB /* EssentialVocabModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8246A622119E200D16293D83 /* EssentialVocabModels.swift */; };
 		043191C8A2287A395AEF89E3 /* EssentialVocabViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B625B4194F4071698E8A44BC /* EssentialVocabViewModel.swift */; };
+		24CB23113F35AC71035E79C3 /* LifePathCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA499DF8F895FC18FC316CEF /* LifePathCatalog.swift */; };
+		CE7C2917D094FEF6BC850984 /* LifePathModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0844EFB656053FC555E94FB4 /* LifePathModels.swift */; };
+		87C33DF0ABB4D5A221D2C7DA /* LifePathViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B30BD9D25179AB0456FD892 /* LifePathViewModel.swift */; };
+		D466D47D4BEE1BB6F4B77395 /* LifePathViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A7F84670CA95F45167AE889 /* LifePathViews.swift */; };
 		139FA5172FE4AD42879B3F8F /* Flashcard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E589B8AD324B386E9D7C217A /* Flashcard.swift */; };
 		73B136CFBC7F0ED63354DE89 /* FlashcardCreateSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A888EB1E508F30CE74527A4 /* FlashcardCreateSheet.swift */; };
 		BC4B2A72C945D09762349C74 /* FlashcardDeckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18185FC3B22CA7BE521534DF /* FlashcardDeckView.swift */; };
@@ -47,6 +51,9 @@
 		FBF2ED3171D3B388704860F5 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 3BBA198ADB9914C92BF94E5C /* manifest.json */; };
 		8AE0E84F78E54397A677DD2C /* essential_zh_v1.json in Resources */ = {isa = PBXBuildFile; fileRef = 0E436148E6E0FEA1A4EDC0AA /* essential_zh_v1.json */; };
 		0C1C85D3493C4BC8508D784D /* essential_en_v1.json in Resources */ = {isa = PBXBuildFile; fileRef = 541C4B7DF6F66906332A2A6A /* essential_en_v1.json */; };
+		BCEE65CEEC47F76236C52204 /* life_path_manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = EED244D3CAF0B9AF8A5A48E7 /* life_path_manifest.json */; };
+		86F26ECD45B4C692109327E7 /* life_path_zh_v1.json in Resources */ = {isa = PBXBuildFile; fileRef = ABAD4D1C68D928786D7F0A8A /* life_path_zh_v1.json */; };
+		30B73EADFB6AE70063D2F1E8 /* life_path_en_v1.json in Resources */ = {isa = PBXBuildFile; fileRef = FDBE4391576C4E653BDDFEC7 /* life_path_en_v1.json */; };
 		A5637D5014EDF0531FA7D0B0 /* FSRS in Frameworks */ = {isa = PBXBuildFile; productRef = 36D379BEFE82D237A4C2A8B2 /* FSRS */; };
 /* End PBXBuildFile section */
 
@@ -64,6 +71,10 @@
 		64CCF0E19E77DAC4DA249B52 /* EssentialVocabListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "EssentialVocabListView.swift"; path = "Sources/EssentialVocabListView.swift"; sourceTree = "<group>"; };
 		8246A622119E200D16293D83 /* EssentialVocabModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "EssentialVocabModels.swift"; path = "Sources/EssentialVocabModels.swift"; sourceTree = "<group>"; };
 		B625B4194F4071698E8A44BC /* EssentialVocabViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "EssentialVocabViewModel.swift"; path = "Sources/EssentialVocabViewModel.swift"; sourceTree = "<group>"; };
+		AA499DF8F895FC18FC316CEF /* LifePathCatalog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "LifePathCatalog.swift"; path = "Sources/LifePathCatalog.swift"; sourceTree = "<group>"; };
+		0844EFB656053FC555E94FB4 /* LifePathModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "LifePathModels.swift"; path = "Sources/LifePathModels.swift"; sourceTree = "<group>"; };
+		6B30BD9D25179AB0456FD892 /* LifePathViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "LifePathViewModel.swift"; path = "Sources/LifePathViewModel.swift"; sourceTree = "<group>"; };
+		7A7F84670CA95F45167AE889 /* LifePathViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "LifePathViews.swift"; path = "Sources/LifePathViews.swift"; sourceTree = "<group>"; };
 		E589B8AD324B386E9D7C217A /* Flashcard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Flashcard.swift"; path = "Sources/Flashcard.swift"; sourceTree = "<group>"; };
 		9A888EB1E508F30CE74527A4 /* FlashcardCreateSheet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "FlashcardCreateSheet.swift"; path = "Sources/FlashcardCreateSheet.swift"; sourceTree = "<group>"; };
 		18185FC3B22CA7BE521534DF /* FlashcardDeckView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "FlashcardDeckView.swift"; path = "Sources/FlashcardDeckView.swift"; sourceTree = "<group>"; };
@@ -92,6 +103,9 @@
 		3BBA198ADB9914C92BF94E5C /* manifest.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = "manifest.json"; path = "Sources/EssentialVocab/manifest.json"; sourceTree = "<group>"; };
 		0E436148E6E0FEA1A4EDC0AA /* essential_zh_v1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = "essential_zh_v1.json"; path = "Sources/EssentialVocab/essential_zh_v1.json"; sourceTree = "<group>"; };
 		541C4B7DF6F66906332A2A6A /* essential_en_v1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = "essential_en_v1.json"; path = "Sources/EssentialVocab/essential_en_v1.json"; sourceTree = "<group>"; };
+		EED244D3CAF0B9AF8A5A48E7 /* life_path_manifest.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = "life_path_manifest.json"; path = "Sources/LifePath/life_path_manifest.json"; sourceTree = "<group>"; };
+		ABAD4D1C68D928786D7F0A8A /* life_path_zh_v1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = "life_path_zh_v1.json"; path = "Sources/LifePath/life_path_zh_v1.json"; sourceTree = "<group>"; };
+		FDBE4391576C4E653BDDFEC7 /* life_path_en_v1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = "life_path_en_v1.json"; path = "Sources/LifePath/life_path_en_v1.json"; sourceTree = "<group>"; };
 		4F132F2870B5AF972740A283 /* DeveloperChatbot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeveloperChatbot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -132,6 +146,10 @@
 				64CCF0E19E77DAC4DA249B52 /* EssentialVocabListView.swift */,
 				8246A622119E200D16293D83 /* EssentialVocabModels.swift */,
 				B625B4194F4071698E8A44BC /* EssentialVocabViewModel.swift */,
+				AA499DF8F895FC18FC316CEF /* LifePathCatalog.swift */,
+				0844EFB656053FC555E94FB4 /* LifePathModels.swift */,
+				6B30BD9D25179AB0456FD892 /* LifePathViewModel.swift */,
+				7A7F84670CA95F45167AE889 /* LifePathViews.swift */,
 				E589B8AD324B386E9D7C217A /* Flashcard.swift */,
 				9A888EB1E508F30CE74527A4 /* FlashcardCreateSheet.swift */,
 				18185FC3B22CA7BE521534DF /* FlashcardDeckView.swift */,
@@ -165,6 +183,7 @@
 			isa = PBXGroup;
 			children = (
 				A9AFFE738B1A03D9B6B1D537 /* EssentialVocab */,
+				981BAB0EFDDDFC222512DF29 /* LifePath */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -177,6 +196,16 @@
 				541C4B7DF6F66906332A2A6A /* essential_en_v1.json */,
 			);
 			name = EssentialVocab;
+			sourceTree = "<group>";
+		};
+		981BAB0EFDDDFC222512DF29 /* LifePath */ = {
+			isa = PBXGroup;
+			children = (
+				EED244D3CAF0B9AF8A5A48E7 /* life_path_manifest.json */,
+				ABAD4D1C68D928786D7F0A8A /* life_path_zh_v1.json */,
+				FDBE4391576C4E653BDDFEC7 /* life_path_en_v1.json */,
+			);
+			name = LifePath;
 			sourceTree = "<group>";
 		};
 		BF7A2D27A78D590BDEF15AF2 /* Products */ = {
@@ -263,6 +292,10 @@
 				47B1E91D8CC745C8369CA661 /* EssentialVocabListView.swift in Sources */,
 				AE78D2D028159214702F2FDB /* EssentialVocabModels.swift in Sources */,
 				043191C8A2287A395AEF89E3 /* EssentialVocabViewModel.swift in Sources */,
+				24CB23113F35AC71035E79C3 /* LifePathCatalog.swift in Sources */,
+				CE7C2917D094FEF6BC850984 /* LifePathModels.swift in Sources */,
+				87C33DF0ABB4D5A221D2C7DA /* LifePathViewModel.swift in Sources */,
+				D466D47D4BEE1BB6F4B77395 /* LifePathViews.swift in Sources */,
 				139FA5172FE4AD42879B3F8F /* Flashcard.swift in Sources */,
 				73B136CFBC7F0ED63354DE89 /* FlashcardCreateSheet.swift in Sources */,
 				BC4B2A72C945D09762349C74 /* FlashcardDeckView.swift in Sources */,
@@ -301,6 +334,9 @@
 				FBF2ED3171D3B388704860F5 /* manifest.json in Resources */,
 				8AE0E84F78E54397A677DD2C /* essential_zh_v1.json in Resources */,
 				0C1C85D3493C4BC8508D784D /* essential_en_v1.json in Resources */,
+				BCEE65CEEC47F76236C52204 /* life_path_manifest.json in Resources */,
+				86F26ECD45B4C692109327E7 /* life_path_zh_v1.json in Resources */,
+				30B73EADFB6AE70063D2F1E8 /* life_path_en_v1.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

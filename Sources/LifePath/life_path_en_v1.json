@@ -1,0 +1,1329 @@
+{
+  "listId": "life_path_en",
+  "listVersion": 1,
+  "language": "en",
+  "stages": [
+    {
+      "id": "baby",
+      "order": 0,
+      "title": {
+        "en": "Baby",
+        "zh": "婴儿"
+      },
+      "subtitle": {
+        "en": "First words",
+        "zh": "开口词"
+      },
+      "targetCount": 50,
+      "clearReward": {
+        "xp": 100,
+        "coins": 50
+      }
+    },
+    {
+      "id": "toddler",
+      "order": 1,
+      "title": {
+        "en": "Toddler",
+        "zh": "幼儿"
+      },
+      "subtitle": {
+        "en": "Everyday talk",
+        "zh": "日常用语"
+      },
+      "targetCount": 66,
+      "clearReward": {
+        "xp": 150,
+        "coins": 75
+      }
+    }
+  ],
+  "entries": [
+    {
+      "id": "en_baby_001",
+      "stageId": "baby",
+      "rankInStage": 1,
+      "front": "mama",
+      "back": "妈妈",
+      "phonics": null,
+      "tags": [
+        "people",
+        "social"
+      ]
+    },
+    {
+      "id": "en_baby_002",
+      "stageId": "baby",
+      "rankInStage": 2,
+      "front": "daddy",
+      "back": "爸爸",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_baby_003",
+      "stageId": "baby",
+      "rankInStage": 3,
+      "front": "baby",
+      "back": "宝宝",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_baby_004",
+      "stageId": "baby",
+      "rankInStage": 4,
+      "front": "ball",
+      "back": "球",
+      "phonics": null,
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "id": "en_baby_005",
+      "stageId": "baby",
+      "rankInStage": 5,
+      "front": "bye",
+      "back": "再见",
+      "phonics": null,
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "en_baby_006",
+      "stageId": "baby",
+      "rankInStage": 6,
+      "front": "hi",
+      "back": "你好",
+      "phonics": null,
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "en_baby_007",
+      "stageId": "baby",
+      "rankInStage": 7,
+      "front": "no",
+      "back": "不",
+      "phonics": null,
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "en_baby_008",
+      "stageId": "baby",
+      "rankInStage": 8,
+      "front": "yes",
+      "back": "好",
+      "phonics": null,
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "en_baby_009",
+      "stageId": "baby",
+      "rankInStage": 9,
+      "front": "dog",
+      "back": "狗",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_baby_010",
+      "stageId": "baby",
+      "rankInStage": 10,
+      "front": "cat",
+      "back": "猫",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_baby_011",
+      "stageId": "baby",
+      "rankInStage": 11,
+      "front": "milk",
+      "back": "牛奶",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_baby_012",
+      "stageId": "baby",
+      "rankInStage": 12,
+      "front": "water",
+      "back": "水",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_baby_013",
+      "stageId": "baby",
+      "rankInStage": 13,
+      "front": "banana",
+      "back": "香蕉",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_baby_014",
+      "stageId": "baby",
+      "rankInStage": 14,
+      "front": "bottle",
+      "back": "奶瓶",
+      "phonics": null,
+      "tags": [
+        "food",
+        "home"
+      ]
+    },
+    {
+      "id": "en_baby_015",
+      "stageId": "baby",
+      "rankInStage": 15,
+      "front": "bubble",
+      "back": "泡泡",
+      "phonics": null,
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "id": "en_baby_016",
+      "stageId": "baby",
+      "rankInStage": 16,
+      "front": "uh-oh",
+      "back": "哎呀",
+      "phonics": null,
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "en_baby_017",
+      "stageId": "baby",
+      "rankInStage": 17,
+      "front": "more",
+      "back": "还要",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_baby_018",
+      "stageId": "baby",
+      "rankInStage": 18,
+      "front": "shoe",
+      "back": "鞋",
+      "phonics": null,
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "en_baby_019",
+      "stageId": "baby",
+      "rankInStage": 19,
+      "front": "hat",
+      "back": "帽子",
+      "phonics": null,
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "en_baby_020",
+      "stageId": "baby",
+      "rankInStage": 20,
+      "front": "book",
+      "back": "书",
+      "phonics": null,
+      "tags": [
+        "toys_play",
+        "school"
+      ]
+    },
+    {
+      "id": "en_baby_021",
+      "stageId": "baby",
+      "rankInStage": 21,
+      "front": "car",
+      "back": "车",
+      "phonics": null,
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "id": "en_baby_022",
+      "stageId": "baby",
+      "rankInStage": 22,
+      "front": "hot",
+      "back": "烫",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_baby_023",
+      "stageId": "baby",
+      "rankInStage": 23,
+      "front": "bath",
+      "back": "洗澡",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "home"
+      ]
+    },
+    {
+      "id": "en_baby_024",
+      "stageId": "baby",
+      "rankInStage": 24,
+      "front": "nose",
+      "back": "鼻子",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_baby_025",
+      "stageId": "baby",
+      "rankInStage": 25,
+      "front": "eye",
+      "back": "眼睛",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_baby_026",
+      "stageId": "baby",
+      "rankInStage": 26,
+      "front": "cookie",
+      "back": "饼干",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_baby_027",
+      "stageId": "baby",
+      "rankInStage": 27,
+      "front": "juice",
+      "back": "果汁",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_baby_028",
+      "stageId": "baby",
+      "rankInStage": 28,
+      "front": "thank you",
+      "back": "谢谢",
+      "phonics": null,
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "en_baby_029",
+      "stageId": "baby",
+      "rankInStage": 29,
+      "front": "please",
+      "back": "请",
+      "phonics": null,
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "en_baby_030",
+      "stageId": "baby",
+      "rankInStage": 30,
+      "front": "up",
+      "back": "上",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_baby_031",
+      "stageId": "baby",
+      "rankInStage": 31,
+      "front": "down",
+      "back": "下",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_baby_032",
+      "stageId": "baby",
+      "rankInStage": 32,
+      "front": "eat",
+      "back": "吃",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_baby_033",
+      "stageId": "baby",
+      "rankInStage": 33,
+      "front": "go",
+      "back": "去",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_baby_034",
+      "stageId": "baby",
+      "rankInStage": 34,
+      "front": "sleep",
+      "back": "睡觉",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_baby_035",
+      "stageId": "baby",
+      "rankInStage": 35,
+      "front": "want",
+      "back": "要",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_baby_036",
+      "stageId": "baby",
+      "rankInStage": 36,
+      "front": "all gone",
+      "back": "没了",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_baby_037",
+      "stageId": "baby",
+      "rankInStage": 37,
+      "front": "hug",
+      "back": "抱抱",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_baby_038",
+      "stageId": "baby",
+      "rankInStage": 38,
+      "front": "kiss",
+      "back": "亲亲",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_baby_039",
+      "stageId": "baby",
+      "rankInStage": 39,
+      "front": "help",
+      "back": "帮忙",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_baby_040",
+      "stageId": "baby",
+      "rankInStage": 40,
+      "front": "open",
+      "back": "打开",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_baby_041",
+      "stageId": "baby",
+      "rankInStage": 41,
+      "front": "sit",
+      "back": "坐",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_baby_042",
+      "stageId": "baby",
+      "rankInStage": 42,
+      "front": "stand",
+      "back": "站",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_baby_043",
+      "stageId": "baby",
+      "rankInStage": 43,
+      "front": "run",
+      "back": "跑",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_baby_044",
+      "stageId": "baby",
+      "rankInStage": 44,
+      "front": "play",
+      "back": "玩",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_baby_045",
+      "stageId": "baby",
+      "rankInStage": 45,
+      "front": "love",
+      "back": "爱",
+      "phonics": null,
+      "tags": [
+        "emotion",
+        "actions"
+      ]
+    },
+    {
+      "id": "en_baby_046",
+      "stageId": "baby",
+      "rankInStage": 46,
+      "front": "grandma",
+      "back": "奶奶",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_baby_047",
+      "stageId": "baby",
+      "rankInStage": 47,
+      "front": "grandpa",
+      "back": "爷爷",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_baby_048",
+      "stageId": "baby",
+      "rankInStage": 48,
+      "front": "wow",
+      "back": "哇",
+      "phonics": null,
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "en_baby_049",
+      "stageId": "baby",
+      "rankInStage": 49,
+      "front": "ouch",
+      "back": "疼",
+      "phonics": null,
+      "tags": [
+        "emotion",
+        "body"
+      ]
+    },
+    {
+      "id": "en_baby_050",
+      "stageId": "baby",
+      "rankInStage": 50,
+      "front": "done",
+      "back": "好了",
+      "phonics": null,
+      "tags": [
+        "social",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_toddler_001",
+      "stageId": "toddler",
+      "rankInStage": 1,
+      "front": "hello",
+      "back": "你好",
+      "phonics": null,
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "en_toddler_002",
+      "stageId": "toddler",
+      "rankInStage": 2,
+      "front": "goodbye",
+      "back": "再见",
+      "phonics": null,
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "en_toddler_003",
+      "stageId": "toddler",
+      "rankInStage": 3,
+      "front": "sorry",
+      "back": "对不起",
+      "phonics": null,
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "en_toddler_004",
+      "stageId": "toddler",
+      "rankInStage": 4,
+      "front": "again",
+      "back": "再一次",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_toddler_005",
+      "stageId": "toddler",
+      "rankInStage": 5,
+      "front": "stop",
+      "back": "停",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_toddler_006",
+      "stageId": "toddler",
+      "rankInStage": 6,
+      "front": "come",
+      "back": "来",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_toddler_007",
+      "stageId": "toddler",
+      "rankInStage": 7,
+      "front": "look",
+      "back": "看",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_toddler_008",
+      "stageId": "toddler",
+      "rankInStage": 8,
+      "front": "see",
+      "back": "看见",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_toddler_009",
+      "stageId": "toddler",
+      "rankInStage": 9,
+      "front": "drink",
+      "back": "喝",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_toddler_010",
+      "stageId": "toddler",
+      "rankInStage": 10,
+      "front": "wash",
+      "back": "洗",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_toddler_011",
+      "stageId": "toddler",
+      "rankInStage": 11,
+      "front": "push",
+      "back": "推",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_toddler_012",
+      "stageId": "toddler",
+      "rankInStage": 12,
+      "front": "pull",
+      "back": "拉",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_toddler_013",
+      "stageId": "toddler",
+      "rankInStage": 13,
+      "front": "throw",
+      "back": "扔",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_toddler_014",
+      "stageId": "toddler",
+      "rankInStage": 14,
+      "front": "catch",
+      "back": "接",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_toddler_015",
+      "stageId": "toddler",
+      "rankInStage": 15,
+      "front": "jump",
+      "back": "跳",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_toddler_016",
+      "stageId": "toddler",
+      "rankInStage": 16,
+      "front": "walk",
+      "back": "走",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_toddler_017",
+      "stageId": "toddler",
+      "rankInStage": 17,
+      "front": "climb",
+      "back": "爬",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_toddler_018",
+      "stageId": "toddler",
+      "rankInStage": 18,
+      "front": "fall",
+      "back": "摔",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_toddler_019",
+      "stageId": "toddler",
+      "rankInStage": 19,
+      "front": "give",
+      "back": "给",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_toddler_020",
+      "stageId": "toddler",
+      "rankInStage": 20,
+      "front": "take",
+      "back": "拿",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_toddler_021",
+      "stageId": "toddler",
+      "rankInStage": 21,
+      "front": "put",
+      "back": "放",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_toddler_022",
+      "stageId": "toddler",
+      "rankInStage": 22,
+      "front": "find",
+      "back": "找",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_toddler_023",
+      "stageId": "toddler",
+      "rankInStage": 23,
+      "front": "in",
+      "back": "里",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_toddler_024",
+      "stageId": "toddler",
+      "rankInStage": 24,
+      "front": "out",
+      "back": "外",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_toddler_025",
+      "stageId": "toddler",
+      "rankInStage": 25,
+      "front": "on",
+      "back": "上面",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_toddler_026",
+      "stageId": "toddler",
+      "rankInStage": 26,
+      "front": "off",
+      "back": "下来",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_toddler_027",
+      "stageId": "toddler",
+      "rankInStage": 27,
+      "front": "here",
+      "back": "这里",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_toddler_028",
+      "stageId": "toddler",
+      "rankInStage": 28,
+      "front": "there",
+      "back": "那里",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_toddler_029",
+      "stageId": "toddler",
+      "rankInStage": 29,
+      "front": "big",
+      "back": "大",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_toddler_030",
+      "stageId": "toddler",
+      "rankInStage": 30,
+      "front": "little",
+      "back": "小",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_toddler_031",
+      "stageId": "toddler",
+      "rankInStage": 31,
+      "front": "cold",
+      "back": "冷",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_toddler_032",
+      "stageId": "toddler",
+      "rankInStage": 32,
+      "front": "dirty",
+      "back": "脏",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_toddler_033",
+      "stageId": "toddler",
+      "rankInStage": 33,
+      "front": "clean",
+      "back": "干净",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_toddler_034",
+      "stageId": "toddler",
+      "rankInStage": 34,
+      "front": "happy",
+      "back": "开心",
+      "phonics": null,
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_toddler_035",
+      "stageId": "toddler",
+      "rankInStage": 35,
+      "front": "sad",
+      "back": "难过",
+      "phonics": null,
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_toddler_036",
+      "stageId": "toddler",
+      "rankInStage": 36,
+      "front": "hungry",
+      "back": "饿",
+      "phonics": null,
+      "tags": [
+        "emotion",
+        "body"
+      ]
+    },
+    {
+      "id": "en_toddler_037",
+      "stageId": "toddler",
+      "rankInStage": 37,
+      "front": "thirsty",
+      "back": "渴",
+      "phonics": null,
+      "tags": [
+        "emotion",
+        "body"
+      ]
+    },
+    {
+      "id": "en_toddler_038",
+      "stageId": "toddler",
+      "rankInStage": 38,
+      "front": "hand",
+      "back": "手",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_toddler_039",
+      "stageId": "toddler",
+      "rankInStage": 39,
+      "front": "foot",
+      "back": "脚",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_toddler_040",
+      "stageId": "toddler",
+      "rankInStage": 40,
+      "front": "mouth",
+      "back": "嘴巴",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_toddler_041",
+      "stageId": "toddler",
+      "rankInStage": 41,
+      "front": "ear",
+      "back": "耳朵",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_toddler_042",
+      "stageId": "toddler",
+      "rankInStage": 42,
+      "front": "head",
+      "back": "头",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_toddler_043",
+      "stageId": "toddler",
+      "rankInStage": 43,
+      "front": "apple",
+      "back": "苹果",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_toddler_044",
+      "stageId": "toddler",
+      "rankInStage": 44,
+      "front": "rice",
+      "back": "米饭",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_toddler_045",
+      "stageId": "toddler",
+      "rankInStage": 45,
+      "front": "bread",
+      "back": "面包",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_toddler_046",
+      "stageId": "toddler",
+      "rankInStage": 46,
+      "front": "egg",
+      "back": "鸡蛋",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_toddler_047",
+      "stageId": "toddler",
+      "rankInStage": 47,
+      "front": "chicken",
+      "back": "鸡肉",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_toddler_048",
+      "stageId": "toddler",
+      "rankInStage": 48,
+      "front": "fish",
+      "back": "鱼",
+      "phonics": null,
+      "tags": [
+        "animals",
+        "food"
+      ]
+    },
+    {
+      "id": "en_toddler_049",
+      "stageId": "toddler",
+      "rankInStage": 49,
+      "front": "bird",
+      "back": "鸟",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_toddler_050",
+      "stageId": "toddler",
+      "rankInStage": 50,
+      "front": "duck",
+      "back": "鸭子",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_toddler_051",
+      "stageId": "toddler",
+      "rankInStage": 51,
+      "front": "cow",
+      "back": "牛",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_toddler_052",
+      "stageId": "toddler",
+      "rankInStage": 52,
+      "front": "horse",
+      "back": "马",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_toddler_053",
+      "stageId": "toddler",
+      "rankInStage": 53,
+      "front": "shirt",
+      "back": "衣服",
+      "phonics": null,
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "en_toddler_054",
+      "stageId": "toddler",
+      "rankInStage": 54,
+      "front": "pants",
+      "back": "裤子",
+      "phonics": null,
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "en_toddler_055",
+      "stageId": "toddler",
+      "rankInStage": 55,
+      "front": "socks",
+      "back": "袜子",
+      "phonics": null,
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "en_toddler_056",
+      "stageId": "toddler",
+      "rankInStage": 56,
+      "front": "coat",
+      "back": "外套",
+      "phonics": null,
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "en_toddler_057",
+      "stageId": "toddler",
+      "rankInStage": 57,
+      "front": "bed",
+      "back": "床",
+      "phonics": null,
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "id": "en_toddler_058",
+      "stageId": "toddler",
+      "rankInStage": 58,
+      "front": "door",
+      "back": "门",
+      "phonics": null,
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "id": "en_toddler_059",
+      "stageId": "toddler",
+      "rankInStage": 59,
+      "front": "chair",
+      "back": "椅子",
+      "phonics": null,
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "id": "en_toddler_060",
+      "stageId": "toddler",
+      "rankInStage": 60,
+      "front": "table",
+      "back": "桌子",
+      "phonics": null,
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "id": "en_toddler_061",
+      "stageId": "toddler",
+      "rankInStage": 61,
+      "front": "phone",
+      "back": "电话",
+      "phonics": null,
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "id": "en_toddler_062",
+      "stageId": "toddler",
+      "rankInStage": 62,
+      "front": "red",
+      "back": "红",
+      "phonics": null,
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "en_toddler_063",
+      "stageId": "toddler",
+      "rankInStage": 63,
+      "front": "blue",
+      "back": "蓝",
+      "phonics": null,
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "en_toddler_064",
+      "stageId": "toddler",
+      "rankInStage": 64,
+      "front": "one",
+      "back": "一",
+      "phonics": null,
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "en_toddler_065",
+      "stageId": "toddler",
+      "rankInStage": 65,
+      "front": "two",
+      "back": "二",
+      "phonics": null,
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "en_toddler_066",
+      "stageId": "toddler",
+      "rankInStage": 66,
+      "front": "three",
+      "back": "三",
+      "phonics": null,
+      "tags": [
+        "numbers_colors"
+      ]
+    }
+  ]
+}

@@ -154,6 +154,8 @@ final class FlashcardViewModel: ObservableObject {
     @Published var isShowingCreateSheet = false
     /// Essential common-words triage sheet (hosted from ContentView).
     @Published var isShowingEssentialVocab = false
+    /// Baby→Child Life Path game sheet (hosted from ContentView).
+    @Published var isShowingLifePath = false
     @Published var isTranslatingDraft = false
     @Published var duplicateWarning = false
     @Published var saveError: String?

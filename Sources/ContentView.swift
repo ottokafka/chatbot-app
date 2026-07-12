@@ -477,6 +477,10 @@ public struct ContentView: View {
                 EssentialVocabListView(flashcardVM: flashcardVM)
                     .environment(\.appLanguage, viewModel.appLanguage)
             }
+            .sheet(isPresented: $flashcardVM.isShowingLifePath) {
+                LifePathRootView(flashcardVM: flashcardVM, chatVM: viewModel)
+                    .environment(\.appLanguage, viewModel.appLanguage)
+            }
             .sheet(isPresented: $flashcardVM.isShowingReviewSession, onDismiss: {
                 flashcardVM.endReviewSession()
                 // PR4: post-study Speak — present setup only after review sheet is gone.

@@ -1241,6 +1241,134 @@ enum L10n {
         lang == .zh ? "保持已会" : "Keep as known"
     }
 
+    // MARK: - Life Path game
+
+    static func lifePathTitle(_ lang: AppLanguage) -> String {
+        lang == .zh ? "成长之路" : "Life Path"
+    }
+
+    static func lifePathShort(_ lang: AppLanguage) -> String {
+        lang == .zh ? "成长" : "Life Path"
+    }
+
+    static func lifePathBrowseHelp(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "从婴儿词汇开始，闯关长大并获得奖励"
+            : "Start as a baby, grow through stages, earn rewards"
+    }
+
+    static func lifePathPickLanguage(_ lang: AppLanguage) -> String {
+        lang == .zh ? "选择学习语言" : "What are you learning?"
+    }
+
+    static func lifePathPickLanguageHint(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "从婴儿阶段开始，掌握词汇后长大进入下一阶段。"
+            : "Start at the Baby stage. Master the words to grow up."
+    }
+
+    static func lifePathPlay(_ lang: AppLanguage) -> String {
+        lang == .zh ? "闯关本阶段" : "Play full stage"
+    }
+
+    static func lifePathEndRound(_ lang: AppLanguage) -> String {
+        lang == .zh ? "结束本阶段" : "End stage"
+    }
+
+    static func lifePathStageSessionProgress(_ lang: AppLanguage, mastered: Int, total: Int) -> String {
+        lang == .zh
+            ? "本阶段 \(mastered)/\(total) 已掌握"
+            : "Stage \(mastered)/\(total) mastered"
+    }
+
+    static func lifePathSessionRemaining(_ lang: AppLanguage, remaining: Int) -> String {
+        lang == .zh
+            ? "队列剩余 \(remaining) 张"
+            : "\(remaining) card\(remaining == 1 ? "" : "s") left in queue"
+    }
+
+    static func lifePathStageProgress(_ lang: AppLanguage) -> String {
+        lang == .zh ? "本阶段进度" : "Stage progress"
+    }
+
+    static func lifePathMasteryHint(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "答对 1 次即可掌握。一次可刷完整阶段；全部掌握后长大升级！"
+            : "One correct answer masters a word. Play the whole stage in one session; clear it to grow up!"
+    }
+
+    static func lifePathWords(_ lang: AppLanguage) -> String {
+        lang == .zh ? "本阶段词汇" : "Stage words"
+    }
+
+    static func lifePathStatusLocked(_ lang: AppLanguage) -> String {
+        lang == .zh ? "锁定" : "Locked"
+    }
+
+    static func lifePathStatusNew(_ lang: AppLanguage) -> String {
+        lang == .zh ? "新词" : "New"
+    }
+
+    static func lifePathStatusLearning(_ lang: AppLanguage) -> String {
+        lang == .zh ? "学习中" : "Learning"
+    }
+
+    static func lifePathStatusMastered(_ lang: AppLanguage) -> String {
+        lang == .zh ? "已掌握" : "Mastered"
+    }
+
+    static func lifePathShowAnswer(_ lang: AppLanguage) -> String {
+        lang == .zh ? "显示答案" : "Show answer"
+    }
+
+    static func lifePathTapToReveal(_ lang: AppLanguage) -> String {
+        lang == .zh ? "点按卡片显示答案" : "Tap card to reveal"
+    }
+
+    static func lifePathGotIt(_ lang: AppLanguage) -> String {
+        lang == .zh ? "会了" : "Got it"
+    }
+
+    static func lifePathAgain(_ lang: AppLanguage) -> String {
+        lang == .zh ? "再练" : "Again"
+    }
+
+    static func lifePathCardProgress(_ lang: AppLanguage, current: Int, total: Int) -> String {
+        lang == .zh ? "第 \(current)/\(total) 张" : "Card \(current) of \(total)"
+    }
+
+    static func lifePathRoundComplete(_ lang: AppLanguage) -> String {
+        lang == .zh ? "本阶段会话完成" : "Stage session complete"
+    }
+
+    static func lifePathRoundStats(_ lang: AppLanguage, correct: Int, wrong: Int) -> String {
+        lang == .zh ? "正确 \(correct) · 错误 \(wrong)" : "\(correct) correct · \(wrong) wrong"
+    }
+
+    static func lifePathRoundRewards(_ lang: AppLanguage, xp: Int, coins: Int) -> String {
+        lang == .zh ? "本轮 +\(xp) XP · +\(coins) 金币" : "Round +\(xp) XP · +\(coins) coins"
+    }
+
+    static func lifePathBackHome(_ lang: AppLanguage) -> String {
+        lang == .zh ? "返回主页" : "Back to home"
+    }
+
+    static func lifePathPlayAgain(_ lang: AppLanguage) -> String {
+        lang == .zh ? "继续本阶段" : "Continue stage"
+    }
+
+    static func lifePathClaimContinue(_ lang: AppLanguage) -> String {
+        lang == .zh ? "领取并继续" : "Claim & continue"
+    }
+
+    static func lifePathErrorTitle(_ lang: AppLanguage) -> String {
+        lang == .zh ? "成长之路出错" : "Life Path error"
+    }
+
+    static func lifePathPlayAudio(_ lang: AppLanguage) -> String {
+        lang == .zh ? "播放发音" : "Play audio"
+    }
+
     static func speakSetupTitle(_ lang: AppLanguage) -> String {
         lang == .zh ? "AI 口语" : "Speak with AI"
     }

@@ -204,6 +204,12 @@ class DatabaseManager {
         execute(sql: createFlashcardsFrontIndex)
         execute(sql: createEssentialProgressTable)
         execute(sql: createEssentialProgressIndex)
+        execute(sql: Self.createLifePathListTableSQL)
+        execute(sql: Self.createLifePathListIndexSQL)
+        execute(sql: Self.createLifePathListDueIndexSQL)
+        execute(sql: Self.createLifePathProfileTableSQL)
+        execute(sql: Self.createLifePathRewardsTableSQL)
+        execute(sql: Self.createLifePathRewardsIndexSQL)
         migrateDatabase()
 
         prepopulateDefaultPrompts()
@@ -246,7 +252,85 @@ class DatabaseManager {
         CREATE INDEX IF NOT EXISTS idx_essential_progress_list_status
           ON essential_vocab_progress(list_id, status);
         """)
+        // Life Path game tables
+        execute(sql: Self.createLifePathListTableSQL)
+        execute(sql: Self.createLifePathListIndexSQL)
+        execute(sql: Self.createLifePathListDueIndexSQL)
+        execute(sql: Self.createLifePathProfileTableSQL)
+        execute(sql: Self.createLifePathRewardsTableSQL)
+        execute(sql: Self.createLifePathRewardsIndexSQL)
     }
+
+    // MARK: - Life Path schema SQL
+
+    private static let createLifePathListTableSQL = """
+    CREATE TABLE IF NOT EXISTS baby_to_child_list (
+        id TEXT PRIMARY KEY,
+        language TEXT NOT NULL,
+        entry_id TEXT NOT NULL,
+        stage_id TEXT NOT NULL,
+        front TEXT NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ('locked', 'available', 'learning', 'mastered')),
+        correct_count INTEGER NOT NULL DEFAULT 0,
+        wrong_count INTEGER NOT NULL DEFAULT 0,
+        correct_streak INTEGER NOT NULL DEFAULT 0,
+        due_at REAL,
+        last_reviewed_at REAL,
+        mastered_at REAL,
+        flashcard_id TEXT,
+        created_at REAL NOT NULL,
+        updated_at REAL NOT NULL,
+        UNIQUE (language, entry_id)
+    );
+    """
+
+    private static let createLifePathListIndexSQL = """
+    CREATE INDEX IF NOT EXISTS idx_btc_list_lang_stage_status
+      ON baby_to_child_list(language, stage_id, status);
+    """
+
+    private static let createLifePathListDueIndexSQL = """
+    CREATE INDEX IF NOT EXISTS idx_btc_list_due
+      ON baby_to_child_list(language, due_at);
+    """
+
+    private static let createLifePathProfileTableSQL = """
+    CREATE TABLE IF NOT EXISTS baby_to_child_profile (
+        language TEXT PRIMARY KEY,
+        current_stage_id TEXT NOT NULL,
+        highest_stage_id TEXT NOT NULL,
+        xp INTEGER NOT NULL DEFAULT 0,
+        coins INTEGER NOT NULL DEFAULT 0,
+        lifetime_xp INTEGER NOT NULL DEFAULT 0,
+        streak_days INTEGER NOT NULL DEFAULT 0,
+        last_play_day TEXT,
+        total_reviews INTEGER NOT NULL DEFAULT 0,
+        total_mastered INTEGER NOT NULL DEFAULT 0,
+        stages_cleared_json TEXT NOT NULL DEFAULT '[]',
+        pending_notify_json TEXT,
+        created_at REAL NOT NULL,
+        updated_at REAL NOT NULL
+    );
+    """
+
+    private static let createLifePathRewardsTableSQL = """
+    CREATE TABLE IF NOT EXISTS baby_to_child_rewards (
+        id TEXT PRIMARY KEY,
+        language TEXT NOT NULL,
+        reward_type TEXT NOT NULL,
+        amount INTEGER NOT NULL DEFAULT 0,
+        reason TEXT NOT NULL,
+        stage_id TEXT,
+        entry_id TEXT,
+        meta_json TEXT,
+        created_at REAL NOT NULL
+    );
+    """
+
+    private static let createLifePathRewardsIndexSQL = """
+    CREATE INDEX IF NOT EXISTS idx_btc_rewards_lang_created
+      ON baby_to_child_rewards(language, created_at);
+    """
 
     private func columnExists(table: String, column: String) -> Bool {
         let sql = "PRAGMA table_info(\(table));"
@@ -1043,6 +1127,388 @@ class DatabaseManager {
             }
         }
         sqlite3_finalize(statement)
+    }
+
+    // MARK: - Life Path (baby_to_child_*)
+
+    func fetchLifePathProfile(language: String) -> LifePathProfile? {
+        let sql = """
+        SELECT language, current_stage_id, highest_stage_id, xp, coins, lifetime_xp,
+               streak_days, last_play_day, total_reviews, total_mastered,
+               stages_cleared_json, pending_notify_json, created_at, updated_at
+        FROM baby_to_child_profile
+        WHERE language = ?
+        LIMIT 1;
+        """
+        var statement: OpaquePointer?
+        var profile: LifePathProfile?
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            sqlite3_bind_text(statement, 1, (language as NSString).utf8String, -1, nil)
+            if sqlite3_step(statement) == SQLITE_ROW {
+                profile = parseLifePathProfile(from: statement)
+            }
+        }
+        sqlite3_finalize(statement)
+        return profile
+    }
+
+    func upsertLifePathProfile(_ profile: LifePathProfile) {
+        let sql = """
+        INSERT INTO baby_to_child_profile (
+            language, current_stage_id, highest_stage_id, xp, coins, lifetime_xp,
+            streak_days, last_play_day, total_reviews, total_mastered,
+            stages_cleared_json, pending_notify_json, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(language) DO UPDATE SET
+            current_stage_id = excluded.current_stage_id,
+            highest_stage_id = excluded.highest_stage_id,
+            xp = excluded.xp,
+            coins = excluded.coins,
+            lifetime_xp = excluded.lifetime_xp,
+            streak_days = excluded.streak_days,
+            last_play_day = excluded.last_play_day,
+            total_reviews = excluded.total_reviews,
+            total_mastered = excluded.total_mastered,
+            stages_cleared_json = excluded.stages_cleared_json,
+            pending_notify_json = excluded.pending_notify_json,
+            updated_at = excluded.updated_at;
+        """
+        var statement: OpaquePointer?
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            let clearedData = (try? JSONEncoder().encode(profile.stagesCleared)) ?? Data("[]".utf8)
+            let clearedJSON = String(data: clearedData, encoding: .utf8) ?? "[]"
+            sqlite3_bind_text(statement, 1, (profile.language as NSString).utf8String, -1, nil)
+            sqlite3_bind_text(statement, 2, (profile.currentStageId as NSString).utf8String, -1, nil)
+            sqlite3_bind_text(statement, 3, (profile.highestStageId as NSString).utf8String, -1, nil)
+            sqlite3_bind_int(statement, 4, Int32(profile.xp))
+            sqlite3_bind_int(statement, 5, Int32(profile.coins))
+            sqlite3_bind_int(statement, 6, Int32(profile.lifetimeXp))
+            sqlite3_bind_int(statement, 7, Int32(profile.streakDays))
+            if let day = profile.lastPlayDay {
+                sqlite3_bind_text(statement, 8, (day as NSString).utf8String, -1, nil)
+            } else {
+                sqlite3_bind_null(statement, 8)
+            }
+            sqlite3_bind_int(statement, 9, Int32(profile.totalReviews))
+            sqlite3_bind_int(statement, 10, Int32(profile.totalMastered))
+            sqlite3_bind_text(statement, 11, (clearedJSON as NSString).utf8String, -1, nil)
+            if let notify = profile.pendingNotifyJSON {
+                sqlite3_bind_text(statement, 12, (notify as NSString).utf8String, -1, nil)
+            } else {
+                sqlite3_bind_null(statement, 12)
+            }
+            sqlite3_bind_double(statement, 13, profile.createdAt.timeIntervalSince1970)
+            sqlite3_bind_double(statement, 14, profile.updatedAt.timeIntervalSince1970)
+            if sqlite3_step(statement) != SQLITE_DONE {
+                printLifePathDBError("upsertLifePathProfile")
+            }
+        } else {
+            printLifePathDBError("prepare upsertLifePathProfile")
+        }
+        sqlite3_finalize(statement)
+    }
+
+    func fetchLifePathList(language: String) -> [LifePathListRow] {
+        let sql = """
+        SELECT id, language, entry_id, stage_id, front, status,
+               correct_count, wrong_count, correct_streak,
+               due_at, last_reviewed_at, mastered_at, flashcard_id,
+               created_at, updated_at
+        FROM baby_to_child_list
+        WHERE language = ?
+        ORDER BY stage_id, front;
+        """
+        var statement: OpaquePointer?
+        var rows: [LifePathListRow] = []
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            sqlite3_bind_text(statement, 1, (language as NSString).utf8String, -1, nil)
+            while sqlite3_step(statement) == SQLITE_ROW {
+                if let row = parseLifePathListRow(from: statement) {
+                    rows.append(row)
+                }
+            }
+        } else {
+            printLifePathDBError("prepare fetchLifePathList")
+        }
+        sqlite3_finalize(statement)
+        return rows
+    }
+
+    func countLifePathList(language: String) -> Int {
+        let sql = "SELECT COUNT(*) FROM baby_to_child_list WHERE language = ?;"
+        var statement: OpaquePointer?
+        var count = 0
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            sqlite3_bind_text(statement, 1, (language as NSString).utf8String, -1, nil)
+            if sqlite3_step(statement) == SQLITE_ROW {
+                count = Int(sqlite3_column_int(statement, 0))
+            }
+        }
+        sqlite3_finalize(statement)
+        return count
+    }
+
+    func insertLifePathListRow(_ row: LifePathListRow) {
+        let sql = """
+        INSERT OR IGNORE INTO baby_to_child_list (
+            id, language, entry_id, stage_id, front, status,
+            correct_count, wrong_count, correct_streak,
+            due_at, last_reviewed_at, mastered_at, flashcard_id,
+            created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        """
+        var statement: OpaquePointer?
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            bindLifePathListRow(statement, row: row)
+            if sqlite3_step(statement) != SQLITE_DONE {
+                printLifePathDBError("insertLifePathListRow")
+            }
+        } else {
+            printLifePathDBError("prepare insertLifePathListRow")
+        }
+        sqlite3_finalize(statement)
+    }
+
+    func upsertLifePathListRow(_ row: LifePathListRow) {
+        let sql = """
+        INSERT INTO baby_to_child_list (
+            id, language, entry_id, stage_id, front, status,
+            correct_count, wrong_count, correct_streak,
+            due_at, last_reviewed_at, mastered_at, flashcard_id,
+            created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(language, entry_id) DO UPDATE SET
+            stage_id = excluded.stage_id,
+            front = excluded.front,
+            status = excluded.status,
+            correct_count = excluded.correct_count,
+            wrong_count = excluded.wrong_count,
+            correct_streak = excluded.correct_streak,
+            due_at = excluded.due_at,
+            last_reviewed_at = excluded.last_reviewed_at,
+            mastered_at = excluded.mastered_at,
+            flashcard_id = excluded.flashcard_id,
+            updated_at = excluded.updated_at;
+        """
+        var statement: OpaquePointer?
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            bindLifePathListRow(statement, row: row)
+            if sqlite3_step(statement) != SQLITE_DONE {
+                printLifePathDBError("upsertLifePathListRow")
+            }
+        } else {
+            printLifePathDBError("prepare upsertLifePathListRow")
+        }
+        sqlite3_finalize(statement)
+    }
+
+    func unlockLifePathStage(language: String, stageId: String, now: Date = Date()) {
+        let sql = """
+        UPDATE baby_to_child_list
+        SET status = 'available', updated_at = ?
+        WHERE language = ? AND stage_id = ? AND status = 'locked';
+        """
+        var statement: OpaquePointer?
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            sqlite3_bind_double(statement, 1, now.timeIntervalSince1970)
+            sqlite3_bind_text(statement, 2, (language as NSString).utf8String, -1, nil)
+            sqlite3_bind_text(statement, 3, (stageId as NSString).utf8String, -1, nil)
+            if sqlite3_step(statement) != SQLITE_DONE {
+                printLifePathDBError("unlockLifePathStage")
+            }
+        }
+        sqlite3_finalize(statement)
+    }
+
+    func insertLifePathReward(_ reward: LifePathRewardRow) {
+        let sql = """
+        INSERT INTO baby_to_child_rewards (
+            id, language, reward_type, amount, reason, stage_id, entry_id, meta_json, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+        """
+        var statement: OpaquePointer?
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            sqlite3_bind_text(statement, 1, (reward.id as NSString).utf8String, -1, nil)
+            sqlite3_bind_text(statement, 2, (reward.language as NSString).utf8String, -1, nil)
+            sqlite3_bind_text(statement, 3, (reward.rewardType.rawValue as NSString).utf8String, -1, nil)
+            sqlite3_bind_int(statement, 4, Int32(reward.amount))
+            sqlite3_bind_text(statement, 5, (reward.reason as NSString).utf8String, -1, nil)
+            if let stageId = reward.stageId {
+                sqlite3_bind_text(statement, 6, (stageId as NSString).utf8String, -1, nil)
+            } else {
+                sqlite3_bind_null(statement, 6)
+            }
+            if let entryId = reward.entryId {
+                sqlite3_bind_text(statement, 7, (entryId as NSString).utf8String, -1, nil)
+            } else {
+                sqlite3_bind_null(statement, 7)
+            }
+            if let meta = reward.metaJSON {
+                sqlite3_bind_text(statement, 8, (meta as NSString).utf8String, -1, nil)
+            } else {
+                sqlite3_bind_null(statement, 8)
+            }
+            sqlite3_bind_double(statement, 9, reward.createdAt.timeIntervalSince1970)
+            if sqlite3_step(statement) != SQLITE_DONE {
+                printLifePathDBError("insertLifePathReward")
+            }
+        }
+        sqlite3_finalize(statement)
+    }
+
+    func fetchRecentLifePathRewards(language: String, limit: Int = 20) -> [LifePathRewardRow] {
+        let sql = """
+        SELECT id, language, reward_type, amount, reason, stage_id, entry_id, meta_json, created_at
+        FROM baby_to_child_rewards
+        WHERE language = ?
+        ORDER BY created_at DESC
+        LIMIT ?;
+        """
+        var statement: OpaquePointer?
+        var rows: [LifePathRewardRow] = []
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            sqlite3_bind_text(statement, 1, (language as NSString).utf8String, -1, nil)
+            sqlite3_bind_int(statement, 2, Int32(limit))
+            while sqlite3_step(statement) == SQLITE_ROW {
+                if let row = parseLifePathReward(from: statement) {
+                    rows.append(row)
+                }
+            }
+        }
+        sqlite3_finalize(statement)
+        return rows
+    }
+
+    private func bindLifePathListRow(_ statement: OpaquePointer?, row: LifePathListRow) {
+        guard let statement else { return }
+        sqlite3_bind_text(statement, 1, (row.rowId as NSString).utf8String, -1, nil)
+        sqlite3_bind_text(statement, 2, (row.language as NSString).utf8String, -1, nil)
+        sqlite3_bind_text(statement, 3, (row.entryId as NSString).utf8String, -1, nil)
+        sqlite3_bind_text(statement, 4, (row.stageId as NSString).utf8String, -1, nil)
+        sqlite3_bind_text(statement, 5, (row.front as NSString).utf8String, -1, nil)
+        sqlite3_bind_text(statement, 6, (row.status.rawValue as NSString).utf8String, -1, nil)
+        sqlite3_bind_int(statement, 7, Int32(row.correctCount))
+        sqlite3_bind_int(statement, 8, Int32(row.wrongCount))
+        sqlite3_bind_int(statement, 9, Int32(row.correctStreak))
+        if let due = row.dueAt {
+            sqlite3_bind_double(statement, 10, due.timeIntervalSince1970)
+        } else {
+            sqlite3_bind_null(statement, 10)
+        }
+        if let last = row.lastReviewedAt {
+            sqlite3_bind_double(statement, 11, last.timeIntervalSince1970)
+        } else {
+            sqlite3_bind_null(statement, 11)
+        }
+        if let mastered = row.masteredAt {
+            sqlite3_bind_double(statement, 12, mastered.timeIntervalSince1970)
+        } else {
+            sqlite3_bind_null(statement, 12)
+        }
+        if let fid = row.flashcardId {
+            sqlite3_bind_text(statement, 13, (fid as NSString).utf8String, -1, nil)
+        } else {
+            sqlite3_bind_null(statement, 13)
+        }
+        sqlite3_bind_double(statement, 14, row.createdAt.timeIntervalSince1970)
+        sqlite3_bind_double(statement, 15, row.updatedAt.timeIntervalSince1970)
+    }
+
+    private func parseLifePathProfile(from statement: OpaquePointer?) -> LifePathProfile? {
+        guard let statement,
+              let langCol = sqlite3_column_text(statement, 0),
+              let currentCol = sqlite3_column_text(statement, 1),
+              let highestCol = sqlite3_column_text(statement, 2),
+              let clearedCol = sqlite3_column_text(statement, 10) else {
+            return nil
+        }
+        let clearedJSON = String(cString: clearedCol)
+        let stagesCleared = (try? JSONDecoder().decode([String].self, from: Data(clearedJSON.utf8))) ?? []
+        let lastPlay = sqlite3_column_text(statement, 7).map { String(cString: $0) }
+        let pending = sqlite3_column_text(statement, 11).map { String(cString: $0) }
+        return LifePathProfile(
+            language: String(cString: langCol),
+            currentStageId: String(cString: currentCol),
+            highestStageId: String(cString: highestCol),
+            xp: Int(sqlite3_column_int(statement, 3)),
+            coins: Int(sqlite3_column_int(statement, 4)),
+            lifetimeXp: Int(sqlite3_column_int(statement, 5)),
+            streakDays: Int(sqlite3_column_int(statement, 6)),
+            lastPlayDay: lastPlay,
+            totalReviews: Int(sqlite3_column_int(statement, 8)),
+            totalMastered: Int(sqlite3_column_int(statement, 9)),
+            stagesCleared: stagesCleared,
+            pendingNotifyJSON: pending,
+            createdAt: Date(timeIntervalSince1970: sqlite3_column_double(statement, 12)),
+            updatedAt: Date(timeIntervalSince1970: sqlite3_column_double(statement, 13))
+        )
+    }
+
+    private func parseLifePathListRow(from statement: OpaquePointer?) -> LifePathListRow? {
+        guard let statement,
+              let idCol = sqlite3_column_text(statement, 0),
+              let langCol = sqlite3_column_text(statement, 1),
+              let entryCol = sqlite3_column_text(statement, 2),
+              let stageCol = sqlite3_column_text(statement, 3),
+              let frontCol = sqlite3_column_text(statement, 4),
+              let statusCol = sqlite3_column_text(statement, 5),
+              let status = LifePathWordStatus(rawValue: String(cString: statusCol)) else {
+            return nil
+        }
+        let dueAt: Date? = sqlite3_column_type(statement, 9) == SQLITE_NULL
+            ? nil
+            : Date(timeIntervalSince1970: sqlite3_column_double(statement, 9))
+        let lastReviewed: Date? = sqlite3_column_type(statement, 10) == SQLITE_NULL
+            ? nil
+            : Date(timeIntervalSince1970: sqlite3_column_double(statement, 10))
+        let masteredAt: Date? = sqlite3_column_type(statement, 11) == SQLITE_NULL
+            ? nil
+            : Date(timeIntervalSince1970: sqlite3_column_double(statement, 11))
+        let flashcardId = sqlite3_column_text(statement, 12).map { String(cString: $0) }
+        return LifePathListRow(
+            rowId: String(cString: idCol),
+            language: String(cString: langCol),
+            entryId: String(cString: entryCol),
+            stageId: String(cString: stageCol),
+            front: String(cString: frontCol),
+            status: status,
+            correctCount: Int(sqlite3_column_int(statement, 6)),
+            wrongCount: Int(sqlite3_column_int(statement, 7)),
+            correctStreak: Int(sqlite3_column_int(statement, 8)),
+            dueAt: dueAt,
+            lastReviewedAt: lastReviewed,
+            masteredAt: masteredAt,
+            flashcardId: flashcardId,
+            createdAt: Date(timeIntervalSince1970: sqlite3_column_double(statement, 13)),
+            updatedAt: Date(timeIntervalSince1970: sqlite3_column_double(statement, 14))
+        )
+    }
+
+    private func parseLifePathReward(from statement: OpaquePointer?) -> LifePathRewardRow? {
+        guard let statement,
+              let idCol = sqlite3_column_text(statement, 0),
+              let langCol = sqlite3_column_text(statement, 1),
+              let typeCol = sqlite3_column_text(statement, 2),
+              let reasonCol = sqlite3_column_text(statement, 4),
+              let rewardType = LifePathRewardType(rawValue: String(cString: typeCol)) else {
+            return nil
+        }
+        return LifePathRewardRow(
+            id: String(cString: idCol),
+            language: String(cString: langCol),
+            rewardType: rewardType,
+            amount: Int(sqlite3_column_int(statement, 3)),
+            reason: String(cString: reasonCol),
+            stageId: sqlite3_column_text(statement, 5).map { String(cString: $0) },
+            entryId: sqlite3_column_text(statement, 6).map { String(cString: $0) },
+            metaJSON: sqlite3_column_text(statement, 7).map { String(cString: $0) },
+            createdAt: Date(timeIntervalSince1970: sqlite3_column_double(statement, 8))
+        )
+    }
+
+    private func printLifePathDBError(_ context: String) {
+        let errmsg = sqlite3_errmsg(db) != nil ? String(cString: sqlite3_errmsg(db)!) : "Unknown error"
+        print("DatabaseManager: Life Path \(context): \(errmsg)")
     }
 
     private func parseFlashcard(from statement: OpaquePointer?) -> Flashcard? {

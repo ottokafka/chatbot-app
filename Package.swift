@@ -22,7 +22,8 @@ let package = Package(
             path: "Sources",
             exclude: ["App.swift"],
             resources: [
-                .process("EssentialVocab")
+                .process("EssentialVocab"),
+                .process("LifePath")
             ]
         ),
         .executableTarget(

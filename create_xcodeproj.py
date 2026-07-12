@@ -24,6 +24,10 @@ def main():
         "EssentialVocabListView.swift",
         "EssentialVocabModels.swift",
         "EssentialVocabViewModel.swift",
+        "LifePathCatalog.swift",
+        "LifePathModels.swift",
+        "LifePathViewModel.swift",
+        "LifePathViews.swift",
         "Flashcard.swift",
         "FlashcardCreateSheet.swift",
         "FlashcardDeckView.swift",
@@ -55,6 +59,9 @@ def main():
         "EssentialVocab/manifest.json",
         "EssentialVocab/essential_zh_v1.json",
         "EssentialVocab/essential_en_v1.json",
+        "LifePath/life_path_manifest.json",
+        "LifePath/life_path_zh_v1.json",
+        "LifePath/life_path_en_v1.json",
     ]
     
     # Generate UUIDs
@@ -69,6 +76,7 @@ def main():
     target_id = gen_id("target")
     resources_group_id = gen_id("resources_group")
     essential_vocab_group_id = gen_id("essential_vocab_group")
+    life_path_group_id = gen_id("life_path_group")
     
     project_config_list = gen_id("project_config_list")
     project_config_debug = gen_id("project_config_debug")
@@ -97,6 +105,7 @@ def main():
 
     resources_phase_files = []
     essential_vocab_children = []
+    life_path_children = []
     for rf in resource_files:
         name = os.path.basename(rf)
         file_ref = gen_id(f"file_ref_res_{rf}")
@@ -110,7 +119,10 @@ def main():
         build_files_content.append(f"\t\t{build_file} /* {name} in Resources */ = {{isa = PBXBuildFile; fileRef = {file_ref} /* {name} */; }};")
         file_refs_content.append(f"\t\t{file_ref} /* {name} */ = {{isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = {ftype}; name = \"{name}\"; path = \"Sources/{rf}\"; sourceTree = \"<group>\"; }};")
         resources_phase_files.append(f"\t\t\t\t{build_file} /* {name} in Resources */,")
-        essential_vocab_children.append(f"\t\t\t\t{file_ref} /* {name} */,")
+        if rf.startswith("LifePath/"):
+            life_path_children.append(f"\t\t\t\t{file_ref} /* {name} */,")
+        else:
+            essential_vocab_children.append(f"\t\t\t\t{file_ref} /* {name} */,")
 
     # Add the App Product File Reference
     file_refs_content.append(f"\t\t{product_app_file_ref} /* DeveloperChatbot.app */ = {{isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeveloperChatbot.app; sourceTree = BUILT_PRODUCTS_DIR; }};")
@@ -132,6 +144,7 @@ def main():
     sources_children_str = "\n".join(sources_children)
     resources_phase_files_str = "\n".join(resources_phase_files)
     essential_vocab_children_str = "\n".join(essential_vocab_children)
+    life_path_children_str = "\n".join(life_path_children)
         
     pbxproj_content = f"""// !$*UTF8*$!
 {{
@@ -181,6 +194,7 @@ def main():
 			isa = PBXGroup;
 			children = (
 				{essential_vocab_group_id} /* EssentialVocab */,
+				{life_path_group_id} /* LifePath */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -191,6 +205,14 @@ def main():
 {essential_vocab_children_str}
 			);
 			name = EssentialVocab;
+			sourceTree = "<group>";
+		}};
+		{life_path_group_id} /* LifePath */ = {{
+			isa = PBXGroup;
+			children = (
+{life_path_children_str}
+			);
+			name = LifePath;
 			sourceTree = "<group>";
 		}};
 		{products_group_id} /* Products */ = {{

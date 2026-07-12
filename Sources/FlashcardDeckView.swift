@@ -115,6 +115,7 @@ struct FlashcardDeckView: View {
         // Essential words — leading, icon-first on narrow widths (design V11).
         if flashcardVM.selectedDeckKind == .vocab {
             essentialWordsControl
+            lifePathControl
         }
 
         if flashcardVM.selectedDeckKind == .vocab,
@@ -534,6 +535,16 @@ struct FlashcardDeckView: View {
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
                 .help(L10n.essentialBrowseHelp(lang))
+
+                Button {
+                    flashcardVM.isShowingLifePath = true
+                } label: {
+                    Text(L10n.lifePathTitle(lang))
+                        .frame(minWidth: 200)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+                .help(L10n.lifePathBrowseHelp(lang))
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -560,6 +571,29 @@ struct FlashcardDeckView: View {
         .buttonStyle(.bordered)
         .controlSize(.large)
         .help(L10n.essentialBrowseHelp(lang))
+        #endif
+    }
+
+    private var lifePathControl: some View {
+        #if os(iOS)
+        Button {
+            flashcardVM.isShowingLifePath = true
+        } label: {
+            Image(systemName: "figure.and.child.holdinghands")
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.large)
+        .help(L10n.lifePathBrowseHelp(lang))
+        .accessibilityLabel(L10n.lifePathTitle(lang))
+        #else
+        Button {
+            flashcardVM.isShowingLifePath = true
+        } label: {
+            Label(L10n.lifePathShort(lang), systemImage: "figure.and.child.holdinghands")
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.large)
+        .help(L10n.lifePathBrowseHelp(lang))
         #endif
     }
 
