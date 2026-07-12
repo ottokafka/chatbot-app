@@ -22,7 +22,11 @@ struct PracticeSessionView: View {
                 completionView
             }
         }
+        #if os(iOS)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        #else
         .frame(minWidth: 560, minHeight: 520)
+        #endif
         .background(Color.platformControlBackground)
         .onAppear {
             autoPlayFrontIfNeeded()

@@ -1,10 +1,13 @@
 import SwiftUI
 
 struct LifePathRootView: View {
+    @ObservedObject var nav: AppNavigationModel
     @ObservedObject var flashcardVM: FlashcardViewModel
     @ObservedObject var chatVM: ChatViewModel
     /// Leave Life Path feature (typically `nav.goHome`).
     var onExit: () -> Void = {}
+    /// Compact iOS: reveal the split-view sidebar column (unused when leading is owned by Home/Cancel).
+    var onPreferSidebar: () -> Void = {}
     @StateObject private var vm = LifePathViewModel()
     @Environment(\.appLanguage) private var lang
     @State private var showResetConfirm = false
@@ -51,6 +54,15 @@ struct LifePathRootView: View {
                     }
                 }
             }
+            // Inside stack so Menu appears on Life Path chrome (K5a); no leading sidebar button
+            // — leading already has Home / Cancel / End round.
+            .compactFeatureChrome(
+                nav: nav,
+                lang: lang,
+                dueCount: flashcardVM.dueCount,
+                onPreferSidebar: onPreferSidebar,
+                showSidebarButton: false
+            )
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {
@@ -583,6 +595,10 @@ struct LifePathLevelUpView: View {
             .padding(.horizontal, 32)
             Spacer()
         }
+        #if os(iOS)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        #else
         .frame(minWidth: 400, minHeight: 480)
+        #endif
     }
 }

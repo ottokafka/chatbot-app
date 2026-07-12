@@ -27,7 +27,11 @@ struct FlashcardReviewView: View {
                 completionView
             }
         }
+        #if os(iOS)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        #else
         .frame(minWidth: 520, minHeight: 480)
+        #endif
         .background(Color.platformControlBackground)
         .onAppear {
             autoPlayFrontIfNeeded()

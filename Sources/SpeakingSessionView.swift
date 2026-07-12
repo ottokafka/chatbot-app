@@ -46,7 +46,11 @@ struct SpeakingSessionView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
+        #if os(iOS)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        #else
         .frame(minWidth: 560, minHeight: 560)
+        #endif
         .background(Color.platformControlBackground)
         .onAppear {
             // Default selection for save: last assistant turn (D20).

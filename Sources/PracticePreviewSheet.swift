@@ -53,7 +53,11 @@ struct PracticePreviewSheet: View {
                 footer(canStart: false)
             }
         }
+        #if os(iOS)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        #else
         .frame(minWidth: 560, minHeight: 500)
+        #endif
         .background(Color.platformControlBackground)
         .alert(
             L10n.practiceInfoTitle(lang),

@@ -9,6 +9,8 @@
 		EBE01AEB25E55906882BB3FD /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A16B38FAA94B87757C25FE /* APIManager.swift */; };
 		B5F75F6C2E79EE0B220E5887 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D3B50390BC9D9916B896D9F /* App.swift */; };
 		C7C7BA59D168043CCBEEE18F /* AppNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B591505AC26718E173005FA /* AppNavigation.swift */; };
+		148FC5811B408CAA445E23BA /* AppNavigationPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50F5F2BAA307F94623E78C3 /* AppNavigationPresentation.swift */; };
+		36EC6ACDFADDFAD5B96E3DFC /* AppRoute+Chrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 005C364B91C286B911142134 /* AppRoute+Chrome.swift */; };
 		7DC349B3DB40F1F62CD7587A /* AppSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947D94A101D17576981C74D3 /* AppSidebarView.swift */; };
 		C05C2A8802E702A51EC91771 /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1912387963492AEA44EC4EA7 /* AudioPlayer.swift */; };
 		1DB33D8852782FA344C1C805 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB7A1682EC35FF330ECCA59 /* AudioRecorder.swift */; };
@@ -69,6 +71,8 @@
 		C0A16B38FAA94B87757C25FE /* APIManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "APIManager.swift"; path = "Sources/APIManager.swift"; sourceTree = "<group>"; };
 		0D3B50390BC9D9916B896D9F /* App.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "App.swift"; path = "Sources/App.swift"; sourceTree = "<group>"; };
 		9B591505AC26718E173005FA /* AppNavigation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "AppNavigation.swift"; path = "Sources/AppNavigation.swift"; sourceTree = "<group>"; };
+		D50F5F2BAA307F94623E78C3 /* AppNavigationPresentation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "AppNavigationPresentation.swift"; path = "Sources/AppNavigationPresentation.swift"; sourceTree = "<group>"; };
+		005C364B91C286B911142134 /* AppRoute+Chrome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "AppRoute+Chrome.swift"; path = "Sources/AppRoute+Chrome.swift"; sourceTree = "<group>"; };
 		947D94A101D17576981C74D3 /* AppSidebarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "AppSidebarView.swift"; path = "Sources/AppSidebarView.swift"; sourceTree = "<group>"; };
 		1912387963492AEA44EC4EA7 /* AudioPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "AudioPlayer.swift"; path = "Sources/AudioPlayer.swift"; sourceTree = "<group>"; };
 		7CB7A1682EC35FF330ECCA59 /* AudioRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "AudioRecorder.swift"; path = "Sources/AudioRecorder.swift"; sourceTree = "<group>"; };
@@ -152,6 +156,8 @@
 				C0A16B38FAA94B87757C25FE /* APIManager.swift */,
 				0D3B50390BC9D9916B896D9F /* App.swift */,
 				9B591505AC26718E173005FA /* AppNavigation.swift */,
+				D50F5F2BAA307F94623E78C3 /* AppNavigationPresentation.swift */,
+				005C364B91C286B911142134 /* AppRoute+Chrome.swift */,
 				947D94A101D17576981C74D3 /* AppSidebarView.swift */,
 				1912387963492AEA44EC4EA7 /* AudioPlayer.swift */,
 				7CB7A1682EC35FF330ECCA59 /* AudioRecorder.swift */,
@@ -306,6 +312,8 @@
 				EBE01AEB25E55906882BB3FD /* APIManager.swift in Sources */,
 				B5F75F6C2E79EE0B220E5887 /* App.swift in Sources */,
 				C7C7BA59D168043CCBEEE18F /* AppNavigation.swift in Sources */,
+				148FC5811B408CAA445E23BA /* AppNavigationPresentation.swift in Sources */,
+				36EC6ACDFADDFAD5B96E3DFC /* AppRoute+Chrome.swift in Sources */,
 				7DC349B3DB40F1F62CD7587A /* AppSidebarView.swift in Sources */,
 				C05C2A8802E702A51EC91771 /* AudioPlayer.swift in Sources */,
 				1DB33D8852782FA344C1C805 /* AudioRecorder.swift in Sources */,

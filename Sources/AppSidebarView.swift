@@ -9,6 +9,8 @@ struct AppSidebarView: View {
     @Binding var selectedFlashcard: Flashcard?
     /// Wire chat audio into speakingVM before DEBUG sheet.
     var configureSpeaking: () -> Void
+    /// Compact iOS: show detail column after non-route actions / same-route re-tap.
+    var onPreferDetail: () -> Void = {}
 
     @Environment(\.appLanguage) private var lang
     #if DEBUG
@@ -19,26 +21,17 @@ struct AppSidebarView: View {
         VStack(alignment: .leading, spacing: 0) {
             List {
                 Section {
-                    sidebarRouteRow(
-                        .home,
-                        title: L10n.home(lang),
-                        systemImage: "square.grid.2x2"
-                    )
-                    sidebarRouteRow(
-                        .lifePath,
-                        title: L10n.lifePathTitle(lang),
-                        systemImage: "figure.and.child.holdinghands"
-                    )
-                    sidebarRouteRow(
-                        .flashcards,
-                        title: L10n.flashcardsWithDue(lang, due: flashcardVM.dueCount),
-                        systemImage: "rectangle.on.rectangle.angled"
-                    )
-                    sidebarRouteRow(
-                        .chat,
-                        title: L10n.conversations(lang),
-                        systemImage: "bubble.left.and.bubble.right"
-                    )
+                    ForEach(AppRoute.allCases) { route in
+                        sidebarRouteRow(
+                            route,
+                            title: AppRouteChrome.title(
+                                route,
+                                lang: lang,
+                                dueCount: route == .flashcards ? flashcardVM.dueCount : nil
+                            ),
+                            systemImage: AppRouteChrome.systemImage(route)
+                        )
+                    }
                 } header: {
                     Text(L10n.appsSection(lang))
                 }
@@ -100,12 +93,7 @@ struct AppSidebarView: View {
     }
 
     private var sidebarTitle: String {
-        switch nav.route {
-        case .home: return L10n.home(lang)
-        case .lifePath: return L10n.lifePathTitle(lang)
-        case .flashcards: return L10n.flashcards(lang)
-        case .chat: return L10n.conversations(lang)
-        }
+        AppRouteChrome.title(nav.route, lang: lang)
     }
 
     @ViewBuilder
@@ -137,6 +125,7 @@ struct AppSidebarView: View {
                 .contentShape(Rectangle())
                 .onTapGesture {
                     selectedFlashcard = card
+                    onPreferDetail()
                 }
                 .listRowBackground(
                     selectedFlashcard?.id == card.id
@@ -152,6 +141,7 @@ struct AppSidebarView: View {
         Section {
             Button {
                 viewModel.startNewConversation()
+                onPreferDetail()
             } label: {
                 Label(L10n.newChat(lang), systemImage: "plus.bubble")
                     .font(.headline)
@@ -176,6 +166,7 @@ struct AppSidebarView: View {
                 .contentShape(Rectangle())
                 .onTapGesture {
                     viewModel.selectConversation(conversation)
+                    onPreferDetail()
                 }
                 .listRowBackground(
                     viewModel.activeConversation?.id == conversation.id
@@ -189,11 +180,18 @@ struct AppSidebarView: View {
     @ViewBuilder
     private func sidebarRouteRow(_ route: AppRoute, title: String, systemImage: String) -> some View {
         Button {
-            nav.navigate(to: route, source: .switcher)
+            if nav.route == route {
+                // navigate() no-ops; onChange will not fire — still show detail on compact.
+                onPreferDetail()
+            } else {
+                nav.navigate(to: route, source: .switcher)
+                // preferDetail also runs from ContentView onChange(route) after successful navigate
+            }
         } label: {
             Label(title, systemImage: systemImage)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .fontWeight(nav.route == route ? .semibold : .regular)
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .listRowBackground(
