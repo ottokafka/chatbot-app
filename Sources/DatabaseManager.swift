@@ -294,6 +294,7 @@ class DatabaseManager {
       ON baby_to_child_list(language, due_at);
     """
 
+    /// Profile columns `xp` / `coins` / `lifetime_xp` are inert (legacy economy). Always stored as 0.
     private static let createLifePathProfileTableSQL = """
     CREATE TABLE IF NOT EXISTS baby_to_child_profile (
         language TEXT PRIMARY KEY,
@@ -313,6 +314,7 @@ class DatabaseManager {
     );
     """
 
+    /// Legacy table (XP/coins economy removed). Kept for existing installs / reset cleanup only.
     private static let createLifePathRewardsTableSQL = """
     CREATE TABLE IF NOT EXISTS baby_to_child_rewards (
         id TEXT PRIMARY KEY,
@@ -1320,66 +1322,8 @@ class DatabaseManager {
         sqlite3_finalize(statement)
     }
 
-    func insertLifePathReward(_ reward: LifePathRewardRow) {
-        let sql = """
-        INSERT INTO baby_to_child_rewards (
-            id, language, reward_type, amount, reason, stage_id, entry_id, meta_json, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
-        """
-        var statement: OpaquePointer?
-        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
-            sqlite3_bind_text(statement, 1, (reward.id as NSString).utf8String, -1, nil)
-            sqlite3_bind_text(statement, 2, (reward.language as NSString).utf8String, -1, nil)
-            sqlite3_bind_text(statement, 3, (reward.rewardType.rawValue as NSString).utf8String, -1, nil)
-            sqlite3_bind_int(statement, 4, Int32(reward.amount))
-            sqlite3_bind_text(statement, 5, (reward.reason as NSString).utf8String, -1, nil)
-            if let stageId = reward.stageId {
-                sqlite3_bind_text(statement, 6, (stageId as NSString).utf8String, -1, nil)
-            } else {
-                sqlite3_bind_null(statement, 6)
-            }
-            if let entryId = reward.entryId {
-                sqlite3_bind_text(statement, 7, (entryId as NSString).utf8String, -1, nil)
-            } else {
-                sqlite3_bind_null(statement, 7)
-            }
-            if let meta = reward.metaJSON {
-                sqlite3_bind_text(statement, 8, (meta as NSString).utf8String, -1, nil)
-            } else {
-                sqlite3_bind_null(statement, 8)
-            }
-            sqlite3_bind_double(statement, 9, reward.createdAt.timeIntervalSince1970)
-            if sqlite3_step(statement) != SQLITE_DONE {
-                printLifePathDBError("insertLifePathReward")
-            }
-        }
-        sqlite3_finalize(statement)
-    }
-
-    func fetchRecentLifePathRewards(language: String, limit: Int = 20) -> [LifePathRewardRow] {
-        let sql = """
-        SELECT id, language, reward_type, amount, reason, stage_id, entry_id, meta_json, created_at
-        FROM baby_to_child_rewards
-        WHERE language = ?
-        ORDER BY created_at DESC
-        LIMIT ?;
-        """
-        var statement: OpaquePointer?
-        var rows: [LifePathRewardRow] = []
-        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
-            sqlite3_bind_text(statement, 1, (language as NSString).utf8String, -1, nil)
-            sqlite3_bind_int(statement, 2, Int32(limit))
-            while sqlite3_step(statement) == SQLITE_ROW {
-                if let row = parseLifePathReward(from: statement) {
-                    rows.append(row)
-                }
-            }
-        }
-        sqlite3_finalize(statement)
-        return rows
-    }
-
-    /// DEV/testing: wipe all Life Path rows for one learning language (list + profile + rewards).
+    /// DEV/testing: wipe all Life Path rows for one learning language
+    /// (list + profile + legacy rewards table if present).
     func resetLifePathProgress(language: String) {
         let tables = [
             "DELETE FROM baby_to_child_list WHERE language = ?;",
@@ -1502,28 +1446,6 @@ class DatabaseManager {
             flashcardId: flashcardId,
             createdAt: Date(timeIntervalSince1970: sqlite3_column_double(statement, 13)),
             updatedAt: Date(timeIntervalSince1970: sqlite3_column_double(statement, 14))
-        )
-    }
-
-    private func parseLifePathReward(from statement: OpaquePointer?) -> LifePathRewardRow? {
-        guard let statement,
-              let idCol = sqlite3_column_text(statement, 0),
-              let langCol = sqlite3_column_text(statement, 1),
-              let typeCol = sqlite3_column_text(statement, 2),
-              let reasonCol = sqlite3_column_text(statement, 4),
-              let rewardType = LifePathRewardType(rawValue: String(cString: typeCol)) else {
-            return nil
-        }
-        return LifePathRewardRow(
-            id: String(cString: idCol),
-            language: String(cString: langCol),
-            rewardType: rewardType,
-            amount: Int(sqlite3_column_int(statement, 3)),
-            reason: String(cString: reasonCol),
-            stageId: sqlite3_column_text(statement, 5).map { String(cString: $0) },
-            entryId: sqlite3_column_text(statement, 6).map { String(cString: $0) },
-            metaJSON: sqlite3_column_text(statement, 7).map { String(cString: $0) },
-            createdAt: Date(timeIntervalSince1970: sqlite3_column_double(statement, 8))
         )
     }
 

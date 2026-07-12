@@ -377,11 +377,7 @@ Tag frequency (entries may have multiple tags):
     "en": "Daily life & school",
     "zh": "日常生活与学前"
   },
-  "targetCount": 299,
-  "clearReward": {
-    "xp": 200,
-    "coins": 100
-  }
+  "targetCount": 299
 }
 ```
 

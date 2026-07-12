@@ -14,11 +14,7 @@
         "en": "First words",
         "zh": "开口词"
       },
-      "targetCount": 50,
-      "clearReward": {
-        "xp": 100,
-        "coins": 50
-      }
+      "targetCount": 50
     },
     {
       "id": "toddler",
@@ -31,11 +27,7 @@
         "en": "Everyday talk",
         "zh": "日常用语"
       },
-      "targetCount": 66,
-      "clearReward": {
-        "xp": 150,
-        "coins": 75
-      }
+      "targetCount": 66
     },
     {
       "id": "preschool",
@@ -48,11 +40,7 @@
         "en": "Daily life & school",
         "zh": "日常生活与学前"
       },
-      "targetCount": 299,
-      "clearReward": {
-        "xp": 200,
-        "coins": 100
-      }
+      "targetCount": 299
     }
   ],
   "entries": [

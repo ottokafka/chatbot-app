@@ -4,7 +4,7 @@
 
 | Field | Value |
 |-------|--------|
-| **Status** | Implemented (v1: baby + toddler, play loop, rewards, level-up) |
+| **Status** | Implemented (baby + toddler + preschool; play loop + stage level-up; **no XP/coins**) |
 | **Date** | 2026-07-12 |
 | **Supersedes** | Earlier draft that *replaced* Essential Vocab with developmental lists |
 | **App** | DeveloperChatbot (`chatbot-app/`) |
@@ -26,13 +26,13 @@ These are **two separate features**. They do not share progress tables, UI sheet
 │  Essential Vocab (existing)  │     │  Baby→Child Game (NEW)           │
 │  essential_* JSON            │     │  life_path_* JSON (catalog)      │
 │  essential_vocab_progress    │     │  baby_to_child_list (+ profile)  │
-│  Triage: Add / I know        │     │  Play: study cards, earn rewards │
+│  Triage: Add / I know        │     │  Play: study cards, clear stages │
 │  → kind=vocab library        │     │  → grow stage + optional vocab   │
 └──────────────────────────────┘     └──────────────────────────────────┘
 ```
 
 **One-line pitch:**  
-A life-path flashcard game where you start as a **baby**, clear baby words, get notified that you grew into a **toddler**, earn rewards, and keep aging through childhood stages — without touching the Essential frequency lists.
+A life-path flashcard game where you start as a **baby**, clear baby words, get notified that you grew into a **toddler**, and keep aging through childhood stages — without touching the Essential frequency lists. **No XP or coins.**
 
 ---
 
@@ -42,7 +42,7 @@ A life-path flashcard game where you start as a **baby**, clear baby words, get 
 
 - A **new game mode** with its own DB tables, catalog, ViewModel, and UI.
 - A **flashcard game**: player studies words in the current life stage (flip / rate / advance).
-- A **progression RPG-lite**: complete stage vocabulary → **grow up** (baby → toddler → …) with **celebration notify** + **rewards**.
+- A **progression game**: complete stage vocabulary → **grow up** (baby → toddler → preschool → …) with a **celebration notify**.
 - Optionally may **also** insert or link `kind = vocab` flashcards so words land in the library (see §6).
 
 ### Is not
@@ -51,6 +51,7 @@ A life-path flashcard game where you start as a **baby**, clear baby words, get 
 - A replacement for Essential Vocab.
 - A third permanent “deck kind” in the library/gym model (game has its own run state; library stays vocab/example).
 - Soft triage-only (Essential stays the triage product; this is **play + grow**).
+- An XP / coin economy, shop, or spendable currency (removed from product; inert DB columns only).
 
 ---
 
@@ -59,7 +60,7 @@ A life-path flashcard game where you start as a **baby**, clear baby words, get 
 ```
 Start life as Baby
     → Study baby vocabulary (flashcards)
-    → Earn XP / coins / streak rewards
+    → Master every word in the stage
     → Clear stage requirement
     → NOTIFY: "You grew up! You're a Toddler now."
     → Unlock toddler vocabulary
@@ -70,10 +71,10 @@ Start life as Baby
 
 1. Open **Life Path** game.  
 2. See avatar age/stage + progress bar for current stage.  
-3. Play a **round** of flashcards from the **current stage only**.  
-4. On each correct / good review: XP, coins, stage progress.  
-5. On stage clear: **level-up ceremony** (notification + reward grant).  
-6. Next session: new stage’s word pool.
+3. Play a **full-stage session** of flashcards from the **current stage only**.  
+4. On each correct review: word progress toward mastery.  
+5. On stage clear: **level-up ceremony** (grow-up notify; unlock next stage).  
+6. Session complete → **Next level** to start the new stage.
 
 ### Secondary loop (optional library bridge)
 
@@ -120,15 +121,15 @@ Alternative (softer, if playtests feel grindy): 90% mastered + rest at least `se
           ┌────────────────┼────────────────┐
           ▼                ▼                ▼
 ┌─ SQLite ─────────────────────────────────────────────┐
-│  baby_to_child_profile     (player: stage, XP, …)    │
+│  baby_to_child_profile     (stage, mastery counts)   │
 │  baby_to_child_list        (per-word game progress)  │
-│  baby_to_child_rewards     (ledger of grants)        │
+│  baby_to_child_rewards     (LEGACY inert table)      │
 │  flashcards (optional link when user adds to vocab)  │
 └──────────────────────────┬───────────────────────────┘
                            │
                            ▼
 ┌─ LifePathViewModel + UI ─────────────────────────────┐
-│  Stage map · Play session · Level-up modal · Shop?   │
+│  Stage map · Play session · Level-up modal           │
 └──────────────────────────────────────────────────────┘
 ```
 
@@ -189,6 +190,7 @@ CREATE TABLE IF NOT EXISTS baby_to_child_profile (
     language            TEXT PRIMARY KEY,      -- 'zh' | 'en'
     current_stage_id    TEXT NOT NULL,         -- e.g. 'baby'
     highest_stage_id    TEXT NOT NULL,         -- farthest ever unlocked
+    -- LEGACY economy (inert): always 0; not used by gameplay/UI
     xp                  INTEGER NOT NULL DEFAULT 0,
     coins               INTEGER NOT NULL DEFAULT 0,
     lifetime_xp         INTEGER NOT NULL DEFAULT 0,
@@ -203,24 +205,10 @@ CREATE TABLE IF NOT EXISTS baby_to_child_profile (
 );
 ```
 
-### 6.3 `baby_to_child_rewards` (reward ledger)
+### 6.3 `baby_to_child_rewards` (legacy — unused)
 
-```sql
-CREATE TABLE IF NOT EXISTS baby_to_child_rewards (
-    id              TEXT PRIMARY KEY,
-    language        TEXT NOT NULL,
-    reward_type     TEXT NOT NULL,  -- see §8
-    amount          INTEGER NOT NULL DEFAULT 0,
-    reason          TEXT NOT NULL,  -- 'review_correct' | 'stage_clear' | 'streak' | 'first_session' | ...
-    stage_id        TEXT,
-    entry_id        TEXT,
-    meta_json       TEXT,           -- optional payload (title, icon key)
-    created_at      REAL NOT NULL
-);
-
-CREATE INDEX IF NOT EXISTS idx_btc_rewards_lang_created
-  ON baby_to_child_rewards(language, created_at);
-```
+Originally planned as an XP/coins ledger. **Product does not use XP or coins.**  
+Table is still created for existing installs and wiped on DEV reset; **no app APIs read or write grants.**
 
 ### 6.4 Relation to `flashcards`
 
@@ -252,17 +240,17 @@ Same bilingual idea as Essential rows:
 - Learning ZH: front = 汉字, phonics, back = English gloss  
 - Learning EN: front = English, back = Chinese gloss  
 
-UI is **game-styled** (big type, stage chrome, XP toast) — separate from Essential list sheet and from Library review chrome (can share low-level flip components later).
+UI is **game-styled** (big type, stage chrome) — separate from Essential list sheet and from Library review chrome (can share low-level flip components later).
 
 ### 7.3 Rating (v1 simple)
 
-| Action | Effect on word | XP | Coins |
-|--------|----------------|----|-------|
-| **Got it** (correct) | `correct_count++`; if `correct_count >= 2` and last was correct → `mastered` | +10 | +1 |
-| **Again** (wrong) | `wrong_count++`; status → `learning`; reset mastery streak | +2 | 0 |
-| **Skip** | no mastery change; slight delay `due_at` | 0 | 0 |
+| Action | Effect on word |
+|--------|----------------|
+| **Got it** (correct) | `correct_count++`; on mastery streak met → `mastered` |
+| **Again** (wrong) | `wrong_count++`; status → `learning`; reset mastery streak; re-queue card |
 
-**Mastery threshold (shipped):** **1 correct** = mastered (first “Got it” clears the word).
+**Mastery threshold (shipped):** **1 correct** = mastered (first “Got it” clears the word).  
+No XP/coins are granted on either action.
 
 ### 7.4 Stage clear detection
 
@@ -276,46 +264,18 @@ if count(status='mastered' WHERE stage=current) == count(entries in stage catalo
 
 ---
 
-## 8. Reward system
+## 8. Economy (removed)
 
-### 8.1 Currencies
+**Decision:** Life Path does **not** use XP, coins, titles, frames, or a reward shop.
 
-| Currency | Use |
-|----------|-----|
-| **XP** | Permanent growth meter; unlocks titles / avatar frames at thresholds |
-| **Coins** | Spendable (v1: cosmetic only or bank for future shop) |
+| Artifact | Status |
+|----------|--------|
+| Profile `xp` / `coins` / `lifetime_xp` | **Inert** DB columns (always 0) — kept to avoid schema migration |
+| `baby_to_child_rewards` | **Legacy** table; created/reset only; no Swift grant APIs |
+| Catalog `clearReward` | **Removed** from JSON |
+| Play UI | Stage progress + mastery only |
 
-### 8.2 Earn table (v1)
-
-| Event | XP | Coins | Notes |
-|-------|----|-------|--------|
-| Correct review | 10 | 1 | Base |
-| First-time correct on a word | +5 bonus XP | — | `correct_count` went 0→1 |
-| Word mastered | +25 | +5 | Once per `entry_id` |
-| Stage cleared (grow up) | +100 | +50 | Plus ceremony |
-| Daily first session | +15 | +5 | Per calendar day |
-| Streak day 3 / 7 / 14 | +20 / +50 / +100 | +10 / +25 / +50 | Streak milestones |
-| Perfect round (all correct) | +15 | +5 | Per session |
-
-All grants append a row to `baby_to_child_rewards` and update `baby_to_child_profile.xp` / `coins` / `lifetime_xp`.
-
-### 8.3 Spend / unlockables (v1 minimal)
-
-| Unlock | Cost / condition |
-|--------|------------------|
-| Title: “First Words” | Clear `baby` |
-| Title: “Toddler Talk” | Clear `toddler` |
-| Avatar frame: Baby | Default |
-| Avatar frame: Toddler | Clear `baby` (auto) |
-| Avatar frame: Kid | Clear `preschool` |
-| Coin sink (optional) | “Sticker pack” cosmetic — defer if no art |
-
-v1 can ship **grants only** (no shop UI) and still feel rewarding via ceremony + XP bar + titles.
-
-### 8.4 Anti-abuse
-
-- Max XP per calendar day soft cap (e.g. 500) to block mindless farming.  
-- Stage clear reward granted once (`stages_cleared_json` / reward reason unique check).
+Progression reward is **growing into the next life stage**, not a currency.
 
 ---
 
@@ -323,14 +283,13 @@ v1 can ship **grants only** (no shop UI) and still feel rewarding via ceremony +
 
 ### 9.1 When
 
-On stage clear, **before** switching `current_stage_id`:
+On stage clear:
 
-1. Persist reward ledger + profile XP/coins.  
-2. Append stage to `stages_cleared_json`.  
-3. Set `pending_notify_json` to a structured payload (survive process death).  
-4. Unlock next stage rows in `baby_to_child_list` (`locked` → `available`).  
-5. Set `current_stage_id` / `highest_stage_id` to next stage.  
-6. Present **Level-Up modal** (blocking, celebratory).
+1. Append stage to `stages_cleared_json`.  
+2. Set `pending_notify_json` to a structured payload (survive process death).  
+3. Unlock next stage rows in `baby_to_child_list` (`locked` → `available`).  
+4. Set `current_stage_id` / `highest_stage_id` to next stage.  
+5. Present **Level-Up modal** (blocking, celebratory).
 
 ### 9.2 Notify payload
 
@@ -343,13 +302,7 @@ On stage clear, **before** switching `current_stage_id`:
   "body": {
     "en": "Baby words complete. Welcome to Toddler.",
     "zh": "婴儿词汇已全部掌握，欢迎进入幼儿阶段。"
-  },
-  "rewards": [
-    { "type": "xp", "amount": 100 },
-    { "type": "coins", "amount": 50 },
-    { "type": "title", "id": "first_words" },
-    { "type": "frame", "id": "toddler" }
-  ]
+  }
 }
 ```
 
@@ -357,10 +310,9 @@ On stage clear, **before** switching `current_stage_id`:
 
 | Surface | Behavior |
 |---------|----------|
-| **In-app modal** | Primary — confetti / stage art / claim button |
-| **Toast** | Secondary for small XP ticks during play |
-| **System local notification** | Optional v1.1 if app backgrounded mid-clear |
-| **Profile badge** | Persistent “Toddler” on Life Path home |
+| **In-app modal** | Primary — stage clear ceremony + Continue |
+| **Session complete** | **Next level** starts the unlocked stage session |
+| **Profile badge** | Current stage name on Life Path home |
 
 Clear `pending_notify_json` only after user taps **Continue** on the modal (so relaunch can re-show).
 
@@ -392,16 +344,14 @@ Optional split: `en_baby.json`, `en_toddler.json`, … merged by catalog loader.
       "order": 0,
       "title": { "en": "Baby", "zh": "婴儿" },
       "subtitle": { "en": "First words", "zh": "开口词" },
-      "targetCount": 50,
-      "clearReward": { "xp": 100, "coins": 50 }
+      "targetCount": 50
     },
     {
       "id": "toddler",
       "order": 1,
       "title": { "en": "Toddler", "zh": "幼儿" },
       "subtitle": { "en": "Everyday talk", "zh": "日常用语" },
-      "targetCount": 150,
-      "clearReward": { "xp": 150, "coins": 75 }
+      "targetCount": 66
     }
   ],
   "entries": [
@@ -437,12 +387,12 @@ Overlap across stages allowed; each `entry_id` is unique. Same surface form in a
 | Component | Responsibility |
 |-----------|----------------|
 | `LifePathCatalog` | Load/validate JSON, cache stages/entries |
-| `LifePathModels` | Stage, Entry, RewardType, NotifyPayload |
-| `LifePathViewModel` | Profile, list rows, session, awards, level-up |
-| `LifePathHomeView` | Stage map, XP/coins, Play CTA |
-| `LifePathPlayView` | Flashcard round UI |
+| `LifePathModels` | Stage, Entry, Profile, NotifyPayload |
+| `LifePathViewModel` | Profile, list rows, session, stage clear, level-up |
+| `LifePathHomeView` | Stage map, mastery progress, Play CTA |
+| `LifePathPlayView` | Flashcard full-stage session UI |
 | `LifePathLevelUpView` | Blocking progression ceremony |
-| `DatabaseManager` | CRUD for three new tables |
+| `DatabaseManager` | List + profile CRUD (rewards table legacy only) |
 | `L10n` | Strings for game (separate keys from Essential) |
 
 ### Navigation
@@ -466,25 +416,27 @@ lifePath.reduceMotion
 ### A. Life Path Home
 
 - Avatar + current stage name (“Baby”)  
-- Progress: `mastered / total` for stage + XP bar  
-- Coins / streak  
+- Progress: `mastered / total` for stage  
 - Stage rail: Baby ✓ · Toddler 🔒 · …  
 - Primary: **Play**  
-- Secondary: Word list (current stage), Rewards history  
+- Secondary: Word list (current stage)  
 
 ### B. Play session
 
 - Card stack / single card flip  
 - Got it / Again  
-- Floating +XP toasts  
-- End-of-round summary (correct count, coins)  
 
 ### C. Level-up (notify)
 
 - Full-screen: “You grew up!”  
 - From Baby art → Toddler art  
-- Reward chips  
-- **Claim & continue** → Home with Toddler unlocked  
+- **Continue** → session complete → **Next level** starts unlocked stage  
+
+### C′. Session complete
+
+- Stats: correct / wrong for the session  
+- Primary: **Next level**  
+- Toolbar **Done** still dismisses Life Path  
 
 ### D. Stage word list (read-only + status)
 
@@ -515,43 +467,27 @@ lifePath.reduceMotion
                          FSRS Study / Practice / Speaking
 ```
 
-Both systems can feed the library; only Life Path has **stages, XP, coins, growth notify**.
+Both systems can feed the library; only Life Path has **stages, mastery progress, and growth notify**.
 
 ---
 
 ## 14. Implementation plan (phased)
 
-### PR1 — Schema + catalog skeleton
+### Shipped
 
-- Create `baby_to_child_list`, `baby_to_child_profile`, `baby_to_child_rewards`.  
-- Ship `life_path_*` JSON with **baby** stage only (~50 EN + 50 ZH).  
-- `LifePathCatalog` load + unit tests.  
-- Seed list rows on first open.
+- Schema: `baby_to_child_list` + `baby_to_child_profile` (+ legacy rewards table inert).  
+- Catalog: baby + toddler + preschool (EN + ZH).  
+- Play loop: full-stage session, Got it / Again, mastery.  
+- Progression: stage clear → level-up modal → unlock next stage → **Next level**.  
+- **No XP/coins economy.**
 
-### PR2 — Play loop
+### Later
 
-- Home + Play session (Got it / Again).  
-- Update list status, XP/coins, reward ledger.  
-- Mastery + stage progress bar.
-
-### PR3 — Progression + notify + rewards ceremony
-
-- Stage clear → unlock toddler (catalog can still be small stub).  
-- Level-up modal + `pending_notify_json`.  
-- Titles / frames grant.
-
-### PR4 — Toddler content + polish
-
-- Full toddler lists.  
-- Streak + daily bonus.  
+- Grade1+ content packs.  
 - Optional Add to Vocabulary.  
 - Sound / haptics / reduce motion.
 
-### PR5 — Later stages
-
-- Preschool, grade1, … content packs + balance pass on XP.
-
-**Out of scope for first ship:** shop UI, multiplayer, server sync, replacing Essential.
+**Out of scope:** shop, multiplayer, server sync, replacing Essential, XP/coins.
 
 ---
 
@@ -562,8 +498,8 @@ Both systems can feed the library; only Life Path has **stages, XP, coins, growt
 | Start of fun | User completes first baby round in &lt; 3 minutes |
 | Growth moment | ≥50% of users who master 10 baby words see level-up to toddler |
 | Parallel systems | Essential still works with zero regressions |
-| Reward clarity | User can state coins/XP sources after one session |
-| Retention proxy | Return next day streak ≥1 for engaged players |
+| Growth clarity | User understands stage clear unlocks the next age |
+| Return | Player re-opens Life Path after a session |
 
 ---
 
@@ -574,9 +510,9 @@ Both systems can feed the library; only Life Path has **stages, XP, coins, growt
 | Confused with Essential | Separate name (“Life Path”), separate entry point, different UI chrome |
 | Grind to clear stage | Mastery is 1 correct; full-stage session + re-queue only on misses |
 | Duplicate words vs Essential / library | Shared `front` uniqueness only at flashcard insert time; game list is independent |
-| Table name alone insufficient | Profile + rewards tables required; document all three as the “Life Path DB pack” |
+| Table name alone insufficient | Profile + list tables required; rewards table is legacy only |
 | Adult learners dislike “baby” | Subtitle “Stage 1 · First words”; avatar optional; fantasy is growth, not infantilization |
-| Scope creep (shop, grades 1–6) | Hard cut: baby + toddler + ceremony for v1 |
+| Scope creep (shop, XP, grades 1–6) | Hard cut: stage mastery + ceremony only; no economy |
 
 ---
 
@@ -585,16 +521,16 @@ Both systems can feed the library; only Life Path has **stages, XP, coins, growt
 - [x] Keep Essential Vocab frequency lists and UI  
 - [x] New system, not a replace  
 - [x] Primary progress table: `baby_to_child_list`  
-- [x] Supporting: `baby_to_child_profile`, `baby_to_child_rewards`  
+- [x] Supporting: `baby_to_child_profile` (rewards table legacy/inert)  
 - [x] Flashcard **game** play loop (not triage-only)  
 - [x] Hard stage unlock; notify on grow-up  
-- [x] Reward system: XP + coins + stage titles/frames  
-- [ ] Mastery algorithm final numbers (lock in PR2)  
-- [ ] Auto-add to Vocabulary vs manual only (recommend **manual** v1)  
-- [ ] v1 content: baby only vs baby+toddler (recommend **baby full + toddler full** if possible)
+- [x] **No** XP/coins economy (removed from product)  
+- [x] Mastery: 1 correct = mastered  
+- [ ] Auto-add to Vocabulary vs manual only (recommend **manual**)  
+- [x] Content: baby + toddler + preschool shipped  
 
 ---
 
 ## 18. One-sentence technical summary
 
-**Keep Essential as the frequency triage funnel; build a separate Life Path flashcard game whose per-word state lives in `baby_to_child_list`, whose player growth lives in `baby_to_child_profile`, and whose XP/coins/stage-clear ceremonies live in `baby_to_child_rewards` — starting as baby, notifying the player as they grow into toddler and beyond.**
+**Keep Essential as the frequency triage funnel; build a separate Life Path flashcard game whose per-word state lives in `baby_to_child_list`, whose player growth lives in `baby_to_child_profile`, and whose stage-clear ceremony unlocks the next life stage — starting as baby, through toddler and preschool, without XP or coins.**

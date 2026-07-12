@@ -365,8 +365,7 @@ final class LifePathViewModel: ObservableObject {
                 "zh": next != nil
                     ? "\(stageMeta?.title(for: .zh) ?? stageId) 词汇已掌握，欢迎进入\(next?.title(for: .zh) ?? toStageId)！"
                     : "\(stageMeta?.title(for: .zh) ?? stageId) 词汇已掌握，当前成长之路已全部通关！"
-            ],
-            rewards: []
+            ]
         )
         if let data = try? JSONEncoder().encode(notify),
            let json = String(data: data, encoding: .utf8) {

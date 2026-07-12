@@ -50,7 +50,7 @@ final class LifePathCatalogTests: XCTestCase {
           "listVersion": 1,
           "language": "en",
           "stages": [
-            {"id":"baby","order":0,"title":{"en":"Baby"},"targetCount":2,"clearReward":{"xp":100,"coins":50}}
+            {"id":"baby","order":0,"title":{"en":"Baby"},"targetCount":2}
           ],
           "entries": [
             {"id":"a","stageId":"baby","rankInStage":1,"front":"mama","back":"妈妈","phonics":null,"tags":[]},
@@ -68,7 +68,7 @@ final class LifePathCatalogTests: XCTestCase {
 }
 
 final class LifePathDBTests: XCTestCase {
-    func testProfileListAndRewardsCRUD() throws {
+    func testProfileListAndUnlockCRUD() throws {
         let path = NSTemporaryDirectory() + "life-path-test-\(UUID().uuidString).sqlite"
         defer { try? FileManager.default.removeItem(atPath: path) }
 
@@ -79,9 +79,9 @@ final class LifePathDBTests: XCTestCase {
             language: "en",
             currentStageId: "baby",
             highestStageId: "baby",
-            xp: 10,
-            coins: 2,
-            lifetimeXp: 10,
+            xp: 0,
+            coins: 0,
+            lifetimeXp: 0,
             streakDays: 1,
             lastPlayDay: "2026-07-12",
             totalReviews: 1,
@@ -93,8 +93,11 @@ final class LifePathDBTests: XCTestCase {
         )
         db.upsertLifePathProfile(profile)
         let loaded = db.fetchLifePathProfile(language: "en")
-        XCTAssertEqual(loaded?.xp, 10)
         XCTAssertEqual(loaded?.currentStageId, "baby")
+        XCTAssertEqual(loaded?.totalReviews, 1)
+        // Economy columns are inert scaffolding — always 0 in product paths.
+        XCTAssertEqual(loaded?.xp, 0)
+        XCTAssertEqual(loaded?.coins, 0)
 
         let row = LifePathListRow(
             rowId: UUID().uuidString,
@@ -148,26 +151,9 @@ final class LifePathDBTests: XCTestCase {
         let afterUnlock = db.fetchLifePathList(language: "en").first { $0.entryId == "en_toddler_001" }
         XCTAssertEqual(afterUnlock?.status, .available)
 
-        let reward = LifePathRewardRow(
-            id: UUID().uuidString,
-            language: "en",
-            rewardType: .xp,
-            amount: 100,
-            reason: "stage_clear",
-            stageId: "baby",
-            entryId: nil,
-            metaJSON: nil,
-            createdAt: now
-        )
-        db.insertLifePathReward(reward)
-        let rewards = db.fetchRecentLifePathRewards(language: "en")
-        XCTAssertEqual(rewards.count, 1)
-        XCTAssertEqual(rewards.first?.amount, 100)
-
         db.resetLifePathProgress(language: "en")
         XCTAssertEqual(db.countLifePathList(language: "en"), 0)
         XCTAssertNil(db.fetchLifePathProfile(language: "en"))
-        XCTAssertTrue(db.fetchRecentLifePathRewards(language: "en").isEmpty)
     }
 }
 

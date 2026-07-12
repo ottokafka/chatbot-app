@@ -48,18 +48,12 @@ struct LifePathListMeta: Codable, Equatable, Identifiable {
     let sourceNote: String?
 }
 
-struct LifePathClearReward: Codable, Equatable {
-    let xp: Int
-    let coins: Int
-}
-
 struct LifePathStageMeta: Codable, Equatable, Identifiable {
     let id: String
     let order: Int
     let title: [String: String]
     let subtitle: [String: String]?
     let targetCount: Int
-    let clearReward: LifePathClearReward?
 
     func title(for ui: AppLanguage) -> String {
         title[ui.rawValue] ?? title["en"] ?? id
@@ -122,6 +116,7 @@ struct LifePathProfile: Equatable {
     let language: String
     var currentStageId: String
     var highestStageId: String
+    /// Inert DB columns (legacy economy scaffolding). Always write 0; not used by gameplay/UI.
     var xp: Int
     var coins: Int
     var lifetimeXp: Int
@@ -135,38 +130,12 @@ struct LifePathProfile: Equatable {
     var updatedAt: Date
 }
 
-enum LifePathRewardType: String, Codable {
-    case xp
-    case coins
-    case title
-    case frame
-}
-
-struct LifePathRewardRow: Equatable, Identifiable {
-    let id: String
-    let language: String
-    let rewardType: LifePathRewardType
-    let amount: Int
-    let reason: String
-    let stageId: String?
-    let entryId: String?
-    let metaJSON: String?
-    let createdAt: Date
-}
-
 struct LifePathLevelUpNotify: Codable, Equatable {
     let type: String
     let fromStageId: String
     let toStageId: String
     let title: [String: String]
     let body: [String: String]
-    let rewards: [LifePathNotifyReward]
-
-    struct LifePathNotifyReward: Codable, Equatable {
-        let type: String
-        let amount: Int?
-        let id: String?
-    }
 
     func title(for ui: AppLanguage) -> String {
         title[ui.rawValue] ?? title["en"] ?? "You grew up!"
