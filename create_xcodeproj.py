@@ -20,6 +20,10 @@ def main():
         "ChatViewModel.swift",
         "ContentView.swift",
         "DatabaseManager.swift",
+        "EssentialVocabCatalog.swift",
+        "EssentialVocabListView.swift",
+        "EssentialVocabModels.swift",
+        "EssentialVocabViewModel.swift",
         "Flashcard.swift",
         "FlashcardCreateSheet.swift",
         "FlashcardDeckView.swift",
@@ -46,6 +50,12 @@ def main():
         "String+Pinyin.swift",
         "WebSocketManager.swift",
     ]
+
+    resource_files = [
+        "EssentialVocab/manifest.json",
+        "EssentialVocab/essential_zh_v1.json",
+        "EssentialVocab/essential_en_v1.json",
+    ]
     
     # Generate UUIDs
     main_group_id = gen_id("main_group")
@@ -55,7 +65,10 @@ def main():
     project_id = gen_id("project")
     sources_build_phase = gen_id("sources_build_phase")
     frameworks_build_phase = gen_id("frameworks_build_phase")
+    resources_build_phase = gen_id("resources_build_phase")
     target_id = gen_id("target")
+    resources_group_id = gen_id("resources_group")
+    essential_vocab_group_id = gen_id("essential_vocab_group")
     
     project_config_list = gen_id("project_config_list")
     project_config_debug = gen_id("project_config_debug")
@@ -82,6 +95,23 @@ def main():
         file_refs_content.append(f"\t\t{file_ref} /* {f} */ = {{isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = \"{f}\"; path = \"Sources/{f}\"; sourceTree = \"<group>\"; }};")
         sources_phase_files.append(f"\t\t\t\t{build_file} /* {f} in Sources */,")
 
+    resources_phase_files = []
+    essential_vocab_children = []
+    for rf in resource_files:
+        name = os.path.basename(rf)
+        file_ref = gen_id(f"file_ref_res_{rf}")
+        build_file = gen_id(f"build_file_res_{rf}")
+        if name.endswith(".json"):
+            ftype = "text.json"
+        elif name.endswith(".md"):
+            ftype = "net.daringfireball.markdown"
+        else:
+            ftype = "text"
+        build_files_content.append(f"\t\t{build_file} /* {name} in Resources */ = {{isa = PBXBuildFile; fileRef = {file_ref} /* {name} */; }};")
+        file_refs_content.append(f"\t\t{file_ref} /* {name} */ = {{isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = {ftype}; name = \"{name}\"; path = \"Sources/{rf}\"; sourceTree = \"<group>\"; }};")
+        resources_phase_files.append(f"\t\t\t\t{build_file} /* {name} in Resources */,")
+        essential_vocab_children.append(f"\t\t\t\t{file_ref} /* {name} */,")
+
     # Add the App Product File Reference
     file_refs_content.append(f"\t\t{product_app_file_ref} /* DeveloperChatbot.app */ = {{isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeveloperChatbot.app; sourceTree = BUILT_PRODUCTS_DIR; }};")
 
@@ -100,6 +130,8 @@ def main():
     file_refs_str = "\n".join(file_refs_content)
     sources_phase_files_str = "\n".join(sources_phase_files)
     sources_children_str = "\n".join(sources_children)
+    resources_phase_files_str = "\n".join(resources_phase_files)
+    essential_vocab_children_str = "\n".join(essential_vocab_children)
         
     pbxproj_content = f"""// !$*UTF8*$!
 {{
@@ -132,6 +164,7 @@ def main():
 			isa = PBXGroup;
 			children = (
 				{sources_group_id} /* Sources */,
+				{resources_group_id} /* Resources */,
 				{products_group_id} /* Products */,
 			);
 			sourceTree = "<group>";
@@ -142,6 +175,22 @@ def main():
 {sources_children_str}
 			);
 			name = Sources;
+			sourceTree = "<group>";
+		}};
+		{resources_group_id} /* Resources */ = {{
+			isa = PBXGroup;
+			children = (
+				{essential_vocab_group_id} /* EssentialVocab */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		}};
+		{essential_vocab_group_id} /* EssentialVocab */ = {{
+			isa = PBXGroup;
+			children = (
+{essential_vocab_children_str}
+			);
+			name = EssentialVocab;
 			sourceTree = "<group>";
 		}};
 		{products_group_id} /* Products */ = {{
@@ -161,6 +210,7 @@ def main():
 			buildPhases = (
 				{sources_build_phase} /* Sources */,
 				{frameworks_build_phase} /* Frameworks */,
+				{resources_build_phase} /* Resources */,
 			);
 			buildRules = (
 			);
@@ -219,6 +269,17 @@ def main():
 			runOnlyForDeploymentPostprocessing = 0;
 		}};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXResourcesBuildPhase section */
+		{resources_build_phase} /* Resources */ = {{
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+{resources_phase_files_str}
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		}};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
 		{project_config_debug} /* Debug */ = {{

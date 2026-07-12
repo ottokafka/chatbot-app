@@ -1,0 +1,4617 @@
+{
+  "listId": "essential_en",
+  "listVersion": 1,
+  "language": "en",
+  "entries": [
+    {
+      "id": "en_0001",
+      "rank": 1,
+      "front": "the",
+      "back": "定冠词：指特定的人或物",
+      "phonics": null,
+      "pos": "article",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0002",
+      "rank": 2,
+      "front": "be",
+      "back": "是；在；成为",
+      "phonics": null,
+      "pos": "verb",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0003",
+      "rank": 3,
+      "front": "to",
+      "back": "到；向；不定式标记",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0004",
+      "rank": 4,
+      "front": "of",
+      "back": "的；属于",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0005",
+      "rank": 5,
+      "front": "and",
+      "back": "和；并且",
+      "phonics": null,
+      "pos": "conj",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0006",
+      "rank": 6,
+      "front": "a",
+      "back": "不定冠词：一个",
+      "phonics": null,
+      "pos": "article",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0007",
+      "rank": 7,
+      "front": "in",
+      "back": "在…里",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0008",
+      "rank": 8,
+      "front": "I",
+      "back": "我",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0009",
+      "rank": 9,
+      "front": "you",
+      "back": "你；你们",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0010",
+      "rank": 10,
+      "front": "it",
+      "back": "它",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0011",
+      "rank": 11,
+      "front": "have",
+      "back": "有；已经",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0012",
+      "rank": 12,
+      "front": "for",
+      "back": "为了；对于",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0013",
+      "rank": 13,
+      "front": "not",
+      "back": "不；没有",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0014",
+      "rank": 14,
+      "front": "on",
+      "back": "在…上",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0015",
+      "rank": 15,
+      "front": "with",
+      "back": "和；用；带有",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0016",
+      "rank": 16,
+      "front": "he",
+      "back": "他",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0017",
+      "rank": 17,
+      "front": "she",
+      "back": "她",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0018",
+      "rank": 18,
+      "front": "they",
+      "back": "他们；她们；它们",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0019",
+      "rank": 19,
+      "front": "we",
+      "back": "我们",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0020",
+      "rank": 20,
+      "front": "do",
+      "back": "做；助动词",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0021",
+      "rank": 21,
+      "front": "say",
+      "back": "说",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0022",
+      "rank": 22,
+      "front": "go",
+      "back": "去",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0023",
+      "rank": 23,
+      "front": "get",
+      "back": "得到；变得",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0024",
+      "rank": 24,
+      "front": "make",
+      "back": "做；制作",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0025",
+      "rank": 25,
+      "front": "know",
+      "back": "知道；认识",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0026",
+      "rank": 26,
+      "front": "think",
+      "back": "想；认为",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0027",
+      "rank": 27,
+      "front": "take",
+      "back": "拿；乘坐",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0028",
+      "rank": 28,
+      "front": "see",
+      "back": "看见",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0029",
+      "rank": 29,
+      "front": "come",
+      "back": "来",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0030",
+      "rank": 30,
+      "front": "want",
+      "back": "想要",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0031",
+      "rank": 31,
+      "front": "look",
+      "back": "看；显得",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0032",
+      "rank": 32,
+      "front": "use",
+      "back": "使用",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0033",
+      "rank": 33,
+      "front": "find",
+      "back": "找到；发现",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0034",
+      "rank": 34,
+      "front": "give",
+      "back": "给",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0035",
+      "rank": 35,
+      "front": "tell",
+      "back": "告诉",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0036",
+      "rank": 36,
+      "front": "work",
+      "back": "工作；起作用",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0037",
+      "rank": 37,
+      "front": "call",
+      "back": "呼叫；打电话",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0038",
+      "rank": 38,
+      "front": "try",
+      "back": "尝试",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0039",
+      "rank": 39,
+      "front": "ask",
+      "back": "问；请求",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0040",
+      "rank": 40,
+      "front": "need",
+      "back": "需要",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0041",
+      "rank": 41,
+      "front": "feel",
+      "back": "感觉",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0042",
+      "rank": 42,
+      "front": "become",
+      "back": "变成",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0043",
+      "rank": 43,
+      "front": "leave",
+      "back": "离开；留下",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0044",
+      "rank": 44,
+      "front": "put",
+      "back": "放",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0045",
+      "rank": 45,
+      "front": "mean",
+      "back": "意思是；意味着",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0046",
+      "rank": 46,
+      "front": "keep",
+      "back": "保持；继续",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0047",
+      "rank": 47,
+      "front": "let",
+      "back": "让",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0048",
+      "rank": 48,
+      "front": "begin",
+      "back": "开始",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0049",
+      "rank": 49,
+      "front": "seem",
+      "back": "似乎",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0050",
+      "rank": 50,
+      "front": "help",
+      "back": "帮助",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0051",
+      "rank": 51,
+      "front": "show",
+      "back": "展示；演出",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0052",
+      "rank": 52,
+      "front": "hear",
+      "back": "听见",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0053",
+      "rank": 53,
+      "front": "play",
+      "back": "玩；演奏",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0054",
+      "rank": 54,
+      "front": "run",
+      "back": "跑；经营",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0055",
+      "rank": 55,
+      "front": "move",
+      "back": "移动",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0056",
+      "rank": 56,
+      "front": "live",
+      "back": "居住；生活",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0057",
+      "rank": 57,
+      "front": "believe",
+      "back": "相信",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0058",
+      "rank": 58,
+      "front": "bring",
+      "back": "带来",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0059",
+      "rank": 59,
+      "front": "happen",
+      "back": "发生",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0060",
+      "rank": 60,
+      "front": "write",
+      "back": "写",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0061",
+      "rank": 61,
+      "front": "sit",
+      "back": "坐",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0062",
+      "rank": 62,
+      "front": "stand",
+      "back": "站；忍受",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0063",
+      "rank": 63,
+      "front": "lose",
+      "back": "失去；输",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0064",
+      "rank": 64,
+      "front": "pay",
+      "back": "支付",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0065",
+      "rank": 65,
+      "front": "meet",
+      "back": "遇见；满足",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0066",
+      "rank": 66,
+      "front": "include",
+      "back": "包括",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0067",
+      "rank": 67,
+      "front": "continue",
+      "back": "继续",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0068",
+      "rank": 68,
+      "front": "set",
+      "back": "放置；设定",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0069",
+      "rank": 69,
+      "front": "learn",
+      "back": "学习",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0070",
+      "rank": 70,
+      "front": "change",
+      "back": "改变；零钱",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0071",
+      "rank": 71,
+      "front": "lead",
+      "back": "带领；导致",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0072",
+      "rank": 72,
+      "front": "understand",
+      "back": "理解",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0073",
+      "rank": 73,
+      "front": "watch",
+      "back": "观看；手表",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0074",
+      "rank": 74,
+      "front": "follow",
+      "back": "跟随",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0075",
+      "rank": 75,
+      "front": "stop",
+      "back": "停止",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0076",
+      "rank": 76,
+      "front": "create",
+      "back": "创造",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0077",
+      "rank": 77,
+      "front": "speak",
+      "back": "说话",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0078",
+      "rank": 78,
+      "front": "read",
+      "back": "读",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0079",
+      "rank": 79,
+      "front": "allow",
+      "back": "允许",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0080",
+      "rank": 80,
+      "front": "add",
+      "back": "添加",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0081",
+      "rank": 81,
+      "front": "spend",
+      "back": "花费",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0082",
+      "rank": 82,
+      "front": "grow",
+      "back": "成长；种植",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0083",
+      "rank": 83,
+      "front": "open",
+      "back": "打开；开放",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0084",
+      "rank": 84,
+      "front": "walk",
+      "back": "走；散步",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0085",
+      "rank": 85,
+      "front": "win",
+      "back": "赢",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0086",
+      "rank": 86,
+      "front": "offer",
+      "back": "提供；提议",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0087",
+      "rank": 87,
+      "front": "remember",
+      "back": "记得",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0088",
+      "rank": 88,
+      "front": "love",
+      "back": "爱",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0089",
+      "rank": 89,
+      "front": "consider",
+      "back": "考虑",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0090",
+      "rank": 90,
+      "front": "appear",
+      "back": "出现；显得",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0091",
+      "rank": 91,
+      "front": "buy",
+      "back": "买",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0092",
+      "rank": 92,
+      "front": "wait",
+      "back": "等待",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0093",
+      "rank": 93,
+      "front": "serve",
+      "back": "服务；上菜",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0094",
+      "rank": 94,
+      "front": "die",
+      "back": "死",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0095",
+      "rank": 95,
+      "front": "send",
+      "back": "发送",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0096",
+      "rank": 96,
+      "front": "expect",
+      "back": "期待",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0097",
+      "rank": 97,
+      "front": "build",
+      "back": "建造",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0098",
+      "rank": 98,
+      "front": "stay",
+      "back": "停留；保持",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0099",
+      "rank": 99,
+      "front": "fall",
+      "back": "落下；秋天",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0100",
+      "rank": 100,
+      "front": "cut",
+      "back": "切；削减",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0101",
+      "rank": 101,
+      "front": "reach",
+      "back": "到达；够到",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0102",
+      "rank": 102,
+      "front": "kill",
+      "back": "杀死",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0103",
+      "rank": 103,
+      "front": "remain",
+      "back": "保持；剩余",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0104",
+      "rank": 104,
+      "front": "suggest",
+      "back": "建议",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0105",
+      "rank": 105,
+      "front": "raise",
+      "back": "举起；提高；抚养",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0106",
+      "rank": 106,
+      "front": "pass",
+      "back": "通过；传递",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0107",
+      "rank": 107,
+      "front": "sell",
+      "back": "卖",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0108",
+      "rank": 108,
+      "front": "require",
+      "back": "需要；要求",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0109",
+      "rank": 109,
+      "front": "report",
+      "back": "报告",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0110",
+      "rank": 110,
+      "front": "decide",
+      "back": "决定",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0111",
+      "rank": 111,
+      "front": "pull",
+      "back": "拉",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0112",
+      "rank": 112,
+      "front": "this",
+      "back": "这；这个",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0113",
+      "rank": 113,
+      "front": "that",
+      "back": "那；那个",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0114",
+      "rank": 114,
+      "front": "these",
+      "back": "这些",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0115",
+      "rank": 115,
+      "front": "those",
+      "back": "那些",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0116",
+      "rank": 116,
+      "front": "my",
+      "back": "我的",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0117",
+      "rank": 117,
+      "front": "your",
+      "back": "你的；你们的",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0118",
+      "rank": 118,
+      "front": "his",
+      "back": "他的",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0119",
+      "rank": 119,
+      "front": "her",
+      "back": "她的；她",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0120",
+      "rank": 120,
+      "front": "its",
+      "back": "它的",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0121",
+      "rank": 121,
+      "front": "our",
+      "back": "我们的",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0122",
+      "rank": 122,
+      "front": "their",
+      "back": "他们的",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0123",
+      "rank": 123,
+      "front": "who",
+      "back": "谁",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0124",
+      "rank": 124,
+      "front": "what",
+      "back": "什么",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0125",
+      "rank": 125,
+      "front": "which",
+      "back": "哪个",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0126",
+      "rank": 126,
+      "front": "where",
+      "back": "哪里",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0127",
+      "rank": 127,
+      "front": "when",
+      "back": "什么时候；当…时",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0128",
+      "rank": 128,
+      "front": "why",
+      "back": "为什么",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0129",
+      "rank": 129,
+      "front": "how",
+      "back": "怎样",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0130",
+      "rank": 130,
+      "front": "all",
+      "back": "全部；所有",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0131",
+      "rank": 131,
+      "front": "each",
+      "back": "每个",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0132",
+      "rank": 132,
+      "front": "every",
+      "back": "每个",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0133",
+      "rank": 133,
+      "front": "both",
+      "back": "两者",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0134",
+      "rank": 134,
+      "front": "few",
+      "back": "很少的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0135",
+      "rank": 135,
+      "front": "more",
+      "back": "更多",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0136",
+      "rank": 136,
+      "front": "most",
+      "back": "大多数；最",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0137",
+      "rank": 137,
+      "front": "other",
+      "back": "其他的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0138",
+      "rank": 138,
+      "front": "some",
+      "back": "一些",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0139",
+      "rank": 139,
+      "front": "such",
+      "back": "这样的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0140",
+      "rank": 140,
+      "front": "no",
+      "back": "不；没有",
+      "phonics": null,
+      "pos": "det",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0141",
+      "rank": 141,
+      "front": "nor",
+      "back": "也不",
+      "phonics": null,
+      "pos": "conj",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0142",
+      "rank": 142,
+      "front": "only",
+      "back": "仅仅",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0143",
+      "rank": 143,
+      "front": "own",
+      "back": "自己的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0144",
+      "rank": 144,
+      "front": "same",
+      "back": "相同的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0145",
+      "rank": 145,
+      "front": "so",
+      "back": "所以；如此",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0146",
+      "rank": 146,
+      "front": "than",
+      "back": "比",
+      "phonics": null,
+      "pos": "conj",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0147",
+      "rank": 147,
+      "front": "too",
+      "back": "也；太",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0148",
+      "rank": 148,
+      "front": "very",
+      "back": "非常",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0149",
+      "rank": 149,
+      "front": "just",
+      "back": "刚刚；只是",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0150",
+      "rank": 150,
+      "front": "can",
+      "back": "能；可以",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0151",
+      "rank": 151,
+      "front": "will",
+      "back": "将；愿意",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0152",
+      "rank": 152,
+      "front": "would",
+      "back": "会；愿意",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0153",
+      "rank": 153,
+      "front": "should",
+      "back": "应该",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0154",
+      "rank": 154,
+      "front": "could",
+      "back": "能够；可能",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0155",
+      "rank": 155,
+      "front": "may",
+      "back": "可能；可以",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0156",
+      "rank": 156,
+      "front": "might",
+      "back": "可能",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0157",
+      "rank": 157,
+      "front": "must",
+      "back": "必须",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0158",
+      "rank": 158,
+      "front": "shall",
+      "back": "将；应该",
+      "phonics": null,
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "en_0159",
+      "rank": 159,
+      "front": "about",
+      "back": "关于",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0160",
+      "rank": 160,
+      "front": "above",
+      "back": "在…上面",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0161",
+      "rank": 161,
+      "front": "across",
+      "back": "穿过",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0162",
+      "rank": 162,
+      "front": "after",
+      "back": "在…之后",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0163",
+      "rank": 163,
+      "front": "against",
+      "back": "反对；靠着",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0164",
+      "rank": 164,
+      "front": "along",
+      "back": "沿着",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0165",
+      "rank": 165,
+      "front": "among",
+      "back": "在…之中",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0166",
+      "rank": 166,
+      "front": "around",
+      "back": "在…周围",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0167",
+      "rank": 167,
+      "front": "as",
+      "back": "作为；如同",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0168",
+      "rank": 168,
+      "front": "at",
+      "back": "在",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0169",
+      "rank": 169,
+      "front": "before",
+      "back": "在…之前",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0170",
+      "rank": 170,
+      "front": "behind",
+      "back": "在…后面",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0171",
+      "rank": 171,
+      "front": "below",
+      "back": "在…下面",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0172",
+      "rank": 172,
+      "front": "beneath",
+      "back": "在…下方",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0173",
+      "rank": 173,
+      "front": "beside",
+      "back": "在…旁边",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0174",
+      "rank": 174,
+      "front": "between",
+      "back": "在…之间",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0175",
+      "rank": 175,
+      "front": "beyond",
+      "back": "超出",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0176",
+      "rank": 176,
+      "front": "but",
+      "back": "但是",
+      "phonics": null,
+      "pos": "conj",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0177",
+      "rank": 177,
+      "front": "by",
+      "back": "被；通过；在…旁",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0178",
+      "rank": 178,
+      "front": "despite",
+      "back": "尽管",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0179",
+      "rank": 179,
+      "front": "down",
+      "back": "向下；沿着",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0180",
+      "rank": 180,
+      "front": "during",
+      "back": "在…期间",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0181",
+      "rank": 181,
+      "front": "except",
+      "back": "除了",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0182",
+      "rank": 182,
+      "front": "from",
+      "back": "从",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0183",
+      "rank": 183,
+      "front": "into",
+      "back": "进入",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0184",
+      "rank": 184,
+      "front": "like",
+      "back": "像；喜欢",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0185",
+      "rank": 185,
+      "front": "near",
+      "back": "靠近",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0186",
+      "rank": 186,
+      "front": "off",
+      "back": "离开；关闭",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0187",
+      "rank": 187,
+      "front": "onto",
+      "back": "到…上",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0188",
+      "rank": 188,
+      "front": "out",
+      "back": "出去",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0189",
+      "rank": 189,
+      "front": "over",
+      "back": "在…上方；结束",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0190",
+      "rank": 190,
+      "front": "since",
+      "back": "自从；因为",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0191",
+      "rank": 191,
+      "front": "through",
+      "back": "通过",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0192",
+      "rank": 192,
+      "front": "throughout",
+      "back": "遍及",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0193",
+      "rank": 193,
+      "front": "till",
+      "back": "直到",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0194",
+      "rank": 194,
+      "front": "toward",
+      "back": "朝向",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0195",
+      "rank": 195,
+      "front": "under",
+      "back": "在…下面",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0196",
+      "rank": 196,
+      "front": "until",
+      "back": "直到",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0197",
+      "rank": 197,
+      "front": "up",
+      "back": "向上",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0198",
+      "rank": 198,
+      "front": "upon",
+      "back": "在…上",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0199",
+      "rank": 199,
+      "front": "via",
+      "back": "经由",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0200",
+      "rank": 200,
+      "front": "within",
+      "back": "在…之内",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0201",
+      "rank": 201,
+      "front": "without",
+      "back": "没有",
+      "phonics": null,
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "en_0202",
+      "rank": 202,
+      "front": "also",
+      "back": "也",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0203",
+      "rank": 203,
+      "front": "again",
+      "back": "再；又",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0204",
+      "rank": 204,
+      "front": "already",
+      "back": "已经",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0205",
+      "rank": 205,
+      "front": "always",
+      "back": "总是",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0206",
+      "rank": 206,
+      "front": "never",
+      "back": "从不",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0207",
+      "rank": 207,
+      "front": "often",
+      "back": "经常",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0208",
+      "rank": 208,
+      "front": "sometimes",
+      "back": "有时",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0209",
+      "rank": 209,
+      "front": "usually",
+      "back": "通常",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0210",
+      "rank": 210,
+      "front": "still",
+      "back": "仍然",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0211",
+      "rank": 211,
+      "front": "yet",
+      "back": "尚未；然而",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0212",
+      "rank": 212,
+      "front": "even",
+      "back": "甚至",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0213",
+      "rank": 213,
+      "front": "ever",
+      "back": "曾经",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0214",
+      "rank": 214,
+      "front": "here",
+      "back": "这里",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0215",
+      "rank": 215,
+      "front": "there",
+      "back": "那里",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0216",
+      "rank": 216,
+      "front": "now",
+      "back": "现在",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0217",
+      "rank": 217,
+      "front": "then",
+      "back": "然后；那时",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0218",
+      "rank": 218,
+      "front": "today",
+      "back": "今天",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0219",
+      "rank": 219,
+      "front": "tomorrow",
+      "back": "明天",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0220",
+      "rank": 220,
+      "front": "yesterday",
+      "back": "昨天",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0221",
+      "rank": 221,
+      "front": "once",
+      "back": "一次；曾经",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0222",
+      "rank": 222,
+      "front": "twice",
+      "back": "两次",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0223",
+      "rank": 223,
+      "front": "soon",
+      "back": "很快",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0224",
+      "rank": 224,
+      "front": "later",
+      "back": "稍后",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0225",
+      "rank": 225,
+      "front": "early",
+      "back": "早",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0226",
+      "rank": 226,
+      "front": "late",
+      "back": "晚",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0227",
+      "rank": 227,
+      "front": "ago",
+      "back": "以前",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0228",
+      "rank": 228,
+      "front": "long",
+      "back": "长；长久",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0229",
+      "rank": 229,
+      "front": "far",
+      "back": "远",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0230",
+      "rank": 230,
+      "front": "away",
+      "back": "离开",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0231",
+      "rank": 231,
+      "front": "back",
+      "back": "回来；背面",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0232",
+      "rank": 232,
+      "front": "forward",
+      "back": "向前",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0233",
+      "rank": 233,
+      "front": "almost",
+      "back": "几乎",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0234",
+      "rank": 234,
+      "front": "enough",
+      "back": "足够",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0235",
+      "rank": 235,
+      "front": "quite",
+      "back": "相当",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0236",
+      "rank": 236,
+      "front": "rather",
+      "back": "相当；宁可",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0237",
+      "rank": 237,
+      "front": "really",
+      "back": "真正地",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0238",
+      "rank": 238,
+      "front": "actually",
+      "back": "实际上",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0239",
+      "rank": 239,
+      "front": "probably",
+      "back": "可能",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0240",
+      "rank": 240,
+      "front": "perhaps",
+      "back": "也许",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0241",
+      "rank": 241,
+      "front": "maybe",
+      "back": "也许",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0242",
+      "rank": 242,
+      "front": "certainly",
+      "back": "当然",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0243",
+      "rank": 243,
+      "front": "surely",
+      "back": "肯定",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0244",
+      "rank": 244,
+      "front": "especially",
+      "back": "尤其",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0245",
+      "rank": 245,
+      "front": "particularly",
+      "back": "特别",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0246",
+      "rank": 246,
+      "front": "generally",
+      "back": "一般地",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0247",
+      "rank": 247,
+      "front": "finally",
+      "back": "最后",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0248",
+      "rank": 248,
+      "front": "suddenly",
+      "back": "突然",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0249",
+      "rank": 249,
+      "front": "quickly",
+      "back": "快速地",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0250",
+      "rank": 250,
+      "front": "slowly",
+      "back": "慢慢地",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0251",
+      "rank": 251,
+      "front": "together",
+      "back": "一起",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0252",
+      "rank": 252,
+      "front": "alone",
+      "back": "独自",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0253",
+      "rank": 253,
+      "front": "else",
+      "back": "其他",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0254",
+      "rank": 254,
+      "front": "instead",
+      "back": "代替",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0255",
+      "rank": 255,
+      "front": "anyway",
+      "back": "无论如何",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0256",
+      "rank": 256,
+      "front": "however",
+      "back": "然而",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0257",
+      "rank": 257,
+      "front": "therefore",
+      "back": "因此",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0258",
+      "rank": 258,
+      "front": "thus",
+      "back": "因此",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0259",
+      "rank": 259,
+      "front": "otherwise",
+      "back": "否则",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0260",
+      "rank": 260,
+      "front": "meanwhile",
+      "back": "与此同时",
+      "phonics": null,
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "en_0261",
+      "rank": 261,
+      "front": "person",
+      "back": "人",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0262",
+      "rank": 262,
+      "front": "people",
+      "back": "人们",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0263",
+      "rank": 263,
+      "front": "man",
+      "back": "男人；人",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0264",
+      "rank": 264,
+      "front": "woman",
+      "back": "女人",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0265",
+      "rank": 265,
+      "front": "child",
+      "back": "孩子",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0266",
+      "rank": 266,
+      "front": "boy",
+      "back": "男孩",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0267",
+      "rank": 267,
+      "front": "girl",
+      "back": "女孩",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0268",
+      "rank": 268,
+      "front": "friend",
+      "back": "朋友",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0269",
+      "rank": 269,
+      "front": "family",
+      "back": "家庭",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0270",
+      "rank": 270,
+      "front": "parent",
+      "back": "父母",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0271",
+      "rank": 271,
+      "front": "mother",
+      "back": "母亲",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0272",
+      "rank": 272,
+      "front": "father",
+      "back": "父亲",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0273",
+      "rank": 273,
+      "front": "son",
+      "back": "儿子",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0274",
+      "rank": 274,
+      "front": "daughter",
+      "back": "女儿",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0275",
+      "rank": 275,
+      "front": "husband",
+      "back": "丈夫",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0276",
+      "rank": 276,
+      "front": "wife",
+      "back": "妻子",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0277",
+      "rank": 277,
+      "front": "brother",
+      "back": "兄弟",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0278",
+      "rank": 278,
+      "front": "sister",
+      "back": "姐妹",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0279",
+      "rank": 279,
+      "front": "baby",
+      "back": "婴儿",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0280",
+      "rank": 280,
+      "front": "student",
+      "back": "学生",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0281",
+      "rank": 281,
+      "front": "teacher",
+      "back": "老师",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0282",
+      "rank": 282,
+      "front": "doctor",
+      "back": "医生",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0283",
+      "rank": 283,
+      "front": "nurse",
+      "back": "护士",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0284",
+      "rank": 284,
+      "front": "worker",
+      "back": "工人",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0285",
+      "rank": 285,
+      "front": "boss",
+      "back": "老板",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0286",
+      "rank": 286,
+      "front": "customer",
+      "back": "顾客",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0287",
+      "rank": 287,
+      "front": "neighbor",
+      "back": "邻居",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0288",
+      "rank": 288,
+      "front": "stranger",
+      "back": "陌生人",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0289",
+      "rank": 289,
+      "front": "group",
+      "back": "群体",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0290",
+      "rank": 290,
+      "front": "team",
+      "back": "团队",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0291",
+      "rank": 291,
+      "front": "company",
+      "back": "公司",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0292",
+      "rank": 292,
+      "front": "school",
+      "back": "学校",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0293",
+      "rank": 293,
+      "front": "university",
+      "back": "大学",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0294",
+      "rank": 294,
+      "front": "class",
+      "back": "班级；课",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0295",
+      "rank": 295,
+      "front": "lesson",
+      "back": "课",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0296",
+      "rank": 296,
+      "front": "book",
+      "back": "书",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0297",
+      "rank": 297,
+      "front": "page",
+      "back": "页",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0298",
+      "rank": 298,
+      "front": "word",
+      "back": "词；话",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0299",
+      "rank": 299,
+      "front": "language",
+      "back": "语言",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0300",
+      "rank": 300,
+      "front": "story",
+      "back": "故事",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0301",
+      "rank": 301,
+      "front": "news",
+      "back": "新闻",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0302",
+      "rank": 302,
+      "front": "information",
+      "back": "信息",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0303",
+      "rank": 303,
+      "front": "idea",
+      "back": "想法",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0304",
+      "rank": 304,
+      "front": "fact",
+      "back": "事实",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0305",
+      "rank": 305,
+      "front": "example",
+      "back": "例子",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0306",
+      "rank": 306,
+      "front": "problem",
+      "back": "问题",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0307",
+      "rank": 307,
+      "front": "question",
+      "back": "问题",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0308",
+      "rank": 308,
+      "front": "answer",
+      "back": "回答",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0309",
+      "rank": 309,
+      "front": "reason",
+      "back": "原因",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0310",
+      "rank": 310,
+      "front": "result",
+      "back": "结果",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0311",
+      "rank": 311,
+      "front": "way",
+      "back": "方式；路",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0312",
+      "rank": 312,
+      "front": "place",
+      "back": "地方",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0313",
+      "rank": 313,
+      "front": "area",
+      "back": "区域",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0314",
+      "rank": 314,
+      "front": "city",
+      "back": "城市",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0315",
+      "rank": 315,
+      "front": "town",
+      "back": "城镇",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0316",
+      "rank": 316,
+      "front": "country",
+      "back": "国家；乡村",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0317",
+      "rank": 317,
+      "front": "world",
+      "back": "世界",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0318",
+      "rank": 318,
+      "front": "home",
+      "back": "家",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0319",
+      "rank": 319,
+      "front": "house",
+      "back": "房子",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0320",
+      "rank": 320,
+      "front": "room",
+      "back": "房间",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0321",
+      "rank": 321,
+      "front": "door",
+      "back": "门",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0322",
+      "rank": 322,
+      "front": "window",
+      "back": "窗",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0323",
+      "rank": 323,
+      "front": "table",
+      "back": "桌子",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0324",
+      "rank": 324,
+      "front": "chair",
+      "back": "椅子",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0325",
+      "rank": 325,
+      "front": "bed",
+      "back": "床",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0326",
+      "rank": 326,
+      "front": "floor",
+      "back": "地板；楼层",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0327",
+      "rank": 327,
+      "front": "wall",
+      "back": "墙",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0328",
+      "rank": 328,
+      "front": "street",
+      "back": "街道",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0329",
+      "rank": 329,
+      "front": "road",
+      "back": "路",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0330",
+      "rank": 330,
+      "front": "car",
+      "back": "汽车",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0331",
+      "rank": 331,
+      "front": "bus",
+      "back": "公共汽车",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0332",
+      "rank": 332,
+      "front": "train",
+      "back": "火车",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0333",
+      "rank": 333,
+      "front": "plane",
+      "back": "飞机",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0334",
+      "rank": 334,
+      "front": "bike",
+      "back": "自行车",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0335",
+      "rank": 335,
+      "front": "boat",
+      "back": "船",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0336",
+      "rank": 336,
+      "front": "ticket",
+      "back": "票",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0337",
+      "rank": 337,
+      "front": "map",
+      "back": "地图",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0338",
+      "rank": 338,
+      "front": "money",
+      "back": "钱",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0339",
+      "rank": 339,
+      "front": "price",
+      "back": "价格",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0340",
+      "rank": 340,
+      "front": "cost",
+      "back": "成本；花费",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0341",
+      "rank": 341,
+      "front": "job",
+      "back": "工作",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0342",
+      "rank": 342,
+      "front": "business",
+      "back": "商业；事务",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0343",
+      "rank": 343,
+      "front": "office",
+      "back": "办公室",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0344",
+      "rank": 344,
+      "front": "market",
+      "back": "市场",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0345",
+      "rank": 345,
+      "front": "shop",
+      "back": "商店",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0346",
+      "rank": 346,
+      "front": "store",
+      "back": "商店",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0347",
+      "rank": 347,
+      "front": "product",
+      "back": "产品",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0348",
+      "rank": 348,
+      "front": "service",
+      "back": "服务",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0349",
+      "rank": 349,
+      "front": "food",
+      "back": "食物",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0350",
+      "rank": 350,
+      "front": "water",
+      "back": "水",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0351",
+      "rank": 351,
+      "front": "bread",
+      "back": "面包",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0352",
+      "rank": 352,
+      "front": "rice",
+      "back": "米饭",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0353",
+      "rank": 353,
+      "front": "meat",
+      "back": "肉",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0354",
+      "rank": 354,
+      "front": "fish",
+      "back": "鱼",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0355",
+      "rank": 355,
+      "front": "fruit",
+      "back": "水果",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0356",
+      "rank": 356,
+      "front": "vegetable",
+      "back": "蔬菜",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0357",
+      "rank": 357,
+      "front": "coffee",
+      "back": "咖啡",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0358",
+      "rank": 358,
+      "front": "tea",
+      "back": "茶",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0359",
+      "rank": 359,
+      "front": "milk",
+      "back": "牛奶",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0360",
+      "rank": 360,
+      "front": "beer",
+      "back": "啤酒",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0361",
+      "rank": 361,
+      "front": "wine",
+      "back": "酒",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0362",
+      "rank": 362,
+      "front": "meal",
+      "back": "一餐",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0363",
+      "rank": 363,
+      "front": "breakfast",
+      "back": "早餐",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0364",
+      "rank": 364,
+      "front": "lunch",
+      "back": "午餐",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0365",
+      "rank": 365,
+      "front": "dinner",
+      "back": "晚餐",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0366",
+      "rank": 366,
+      "front": "restaurant",
+      "back": "餐馆",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0367",
+      "rank": 367,
+      "front": "kitchen",
+      "back": "厨房",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0368",
+      "rank": 368,
+      "front": "time",
+      "back": "时间",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0369",
+      "rank": 369,
+      "front": "day",
+      "back": "天；白天",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0370",
+      "rank": 370,
+      "front": "week",
+      "back": "周",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0371",
+      "rank": 371,
+      "front": "month",
+      "back": "月",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0372",
+      "rank": 372,
+      "front": "year",
+      "back": "年",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0373",
+      "rank": 373,
+      "front": "hour",
+      "back": "小时",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0374",
+      "rank": 374,
+      "front": "minute",
+      "back": "分钟",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0375",
+      "rank": 375,
+      "front": "second",
+      "back": "秒",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0376",
+      "rank": 376,
+      "front": "morning",
+      "back": "早晨",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0377",
+      "rank": 377,
+      "front": "afternoon",
+      "back": "下午",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0378",
+      "rank": 378,
+      "front": "evening",
+      "back": "晚上",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0379",
+      "rank": 379,
+      "front": "night",
+      "back": "夜晚",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0380",
+      "rank": 380,
+      "front": "moment",
+      "back": "片刻",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0381",
+      "rank": 381,
+      "front": "clock",
+      "back": "时钟",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0382",
+      "rank": 382,
+      "front": "weather",
+      "back": "天气",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0383",
+      "rank": 383,
+      "front": "sun",
+      "back": "太阳",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0384",
+      "rank": 384,
+      "front": "rain",
+      "back": "雨",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0385",
+      "rank": 385,
+      "front": "snow",
+      "back": "雪",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0386",
+      "rank": 386,
+      "front": "wind",
+      "back": "风",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0387",
+      "rank": 387,
+      "front": "hot",
+      "back": "热的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0388",
+      "rank": 388,
+      "front": "cold",
+      "back": "冷的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0389",
+      "rank": 389,
+      "front": "warm",
+      "back": "温暖的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0390",
+      "rank": 390,
+      "front": "cool",
+      "back": "凉爽的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0391",
+      "rank": 391,
+      "front": "body",
+      "back": "身体",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0392",
+      "rank": 392,
+      "front": "head",
+      "back": "头",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0393",
+      "rank": 393,
+      "front": "face",
+      "back": "脸",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0394",
+      "rank": 394,
+      "front": "eye",
+      "back": "眼睛",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0395",
+      "rank": 395,
+      "front": "ear",
+      "back": "耳朵",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0396",
+      "rank": 396,
+      "front": "mouth",
+      "back": "嘴",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0397",
+      "rank": 397,
+      "front": "hand",
+      "back": "手",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0398",
+      "rank": 398,
+      "front": "foot",
+      "back": "脚",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0399",
+      "rank": 399,
+      "front": "heart",
+      "back": "心",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0400",
+      "rank": 400,
+      "front": "health",
+      "back": "健康",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0401",
+      "rank": 401,
+      "front": "pain",
+      "back": "疼痛",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0402",
+      "rank": 402,
+      "front": "medicine",
+      "back": "药",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0403",
+      "rank": 403,
+      "front": "hospital",
+      "back": "医院",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0404",
+      "rank": 404,
+      "front": "life",
+      "back": "生活；生命",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0405",
+      "rank": 405,
+      "front": "death",
+      "back": "死亡",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0406",
+      "rank": 406,
+      "front": "age",
+      "back": "年龄",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0407",
+      "rank": 407,
+      "front": "name",
+      "back": "名字",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0408",
+      "rank": 408,
+      "front": "number",
+      "back": "数字；号码",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0409",
+      "rank": 409,
+      "front": "color",
+      "back": "颜色",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0410",
+      "rank": 410,
+      "front": "red",
+      "back": "红色",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0411",
+      "rank": 411,
+      "front": "blue",
+      "back": "蓝色",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0412",
+      "rank": 412,
+      "front": "green",
+      "back": "绿色",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0413",
+      "rank": 413,
+      "front": "yellow",
+      "back": "黄色",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0414",
+      "rank": 414,
+      "front": "black",
+      "back": "黑色",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0415",
+      "rank": 415,
+      "front": "white",
+      "back": "白色",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0416",
+      "rank": 416,
+      "front": "big",
+      "back": "大的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0417",
+      "rank": 417,
+      "front": "small",
+      "back": "小的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0418",
+      "rank": 418,
+      "front": "large",
+      "back": "大的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0419",
+      "rank": 419,
+      "front": "little",
+      "back": "小的；一点",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0420",
+      "rank": 420,
+      "front": "short",
+      "back": "短的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0421",
+      "rank": 421,
+      "front": "high",
+      "back": "高的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0422",
+      "rank": 422,
+      "front": "low",
+      "back": "低的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0423",
+      "rank": 423,
+      "front": "tall",
+      "back": "高的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0424",
+      "rank": 424,
+      "front": "wide",
+      "back": "宽的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0425",
+      "rank": 425,
+      "front": "heavy",
+      "back": "重的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0426",
+      "rank": 426,
+      "front": "light",
+      "back": "轻的；光",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0427",
+      "rank": 427,
+      "front": "full",
+      "back": "满的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0428",
+      "rank": 428,
+      "front": "empty",
+      "back": "空的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0429",
+      "rank": 429,
+      "front": "new",
+      "back": "新的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0430",
+      "rank": 430,
+      "front": "old",
+      "back": "老的；旧的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0431",
+      "rank": 431,
+      "front": "young",
+      "back": "年轻的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0432",
+      "rank": 432,
+      "front": "good",
+      "back": "好的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0433",
+      "rank": 433,
+      "front": "bad",
+      "back": "坏的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0434",
+      "rank": 434,
+      "front": "great",
+      "back": "伟大的；很棒",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0435",
+      "rank": 435,
+      "front": "fine",
+      "back": "好的；精细的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0436",
+      "rank": 436,
+      "front": "nice",
+      "back": "美好的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0437",
+      "rank": 437,
+      "front": "beautiful",
+      "back": "美丽的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0438",
+      "rank": 438,
+      "front": "ugly",
+      "back": "丑的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0439",
+      "rank": 439,
+      "front": "happy",
+      "back": "快乐的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0440",
+      "rank": 440,
+      "front": "sad",
+      "back": "悲伤的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0441",
+      "rank": 441,
+      "front": "angry",
+      "back": "生气的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0442",
+      "rank": 442,
+      "front": "afraid",
+      "back": "害怕的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0443",
+      "rank": 443,
+      "front": "tired",
+      "back": "累的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0444",
+      "rank": 444,
+      "front": "busy",
+      "back": "忙的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0445",
+      "rank": 445,
+      "front": "free",
+      "back": "免费的；自由的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0446",
+      "rank": 446,
+      "front": "ready",
+      "back": "准备好的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0447",
+      "rank": 447,
+      "front": "easy",
+      "back": "容易的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0448",
+      "rank": 448,
+      "front": "hard",
+      "back": "困难的；硬的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0449",
+      "rank": 449,
+      "front": "difficult",
+      "back": "困难的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0450",
+      "rank": 450,
+      "front": "possible",
+      "back": "可能的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0451",
+      "rank": 451,
+      "front": "impossible",
+      "back": "不可能的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0452",
+      "rank": 452,
+      "front": "true",
+      "back": "真的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0453",
+      "rank": 453,
+      "front": "false",
+      "back": "假的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0454",
+      "rank": 454,
+      "front": "right",
+      "back": "对的；右边",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0455",
+      "rank": 455,
+      "front": "wrong",
+      "back": "错的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0456",
+      "rank": 456,
+      "front": "important",
+      "back": "重要的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0457",
+      "rank": 457,
+      "front": "special",
+      "back": "特别的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0458",
+      "rank": 458,
+      "front": "different",
+      "back": "不同的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0459",
+      "rank": 459,
+      "front": "similar",
+      "back": "相似的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0460",
+      "rank": 460,
+      "front": "next",
+      "back": "下一个",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0461",
+      "rank": 461,
+      "front": "last",
+      "back": "最后的；上一个",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0462",
+      "rank": 462,
+      "front": "first",
+      "back": "第一",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0463",
+      "rank": 463,
+      "front": "third",
+      "back": "第三",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0464",
+      "rank": 464,
+      "front": "best",
+      "back": "最好的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0465",
+      "rank": 465,
+      "front": "better",
+      "back": "更好的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0466",
+      "rank": 466,
+      "front": "worse",
+      "back": "更差的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0467",
+      "rank": 467,
+      "front": "worst",
+      "back": "最差的",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0468",
+      "rank": 468,
+      "front": "many",
+      "back": "许多",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0469",
+      "rank": 469,
+      "front": "much",
+      "back": "许多",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0470",
+      "rank": 470,
+      "front": "lot",
+      "back": "许多",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0471",
+      "rank": 471,
+      "front": "several",
+      "back": "几个",
+      "phonics": null,
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "en_0472",
+      "rank": 472,
+      "front": "one",
+      "back": "一",
+      "phonics": null,
+      "pos": "num",
+      "tags": []
+    },
+    {
+      "id": "en_0473",
+      "rank": 473,
+      "front": "two",
+      "back": "二",
+      "phonics": null,
+      "pos": "num",
+      "tags": []
+    },
+    {
+      "id": "en_0474",
+      "rank": 474,
+      "front": "three",
+      "back": "三",
+      "phonics": null,
+      "pos": "num",
+      "tags": []
+    },
+    {
+      "id": "en_0475",
+      "rank": 475,
+      "front": "four",
+      "back": "四",
+      "phonics": null,
+      "pos": "num",
+      "tags": []
+    },
+    {
+      "id": "en_0476",
+      "rank": 476,
+      "front": "five",
+      "back": "五",
+      "phonics": null,
+      "pos": "num",
+      "tags": []
+    },
+    {
+      "id": "en_0477",
+      "rank": 477,
+      "front": "six",
+      "back": "六",
+      "phonics": null,
+      "pos": "num",
+      "tags": []
+    },
+    {
+      "id": "en_0478",
+      "rank": 478,
+      "front": "seven",
+      "back": "七",
+      "phonics": null,
+      "pos": "num",
+      "tags": []
+    },
+    {
+      "id": "en_0479",
+      "rank": 479,
+      "front": "eight",
+      "back": "八",
+      "phonics": null,
+      "pos": "num",
+      "tags": []
+    },
+    {
+      "id": "en_0480",
+      "rank": 480,
+      "front": "nine",
+      "back": "九",
+      "phonics": null,
+      "pos": "num",
+      "tags": []
+    },
+    {
+      "id": "en_0481",
+      "rank": 481,
+      "front": "ten",
+      "back": "十",
+      "phonics": null,
+      "pos": "num",
+      "tags": []
+    },
+    {
+      "id": "en_0482",
+      "rank": 482,
+      "front": "hundred",
+      "back": "百",
+      "phonics": null,
+      "pos": "num",
+      "tags": []
+    },
+    {
+      "id": "en_0483",
+      "rank": 483,
+      "front": "thousand",
+      "back": "千",
+      "phonics": null,
+      "pos": "num",
+      "tags": []
+    },
+    {
+      "id": "en_0484",
+      "rank": 484,
+      "front": "million",
+      "back": "百万",
+      "phonics": null,
+      "pos": "num",
+      "tags": []
+    },
+    {
+      "id": "en_0485",
+      "rank": 485,
+      "front": "half",
+      "back": "一半",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0486",
+      "rank": 486,
+      "front": "side",
+      "back": "边；方面",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0487",
+      "rank": 487,
+      "front": "end",
+      "back": "结束；末端",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0488",
+      "rank": 488,
+      "front": "part",
+      "back": "部分",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0489",
+      "rank": 489,
+      "front": "kind",
+      "back": "种类；善良",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0490",
+      "rank": 490,
+      "front": "type",
+      "back": "类型",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0491",
+      "rank": 491,
+      "front": "sort",
+      "back": "种类",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0492",
+      "rank": 492,
+      "front": "level",
+      "back": "水平",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0493",
+      "rank": 493,
+      "front": "point",
+      "back": "点；要点",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0494",
+      "rank": 494,
+      "front": "line",
+      "back": "线；行",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0495",
+      "rank": 495,
+      "front": "case",
+      "back": "情况；案例",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0496",
+      "rank": 496,
+      "front": "thing",
+      "back": "东西",
+      "phonics": null,
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "en_0497",
+      "rank": 497,
+      "front": "something",
+      "back": "某事",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0498",
+      "rank": 498,
+      "front": "anything",
+      "back": "任何事",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0499",
+      "rank": 499,
+      "front": "everything",
+      "back": "一切",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "en_0500",
+      "rank": 500,
+      "front": "nothing",
+      "back": "没有什么",
+      "phonics": null,
+      "pos": "pronoun",
+      "tags": []
+    }
+  ]
+}

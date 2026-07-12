@@ -7,22 +7,33 @@ let package = Package(
         .macOS("15.0")
     ],
     products: [
+        .library(name: "DeveloperChatbotCore", targets: ["DeveloperChatbotCore"]),
         .executable(name: "DeveloperChatbot", targets: ["DeveloperChatbot"])
     ],
     dependencies: [
         .package(url: "https://github.com/open-spaced-repetition/swift-fsrs.git", branch: "main")
     ],
     targets: [
-        .executableTarget(
-            name: "DeveloperChatbot",
+        .target(
+            name: "DeveloperChatbotCore",
             dependencies: [
                 .product(name: "FSRS", package: "swift-fsrs")
             ],
-            path: "Sources"
+            path: "Sources",
+            exclude: ["App.swift"],
+            resources: [
+                .process("EssentialVocab")
+            ]
+        ),
+        .executableTarget(
+            name: "DeveloperChatbot",
+            dependencies: ["DeveloperChatbotCore"],
+            path: "App"
         ),
         .testTarget(
             name: "DeveloperChatbotTests",
             dependencies: [
+                "DeveloperChatbotCore",
                 .product(name: "FSRS", package: "swift-fsrs")
             ],
             path: "Tests"

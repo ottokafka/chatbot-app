@@ -1078,6 +1078,169 @@ enum L10n {
             : "Speak with selected vocabulary; does not affect schedule; saves go to Examples"
     }
 
+    // MARK: - Essential vocabulary
+
+    static func essentialWords(_ lang: AppLanguage) -> String {
+        lang == .zh ? "常用词" : "Essential words"
+    }
+
+    static func essentialWordsShort(_ lang: AppLanguage) -> String {
+        lang == .zh ? "常用词" : "Essential"
+    }
+
+    static func essentialBrowse(_ lang: AppLanguage) -> String {
+        lang == .zh ? "浏览常用词" : "Browse essential words"
+    }
+
+    static func essentialBrowseHelp(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "浏览高频词，加入词库或标记为已会"
+            : "Browse high-frequency words; add to your deck or mark as known"
+    }
+
+    static func essentialAddToDeck(_ lang: AppLanguage) -> String {
+        lang == .zh ? "加入词库" : "Add to my deck"
+    }
+
+    static func essentialIKnowThis(_ lang: AppLanguage) -> String {
+        lang == .zh ? "已会" : "I know this"
+    }
+
+    static func essentialAlreadyInVocab(_ lang: AppLanguage) -> String {
+        lang == .zh ? "已在词库" : "In Vocabulary"
+    }
+
+    static func essentialAlreadyInExamples(_ lang: AppLanguage) -> String {
+        lang == .zh ? "已在例句库（正面相同）" : "Already in deck (Examples)"
+    }
+
+    static func essentialAddedToast(_ lang: AppLanguage) -> String {
+        lang == .zh ? "已加入 — 可随时开始学习" : "Added — ready to study when you are."
+    }
+
+    static func essentialLearningPickerTitle(_ lang: AppLanguage) -> String {
+        lang == .zh ? "你在学什么？" : "What are you learning?"
+    }
+
+    static func essentialUndo(_ lang: AppLanguage) -> String {
+        lang == .zh ? "撤销" : "Undo"
+    }
+
+    static func essentialShowInVocabulary(_ lang: AppLanguage) -> String {
+        lang == .zh ? "在词库中显示" : "Show in Vocabulary"
+    }
+
+    static func essentialFilterPending(_ lang: AppLanguage) -> String {
+        lang == .zh ? "待处理" : "Pending"
+    }
+
+    static func essentialFilterAdded(_ lang: AppLanguage) -> String {
+        lang == .zh ? "已加入" : "Added"
+    }
+
+    static func essentialFilterKnown(_ lang: AppLanguage) -> String {
+        lang == .zh ? "已会" : "Known"
+    }
+
+    static func essentialFilterAll(_ lang: AppLanguage) -> String {
+        lang == .zh ? "全部" : "All"
+    }
+
+    static func essentialFilter(_ lang: AppLanguage) -> String {
+        lang == .zh ? "筛选" : "Filter"
+    }
+
+    static func essentialRankCap(_ lang: AppLanguage) -> String {
+        lang == .zh ? "范围" : "Rank"
+    }
+
+    static func essentialTopN(_ lang: AppLanguage, n: Int) -> String {
+        lang == .zh ? "前 \(n)" : "Top \(n)"
+    }
+
+    static func essentialSearch(_ lang: AppLanguage) -> String {
+        lang == .zh ? "搜索常用词…" : "Search essential words…"
+    }
+
+    static func essentialProgressSummary(
+        _ lang: AppLanguage,
+        reviewed: Int,
+        total: Int,
+        added: Int,
+        known: Int,
+        pending: Int
+    ) -> String {
+        if lang == .zh {
+            return "已处理 \(reviewed)/\(total) · 已加入 \(added) · 已会 \(known) · 待处理 \(pending)"
+        }
+        return "\(reviewed)/\(total) reviewed · \(added) added · \(known) known · \(pending) pending"
+    }
+
+    static func essentialPassProgress(
+        _ lang: AppLanguage,
+        remaining: Int,
+        batch: Int,
+        pending: Int
+    ) -> String {
+        if lang == .zh {
+            return "本批剩余 \(remaining)/\(batch) · 共待处理 \(pending)"
+        }
+        return "This pass: \(remaining) of \(batch) left · \(pending) pending overall"
+    }
+
+    static func essentialBatchComplete(_ lang: AppLanguage) -> String {
+        lang == .zh ? "本批已完成" : "Batch complete"
+    }
+
+    static func essentialBatchCompleteHint(_ lang: AppLanguage, pending: Int) -> String {
+        if lang == .zh {
+            return "还有 \(pending) 个词待处理。继续下一批？"
+        }
+        return "\(pending) words still pending. Continue to the next batch?"
+    }
+
+    static func essentialContinue(_ lang: AppLanguage) -> String {
+        lang == .zh ? "继续" : "Continue"
+    }
+
+    static func essentialAllReviewed(_ lang: AppLanguage, cap: Int) -> String {
+        if lang == .zh {
+            return "你已处理完前 \(cap) 个常用词。"
+        }
+        return "You've reviewed all essential words in Top \(cap)."
+    }
+
+    static func essentialCompleteCounts(_ lang: AppLanguage, added: Int, known: Int) -> String {
+        if lang == .zh {
+            return "已加入词库 \(added) · 标记已会 \(known)"
+        }
+        return "\(added) added to Vocabulary · \(known) marked known"
+    }
+
+    static func essentialShowTop500(_ lang: AppLanguage) -> String {
+        lang == .zh ? "显示前 500" : "Show Top 500"
+    }
+
+    static func essentialEmptyFilter(_ lang: AppLanguage) -> String {
+        lang == .zh ? "此筛选下没有词。" : "No words match this filter."
+    }
+
+    static func essentialRetry(_ lang: AppLanguage) -> String {
+        lang == .zh ? "重试" : "Retry"
+    }
+
+    static func essentialErrorTitle(_ lang: AppLanguage) -> String {
+        lang == .zh ? "常用词出错" : "Essential words error"
+    }
+
+    static func essentialFunctionWord(_ lang: AppLanguage) -> String {
+        lang == .zh ? "虚词" : "function word"
+    }
+
+    static func essentialKeepKnown(_ lang: AppLanguage) -> String {
+        lang == .zh ? "保持已会" : "Keep as known"
+    }
+
     static func speakSetupTitle(_ lang: AppLanguage) -> String {
         lang == .zh ? "AI 口语" : "Speak with AI"
     }

@@ -3,12 +3,14 @@ import SwiftUI
 import Translation
 #endif
 
-struct ContentView: View {
+public struct ContentView: View {
     @StateObject private var viewModel = ChatViewModel()
     @StateObject private var flashcardVM = FlashcardViewModel()
     /// Speaking session ownership (D14). Deck UI ships in PR3; DEBUG typed sheet exercises PR2a.
     @StateObject private var speakingVM = SpeakingSessionViewModel()
     private var lang: AppLanguage { viewModel.appLanguage }
+
+    public init() {}
     @State private var textInput = ""
     @State private var isShowingPromptModal = false
     @State private var isShowingEndpointModal = false
@@ -25,7 +27,7 @@ struct ContentView: View {
     @State private var isShowingSpeakingDebug = false
     #endif
     
-    var body: some View {
+    public var body: some View {
         NavigationSplitView {
             // SIDEBAR
             VStack(alignment: .leading, spacing: 12) {
@@ -469,6 +471,10 @@ struct ContentView: View {
                 }
             }) {
                 FlashcardCreateSheet(flashcardVM: flashcardVM)
+                    .environment(\.appLanguage, viewModel.appLanguage)
+            }
+            .sheet(isPresented: $flashcardVM.isShowingEssentialVocab) {
+                EssentialVocabListView(flashcardVM: flashcardVM)
                     .environment(\.appLanguage, viewModel.appLanguage)
             }
             .sheet(isPresented: $flashcardVM.isShowingReviewSession, onDismiss: {

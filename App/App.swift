@@ -1,6 +1,4 @@
 import SwiftUI
-// Xcode monorepo target compiles Sources as one module (no DeveloperChatbotCore).
-// SPM uses App/App.swift which imports DeveloperChatbotCore instead.
 #if canImport(DeveloperChatbotCore)
 import DeveloperChatbotCore
 #endif

@@ -132,7 +132,8 @@ enum StudySessionStore {
 
 @MainActor
 final class FlashcardViewModel: ObservableObject {
-    private let dbManager = DatabaseManager()
+    /// Shared SQLite access for flashcards and essential-vocab progress.
+    let dbManager = DatabaseManager()
     private let apiManager = APIManager()
     private var practiceGenerationTask: Task<Void, Never>?
 
@@ -151,6 +152,8 @@ final class FlashcardViewModel: ObservableObject {
     @Published var draft: FlashcardDraft?
     @Published var editingFlashcardId: String?
     @Published var isShowingCreateSheet = false
+    /// Essential common-words triage sheet (hosted from ContentView).
+    @Published var isShowingEssentialVocab = false
     @Published var isTranslatingDraft = false
     @Published var duplicateWarning = false
     @Published var saveError: String?

@@ -1,0 +1,4577 @@
+{
+  "listId": "essential_zh",
+  "listVersion": 1,
+  "language": "zh",
+  "entries": [
+    {
+      "id": "zh_0001",
+      "rank": 1,
+      "front": "的",
+      "back": "possessive / descriptive particle",
+      "phonics": "de",
+      "pos": "particle",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0002",
+      "rank": 2,
+      "front": "是",
+      "back": "to be",
+      "phonics": "shì",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0003",
+      "rank": 3,
+      "front": "不",
+      "back": "not; no",
+      "phonics": "bù",
+      "pos": "adverb",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0004",
+      "rank": 4,
+      "front": "我",
+      "back": "I; me",
+      "phonics": "wǒ",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0005",
+      "rank": 5,
+      "front": "了",
+      "back": "completed-action particle",
+      "phonics": "le",
+      "pos": "particle",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0006",
+      "rank": 6,
+      "front": "在",
+      "back": "at; in; be doing",
+      "phonics": "zài",
+      "pos": "prep/verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0007",
+      "rank": 7,
+      "front": "有",
+      "back": "to have; there is",
+      "phonics": "yǒu",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0008",
+      "rank": 8,
+      "front": "他",
+      "back": "he; him",
+      "phonics": "tā",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0009",
+      "rank": 9,
+      "front": "这",
+      "back": "this",
+      "phonics": "zhè",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0010",
+      "rank": 10,
+      "front": "人",
+      "back": "person; people",
+      "phonics": "rén",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0011",
+      "rank": 11,
+      "front": "们",
+      "back": "plural marker",
+      "phonics": "men",
+      "pos": "particle",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0012",
+      "rank": 12,
+      "front": "来",
+      "back": "to come",
+      "phonics": "lái",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0013",
+      "rank": 13,
+      "front": "个",
+      "back": "general measure word",
+      "phonics": "gè",
+      "pos": "measure",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0014",
+      "rank": 14,
+      "front": "上",
+      "back": "up; on; above",
+      "phonics": "shàng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0015",
+      "rank": 15,
+      "front": "大",
+      "back": "big; large",
+      "phonics": "dà",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0016",
+      "rank": 16,
+      "front": "和",
+      "back": "and; with",
+      "phonics": "hé",
+      "pos": "conj",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0017",
+      "rank": 17,
+      "front": "国",
+      "back": "country; nation",
+      "phonics": "guó",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0018",
+      "rank": 18,
+      "front": "到",
+      "back": "to arrive; to (a place)",
+      "phonics": "dào",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0019",
+      "rank": 19,
+      "front": "说",
+      "back": "to say; to speak",
+      "phonics": "shuō",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0020",
+      "rank": 20,
+      "front": "时",
+      "back": "time; when",
+      "phonics": "shí",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0021",
+      "rank": 21,
+      "front": "要",
+      "back": "to want; will; need",
+      "phonics": "yào",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0022",
+      "rank": 22,
+      "front": "就",
+      "back": "then; right away",
+      "phonics": "jiù",
+      "pos": "adverb",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0023",
+      "rank": 23,
+      "front": "出",
+      "back": "to go out; exit",
+      "phonics": "chū",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0024",
+      "rank": 24,
+      "front": "会",
+      "back": "can; will; meeting",
+      "phonics": "huì",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0025",
+      "rank": 25,
+      "front": "也",
+      "back": "also; too",
+      "phonics": "yě",
+      "pos": "adverb",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0026",
+      "rank": 26,
+      "front": "你",
+      "back": "you",
+      "phonics": "nǐ",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0027",
+      "rank": 27,
+      "front": "对",
+      "back": "correct; toward",
+      "phonics": "duì",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0028",
+      "rank": 28,
+      "front": "生",
+      "back": "life; raw; student (in compounds)",
+      "phonics": "shēng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0029",
+      "rank": 29,
+      "front": "能",
+      "back": "can; able",
+      "phonics": "néng",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0030",
+      "rank": 30,
+      "front": "子",
+      "back": "child; noun suffix",
+      "phonics": "zi",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0031",
+      "rank": 31,
+      "front": "那",
+      "back": "that",
+      "phonics": "nà",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0032",
+      "rank": 32,
+      "front": "得",
+      "back": "must; result particle",
+      "phonics": "děi / de",
+      "pos": "verb",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0033",
+      "rank": 33,
+      "front": "着",
+      "back": "ongoing-aspect particle",
+      "phonics": "zhe",
+      "pos": "particle",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0034",
+      "rank": 34,
+      "front": "下",
+      "back": "down; below; next",
+      "phonics": "xià",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0035",
+      "rank": 35,
+      "front": "年",
+      "back": "year",
+      "phonics": "nián",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0036",
+      "rank": 36,
+      "front": "过",
+      "back": "to pass; experience particle",
+      "phonics": "guò",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0037",
+      "rank": 37,
+      "front": "后",
+      "back": "after; behind",
+      "phonics": "hòu",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0038",
+      "rank": 38,
+      "front": "作",
+      "back": "to do; to make",
+      "phonics": "zuò",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0039",
+      "rank": 39,
+      "front": "里",
+      "back": "inside",
+      "phonics": "lǐ",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0040",
+      "rank": 40,
+      "front": "用",
+      "back": "to use",
+      "phonics": "yòng",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0041",
+      "rank": 41,
+      "front": "道",
+      "back": "way; path; to say",
+      "phonics": "dào",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0042",
+      "rank": 42,
+      "front": "水",
+      "back": "water",
+      "phonics": "shuǐ",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0043",
+      "rank": 43,
+      "front": "看",
+      "back": "to look; to watch",
+      "phonics": "kàn",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0044",
+      "rank": 44,
+      "front": "天",
+      "back": "day; sky",
+      "phonics": "tiān",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0045",
+      "rank": 45,
+      "front": "学",
+      "back": "to study; learning",
+      "phonics": "xué",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0046",
+      "rank": 46,
+      "front": "吃",
+      "back": "to eat",
+      "phonics": "chī",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0047",
+      "rank": 47,
+      "front": "好",
+      "back": "good; well",
+      "phonics": "hǎo",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0048",
+      "rank": 48,
+      "front": "吗",
+      "back": "question particle",
+      "phonics": "ma",
+      "pos": "particle",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0049",
+      "rank": 49,
+      "front": "家",
+      "back": "home; family",
+      "phonics": "jiā",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0050",
+      "rank": 50,
+      "front": "去",
+      "back": "to go",
+      "phonics": "qù",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0051",
+      "rank": 51,
+      "front": "她",
+      "back": "she; her",
+      "phonics": "tā",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0052",
+      "rank": 52,
+      "front": "什么",
+      "back": "what",
+      "phonics": "shénme",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0053",
+      "rank": 53,
+      "front": "很",
+      "back": "very",
+      "phonics": "hěn",
+      "pos": "adverb",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0054",
+      "rank": 54,
+      "front": "都",
+      "back": "all; both",
+      "phonics": "dōu",
+      "pos": "adverb",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0055",
+      "rank": 55,
+      "front": "没",
+      "back": "not have; did not",
+      "phonics": "méi",
+      "pos": "adverb",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0056",
+      "rank": 56,
+      "front": "我们",
+      "back": "we; us",
+      "phonics": "wǒmen",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0057",
+      "rank": 57,
+      "front": "他们",
+      "back": "they; them (male/mixed)",
+      "phonics": "tāmen",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0058",
+      "rank": 58,
+      "front": "自己",
+      "back": "oneself",
+      "phonics": "zìjǐ",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0059",
+      "rank": 59,
+      "front": "之",
+      "back": "of (literary / formal)",
+      "phonics": "zhī",
+      "pos": "particle",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0060",
+      "rank": 60,
+      "front": "以",
+      "back": "with; by means of; in order to",
+      "phonics": "yǐ",
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0061",
+      "rank": 61,
+      "front": "为",
+      "back": "for; as; to act as",
+      "phonics": "wèi / wéi",
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0062",
+      "rank": 62,
+      "front": "中",
+      "back": "middle; in; China (in compounds)",
+      "phonics": "zhōng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0063",
+      "rank": 63,
+      "front": "可",
+      "back": "can; may; but",
+      "phonics": "kě",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0064",
+      "rank": 64,
+      "front": "还",
+      "back": "still; also; return",
+      "phonics": "hái / huán",
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "zh_0065",
+      "rank": 65,
+      "front": "把",
+      "back": "ba-construction; handle",
+      "phonics": "bǎ",
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0066",
+      "rank": 66,
+      "front": "从",
+      "back": "from",
+      "phonics": "cóng",
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0067",
+      "rank": 67,
+      "front": "而",
+      "back": "and; yet (formal)",
+      "phonics": "ér",
+      "pos": "conj",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0068",
+      "rank": 68,
+      "front": "被",
+      "back": "passive marker",
+      "phonics": "bèi",
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0069",
+      "rank": 69,
+      "front": "与",
+      "back": "and; with (formal)",
+      "phonics": "yǔ",
+      "pos": "conj",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0070",
+      "rank": 70,
+      "front": "及",
+      "back": "and; reach",
+      "phonics": "jí",
+      "pos": "conj",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0071",
+      "rank": 71,
+      "front": "其",
+      "back": "his/her/its; that",
+      "phonics": "qí",
+      "pos": "pronoun",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0072",
+      "rank": 72,
+      "front": "此",
+      "back": "this (formal)",
+      "phonics": "cǐ",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0073",
+      "rank": 73,
+      "front": "已",
+      "back": "already",
+      "phonics": "yǐ",
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "zh_0074",
+      "rank": 74,
+      "front": "又",
+      "back": "again; also",
+      "phonics": "yòu",
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "zh_0075",
+      "rank": 75,
+      "front": "或",
+      "back": "or",
+      "phonics": "huò",
+      "pos": "conj",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0076",
+      "rank": 76,
+      "front": "如",
+      "back": "like; if",
+      "phonics": "rú",
+      "pos": "conj",
+      "tags": []
+    },
+    {
+      "id": "zh_0077",
+      "rank": 77,
+      "front": "所",
+      "back": "that which; place",
+      "phonics": "suǒ",
+      "pos": "particle",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0078",
+      "rank": 78,
+      "front": "于",
+      "back": "at; in; on (formal)",
+      "phonics": "yú",
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0079",
+      "rank": 79,
+      "front": "之中",
+      "back": "among; in the middle of",
+      "phonics": "zhīzhōng",
+      "pos": "phrase",
+      "tags": []
+    },
+    {
+      "id": "zh_0080",
+      "rank": 80,
+      "front": "因为",
+      "back": "because",
+      "phonics": "yīnwèi",
+      "pos": "conj",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0081",
+      "rank": 81,
+      "front": "所以",
+      "back": "so; therefore",
+      "phonics": "suǒyǐ",
+      "pos": "conj",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0082",
+      "rank": 82,
+      "front": "但是",
+      "back": "but",
+      "phonics": "dànshì",
+      "pos": "conj",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0083",
+      "rank": 83,
+      "front": "如果",
+      "back": "if",
+      "phonics": "rúguǒ",
+      "pos": "conj",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0084",
+      "rank": 84,
+      "front": "虽然",
+      "back": "although",
+      "phonics": "suīrán",
+      "pos": "conj",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0085",
+      "rank": 85,
+      "front": "然后",
+      "back": "then; after that",
+      "phonics": "ránhòu",
+      "pos": "conj",
+      "tags": []
+    },
+    {
+      "id": "zh_0086",
+      "rank": 86,
+      "front": "现在",
+      "back": "now",
+      "phonics": "xiànzài",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0087",
+      "rank": 87,
+      "front": "今天",
+      "back": "today",
+      "phonics": "jīntiān",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0088",
+      "rank": 88,
+      "front": "明天",
+      "back": "tomorrow",
+      "phonics": "míngtiān",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0089",
+      "rank": 89,
+      "front": "昨天",
+      "back": "yesterday",
+      "phonics": "zuótiān",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0090",
+      "rank": 90,
+      "front": "时候",
+      "back": "time; moment",
+      "phonics": "shíhou",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0091",
+      "rank": 91,
+      "front": "时间",
+      "back": "time (duration/clock)",
+      "phonics": "shíjiān",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0092",
+      "rank": 92,
+      "front": "月",
+      "back": "month; moon",
+      "phonics": "yuè",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0093",
+      "rank": 93,
+      "front": "日",
+      "back": "day; sun; date",
+      "phonics": "rì",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0094",
+      "rank": 94,
+      "front": "分",
+      "back": "minute; point; divide",
+      "phonics": "fēn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0095",
+      "rank": 95,
+      "front": "钟",
+      "back": "clock; o'clock",
+      "phonics": "zhōng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0096",
+      "rank": 96,
+      "front": "点",
+      "back": "o'clock; point; a bit",
+      "phonics": "diǎn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0097",
+      "rank": 97,
+      "front": "早",
+      "back": "early; morning",
+      "phonics": "zǎo",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0098",
+      "rank": 98,
+      "front": "晚",
+      "back": "late; evening",
+      "phonics": "wǎn",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0099",
+      "rank": 99,
+      "front": "上午",
+      "back": "morning",
+      "phonics": "shàngwǔ",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0100",
+      "rank": 100,
+      "front": "下午",
+      "back": "afternoon",
+      "phonics": "xiàwǔ",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0101",
+      "rank": 101,
+      "front": "晚上",
+      "back": "evening; night",
+      "phonics": "wǎnshang",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0102",
+      "rank": 102,
+      "front": "星期",
+      "back": "week",
+      "phonics": "xīngqī",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0103",
+      "rank": 103,
+      "front": "号",
+      "back": "number; day of month",
+      "phonics": "hào",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0104",
+      "rank": 104,
+      "front": "岁",
+      "back": "years old",
+      "phonics": "suì",
+      "pos": "measure",
+      "tags": []
+    },
+    {
+      "id": "zh_0105",
+      "rank": 105,
+      "front": "多",
+      "back": "many; much; how many",
+      "phonics": "duō",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0106",
+      "rank": 106,
+      "front": "少",
+      "back": "few; little",
+      "phonics": "shǎo",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0107",
+      "rank": 107,
+      "front": "几",
+      "back": "how many; a few",
+      "phonics": "jǐ",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0108",
+      "rank": 108,
+      "front": "些",
+      "back": "some",
+      "phonics": "xiē",
+      "pos": "measure",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0109",
+      "rank": 109,
+      "front": "每",
+      "back": "every; each",
+      "phonics": "měi",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0110",
+      "rank": 110,
+      "front": "别",
+      "back": "don't; other",
+      "phonics": "bié",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0111",
+      "rank": 111,
+      "front": "再",
+      "back": "again; then",
+      "phonics": "zài",
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "zh_0112",
+      "rank": 112,
+      "front": "才",
+      "back": "only then; just",
+      "phonics": "cái",
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "zh_0113",
+      "rank": 113,
+      "front": "更",
+      "back": "even more",
+      "phonics": "gèng",
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "zh_0114",
+      "rank": 114,
+      "front": "最",
+      "back": "most",
+      "phonics": "zuì",
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "zh_0115",
+      "rank": 115,
+      "front": "太",
+      "back": "too (excessive)",
+      "phonics": "tài",
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "zh_0116",
+      "rank": 116,
+      "front": "真",
+      "back": "really; true",
+      "phonics": "zhēn",
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "zh_0117",
+      "rank": 117,
+      "front": "非常",
+      "back": "very; extremely",
+      "phonics": "fēicháng",
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "zh_0118",
+      "rank": 118,
+      "front": "比较",
+      "back": "relatively; compare",
+      "phonics": "bǐjiào",
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "zh_0119",
+      "rank": 119,
+      "front": "一样",
+      "back": "same",
+      "phonics": "yíyàng",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0120",
+      "rank": 120,
+      "front": "不同",
+      "back": "different",
+      "phonics": "bùtóng",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0121",
+      "rank": 121,
+      "front": "可能",
+      "back": "possible; maybe",
+      "phonics": "kěnéng",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0122",
+      "rank": 122,
+      "front": "应该",
+      "back": "should",
+      "phonics": "yīnggāi",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0123",
+      "rank": 123,
+      "front": "可以",
+      "back": "can; may; OK",
+      "phonics": "kěyǐ",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0124",
+      "rank": 124,
+      "front": "需要",
+      "back": "to need; need",
+      "phonics": "xūyào",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0125",
+      "rank": 125,
+      "front": "想",
+      "back": "to want; to think",
+      "phonics": "xiǎng",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0126",
+      "rank": 126,
+      "front": "觉得",
+      "back": "to feel; to think",
+      "phonics": "juéde",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0127",
+      "rank": 127,
+      "front": "知道",
+      "back": "to know",
+      "phonics": "zhīdào",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0128",
+      "rank": 128,
+      "front": "认识",
+      "back": "to know (a person); to recognize",
+      "phonics": "rènshi",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0129",
+      "rank": 129,
+      "front": "了解",
+      "back": "to understand; to learn about",
+      "phonics": "liǎojiě",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0130",
+      "rank": 130,
+      "front": "明白",
+      "back": "to understand",
+      "phonics": "míngbai",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0131",
+      "rank": 131,
+      "front": "听",
+      "back": "to listen; to hear",
+      "phonics": "tīng",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0132",
+      "rank": 132,
+      "front": "见",
+      "back": "to see; to meet",
+      "phonics": "jiàn",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0133",
+      "rank": 133,
+      "front": "问",
+      "back": "to ask",
+      "phonics": "wèn",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0134",
+      "rank": 134,
+      "front": "答",
+      "back": "to answer",
+      "phonics": "dá",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0135",
+      "rank": 135,
+      "front": "告诉",
+      "back": "to tell",
+      "phonics": "gàosu",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0136",
+      "rank": 136,
+      "front": "叫",
+      "back": "to call; to be called",
+      "phonics": "jiào",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0137",
+      "rank": 137,
+      "front": "让",
+      "back": "to let; to make",
+      "phonics": "ràng",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0138",
+      "rank": 138,
+      "front": "给",
+      "back": "to give; for",
+      "phonics": "gěi",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0139",
+      "rank": 139,
+      "front": "请",
+      "back": "please; to invite",
+      "phonics": "qǐng",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0140",
+      "rank": 140,
+      "front": "谢",
+      "back": "to thank",
+      "phonics": "xiè",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0141",
+      "rank": 141,
+      "front": "谢谢",
+      "back": "thank you",
+      "phonics": "xièxie",
+      "pos": "phrase",
+      "tags": []
+    },
+    {
+      "id": "zh_0142",
+      "rank": 142,
+      "front": "对不起",
+      "back": "sorry",
+      "phonics": "duìbuqǐ",
+      "pos": "phrase",
+      "tags": []
+    },
+    {
+      "id": "zh_0143",
+      "rank": 143,
+      "front": "没关系",
+      "back": "it's OK; no problem",
+      "phonics": "méi guānxi",
+      "pos": "phrase",
+      "tags": []
+    },
+    {
+      "id": "zh_0144",
+      "rank": 144,
+      "front": "欢迎",
+      "back": "welcome",
+      "phonics": "huānyíng",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0145",
+      "rank": 145,
+      "front": "再见",
+      "back": "goodbye",
+      "phonics": "zàijiàn",
+      "pos": "phrase",
+      "tags": []
+    },
+    {
+      "id": "zh_0146",
+      "rank": 146,
+      "front": "你好",
+      "back": "hello",
+      "phonics": "nǐ hǎo",
+      "pos": "phrase",
+      "tags": []
+    },
+    {
+      "id": "zh_0147",
+      "rank": 147,
+      "front": "怎么",
+      "back": "how",
+      "phonics": "zěnme",
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "zh_0148",
+      "rank": 148,
+      "front": "怎么样",
+      "back": "how is it; how about",
+      "phonics": "zěnmeyàng",
+      "pos": "phrase",
+      "tags": []
+    },
+    {
+      "id": "zh_0149",
+      "rank": 149,
+      "front": "为什么",
+      "back": "why",
+      "phonics": "wèishénme",
+      "pos": "adverb",
+      "tags": []
+    },
+    {
+      "id": "zh_0150",
+      "rank": 150,
+      "front": "哪里",
+      "back": "where",
+      "phonics": "nǎlǐ",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0151",
+      "rank": 151,
+      "front": "哪儿",
+      "back": "where (colloquial)",
+      "phonics": "nǎr",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0152",
+      "rank": 152,
+      "front": "谁",
+      "back": "who",
+      "phonics": "shuí",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0153",
+      "rank": 153,
+      "front": "多少",
+      "back": "how much; how many",
+      "phonics": "duōshao",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0154",
+      "rank": 154,
+      "front": "哪",
+      "back": "which",
+      "phonics": "nǎ",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0155",
+      "rank": 155,
+      "front": "这个",
+      "back": "this one",
+      "phonics": "zhège",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0156",
+      "rank": 156,
+      "front": "那个",
+      "back": "that one",
+      "phonics": "nàge",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0157",
+      "rank": 157,
+      "front": "这里",
+      "back": "here",
+      "phonics": "zhèlǐ",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0158",
+      "rank": 158,
+      "front": "那里",
+      "back": "there",
+      "phonics": "nàlǐ",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0159",
+      "rank": 159,
+      "front": "这样",
+      "back": "like this; this way",
+      "phonics": "zhèyàng",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0160",
+      "rank": 160,
+      "front": "那样",
+      "back": "like that",
+      "phonics": "nàyàng",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0161",
+      "rank": 161,
+      "front": "东西",
+      "back": "thing",
+      "phonics": "dōngxi",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0162",
+      "rank": 162,
+      "front": "事情",
+      "back": "matter; affair",
+      "phonics": "shìqing",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0163",
+      "rank": 163,
+      "front": "问题",
+      "back": "question; problem",
+      "phonics": "wèntí",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0164",
+      "rank": 164,
+      "front": "办法",
+      "back": "method; way",
+      "phonics": "bànfǎ",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0165",
+      "rank": 165,
+      "front": "方法",
+      "back": "method",
+      "phonics": "fāngfǎ",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0166",
+      "rank": 166,
+      "front": "意思",
+      "back": "meaning",
+      "phonics": "yìsi",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0167",
+      "rank": 167,
+      "front": "名字",
+      "back": "name",
+      "phonics": "míngzi",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0168",
+      "rank": 168,
+      "front": "字",
+      "back": "character; word",
+      "phonics": "zì",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0169",
+      "rank": 169,
+      "front": "话",
+      "back": "speech; words",
+      "phonics": "huà",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0170",
+      "rank": 170,
+      "front": "语言",
+      "back": "language",
+      "phonics": "yǔyán",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0171",
+      "rank": 171,
+      "front": "中文",
+      "back": "Chinese (language)",
+      "phonics": "Zhōngwén",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0172",
+      "rank": 172,
+      "front": "汉语",
+      "back": "Chinese (language)",
+      "phonics": "Hànyǔ",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0173",
+      "rank": 173,
+      "front": "英语",
+      "back": "English (language)",
+      "phonics": "Yīngyǔ",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0174",
+      "rank": 174,
+      "front": "中国",
+      "back": "China",
+      "phonics": "Zhōngguó",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0175",
+      "rank": 175,
+      "front": "美国",
+      "back": "USA",
+      "phonics": "Měiguó",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0176",
+      "rank": 176,
+      "front": "地方",
+      "back": "place",
+      "phonics": "dìfang",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0177",
+      "rank": 177,
+      "front": "城市",
+      "back": "city",
+      "phonics": "chéngshì",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0178",
+      "rank": 178,
+      "front": "国家",
+      "back": "country",
+      "phonics": "guójiā",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0179",
+      "rank": 179,
+      "front": "世界",
+      "back": "world",
+      "phonics": "shìjiè",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0180",
+      "rank": 180,
+      "front": "公司",
+      "back": "company",
+      "phonics": "gōngsī",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0181",
+      "rank": 181,
+      "front": "工作",
+      "back": "work; job",
+      "phonics": "gōngzuò",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0182",
+      "rank": 182,
+      "front": "学校",
+      "back": "school",
+      "phonics": "xuéxiào",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0183",
+      "rank": 183,
+      "front": "学生",
+      "back": "student",
+      "phonics": "xuésheng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0184",
+      "rank": 184,
+      "front": "老师",
+      "back": "teacher",
+      "phonics": "lǎoshī",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0185",
+      "rank": 185,
+      "front": "同学",
+      "back": "classmate",
+      "phonics": "tóngxué",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0186",
+      "rank": 186,
+      "front": "朋友",
+      "back": "friend",
+      "phonics": "péngyou",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0187",
+      "rank": 187,
+      "front": "家人",
+      "back": "family members",
+      "phonics": "jiārén",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0188",
+      "rank": 188,
+      "front": "爸爸",
+      "back": "dad",
+      "phonics": "bàba",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0189",
+      "rank": 189,
+      "front": "妈妈",
+      "back": "mom",
+      "phonics": "māma",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0190",
+      "rank": 190,
+      "front": "儿子",
+      "back": "son",
+      "phonics": "érzi",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0191",
+      "rank": 191,
+      "front": "女儿",
+      "back": "daughter",
+      "phonics": "nǚ'ér",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0192",
+      "rank": 192,
+      "front": "孩子",
+      "back": "child",
+      "phonics": "háizi",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0193",
+      "rank": 193,
+      "front": "先生",
+      "back": "Mr.; husband",
+      "phonics": "xiānsheng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0194",
+      "rank": 194,
+      "front": "女士",
+      "back": "Ms.; lady",
+      "phonics": "nǚshì",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0195",
+      "rank": 195,
+      "front": "小姐",
+      "back": "Miss",
+      "phonics": "xiǎojiě",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0196",
+      "rank": 196,
+      "front": "男",
+      "back": "male",
+      "phonics": "nán",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0197",
+      "rank": 197,
+      "front": "女",
+      "back": "female",
+      "phonics": "nǚ",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0198",
+      "rank": 198,
+      "front": "身体",
+      "back": "body",
+      "phonics": "shēntǐ",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0199",
+      "rank": 199,
+      "front": "手",
+      "back": "hand",
+      "phonics": "shǒu",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0200",
+      "rank": 200,
+      "front": "头",
+      "back": "head",
+      "phonics": "tóu",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0201",
+      "rank": 201,
+      "front": "眼睛",
+      "back": "eye",
+      "phonics": "yǎnjing",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0202",
+      "rank": 202,
+      "front": "口",
+      "back": "mouth; entrance",
+      "phonics": "kǒu",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0203",
+      "rank": 203,
+      "front": "心",
+      "back": "heart; mind",
+      "phonics": "xīn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0204",
+      "rank": 204,
+      "front": "病",
+      "back": "illness",
+      "phonics": "bìng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0205",
+      "rank": 205,
+      "front": "药",
+      "back": "medicine",
+      "phonics": "yào",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0206",
+      "rank": 206,
+      "front": "医院",
+      "back": "hospital",
+      "phonics": "yīyuàn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0207",
+      "rank": 207,
+      "front": "医生",
+      "back": "doctor",
+      "phonics": "yīshēng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0208",
+      "rank": 208,
+      "front": "钱",
+      "back": "money",
+      "phonics": "qián",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0209",
+      "rank": 209,
+      "front": "块",
+      "back": "yuan (colloquial); piece",
+      "phonics": "kuài",
+      "pos": "measure",
+      "tags": []
+    },
+    {
+      "id": "zh_0210",
+      "rank": 210,
+      "front": "元",
+      "back": "yuan (currency)",
+      "phonics": "yuán",
+      "pos": "measure",
+      "tags": []
+    },
+    {
+      "id": "zh_0211",
+      "rank": 211,
+      "front": "买",
+      "back": "to buy",
+      "phonics": "mǎi",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0212",
+      "rank": 212,
+      "front": "卖",
+      "back": "to sell",
+      "phonics": "mài",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0213",
+      "rank": 213,
+      "front": "贵",
+      "back": "expensive",
+      "phonics": "guì",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0214",
+      "rank": 214,
+      "front": "便宜",
+      "back": "cheap",
+      "phonics": "piányi",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0215",
+      "rank": 215,
+      "front": "价格",
+      "back": "price",
+      "phonics": "jiàgé",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0216",
+      "rank": 216,
+      "front": "商店",
+      "back": "shop",
+      "phonics": "shāngdiàn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0217",
+      "rank": 217,
+      "front": "市场",
+      "back": "market",
+      "phonics": "shìchǎng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0218",
+      "rank": 218,
+      "front": "饭",
+      "back": "meal; rice",
+      "phonics": "fàn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0219",
+      "rank": 219,
+      "front": "菜",
+      "back": "dish; vegetable",
+      "phonics": "cài",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0220",
+      "rank": 220,
+      "front": "肉",
+      "back": "meat",
+      "phonics": "ròu",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0221",
+      "rank": 221,
+      "front": "鱼",
+      "back": "fish",
+      "phonics": "yú",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0222",
+      "rank": 222,
+      "front": "蛋",
+      "back": "egg",
+      "phonics": "dàn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0223",
+      "rank": 223,
+      "front": "米",
+      "back": "rice (uncooked)",
+      "phonics": "mǐ",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0224",
+      "rank": 224,
+      "front": "面",
+      "back": "noodles; flour; face",
+      "phonics": "miàn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0225",
+      "rank": 225,
+      "front": "茶",
+      "back": "tea",
+      "phonics": "chá",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0226",
+      "rank": 226,
+      "front": "咖啡",
+      "back": "coffee",
+      "phonics": "kāfēi",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0227",
+      "rank": 227,
+      "front": "酒",
+      "back": "alcohol; wine",
+      "phonics": "jiǔ",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0228",
+      "rank": 228,
+      "front": "牛奶",
+      "back": "milk",
+      "phonics": "niúnǎi",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0229",
+      "rank": 229,
+      "front": "果汁",
+      "back": "juice",
+      "phonics": "guǒzhī",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0230",
+      "rank": 230,
+      "front": "水果",
+      "back": "fruit",
+      "phonics": "shuǐguǒ",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0231",
+      "rank": 231,
+      "front": "苹果",
+      "back": "apple",
+      "phonics": "píngguǒ",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0232",
+      "rank": 232,
+      "front": "香蕉",
+      "back": "banana",
+      "phonics": "xiāngjiāo",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0233",
+      "rank": 233,
+      "front": "喝",
+      "back": "to drink",
+      "phonics": "hē",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0234",
+      "rank": 234,
+      "front": "做",
+      "back": "to do; to make",
+      "phonics": "zuò",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0235",
+      "rank": 235,
+      "front": "写",
+      "back": "to write",
+      "phonics": "xiě",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0236",
+      "rank": 236,
+      "front": "读",
+      "back": "to read",
+      "phonics": "dú",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0237",
+      "rank": 237,
+      "front": "书",
+      "back": "book",
+      "phonics": "shū",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0238",
+      "rank": 238,
+      "front": "报纸",
+      "back": "newspaper",
+      "phonics": "bàozhǐ",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0239",
+      "rank": 239,
+      "front": "电影",
+      "back": "movie",
+      "phonics": "diànyǐng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0240",
+      "rank": 240,
+      "front": "电视",
+      "back": "television",
+      "phonics": "diànshì",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0241",
+      "rank": 241,
+      "front": "电脑",
+      "back": "computer",
+      "phonics": "diànnǎo",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0242",
+      "rank": 242,
+      "front": "手机",
+      "back": "mobile phone",
+      "phonics": "shǒujī",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0243",
+      "rank": 243,
+      "front": "电话",
+      "back": "telephone",
+      "phonics": "diànhuà",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0244",
+      "rank": 244,
+      "front": "网络",
+      "back": "network; internet",
+      "phonics": "wǎngluò",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0245",
+      "rank": 245,
+      "front": "网站",
+      "back": "website",
+      "phonics": "wǎngzhàn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0246",
+      "rank": 246,
+      "front": "邮件",
+      "back": "mail; email",
+      "phonics": "yóujiàn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0247",
+      "rank": 247,
+      "front": "照片",
+      "back": "photo",
+      "phonics": "zhàopiàn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0248",
+      "rank": 248,
+      "front": "音乐",
+      "back": "music",
+      "phonics": "yīnyuè",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0249",
+      "rank": 249,
+      "front": "歌",
+      "back": "song",
+      "phonics": "gē",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0250",
+      "rank": 250,
+      "front": "玩",
+      "back": "to play",
+      "phonics": "wán",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0251",
+      "rank": 251,
+      "front": "运动",
+      "back": "sports; exercise",
+      "phonics": "yùndòng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0252",
+      "rank": 252,
+      "front": "球",
+      "back": "ball",
+      "phonics": "qiú",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0253",
+      "rank": 253,
+      "front": "跑",
+      "back": "to run",
+      "phonics": "pǎo",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0254",
+      "rank": 254,
+      "front": "走",
+      "back": "to walk; to leave",
+      "phonics": "zǒu",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0255",
+      "rank": 255,
+      "front": "坐",
+      "back": "to sit",
+      "phonics": "zuò",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0256",
+      "rank": 256,
+      "front": "站",
+      "back": "to stand; station",
+      "phonics": "zhàn",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0257",
+      "rank": 257,
+      "front": "开",
+      "back": "to open; to drive; to start",
+      "phonics": "kāi",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0258",
+      "rank": 258,
+      "front": "关",
+      "back": "to close; to turn off",
+      "phonics": "guān",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0259",
+      "rank": 259,
+      "front": "进",
+      "back": "to enter",
+      "phonics": "jìn",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0260",
+      "rank": 260,
+      "front": "回",
+      "back": "to return",
+      "phonics": "huí",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0261",
+      "rank": 261,
+      "front": "等",
+      "back": "to wait; etc.",
+      "phonics": "děng",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0262",
+      "rank": 262,
+      "front": "找",
+      "back": "to look for",
+      "phonics": "zhǎo",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0263",
+      "rank": 263,
+      "front": "拿",
+      "back": "to take; to hold",
+      "phonics": "ná",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0264",
+      "rank": 264,
+      "front": "放",
+      "back": "to put",
+      "phonics": "fàng",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0265",
+      "rank": 265,
+      "front": "带",
+      "back": "to bring; to take along",
+      "phonics": "dài",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0266",
+      "rank": 266,
+      "front": "送",
+      "back": "to send; to give; to see off",
+      "phonics": "sòng",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0267",
+      "rank": 267,
+      "front": "帮",
+      "back": "to help",
+      "phonics": "bāng",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0268",
+      "rank": 268,
+      "front": "帮助",
+      "back": "help; to help",
+      "phonics": "bāngzhù",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0269",
+      "rank": 269,
+      "front": "教",
+      "back": "to teach",
+      "phonics": "jiāo",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0270",
+      "rank": 270,
+      "front": "练习",
+      "back": "to practice; practice",
+      "phonics": "liànxí",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0271",
+      "rank": 271,
+      "front": "考试",
+      "back": "exam; to take an exam",
+      "phonics": "kǎoshì",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0272",
+      "rank": 272,
+      "front": "成绩",
+      "back": "grade; score",
+      "phonics": "chéngjì",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0273",
+      "rank": 273,
+      "front": "课",
+      "back": "class; lesson",
+      "phonics": "kè",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0274",
+      "rank": 274,
+      "front": "教室",
+      "back": "classroom",
+      "phonics": "jiàoshì",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0275",
+      "rank": 275,
+      "front": "图书馆",
+      "back": "library",
+      "phonics": "túshūguǎn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0276",
+      "rank": 276,
+      "front": "办公室",
+      "back": "office",
+      "phonics": "bàngōngshì",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0277",
+      "rank": 277,
+      "front": "房间",
+      "back": "room",
+      "phonics": "fángjiān",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0278",
+      "rank": 278,
+      "front": "房子",
+      "back": "house",
+      "phonics": "fángzi",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0279",
+      "rank": 279,
+      "front": "门",
+      "back": "door",
+      "phonics": "mén",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0280",
+      "rank": 280,
+      "front": "窗",
+      "back": "window",
+      "phonics": "chuāng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0281",
+      "rank": 281,
+      "front": "桌子",
+      "back": "table",
+      "phonics": "zhuōzi",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0282",
+      "rank": 282,
+      "front": "椅子",
+      "back": "chair",
+      "phonics": "yǐzi",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0283",
+      "rank": 283,
+      "front": "床",
+      "back": "bed",
+      "phonics": "chuáng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0284",
+      "rank": 284,
+      "front": "衣服",
+      "back": "clothes",
+      "phonics": "yīfu",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0285",
+      "rank": 285,
+      "front": "鞋",
+      "back": "shoe",
+      "phonics": "xié",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0286",
+      "rank": 286,
+      "front": "帽子",
+      "back": "hat",
+      "phonics": "màozi",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0287",
+      "rank": 287,
+      "front": "颜色",
+      "back": "color",
+      "phonics": "yánsè",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0288",
+      "rank": 288,
+      "front": "红",
+      "back": "red",
+      "phonics": "hóng",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0289",
+      "rank": 289,
+      "front": "黄",
+      "back": "yellow",
+      "phonics": "huáng",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0290",
+      "rank": 290,
+      "front": "蓝",
+      "back": "blue",
+      "phonics": "lán",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0291",
+      "rank": 291,
+      "front": "绿",
+      "back": "green",
+      "phonics": "lǜ",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0292",
+      "rank": 292,
+      "front": "白",
+      "back": "white",
+      "phonics": "bái",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0293",
+      "rank": 293,
+      "front": "黑",
+      "back": "black",
+      "phonics": "hēi",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0294",
+      "rank": 294,
+      "front": "新",
+      "back": "new",
+      "phonics": "xīn",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0295",
+      "rank": 295,
+      "front": "旧",
+      "back": "old (thing)",
+      "phonics": "jiù",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0296",
+      "rank": 296,
+      "front": "老",
+      "back": "old (person/long-established)",
+      "phonics": "lǎo",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0297",
+      "rank": 297,
+      "front": "年轻",
+      "back": "young",
+      "phonics": "niánqīng",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0298",
+      "rank": 298,
+      "front": "高",
+      "back": "tall; high",
+      "phonics": "gāo",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0299",
+      "rank": 299,
+      "front": "矮",
+      "back": "short (height)",
+      "phonics": "ǎi",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0300",
+      "rank": 300,
+      "front": "长",
+      "back": "long",
+      "phonics": "cháng",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0301",
+      "rank": 301,
+      "front": "短",
+      "back": "short (length)",
+      "phonics": "duǎn",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0302",
+      "rank": 302,
+      "front": "快",
+      "back": "fast",
+      "phonics": "kuài",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0303",
+      "rank": 303,
+      "front": "慢",
+      "back": "slow",
+      "phonics": "màn",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0304",
+      "rank": 304,
+      "front": "远",
+      "back": "far",
+      "phonics": "yuǎn",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0305",
+      "rank": 305,
+      "front": "近",
+      "back": "near",
+      "phonics": "jìn",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0306",
+      "rank": 306,
+      "front": "热",
+      "back": "hot",
+      "phonics": "rè",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0307",
+      "rank": 307,
+      "front": "冷",
+      "back": "cold",
+      "phonics": "lěng",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0308",
+      "rank": 308,
+      "front": "凉快",
+      "back": "cool (weather)",
+      "phonics": "liángkuai",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0309",
+      "rank": 309,
+      "front": "暖和",
+      "back": "warm",
+      "phonics": "nuǎnhuo",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0310",
+      "rank": 310,
+      "front": "天气",
+      "back": "weather",
+      "phonics": "tiānqì",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0311",
+      "rank": 311,
+      "front": "雨",
+      "back": "rain",
+      "phonics": "yǔ",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0312",
+      "rank": 312,
+      "front": "雪",
+      "back": "snow",
+      "phonics": "xuě",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0313",
+      "rank": 313,
+      "front": "风",
+      "back": "wind",
+      "phonics": "fēng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0314",
+      "rank": 314,
+      "front": "太阳",
+      "back": "sun",
+      "phonics": "tàiyáng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0315",
+      "rank": 315,
+      "front": "月亮",
+      "back": "moon",
+      "phonics": "yuèliang",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0316",
+      "rank": 316,
+      "front": "星星",
+      "back": "star",
+      "phonics": "xīngxing",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0317",
+      "rank": 317,
+      "front": "山",
+      "back": "mountain",
+      "phonics": "shān",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0318",
+      "rank": 318,
+      "front": "河",
+      "back": "river",
+      "phonics": "hé",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0319",
+      "rank": 319,
+      "front": "海",
+      "back": "sea",
+      "phonics": "hǎi",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0320",
+      "rank": 320,
+      "front": "树",
+      "back": "tree",
+      "phonics": "shù",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0321",
+      "rank": 321,
+      "front": "花",
+      "back": "flower",
+      "phonics": "huā",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0322",
+      "rank": 322,
+      "front": "草",
+      "back": "grass",
+      "phonics": "cǎo",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0323",
+      "rank": 323,
+      "front": "动物",
+      "back": "animal",
+      "phonics": "dòngwù",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0324",
+      "rank": 324,
+      "front": "狗",
+      "back": "dog",
+      "phonics": "gǒu",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0325",
+      "rank": 325,
+      "front": "猫",
+      "back": "cat",
+      "phonics": "māo",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0326",
+      "rank": 326,
+      "front": "鸟",
+      "back": "bird",
+      "phonics": "niǎo",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0327",
+      "rank": 327,
+      "front": "车",
+      "back": "vehicle; car",
+      "phonics": "chē",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0328",
+      "rank": 328,
+      "front": "汽车",
+      "back": "car",
+      "phonics": "qìchē",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0329",
+      "rank": 329,
+      "front": "火车",
+      "back": "train",
+      "phonics": "huǒchē",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0330",
+      "rank": 330,
+      "front": "飞机",
+      "back": "airplane",
+      "phonics": "fēijī",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0331",
+      "rank": 331,
+      "front": "船",
+      "back": "boat; ship",
+      "phonics": "chuán",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0332",
+      "rank": 332,
+      "front": "路",
+      "back": "road; path",
+      "phonics": "lù",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0333",
+      "rank": 333,
+      "front": "街",
+      "back": "street",
+      "phonics": "jiē",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0334",
+      "rank": 334,
+      "front": "桥",
+      "back": "bridge",
+      "phonics": "qiáo",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0335",
+      "rank": 335,
+      "front": "地图",
+      "back": "map",
+      "phonics": "dìtú",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0336",
+      "rank": 336,
+      "front": "票",
+      "back": "ticket",
+      "phonics": "piào",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0337",
+      "rank": 337,
+      "front": "机场",
+      "back": "airport",
+      "phonics": "jīchǎng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0338",
+      "rank": 338,
+      "front": "酒店",
+      "back": "hotel",
+      "phonics": "jiǔdiàn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0339",
+      "rank": 339,
+      "front": "饭店",
+      "back": "restaurant; hotel",
+      "phonics": "fàndiàn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0340",
+      "rank": 340,
+      "front": "银行",
+      "back": "bank",
+      "phonics": "yínháng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0341",
+      "rank": 341,
+      "front": "邮局",
+      "back": "post office",
+      "phonics": "yóujú",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0342",
+      "rank": 342,
+      "front": "公园",
+      "back": "park",
+      "phonics": "gōngyuán",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0343",
+      "rank": 343,
+      "front": "博物馆",
+      "back": "museum",
+      "phonics": "bówùguǎn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0344",
+      "rank": 344,
+      "front": "超市",
+      "back": "supermarket",
+      "phonics": "chāoshì",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0345",
+      "rank": 345,
+      "front": "开始",
+      "back": "to begin; start",
+      "phonics": "kāishǐ",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0346",
+      "rank": 346,
+      "front": "结束",
+      "back": "to end; finish",
+      "phonics": "jiéshù",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0347",
+      "rank": 347,
+      "front": "完",
+      "back": "to finish",
+      "phonics": "wán",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0348",
+      "rank": 348,
+      "front": "准备",
+      "back": "to prepare",
+      "phonics": "zhǔnbèi",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0349",
+      "rank": 349,
+      "front": "计划",
+      "back": "plan; to plan",
+      "phonics": "jìhuà",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0350",
+      "rank": 350,
+      "front": "决定",
+      "back": "to decide; decision",
+      "phonics": "juédìng",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0351",
+      "rank": 351,
+      "front": "选择",
+      "back": "to choose; choice",
+      "phonics": "xuǎnzé",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0352",
+      "rank": 352,
+      "front": "改变",
+      "back": "to change",
+      "phonics": "gǎibiàn",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0353",
+      "rank": 353,
+      "front": "发生",
+      "back": "to happen",
+      "phonics": "fāshēng",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0354",
+      "rank": 354,
+      "front": "出现",
+      "back": "to appear",
+      "phonics": "chūxiàn",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0355",
+      "rank": 355,
+      "front": "成为",
+      "back": "to become",
+      "phonics": "chéngwéi",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0356",
+      "rank": 356,
+      "front": "发展",
+      "back": "to develop; development",
+      "phonics": "fāzhǎn",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0357",
+      "rank": 357,
+      "front": "提高",
+      "back": "to improve; raise",
+      "phonics": "tígāo",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0358",
+      "rank": 358,
+      "front": "增加",
+      "back": "to increase",
+      "phonics": "zēngjiā",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0359",
+      "rank": 359,
+      "front": "减少",
+      "back": "to decrease",
+      "phonics": "jiǎnshǎo",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0360",
+      "rank": 360,
+      "front": "继续",
+      "back": "to continue",
+      "phonics": "jìxù",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0361",
+      "rank": 361,
+      "front": "停止",
+      "back": "to stop",
+      "phonics": "tíngzhǐ",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0362",
+      "rank": 362,
+      "front": "离开",
+      "back": "to leave",
+      "phonics": "líkāi",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0363",
+      "rank": 363,
+      "front": "到达",
+      "back": "to arrive",
+      "phonics": "dàodá",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0364",
+      "rank": 364,
+      "front": "参加",
+      "back": "to participate",
+      "phonics": "cānjiā",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0365",
+      "rank": 365,
+      "front": "会议",
+      "back": "meeting",
+      "phonics": "huìyì",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0366",
+      "rank": 366,
+      "front": "活动",
+      "back": "activity",
+      "phonics": "huódòng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0367",
+      "rank": 367,
+      "front": "机会",
+      "back": "opportunity",
+      "phonics": "jīhuì",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0368",
+      "rank": 368,
+      "front": "重要",
+      "back": "important",
+      "phonics": "zhòngyào",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0369",
+      "rank": 369,
+      "front": "特别",
+      "back": "special; especially",
+      "phonics": "tèbié",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0370",
+      "rank": 370,
+      "front": "一般",
+      "back": "general; ordinary",
+      "phonics": "yìbān",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0371",
+      "rank": 371,
+      "front": "简单",
+      "back": "simple",
+      "phonics": "jiǎndān",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0372",
+      "rank": 372,
+      "front": "容易",
+      "back": "easy",
+      "phonics": "róngyì",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0373",
+      "rank": 373,
+      "front": "难",
+      "back": "difficult",
+      "phonics": "nán",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0374",
+      "rank": 374,
+      "front": "忙",
+      "back": "busy",
+      "phonics": "máng",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0375",
+      "rank": 375,
+      "front": "累",
+      "back": "tired",
+      "phonics": "lèi",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0376",
+      "rank": 376,
+      "front": "高兴",
+      "back": "happy",
+      "phonics": "gāoxìng",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0377",
+      "rank": 377,
+      "front": "快乐",
+      "back": "happy; joyful",
+      "phonics": "kuàilè",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0378",
+      "rank": 378,
+      "front": "开心",
+      "back": "happy; glad",
+      "phonics": "kāixīn",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0379",
+      "rank": 379,
+      "front": "难过",
+      "back": "sad",
+      "phonics": "nánguò",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0380",
+      "rank": 380,
+      "front": "担心",
+      "back": "to worry",
+      "phonics": "dānxīn",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0381",
+      "rank": 381,
+      "front": "害怕",
+      "back": "to be afraid",
+      "phonics": "hàipà",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0382",
+      "rank": 382,
+      "front": "喜欢",
+      "back": "to like",
+      "phonics": "xǐhuan",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0383",
+      "rank": 383,
+      "front": "爱",
+      "back": "to love",
+      "phonics": "ài",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0384",
+      "rank": 384,
+      "front": "希望",
+      "back": "to hope; hope",
+      "phonics": "xīwàng",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0385",
+      "rank": 385,
+      "front": "相信",
+      "back": "to believe",
+      "phonics": "xiāngxìn",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0386",
+      "rank": 386,
+      "front": "记得",
+      "back": "to remember",
+      "phonics": "jìde",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0387",
+      "rank": 387,
+      "front": "忘记",
+      "back": "to forget",
+      "phonics": "wàngjì",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0388",
+      "rank": 388,
+      "front": "发现",
+      "back": "to discover",
+      "phonics": "fāxiàn",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0389",
+      "rank": 389,
+      "front": "注意",
+      "back": "to pay attention",
+      "phonics": "zhùyì",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0390",
+      "rank": 390,
+      "front": "小心",
+      "back": "careful; watch out",
+      "phonics": "xiǎoxīn",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0391",
+      "rank": 391,
+      "front": "努力",
+      "back": "to work hard",
+      "phonics": "nǔlì",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0392",
+      "rank": 392,
+      "front": "成功",
+      "back": "success; successful",
+      "phonics": "chénggōng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0393",
+      "rank": 393,
+      "front": "失败",
+      "back": "failure; to fail",
+      "phonics": "shībài",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0394",
+      "rank": 394,
+      "front": "经验",
+      "back": "experience",
+      "phonics": "jīngyàn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0395",
+      "rank": 395,
+      "front": "文化",
+      "back": "culture",
+      "phonics": "wénhuà",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0396",
+      "rank": 396,
+      "front": "历史",
+      "back": "history",
+      "phonics": "lìshǐ",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0397",
+      "rank": 397,
+      "front": "社会",
+      "back": "society",
+      "phonics": "shèhuì",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0398",
+      "rank": 398,
+      "front": "政治",
+      "back": "politics",
+      "phonics": "zhèngzhì",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0399",
+      "rank": 399,
+      "front": "经济",
+      "back": "economy",
+      "phonics": "jīngjì",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0400",
+      "rank": 400,
+      "front": "科技",
+      "back": "science and technology",
+      "phonics": "kējì",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0401",
+      "rank": 401,
+      "front": "科学",
+      "back": "science",
+      "phonics": "kēxué",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0402",
+      "rank": 402,
+      "front": "艺术",
+      "back": "art",
+      "phonics": "yìshù",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0403",
+      "rank": 403,
+      "front": "新闻",
+      "back": "news",
+      "phonics": "xīnwén",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0404",
+      "rank": 404,
+      "front": "信息",
+      "back": "information",
+      "phonics": "xìnxī",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0405",
+      "rank": 405,
+      "front": "数据",
+      "back": "data",
+      "phonics": "shùjù",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0406",
+      "rank": 406,
+      "front": "系统",
+      "back": "system",
+      "phonics": "xìtǒng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0407",
+      "rank": 407,
+      "front": "服务",
+      "back": "service; to serve",
+      "phonics": "fúwù",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0408",
+      "rank": 408,
+      "front": "客户",
+      "back": "customer",
+      "phonics": "kèhù",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0409",
+      "rank": 409,
+      "front": "产品",
+      "back": "product",
+      "phonics": "chǎnpǐn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0410",
+      "rank": 410,
+      "front": "质量",
+      "back": "quality",
+      "phonics": "zhìliàng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0411",
+      "rank": 411,
+      "front": "环境",
+      "back": "environment",
+      "phonics": "huánjìng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0412",
+      "rank": 412,
+      "front": "自然",
+      "back": "nature; natural",
+      "phonics": "zìrán",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0413",
+      "rank": 413,
+      "front": "健康",
+      "back": "health; healthy",
+      "phonics": "jiànkāng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0414",
+      "rank": 414,
+      "front": "安全",
+      "back": "safety; safe",
+      "phonics": "ānquán",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0415",
+      "rank": 415,
+      "front": "危险",
+      "back": "danger; dangerous",
+      "phonics": "wēixiǎn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0416",
+      "rank": 416,
+      "front": "自由",
+      "back": "freedom; free",
+      "phonics": "zìyóu",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0417",
+      "rank": 417,
+      "front": "权利",
+      "back": "right; privilege",
+      "phonics": "quánlì",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0418",
+      "rank": 418,
+      "front": "责任",
+      "back": "responsibility",
+      "phonics": "zérèn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0419",
+      "rank": 419,
+      "front": "法律",
+      "back": "law",
+      "phonics": "fǎlǜ",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0420",
+      "rank": 420,
+      "front": "政府",
+      "back": "government",
+      "phonics": "zhèngfǔ",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0421",
+      "rank": 421,
+      "front": "人民",
+      "back": "the people",
+      "phonics": "rénmín",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0422",
+      "rank": 422,
+      "front": "民族",
+      "back": "ethnic group; nation",
+      "phonics": "mínzú",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0423",
+      "rank": 423,
+      "front": "传统",
+      "back": "tradition; traditional",
+      "phonics": "chuántǒng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0424",
+      "rank": 424,
+      "front": "现代",
+      "back": "modern",
+      "phonics": "xiàndài",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0425",
+      "rank": 425,
+      "front": "未来",
+      "back": "future",
+      "phonics": "wèilái",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0426",
+      "rank": 426,
+      "front": "过去",
+      "back": "past",
+      "phonics": "guòqù",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0427",
+      "rank": 427,
+      "front": "目前",
+      "back": "at present",
+      "phonics": "mùqián",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0428",
+      "rank": 428,
+      "front": "最近",
+      "back": "recently; nearest",
+      "phonics": "zuìjìn",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0429",
+      "rank": 429,
+      "front": "以前",
+      "back": "before; previously",
+      "phonics": "yǐqián",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0430",
+      "rank": 430,
+      "front": "以后",
+      "back": "after; later",
+      "phonics": "yǐhòu",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0431",
+      "rank": 431,
+      "front": "之前",
+      "back": "before (that)",
+      "phonics": "zhīqián",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0432",
+      "rank": 432,
+      "front": "之后",
+      "back": "after (that)",
+      "phonics": "zhīhòu",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0433",
+      "rank": 433,
+      "front": "期间",
+      "back": "period; during",
+      "phonics": "qījiān",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0434",
+      "rank": 434,
+      "front": "首先",
+      "back": "first of all",
+      "phonics": "shǒuxiān",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0435",
+      "rank": 435,
+      "front": "其次",
+      "back": "secondly",
+      "phonics": "qícì",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0436",
+      "rank": 436,
+      "front": "最后",
+      "back": "finally; last",
+      "phonics": "zuìhòu",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0437",
+      "rank": 437,
+      "front": "另外",
+      "back": "in addition; another",
+      "phonics": "lìngwài",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0438",
+      "rank": 438,
+      "front": "例如",
+      "back": "for example",
+      "phonics": "lìrú",
+      "pos": "conj",
+      "tags": []
+    },
+    {
+      "id": "zh_0439",
+      "rank": 439,
+      "front": "关于",
+      "back": "about; regarding",
+      "phonics": "guānyú",
+      "pos": "prep",
+      "tags": []
+    },
+    {
+      "id": "zh_0440",
+      "rank": 440,
+      "front": "根据",
+      "back": "according to",
+      "phonics": "gēnjù",
+      "pos": "prep",
+      "tags": []
+    },
+    {
+      "id": "zh_0441",
+      "rank": 441,
+      "front": "通过",
+      "back": "through; by means of",
+      "phonics": "tōngguò",
+      "pos": "prep",
+      "tags": []
+    },
+    {
+      "id": "zh_0442",
+      "rank": 442,
+      "front": "按照",
+      "back": "according to",
+      "phonics": "ànzhào",
+      "pos": "prep",
+      "tags": []
+    },
+    {
+      "id": "zh_0443",
+      "rank": 443,
+      "front": "为了",
+      "back": "in order to",
+      "phonics": "wèile",
+      "pos": "prep",
+      "tags": []
+    },
+    {
+      "id": "zh_0444",
+      "rank": 444,
+      "front": "由于",
+      "back": "due to",
+      "phonics": "yóuyú",
+      "pos": "prep",
+      "tags": []
+    },
+    {
+      "id": "zh_0445",
+      "rank": 445,
+      "front": "除了",
+      "back": "except; besides",
+      "phonics": "chúle",
+      "pos": "prep",
+      "tags": []
+    },
+    {
+      "id": "zh_0446",
+      "rank": 446,
+      "front": "包括",
+      "back": "to include",
+      "phonics": "bāokuò",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0447",
+      "rank": 447,
+      "front": "除",
+      "back": "except; divide",
+      "phonics": "chú",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0448",
+      "rank": 448,
+      "front": "比",
+      "back": "than; to compare",
+      "phonics": "bǐ",
+      "pos": "prep",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0449",
+      "rank": 449,
+      "front": "像",
+      "back": "like; to resemble",
+      "phonics": "xiàng",
+      "pos": "verb",
+      "tags": []
+    },
+    {
+      "id": "zh_0450",
+      "rank": 450,
+      "front": "似乎",
+      "back": "it seems",
+      "phonics": "sìhū",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0451",
+      "rank": 451,
+      "front": "当然",
+      "back": "of course",
+      "phonics": "dāngrán",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0452",
+      "rank": 452,
+      "front": "其实",
+      "back": "actually",
+      "phonics": "qíshí",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0453",
+      "rank": 453,
+      "front": "确实",
+      "back": "indeed; really",
+      "phonics": "quèshí",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0454",
+      "rank": 454,
+      "front": "也许",
+      "back": "perhaps",
+      "phonics": "yěxǔ",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0455",
+      "rank": 455,
+      "front": "大概",
+      "back": "approximately; probably",
+      "phonics": "dàgài",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0456",
+      "rank": 456,
+      "front": "几乎",
+      "back": "almost",
+      "phonics": "jīhū",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0457",
+      "rank": 457,
+      "front": "已经",
+      "back": "already",
+      "phonics": "yǐjīng",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0458",
+      "rank": 458,
+      "front": "正在",
+      "back": "in the process of",
+      "phonics": "zhèngzài",
+      "pos": "adv",
+      "tags": [
+        "function"
+      ]
+    },
+    {
+      "id": "zh_0459",
+      "rank": 459,
+      "front": "一直",
+      "back": "always; continuously",
+      "phonics": "yìzhí",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0460",
+      "rank": 460,
+      "front": "总是",
+      "back": "always",
+      "phonics": "zǒngshì",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0461",
+      "rank": 461,
+      "front": "经常",
+      "back": "often",
+      "phonics": "jīngcháng",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0462",
+      "rank": 462,
+      "front": "有时",
+      "back": "sometimes",
+      "phonics": "yǒushí",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0463",
+      "rank": 463,
+      "front": "偶尔",
+      "back": "occasionally",
+      "phonics": "ǒu'ěr",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0464",
+      "rank": 464,
+      "front": "从来",
+      "back": "always (with 不/没: never)",
+      "phonics": "cónglái",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0465",
+      "rank": 465,
+      "front": "突然",
+      "back": "suddenly",
+      "phonics": "tūrán",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0466",
+      "rank": 466,
+      "front": "马上",
+      "back": "immediately",
+      "phonics": "mǎshàng",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0467",
+      "rank": 467,
+      "front": "立刻",
+      "back": "at once",
+      "phonics": "lìkè",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0468",
+      "rank": 468,
+      "front": "先",
+      "back": "first; in advance",
+      "phonics": "xiān",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0469",
+      "rank": 469,
+      "front": "同时",
+      "back": "at the same time",
+      "phonics": "tóngshí",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0470",
+      "rank": 470,
+      "front": "互相",
+      "back": "each other",
+      "phonics": "hùxiāng",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0471",
+      "rank": 471,
+      "front": "一起",
+      "back": "together",
+      "phonics": "yìqǐ",
+      "pos": "adv",
+      "tags": []
+    },
+    {
+      "id": "zh_0472",
+      "rank": 472,
+      "front": "共同",
+      "back": "common; jointly",
+      "phonics": "gòngtóng",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0473",
+      "rank": 473,
+      "front": "个人",
+      "back": "individual; personal",
+      "phonics": "gèrén",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0474",
+      "rank": 474,
+      "front": "别人",
+      "back": "other people",
+      "phonics": "biérén",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0475",
+      "rank": 475,
+      "front": "大家",
+      "back": "everyone",
+      "phonics": "dàjiā",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0476",
+      "rank": 476,
+      "front": "任何",
+      "back": "any",
+      "phonics": "rènhé",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0477",
+      "rank": 477,
+      "front": "所有",
+      "back": "all",
+      "phonics": "suǒyǒu",
+      "pos": "adj",
+      "tags": []
+    },
+    {
+      "id": "zh_0478",
+      "rank": 478,
+      "front": "全部",
+      "back": "all; whole",
+      "phonics": "quánbù",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0479",
+      "rank": 479,
+      "front": "部分",
+      "back": "part",
+      "phonics": "bùfen",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0480",
+      "rank": 480,
+      "front": "其他",
+      "back": "other",
+      "phonics": "qítā",
+      "pos": "pronoun",
+      "tags": []
+    },
+    {
+      "id": "zh_0481",
+      "rank": 481,
+      "front": "某种",
+      "back": "some kind of",
+      "phonics": "mǒu zhǒng",
+      "pos": "phrase",
+      "tags": []
+    },
+    {
+      "id": "zh_0482",
+      "rank": 482,
+      "front": "一种",
+      "back": "a kind of",
+      "phonics": "yì zhǒng",
+      "pos": "phrase",
+      "tags": []
+    },
+    {
+      "id": "zh_0483",
+      "rank": 483,
+      "front": "方面",
+      "back": "aspect",
+      "phonics": "fāngmiàn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0484",
+      "rank": 484,
+      "front": "情况",
+      "back": "situation",
+      "phonics": "qíngkuàng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0485",
+      "rank": 485,
+      "front": "结果",
+      "back": "result",
+      "phonics": "jiéguǒ",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0486",
+      "rank": 486,
+      "front": "原因",
+      "back": "reason",
+      "phonics": "yuányīn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0487",
+      "rank": 487,
+      "front": "目的",
+      "back": "purpose",
+      "phonics": "mùdì",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0488",
+      "rank": 488,
+      "front": "作用",
+      "back": "function; effect",
+      "phonics": "zuòyòng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0489",
+      "rank": 489,
+      "front": "影响",
+      "back": "influence; to influence",
+      "phonics": "yǐngxiǎng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0490",
+      "rank": 490,
+      "front": "关系",
+      "back": "relationship",
+      "phonics": "guānxi",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0491",
+      "rank": 491,
+      "front": "水平",
+      "back": "level",
+      "phonics": "shuǐpíng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0492",
+      "rank": 492,
+      "front": "程度",
+      "back": "degree; extent",
+      "phonics": "chéngdù",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0493",
+      "rank": 493,
+      "front": "基础",
+      "back": "foundation; basic",
+      "phonics": "jīchǔ",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0494",
+      "rank": 494,
+      "front": "条件",
+      "back": "condition",
+      "phonics": "tiáojiàn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0495",
+      "rank": 495,
+      "front": "标准",
+      "back": "standard",
+      "phonics": "biāozhǔn",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0496",
+      "rank": 496,
+      "front": "规则",
+      "back": "rule",
+      "phonics": "guīzé",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0497",
+      "rank": 497,
+      "front": "过程",
+      "back": "process",
+      "phonics": "guòchéng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0498",
+      "rank": 498,
+      "front": "步骤",
+      "back": "step",
+      "phonics": "bùzhòu",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0499",
+      "rank": 499,
+      "front": "内容",
+      "back": "content",
+      "phonics": "nèiróng",
+      "pos": "noun",
+      "tags": []
+    },
+    {
+      "id": "zh_0500",
+      "rank": 500,
+      "front": "形式",
+      "back": "form",
+      "phonics": "xíngshì",
+      "pos": "noun",
+      "tags": []
+    }
+  ]
+}

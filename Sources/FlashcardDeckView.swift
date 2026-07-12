@@ -112,6 +112,11 @@ struct FlashcardDeckView: View {
 
     @ViewBuilder
     private var defaultHeaderActions: some View {
+        // Essential words — leading, icon-first on narrow widths (design V11).
+        if flashcardVM.selectedDeckKind == .vocab {
+            essentialWordsControl
+        }
+
         if flashcardVM.selectedDeckKind == .vocab,
            !flashcardVM.flashcardsForSelectedKind.isEmpty {
             Button {
@@ -507,7 +512,7 @@ struct FlashcardDeckView: View {
         VStack(spacing: 16) {
             Image(systemName: flashcardVM.selectedDeckKind == .vocab
                   ? "rectangle.on.rectangle.angled"
-                  : "text.book.closed")
+                  : "text.quote")
                 .font(.system(size: 56))
                 .foregroundColor(.secondary)
             Text(emptyTitle)
@@ -518,8 +523,44 @@ struct FlashcardDeckView: View {
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 360)
+
+            if flashcardVM.selectedDeckKind == .vocab {
+                Button {
+                    flashcardVM.isShowingEssentialVocab = true
+                } label: {
+                    Text(L10n.essentialBrowse(lang))
+                        .frame(minWidth: 200)
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .help(L10n.essentialBrowseHelp(lang))
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    @ViewBuilder
+    private var essentialWordsControl: some View {
+        #if os(iOS)
+        Button {
+            flashcardVM.isShowingEssentialVocab = true
+        } label: {
+            Image(systemName: "text.book.closed")
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.large)
+        .help(L10n.essentialBrowseHelp(lang))
+        .accessibilityLabel(L10n.essentialWords(lang))
+        #else
+        Button {
+            flashcardVM.isShowingEssentialVocab = true
+        } label: {
+            Label(L10n.essentialWordsShort(lang), systemImage: "text.book.closed")
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.large)
+        .help(L10n.essentialBrowseHelp(lang))
+        #endif
     }
 
     private var emptyTitle: String {

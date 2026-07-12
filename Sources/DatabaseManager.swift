@@ -177,6 +177,22 @@ class DatabaseManager {
         CREATE UNIQUE INDEX IF NOT EXISTS idx_flashcards_front ON flashcards(front);
         """
 
+        let createEssentialProgressTable = """
+        CREATE TABLE IF NOT EXISTS essential_vocab_progress (
+            list_id TEXT NOT NULL,
+            entry_id TEXT NOT NULL,
+            status TEXT NOT NULL CHECK (status IN ('added', 'dismissed')),
+            flashcard_id TEXT,
+            updated_at REAL NOT NULL,
+            PRIMARY KEY (list_id, entry_id)
+        );
+        """
+
+        let createEssentialProgressIndex = """
+        CREATE INDEX IF NOT EXISTS idx_essential_progress_list_status
+          ON essential_vocab_progress(list_id, status);
+        """
+
         execute(sql: createConversationsTable)
         execute(sql: createMessagesTable)
         execute(sql: createSystemPromptsTable)
@@ -186,6 +202,8 @@ class DatabaseManager {
         execute(sql: createFlashcardsKindDueIndex)
         execute(sql: createFlashcardsParentIndex)
         execute(sql: createFlashcardsFrontIndex)
+        execute(sql: createEssentialProgressTable)
+        execute(sql: createEssentialProgressIndex)
         migrateDatabase()
 
         prepopulateDefaultPrompts()
@@ -213,6 +231,21 @@ class DatabaseManager {
         }
         execute(sql: "CREATE INDEX IF NOT EXISTS idx_flashcards_kind_due ON flashcards(kind, due);")
         execute(sql: "CREATE INDEX IF NOT EXISTS idx_flashcards_parent ON flashcards(parent_flashcard_id);")
+        // Essential vocab progress (idempotent for older DBs created before this table existed)
+        execute(sql: """
+        CREATE TABLE IF NOT EXISTS essential_vocab_progress (
+            list_id TEXT NOT NULL,
+            entry_id TEXT NOT NULL,
+            status TEXT NOT NULL CHECK (status IN ('added', 'dismissed')),
+            flashcard_id TEXT,
+            updated_at REAL NOT NULL,
+            PRIMARY KEY (list_id, entry_id)
+        );
+        """)
+        execute(sql: """
+        CREATE INDEX IF NOT EXISTS idx_essential_progress_list_status
+          ON essential_vocab_progress(list_id, status);
+        """)
     }
 
     private func columnExists(table: String, column: String) -> Bool {
@@ -877,6 +910,139 @@ class DatabaseManager {
         }
         sqlite3_finalize(statement)
         return exists
+    }
+
+    /// Exact front match (same semantics as unique index / flashcardExists).
+    func flashcard(forFront front: String) -> Flashcard? {
+        let sql = """
+        SELECT \(Self.flashcardSelectColumns)
+        FROM flashcards
+        WHERE front = ?
+        LIMIT 1;
+        """
+        var statement: OpaquePointer?
+        var flashcard: Flashcard?
+
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            sqlite3_bind_text(statement, 1, (front as NSString).utf8String, -1, nil)
+            if sqlite3_step(statement) == SQLITE_ROW {
+                flashcard = parseFlashcard(from: statement)
+            }
+        }
+        sqlite3_finalize(statement)
+        return flashcard
+    }
+
+    func flashcard(id: String) -> Flashcard? {
+        let sql = """
+        SELECT \(Self.flashcardSelectColumns)
+        FROM flashcards
+        WHERE id = ?
+        LIMIT 1;
+        """
+        var statement: OpaquePointer?
+        var flashcard: Flashcard?
+
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            sqlite3_bind_text(statement, 1, (id as NSString).utf8String, -1, nil)
+            if sqlite3_step(statement) == SQLITE_ROW {
+                flashcard = parseFlashcard(from: statement)
+            }
+        }
+        sqlite3_finalize(statement)
+        return flashcard
+    }
+
+    // MARK: - Essential vocab progress
+
+    func upsertEssentialProgress(
+        listId: String,
+        entryId: String,
+        status: EssentialVocabStatus,
+        flashcardId: String?,
+        updatedAt: Date = Date()
+    ) {
+        let sql = """
+        INSERT INTO essential_vocab_progress (list_id, entry_id, status, flashcard_id, updated_at)
+        VALUES (?, ?, ?, ?, ?)
+        ON CONFLICT(list_id, entry_id) DO UPDATE SET
+            status = excluded.status,
+            flashcard_id = excluded.flashcard_id,
+            updated_at = excluded.updated_at;
+        """
+        var statement: OpaquePointer?
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            sqlite3_bind_text(statement, 1, (listId as NSString).utf8String, -1, nil)
+            sqlite3_bind_text(statement, 2, (entryId as NSString).utf8String, -1, nil)
+            sqlite3_bind_text(statement, 3, (status.rawValue as NSString).utf8String, -1, nil)
+            if let flashcardId {
+                sqlite3_bind_text(statement, 4, (flashcardId as NSString).utf8String, -1, nil)
+            } else {
+                sqlite3_bind_null(statement, 4)
+            }
+            sqlite3_bind_double(statement, 5, updatedAt.timeIntervalSince1970)
+            if sqlite3_step(statement) != SQLITE_DONE {
+                let errmsg = sqlite3_errmsg(db) != nil ? String(cString: sqlite3_errmsg(db)!) : "Unknown error"
+                print("DatabaseManager: Failed to upsert essential progress: \(errmsg)")
+            }
+        } else {
+            let errmsg = sqlite3_errmsg(db) != nil ? String(cString: sqlite3_errmsg(db)!) : "Unknown error"
+            print("DatabaseManager: Failed to prepare upsert essential progress: \(errmsg)")
+        }
+        sqlite3_finalize(statement)
+    }
+
+    func fetchEssentialProgress(listId: String) -> [String: EssentialProgressRow] {
+        let sql = """
+        SELECT list_id, entry_id, status, flashcard_id, updated_at
+        FROM essential_vocab_progress
+        WHERE list_id = ?;
+        """
+        var statement: OpaquePointer?
+        var result: [String: EssentialProgressRow] = [:]
+
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            sqlite3_bind_text(statement, 1, (listId as NSString).utf8String, -1, nil)
+            while sqlite3_step(statement) == SQLITE_ROW {
+                guard let listCol = sqlite3_column_text(statement, 0),
+                      let entryCol = sqlite3_column_text(statement, 1),
+                      let statusCol = sqlite3_column_text(statement, 2) else {
+                    continue
+                }
+                let listIdValue = String(cString: listCol)
+                let entryId = String(cString: entryCol)
+                let statusRaw = String(cString: statusCol)
+                guard let status = EssentialVocabStatus(rawValue: statusRaw) else { continue }
+                let flashcardId = sqlite3_column_text(statement, 3).map { String(cString: $0) }
+                let updatedAt = Date(timeIntervalSince1970: sqlite3_column_double(statement, 4))
+                result[entryId] = EssentialProgressRow(
+                    listId: listIdValue,
+                    entryId: entryId,
+                    status: status,
+                    flashcardId: flashcardId,
+                    updatedAt: updatedAt
+                )
+            }
+        } else {
+            let errmsg = sqlite3_errmsg(db) != nil ? String(cString: sqlite3_errmsg(db)!) : "Unknown error"
+            print("DatabaseManager: Failed to prepare fetchEssentialProgress: \(errmsg)")
+        }
+        sqlite3_finalize(statement)
+        return result
+    }
+
+    func deleteEssentialProgress(listId: String, entryId: String) {
+        let sql = "DELETE FROM essential_vocab_progress WHERE list_id = ? AND entry_id = ?;"
+        var statement: OpaquePointer?
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            sqlite3_bind_text(statement, 1, (listId as NSString).utf8String, -1, nil)
+            sqlite3_bind_text(statement, 2, (entryId as NSString).utf8String, -1, nil)
+            if sqlite3_step(statement) != SQLITE_DONE {
+                let errmsg = sqlite3_errmsg(db) != nil ? String(cString: sqlite3_errmsg(db)!) : "Unknown error"
+                print("DatabaseManager: Failed to delete essential progress: \(errmsg)")
+            }
+        }
+        sqlite3_finalize(statement)
     }
 
     private func parseFlashcard(from statement: OpaquePointer?) -> Flashcard? {

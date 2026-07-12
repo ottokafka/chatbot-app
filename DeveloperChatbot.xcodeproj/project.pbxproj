@@ -15,6 +15,10 @@
 		5B883FA2DEEFF1F9D2A6DD4A /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C48A966629944C57FD77A1 /* ChatViewModel.swift */; };
 		C7E78E43E6AD73050EC448B2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4000AD866CCDB6D8717E0FC2 /* ContentView.swift */; };
 		B1E399AF119BAEC74474E7BA /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC236E1003984788B17C3E6 /* DatabaseManager.swift */; };
+		C59606EF3FB90CDB59828C9D /* EssentialVocabCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477AA9EB5AE3D57F533F8B5B /* EssentialVocabCatalog.swift */; };
+		47B1E91D8CC745C8369CA661 /* EssentialVocabListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64CCF0E19E77DAC4DA249B52 /* EssentialVocabListView.swift */; };
+		AE78D2D028159214702F2FDB /* EssentialVocabModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8246A622119E200D16293D83 /* EssentialVocabModels.swift */; };
+		043191C8A2287A395AEF89E3 /* EssentialVocabViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B625B4194F4071698E8A44BC /* EssentialVocabViewModel.swift */; };
 		139FA5172FE4AD42879B3F8F /* Flashcard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E589B8AD324B386E9D7C217A /* Flashcard.swift */; };
 		73B136CFBC7F0ED63354DE89 /* FlashcardCreateSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A888EB1E508F30CE74527A4 /* FlashcardCreateSheet.swift */; };
 		BC4B2A72C945D09762349C74 /* FlashcardDeckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18185FC3B22CA7BE521534DF /* FlashcardDeckView.swift */; };
@@ -40,6 +44,9 @@
 		58D38C985E1E4C20F3BA3638 /* SpeechCorrection.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB80664C0A4CE63F4E0CA847 /* SpeechCorrection.swift */; };
 		A7DF6306F555EEF2AFE6968F /* String+Pinyin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06D260D42B257D8177ED131 /* String+Pinyin.swift */; };
 		0569F99F9A5072ABAE6378A9 /* WebSocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D17D5E4C3A17F3188513294 /* WebSocketManager.swift */; };
+		FBF2ED3171D3B388704860F5 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 3BBA198ADB9914C92BF94E5C /* manifest.json */; };
+		8AE0E84F78E54397A677DD2C /* essential_zh_v1.json in Resources */ = {isa = PBXBuildFile; fileRef = 0E436148E6E0FEA1A4EDC0AA /* essential_zh_v1.json */; };
+		0C1C85D3493C4BC8508D784D /* essential_en_v1.json in Resources */ = {isa = PBXBuildFile; fileRef = 541C4B7DF6F66906332A2A6A /* essential_en_v1.json */; };
 		A5637D5014EDF0531FA7D0B0 /* FSRS in Frameworks */ = {isa = PBXBuildFile; productRef = 36D379BEFE82D237A4C2A8B2 /* FSRS */; };
 /* End PBXBuildFile section */
 
@@ -53,6 +60,10 @@
 		59C48A966629944C57FD77A1 /* ChatViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ChatViewModel.swift"; path = "Sources/ChatViewModel.swift"; sourceTree = "<group>"; };
 		4000AD866CCDB6D8717E0FC2 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ContentView.swift"; path = "Sources/ContentView.swift"; sourceTree = "<group>"; };
 		DBC236E1003984788B17C3E6 /* DatabaseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "DatabaseManager.swift"; path = "Sources/DatabaseManager.swift"; sourceTree = "<group>"; };
+		477AA9EB5AE3D57F533F8B5B /* EssentialVocabCatalog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "EssentialVocabCatalog.swift"; path = "Sources/EssentialVocabCatalog.swift"; sourceTree = "<group>"; };
+		64CCF0E19E77DAC4DA249B52 /* EssentialVocabListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "EssentialVocabListView.swift"; path = "Sources/EssentialVocabListView.swift"; sourceTree = "<group>"; };
+		8246A622119E200D16293D83 /* EssentialVocabModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "EssentialVocabModels.swift"; path = "Sources/EssentialVocabModels.swift"; sourceTree = "<group>"; };
+		B625B4194F4071698E8A44BC /* EssentialVocabViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "EssentialVocabViewModel.swift"; path = "Sources/EssentialVocabViewModel.swift"; sourceTree = "<group>"; };
 		E589B8AD324B386E9D7C217A /* Flashcard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Flashcard.swift"; path = "Sources/Flashcard.swift"; sourceTree = "<group>"; };
 		9A888EB1E508F30CE74527A4 /* FlashcardCreateSheet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "FlashcardCreateSheet.swift"; path = "Sources/FlashcardCreateSheet.swift"; sourceTree = "<group>"; };
 		18185FC3B22CA7BE521534DF /* FlashcardDeckView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "FlashcardDeckView.swift"; path = "Sources/FlashcardDeckView.swift"; sourceTree = "<group>"; };
@@ -78,6 +89,9 @@
 		FB80664C0A4CE63F4E0CA847 /* SpeechCorrection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "SpeechCorrection.swift"; path = "Sources/SpeechCorrection.swift"; sourceTree = "<group>"; };
 		B06D260D42B257D8177ED131 /* String+Pinyin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "String+Pinyin.swift"; path = "Sources/String+Pinyin.swift"; sourceTree = "<group>"; };
 		0D17D5E4C3A17F3188513294 /* WebSocketManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "WebSocketManager.swift"; path = "Sources/WebSocketManager.swift"; sourceTree = "<group>"; };
+		3BBA198ADB9914C92BF94E5C /* manifest.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = "manifest.json"; path = "Sources/EssentialVocab/manifest.json"; sourceTree = "<group>"; };
+		0E436148E6E0FEA1A4EDC0AA /* essential_zh_v1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = "essential_zh_v1.json"; path = "Sources/EssentialVocab/essential_zh_v1.json"; sourceTree = "<group>"; };
+		541C4B7DF6F66906332A2A6A /* essential_en_v1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = "essential_en_v1.json"; path = "Sources/EssentialVocab/essential_en_v1.json"; sourceTree = "<group>"; };
 		4F132F2870B5AF972740A283 /* DeveloperChatbot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeveloperChatbot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -97,6 +111,7 @@
 			isa = PBXGroup;
 			children = (
 				D685C104AFFBCF83C7CB0FB6 /* Sources */,
+				0ECEC165EE4DFB177DC80E73 /* Resources */,
 				BF7A2D27A78D590BDEF15AF2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -113,6 +128,10 @@
 				59C48A966629944C57FD77A1 /* ChatViewModel.swift */,
 				4000AD866CCDB6D8717E0FC2 /* ContentView.swift */,
 				DBC236E1003984788B17C3E6 /* DatabaseManager.swift */,
+				477AA9EB5AE3D57F533F8B5B /* EssentialVocabCatalog.swift */,
+				64CCF0E19E77DAC4DA249B52 /* EssentialVocabListView.swift */,
+				8246A622119E200D16293D83 /* EssentialVocabModels.swift */,
+				B625B4194F4071698E8A44BC /* EssentialVocabViewModel.swift */,
 				E589B8AD324B386E9D7C217A /* Flashcard.swift */,
 				9A888EB1E508F30CE74527A4 /* FlashcardCreateSheet.swift */,
 				18185FC3B22CA7BE521534DF /* FlashcardDeckView.swift */,
@@ -142,6 +161,24 @@
 			name = Sources;
 			sourceTree = "<group>";
 		};
+		0ECEC165EE4DFB177DC80E73 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A9AFFE738B1A03D9B6B1D537 /* EssentialVocab */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		A9AFFE738B1A03D9B6B1D537 /* EssentialVocab */ = {
+			isa = PBXGroup;
+			children = (
+				3BBA198ADB9914C92BF94E5C /* manifest.json */,
+				0E436148E6E0FEA1A4EDC0AA /* essential_zh_v1.json */,
+				541C4B7DF6F66906332A2A6A /* essential_en_v1.json */,
+			);
+			name = EssentialVocab;
+			sourceTree = "<group>";
+		};
 		BF7A2D27A78D590BDEF15AF2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -159,6 +196,7 @@
 			buildPhases = (
 				7B1AB24959979FF757979CE2 /* Sources */,
 				6DB04654966809A36F783873 /* Frameworks */,
+				BC01316BBCA63BD9F9542A7E /* Resources */,
 			);
 			buildRules = (
 			);
@@ -221,6 +259,10 @@
 				5B883FA2DEEFF1F9D2A6DD4A /* ChatViewModel.swift in Sources */,
 				C7E78E43E6AD73050EC448B2 /* ContentView.swift in Sources */,
 				B1E399AF119BAEC74474E7BA /* DatabaseManager.swift in Sources */,
+				C59606EF3FB90CDB59828C9D /* EssentialVocabCatalog.swift in Sources */,
+				47B1E91D8CC745C8369CA661 /* EssentialVocabListView.swift in Sources */,
+				AE78D2D028159214702F2FDB /* EssentialVocabModels.swift in Sources */,
+				043191C8A2287A395AEF89E3 /* EssentialVocabViewModel.swift in Sources */,
 				139FA5172FE4AD42879B3F8F /* Flashcard.swift in Sources */,
 				73B136CFBC7F0ED63354DE89 /* FlashcardCreateSheet.swift in Sources */,
 				BC4B2A72C945D09762349C74 /* FlashcardDeckView.swift in Sources */,
@@ -250,6 +292,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXResourcesBuildPhase section */
+		BC01316BBCA63BD9F9542A7E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FBF2ED3171D3B388704860F5 /* manifest.json in Resources */,
+				8AE0E84F78E54397A677DD2C /* essential_zh_v1.json in Resources */,
+				0C1C85D3493C4BC8508D784D /* essential_en_v1.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
 		32246F39F4A00D3496149190 /* Debug */ = {

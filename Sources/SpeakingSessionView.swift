@@ -23,6 +23,8 @@ struct SpeakingSessionView: View {
     /// Turn currently being translated for on-demand meaning.
     @State private var meaningTurnId: String?
     @State private var isTranslatingMeaning = false
+    /// Last Apple Translation language pair used for Show meaning (`source|target`).
+    @State private var meaningTranslationPairKey: String?
 
     #if canImport(Translation) && !targetEnvironment(simulator)
     @State private var translationConfiguration: TranslationSession.Configuration?
@@ -173,28 +175,35 @@ struct SpeakingSessionView: View {
             statusAndInput(session)
         }
         #if canImport(Translation) && !targetEnvironment(simulator)
+        // Apple on-device Translation framework (not LLM). Re-runs when
+        // `meaningTranslationConfiguration` is set; see `beginMeaningTranslation`.
         .translationTask(meaningTranslationConfiguration) { translationSession in
-            guard let turnId = meaningTurnId,
-                  let turn = speakingVM.session?.turns.first(where: { $0.id == turnId }) else {
-                await MainActor.run { isTranslatingMeaning = false }
+            let turnId = await MainActor.run { meaningTurnId }
+            guard let turnId,
+                  let turn = await MainActor.run(body: {
+                      speakingVM.session?.turns.first(where: { $0.id == turnId })
+                  }) else {
+                await MainActor.run { clearMeaningTranslationState() }
                 return
             }
             let text = turn.content.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !text.isEmpty else {
-                await MainActor.run { isTranslatingMeaning = false }
+                await MainActor.run { clearMeaningTranslationState() }
                 return
             }
             do {
+                // Local / on-device Translation; typically near-instant after models are ready.
                 let response = try await translationSession.translate(text)
                 await MainActor.run {
+                    // Ignore stale completions if the user tapped another turn.
+                    guard meaningTurnId == turnId else { return }
                     speakingVM.setTurnHelp(turnId: turnId, translation: response.targetText)
-                    isTranslatingMeaning = false
-                    meaningTurnId = nil
+                    clearMeaningTranslationState()
                 }
             } catch {
                 await MainActor.run {
-                    isTranslatingMeaning = false
-                    meaningTurnId = nil
+                    guard meaningTurnId == turnId else { return }
+                    clearMeaningTranslationState()
                 }
             }
         }
@@ -390,7 +399,7 @@ struct SpeakingSessionView: View {
         }
     }
 
-    /// Expand help chrome and fill phonics / TranslationSession meaning for a turn.
+    /// Expand help chrome and fill phonics / Apple Translation meaning for a turn.
     private func showMeaning(for turn: SpeakingTurn) {
         expandedHelpTurnIds.insert(turn.id)
 
@@ -400,12 +409,22 @@ struct SpeakingSessionView: View {
             speakingVM.setTurnHelp(turnId: turn.id, phonics: autoPhonics)
         }
 
-        // Already have a translation — just expand.
+        // Already have a translation — just expand (instant).
         if let existing = turn.translation?.trimmingCharacters(in: .whitespacesAndNewlines),
            !existing.isEmpty {
             return
         }
 
+        beginMeaningTranslation(for: turn)
+    }
+
+    /// Starts Apple `TranslationSession` (on-device) for a turn’s meaning.
+    ///
+    /// Re-running with the same language pair (e.g. zh→en for every assistant line)
+    /// requires either `invalidate()` **or** a nil → reassign cycle. Assigning a new
+    /// `Configuration` with the same source/target after a successful translate often
+    /// does **not** restart `.translationTask`, leaving “Translating…” stuck.
+    private func beginMeaningTranslation(for turn: SpeakingTurn) {
         #if canImport(Translation) && !targetEnvironment(simulator)
         if #available(macOS 15.0, iOS 17.4, *) {
             let text = turn.content.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -413,19 +432,47 @@ struct SpeakingSessionView: View {
                   let pair = FlashcardTranslator.translationConfiguration(for: text) else {
                 return
             }
+
             meaningTurnId = turn.id
             isTranslatingMeaning = true
-            // Force a new translationTask run when switching turns.
-            if meaningTranslationConfiguration != nil {
+
+            let source = Locale.Language(identifier: pair.source)
+            let target = Locale.Language(identifier: pair.target)
+            let pairKey = "\(pair.source)|\(pair.target)"
+            let turnId = turn.id
+
+            if meaningTranslationConfiguration != nil,
+               meaningTranslationPairKey == pairKey {
+                // Same languages (common: every Chinese assistant line → en).
+                // Apple docs: invalidate() restarts `.translationTask` for new content
+                // without rebuilding the session — this is the fast on-device path.
+                // Mutate via @State property (invalidate is mutating).
                 meaningTranslationConfiguration?.invalidate()
+            } else {
+                // First use or language-pair change: install a fresh configuration.
+                meaningTranslationPairKey = pairKey
+                meaningTranslationConfiguration = TranslationSession.Configuration(
+                    source: source,
+                    target: target
+                )
             }
-            meaningTranslationConfiguration = TranslationSession.Configuration(
-                source: Locale.Language(identifier: pair.source),
-                target: Locale.Language(identifier: pair.target)
-            )
+
+            // Safety: never leave the spinner stuck if Translation fails to re-fire.
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 8_000_000_000)
+                guard meaningTurnId == turnId, isTranslatingMeaning else { return }
+                clearMeaningTranslationState()
+            }
             return
         }
         #endif
+    }
+
+    private func clearMeaningTranslationState() {
+        isTranslatingMeaning = false
+        meaningTurnId = nil
+        // Keep `meaningTranslationConfiguration` + pair key so the next Show meaning
+        // can invalidate() the same on-device session (instant re-run).
     }
 
     private func statusAndInput(_ session: SpeakingSession) -> some View {
@@ -723,13 +770,19 @@ struct SpeakingSessionView: View {
                 clearSaveTranslation()
                 return
             }
-            // Show spinner only when a translation task will run; task clears the flag on
-            // every early-return / cancel / completion path (never leave Save permanently disabled).
+            // Apple Translation (same engine as Show meaning). Re-run via invalidate
+            // when config already exists so same-language-pair selections still fire.
             isTranslatingSave = true
-            translationConfiguration = TranslationSession.Configuration(
-                source: Locale.Language(identifier: pair.source),
-                target: Locale.Language(identifier: pair.target)
-            )
+            let source = Locale.Language(identifier: pair.source)
+            let target = Locale.Language(identifier: pair.target)
+            if translationConfiguration != nil {
+                translationConfiguration?.invalidate()
+            } else {
+                translationConfiguration = TranslationSession.Configuration(
+                    source: source,
+                    target: target
+                )
+            }
         }
         #endif
     }

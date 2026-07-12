@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "lists": [
+    {
+      "id": "essential_zh",
+      "version": 1,
+      "language": "zh",
+      "title": {
+        "en": "Essential Chinese",
+        "zh": "常用中文词汇"
+      },
+      "entryCount": 500,
+      "sourceNote": "Top 500 high-frequency simplified Chinese vocabulary for personal study"
+    },
+    {
+      "id": "essential_en",
+      "version": 1,
+      "language": "en",
+      "title": {
+        "en": "Essential English",
+        "zh": "常用英文词汇"
+      },
+      "entryCount": 500,
+      "sourceNote": "Top 500 high-frequency English vocabulary for personal study"
+    }
+  ]
+}
