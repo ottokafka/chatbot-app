@@ -36,7 +36,11 @@ struct SpeakingSessionDebugView: View {
                 }
             }
         }
+        #if os(iOS)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        #else
         .frame(minWidth: 420, minHeight: 520)
+        #endif
     }
 
     // MARK: - Setup

@@ -1,4 +1,7 @@
 #!/bin/bash
+# Dual packaging: this script builds the macOS app via SPM (`swift build`).
+# iOS app = Xcode monorepo only (`create_xcodeproj.py` + Simulator/xcodebuild).
+# Declared Package.swift iOS platform does not make host `swift test` typecheck iOS #if.
 
 # Exit on error
 set -e

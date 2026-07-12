@@ -1,6 +1,12 @@
 import XCTest
 @testable import DeveloperChatbotCore
 
+// NavigationSplitView column presentation (`preferredCompactColumn`, preferDetail /
+// preferSidebar) is **not** unit-tested here: SwiftUI split-view layout has no pure
+// non-UI helpers worth extracting, and UI tests for column visibility are out of scope.
+// **Manual QA remains the source of truth** for compact column presentation (N1–N10, M*).
+// These tests cover only `AppNavigationModel` route / restore behavior.
+
 @MainActor
 final class AppNavigationTests: XCTestCase {
     private let lastRouteKey = AppNavigationModel.lastRouteKey

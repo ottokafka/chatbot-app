@@ -14,24 +14,43 @@ public struct ContentView: View {
     @State private var isLogsExpanded = true
     @State private var logsHeight: CGFloat = 160
     @State private var selectedFlashcard: Flashcard?
+    #if os(iOS)
+    /// Compact iOS only: which column to show. Unbound on macOS.
+    @State private var preferredCompactColumn: NavigationSplitViewColumn = .detail
+    #endif
 
     public var body: some View {
-        NavigationSplitView {
-            AppSidebarView(
-                nav: nav,
-                viewModel: viewModel,
-                flashcardVM: flashcardVM,
-                speakingVM: speakingVM,
-                selectedFlashcard: $selectedFlashcard,
-                configureSpeaking: { configureSpeakingFromChat() }
-            )
+        #if os(iOS)
+        NavigationSplitView(preferredCompactColumn: $preferredCompactColumn) {
+            sidebar
         } detail: {
             detailColumn
         }
         .environment(\.appLanguage, viewModel.appLanguage)
-        #if os(macOS)
+        #else
+        // macOS: keep unbound split — avoid behavioral drift from binding column state
+        NavigationSplitView {
+            sidebar
+        } detail: {
+            detailColumn
+        }
+        .environment(\.appLanguage, viewModel.appLanguage)
         .frame(minWidth: 800, minHeight: 600)
         #endif
+    }
+
+    // MARK: - Sidebar
+
+    private var sidebar: some View {
+        AppSidebarView(
+            nav: nav,
+            viewModel: viewModel,
+            flashcardVM: flashcardVM,
+            speakingVM: speakingVM,
+            selectedFlashcard: $selectedFlashcard,
+            configureSpeaking: { configureSpeakingFromChat() },
+            onPreferDetail: { preferDetailColumn() }
+        )
     }
 
     // MARK: - Detail
@@ -40,31 +59,42 @@ public struct ContentView: View {
         Group {
             switch nav.route {
             case .home:
-                HomeHubView(nav: nav, flashcardVM: flashcardVM, chatVM: viewModel)
-            case .lifePath:
-                LifePathRootView(
+                HomeHubView(
+                    nav: nav,
                     flashcardVM: flashcardVM,
                     chatVM: viewModel,
-                    onExit: { nav.goHome(source: .done) }
+                    onPreferSidebar: { preferSidebarColumn() }
+                )
+            case .lifePath:
+                LifePathRootView(
+                    nav: nav,
+                    flashcardVM: flashcardVM,
+                    chatVM: viewModel,
+                    onExit: { nav.goHome(source: .done) },
+                    onPreferSidebar: { preferSidebarColumn() }
                 )
             case .flashcards:
                 FlashcardsShellView(
+                    nav: nav,
                     flashcardVM: flashcardVM,
                     speakingVM: speakingVM,
                     llmEndpoint: viewModel.llmURL,
                     llmModel: viewModel.llmModel,
                     configureSpeaking: { configureSpeakingFromChat() },
                     dismissPracticeForSpeaking: { dismissPracticeForSpeaking() },
-                    endSpeakingForPractice: { endSpeakingForPractice() }
+                    endSpeakingForPractice: { endSpeakingForPractice() },
+                    onPreferSidebar: { preferSidebarColumn() }
                 )
             case .chat:
                 ChatShellView(
+                    nav: nav,
                     viewModel: viewModel,
                     flashcardVM: flashcardVM,
                     isShowingPromptModal: $isShowingPromptModal,
                     isShowingEndpointModal: $isShowingEndpointModal,
                     isLogsExpanded: $isLogsExpanded,
-                    logsHeight: $logsHeight
+                    logsHeight: $logsHeight,
+                    onPreferSidebar: { preferSidebarColumn() }
                 )
             }
         }
@@ -90,9 +120,12 @@ public struct ContentView: View {
                     tag: "NAV"
                 )
             }
+            // Always prefer detail on cold start (initial route does not fire onChange).
+            preferDetailColumn()
         }
         .onChange(of: nav.route) { oldRoute, newRoute in
             prepareRouteChange(from: oldRoute, to: newRoute)
+            preferDetailColumn()
         }
         .onChange(of: flashcardVM.flashcards) { _, _ in
             if let selected = selectedFlashcard,
@@ -112,6 +145,59 @@ public struct ContentView: View {
         .navigationTitle("")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
+    }
+
+    // MARK: - Compact column presentation (iOS only)
+
+    /// NAV tag logger for column presentation (preferDetail / preferSidebar).
+    private func logNavPresentation(_ message: String) {
+        viewModel.log(message, tag: "NAV")
+    }
+
+    /// Show the detail column on compact width. No-op on macOS.
+    /// Logs `Nav: preferDetail` (or `Nav: preferSidebar` under DEBUG sidebar-first) on each call.
+    private func preferDetailColumn() {
+        #if os(iOS)
+        #if DEBUG
+        // Force sidebar-first for repro of the original compact bug.
+        // When set, the real prefer-detail path never runs — easy to mis-report QA.
+        if UserDefaults.standard.bool(forKey: "app.navigation.debugCompactSidebarFirst") {
+            if !Self.didLogDebugSidebarFirst {
+                Self.didLogDebugSidebarFirst = true
+                viewModel.log(
+                    "Nav: debugCompactSidebarFirst active — forcing sidebar (preferDetail skipped)",
+                    tag: "NAV"
+                )
+            }
+            AppNavigationPresentation.preferSidebar(
+                column: $preferredCompactColumn,
+                onLog: logNavPresentation
+            )
+            return
+        }
+        #endif
+        AppNavigationPresentation.preferDetail(
+            column: $preferredCompactColumn,
+            onLog: logNavPresentation
+        )
+        #endif
+    }
+
+    #if os(iOS) && DEBUG
+    /// Once-per-process notice so QA sees the override without log spam.
+    private static var didLogDebugSidebarFirst = false
+    #endif
+
+    // PR-2: CompactFeatureChrome toolbar/back will call this to reveal the sidebar.
+    /// Reveal the sidebar column on compact width. No-op on macOS.
+    /// Logs `Nav: preferSidebar` on each call.
+    private func preferSidebarColumn() {
+        #if os(iOS)
+        AppNavigationPresentation.preferSidebar(
+            column: $preferredCompactColumn,
+            onLog: logNavPresentation
+        )
         #endif
     }
 
