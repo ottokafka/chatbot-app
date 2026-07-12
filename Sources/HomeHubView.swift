@@ -8,9 +8,34 @@ struct HomeHubView: View {
     /// Compact iOS: reveal the split-view sidebar column.
     var onPreferSidebar: () -> Void = {}
     @Environment(\.appLanguage) private var lang
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    #endif
+
+    /// Compact iPhone width: tighter padding and smaller adaptive grid minimum.
+    private var isCompactLayout: Bool {
+        #if os(iOS)
+        horizontalSizeClass == .compact
+        #else
+        false
+        #endif
+    }
 
     private var columns: [GridItem] {
-        [GridItem(.adaptive(minimum: 220), spacing: 16)]
+        if isCompactLayout {
+            // 160pt min → often single column on SE, two on larger phones.
+            [GridItem(.adaptive(minimum: 160), spacing: 12)]
+        } else {
+            [GridItem(.adaptive(minimum: 220), spacing: 16)]
+        }
+    }
+
+    private var contentPadding: CGFloat {
+        isCompactLayout ? 16 : 32
+    }
+
+    private var gridSpacing: CGFloat {
+        isCompactLayout ? 12 : 16
     }
 
     private var chatSubtitle: String {
@@ -23,13 +48,13 @@ struct HomeHubView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .leading, spacing: isCompactLayout ? 16 : 24) {
                 Text(L10n.homeTitle(lang))
                     .font(.largeTitle.weight(.bold))
                 Text(L10n.homeSubtitle(lang))
                     .foregroundStyle(.secondary)
 
-                LazyVGrid(columns: columns, spacing: 16) {
+                LazyVGrid(columns: columns, spacing: gridSpacing) {
                     featureCard(
                         title: L10n.lifePathTitle(lang),
                         subtitle: L10n.lifePathBrowseHelp(lang),
@@ -52,7 +77,7 @@ struct HomeHubView: View {
 
                 restoreLastAppSection
             }
-            .padding(32)
+            .padding(contentPadding)
             .frame(maxWidth: 900, alignment: .leading)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

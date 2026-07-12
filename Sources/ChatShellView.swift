@@ -333,6 +333,8 @@ struct ChatShellView: View {
 
     private var emptyState: some View {
         VStack(spacing: 16) {
+            Spacer(minLength: 0)
+
             Image(systemName: "bubble.left.and.bubble.right")
                 .font(.system(size: 64))
                 .foregroundColor(.secondary)
@@ -341,15 +343,78 @@ struct ChatShellView: View {
                 .fontWeight(.medium)
             Text(L10n.emptyStateHint(lang))
                 .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
 
             Button(L10n.startNewChat(lang)) {
                 viewModel.startNewConversation()
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
+
+            #if os(iOS)
+            // Compact: recent threads in-detail so switching does not require sidebar.
+            if !viewModel.conversations.isEmpty {
+                recentConversationsList
+                    .padding(.top, 8)
+            }
+            #endif
+
+            Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding()
     }
+
+    #if os(iOS)
+    /// Short recent list for empty/select flow (full list remains in sidebar).
+    private var recentConversationsList: some View {
+        let recent = Array(viewModel.conversations.prefix(8))
+        return VStack(alignment: .leading, spacing: 8) {
+            Text(L10n.conversations(lang))
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 4)
+
+            VStack(spacing: 0) {
+                ForEach(Array(recent.enumerated()), id: \.element.id) { index, conversation in
+                    Button {
+                        viewModel.selectConversation(conversation)
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "message")
+                                .foregroundStyle(.secondary)
+                            Text(conversation.title)
+                                .font(.body)
+                                .foregroundStyle(.primary)
+                                .lineLimit(1)
+                            Spacer(minLength: 0)
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 12)
+                        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+
+                    if index < recent.count - 1 {
+                        Divider()
+                            .padding(.leading, 44)
+                    }
+                }
+            }
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(Color.platformWindowBackground)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+            )
+        }
+        .frame(maxWidth: 420)
+    }
+    #endif
 
     private func messageRowID(_ messageID: String) -> String {
         "\(messageID)-translation-\(viewModel.isTranslationEnabled)"
