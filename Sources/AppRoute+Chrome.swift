@@ -89,7 +89,13 @@ struct CompactFeatureChrome<ExtraTrailing: View>: ViewModifier {
                 } label: {
                     Label {
                         HStack {
-                            Text(AppRouteChrome.title(route, lang: lang, dueCount: dueCount))
+                            Text(
+                                AppRouteChrome.title(
+                                    route,
+                                    lang: lang,
+                                    dueCount: route == .flashcards ? dueCount : nil
+                                )
+                            )
                             if nav.route == route {
                                 Image(systemName: "checkmark")
                             }
@@ -100,7 +106,8 @@ struct CompactFeatureChrome<ExtraTrailing: View>: ViewModifier {
                 }
             }
         } label: {
-            Label(L10n.appsSection(lang), systemImage: "square.grid.2x2")
+            // Distinct from ChatToolsMenuButton (`square.grid.2x2`) when co-located on compact chat.
+            Label(L10n.appsSection(lang), systemImage: "square.grid.3x2")
         }
         .accessibilityLabel(L10n.appsMenu(lang))
     }
