@@ -144,7 +144,15 @@ public struct ContentView: View {
         #if os(iOS)
         #if DEBUG
         // Force sidebar-first for repro of the original compact bug.
+        // When set, the real prefer-detail path never runs — easy to mis-report QA.
         if UserDefaults.standard.bool(forKey: "app.navigation.debugCompactSidebarFirst") {
+            if !Self.didLogDebugSidebarFirst {
+                Self.didLogDebugSidebarFirst = true
+                viewModel.log(
+                    "Nav: debugCompactSidebarFirst active — forcing sidebar (preferDetail skipped)",
+                    tag: "NAV"
+                )
+            }
             AppNavigationPresentation.preferSidebar(column: $preferredCompactColumn)
             return
         }
@@ -153,6 +161,12 @@ public struct ContentView: View {
         #endif
     }
 
+    #if os(iOS) && DEBUG
+    /// Once-per-process notice so QA sees the override without log spam.
+    private static var didLogDebugSidebarFirst = false
+    #endif
+
+    // PR-2: CompactFeatureChrome toolbar/back will call this to reveal the sidebar.
     /// Reveal the sidebar column on compact width. No-op on macOS.
     private func preferSidebarColumn() {
         #if os(iOS)
