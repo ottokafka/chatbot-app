@@ -13,13 +13,6 @@ struct FlashcardDraft: Equatable {
     var sourceConversationId: String?
 }
 
-enum AppSection: String, CaseIterable, Identifiable {
-    case conversations
-    case flashcards
-
-    var id: String { rawValue }
-}
-
 /// Where practice-pack generation draws its vocabulary seeds from.
 enum PracticeSeedSource: Equatable {
     /// Current FSRS-due vocabulary (deck catch-up path).
@@ -154,8 +147,6 @@ final class FlashcardViewModel: ObservableObject {
     @Published var isShowingCreateSheet = false
     /// Essential common-words triage sheet (hosted from ContentView).
     @Published var isShowingEssentialVocab = false
-    /// Baby→Child Life Path game sheet (hosted from ContentView).
-    @Published var isShowingLifePath = false
     @Published var isTranslatingDraft = false
     @Published var duplicateWarning = false
     @Published var saveError: String?

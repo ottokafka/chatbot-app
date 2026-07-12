@@ -8,13 +8,21 @@
 /* Begin PBXBuildFile section */
 		EBE01AEB25E55906882BB3FD /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A16B38FAA94B87757C25FE /* APIManager.swift */; };
 		B5F75F6C2E79EE0B220E5887 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D3B50390BC9D9916B896D9F /* App.swift */; };
+		C7C7BA59D168043CCBEEE18F /* AppNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B591505AC26718E173005FA /* AppNavigation.swift */; };
+		7DC349B3DB40F1F62CD7587A /* AppSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947D94A101D17576981C74D3 /* AppSidebarView.swift */; };
 		C05C2A8802E702A51EC91771 /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1912387963492AEA44EC4EA7 /* AudioPlayer.swift */; };
 		1DB33D8852782FA344C1C805 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB7A1682EC35FF330ECCA59 /* AudioRecorder.swift */; };
 		5319D819070F07FB7097D766 /* AudioStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB9A74C38463539877282581 /* AudioStorage.swift */; };
+		DD9015AF78FEE081AA07DB98 /* ChatChromeViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9442D445CD7BD218A0F59C8 /* ChatChromeViews.swift */; };
+		41B93A49E0EE0D2E944A3116 /* ChatShellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A37C2843FDD5A0B0F899F7 /* ChatShellView.swift */; };
 		04A56DA210B19D276E0A8CC7 /* ChatToolsMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5CAD0A4451F7F8A8A3DD81 /* ChatToolsMenu.swift */; };
 		5B883FA2DEEFF1F9D2A6DD4A /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C48A966629944C57FD77A1 /* ChatViewModel.swift */; };
 		C7E78E43E6AD73050EC448B2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4000AD866CCDB6D8717E0FC2 /* ContentView.swift */; };
+		3DB0E68A21A1FA78FC2D8967 /* EndpointConfigViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B3714ECB32636993376EE67 /* EndpointConfigViews.swift */; };
+		A8530EF2B9CE5FC59B30781E /* FlashcardsShellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119EFC2A3B33D2E2C83C2A74 /* FlashcardsShellView.swift */; };
+		0583A5CA2D7FB8A6DF990C8F /* HomeHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB9EA752AFEF76921701633 /* HomeHubView.swift */; };
 		B1E399AF119BAEC74474E7BA /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC236E1003984788B17C3E6 /* DatabaseManager.swift */; };
+		8A77B538910A70B3179079FB /* SystemPromptModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DCFE10F00C21FE059854B77 /* SystemPromptModalView.swift */; };
 		C59606EF3FB90CDB59828C9D /* EssentialVocabCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477AA9EB5AE3D57F533F8B5B /* EssentialVocabCatalog.swift */; };
 		47B1E91D8CC745C8369CA661 /* EssentialVocabListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64CCF0E19E77DAC4DA249B52 /* EssentialVocabListView.swift */; };
 		AE78D2D028159214702F2FDB /* EssentialVocabModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8246A622119E200D16293D83 /* EssentialVocabModels.swift */; };
@@ -60,13 +68,21 @@
 /* Begin PBXFileReference section */
 		C0A16B38FAA94B87757C25FE /* APIManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "APIManager.swift"; path = "Sources/APIManager.swift"; sourceTree = "<group>"; };
 		0D3B50390BC9D9916B896D9F /* App.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "App.swift"; path = "Sources/App.swift"; sourceTree = "<group>"; };
+		9B591505AC26718E173005FA /* AppNavigation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "AppNavigation.swift"; path = "Sources/AppNavigation.swift"; sourceTree = "<group>"; };
+		947D94A101D17576981C74D3 /* AppSidebarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "AppSidebarView.swift"; path = "Sources/AppSidebarView.swift"; sourceTree = "<group>"; };
 		1912387963492AEA44EC4EA7 /* AudioPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "AudioPlayer.swift"; path = "Sources/AudioPlayer.swift"; sourceTree = "<group>"; };
 		7CB7A1682EC35FF330ECCA59 /* AudioRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "AudioRecorder.swift"; path = "Sources/AudioRecorder.swift"; sourceTree = "<group>"; };
 		CB9A74C38463539877282581 /* AudioStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "AudioStorage.swift"; path = "Sources/AudioStorage.swift"; sourceTree = "<group>"; };
+		A9442D445CD7BD218A0F59C8 /* ChatChromeViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ChatChromeViews.swift"; path = "Sources/ChatChromeViews.swift"; sourceTree = "<group>"; };
+		C7A37C2843FDD5A0B0F899F7 /* ChatShellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ChatShellView.swift"; path = "Sources/ChatShellView.swift"; sourceTree = "<group>"; };
 		EC5CAD0A4451F7F8A8A3DD81 /* ChatToolsMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ChatToolsMenu.swift"; path = "Sources/ChatToolsMenu.swift"; sourceTree = "<group>"; };
 		59C48A966629944C57FD77A1 /* ChatViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ChatViewModel.swift"; path = "Sources/ChatViewModel.swift"; sourceTree = "<group>"; };
 		4000AD866CCDB6D8717E0FC2 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ContentView.swift"; path = "Sources/ContentView.swift"; sourceTree = "<group>"; };
+		5B3714ECB32636993376EE67 /* EndpointConfigViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "EndpointConfigViews.swift"; path = "Sources/EndpointConfigViews.swift"; sourceTree = "<group>"; };
+		119EFC2A3B33D2E2C83C2A74 /* FlashcardsShellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "FlashcardsShellView.swift"; path = "Sources/FlashcardsShellView.swift"; sourceTree = "<group>"; };
+		CEB9EA752AFEF76921701633 /* HomeHubView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "HomeHubView.swift"; path = "Sources/HomeHubView.swift"; sourceTree = "<group>"; };
 		DBC236E1003984788B17C3E6 /* DatabaseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "DatabaseManager.swift"; path = "Sources/DatabaseManager.swift"; sourceTree = "<group>"; };
+		4DCFE10F00C21FE059854B77 /* SystemPromptModalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "SystemPromptModalView.swift"; path = "Sources/SystemPromptModalView.swift"; sourceTree = "<group>"; };
 		477AA9EB5AE3D57F533F8B5B /* EssentialVocabCatalog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "EssentialVocabCatalog.swift"; path = "Sources/EssentialVocabCatalog.swift"; sourceTree = "<group>"; };
 		64CCF0E19E77DAC4DA249B52 /* EssentialVocabListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "EssentialVocabListView.swift"; path = "Sources/EssentialVocabListView.swift"; sourceTree = "<group>"; };
 		8246A622119E200D16293D83 /* EssentialVocabModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "EssentialVocabModels.swift"; path = "Sources/EssentialVocabModels.swift"; sourceTree = "<group>"; };
@@ -135,13 +151,21 @@
 			children = (
 				C0A16B38FAA94B87757C25FE /* APIManager.swift */,
 				0D3B50390BC9D9916B896D9F /* App.swift */,
+				9B591505AC26718E173005FA /* AppNavigation.swift */,
+				947D94A101D17576981C74D3 /* AppSidebarView.swift */,
 				1912387963492AEA44EC4EA7 /* AudioPlayer.swift */,
 				7CB7A1682EC35FF330ECCA59 /* AudioRecorder.swift */,
 				CB9A74C38463539877282581 /* AudioStorage.swift */,
+				A9442D445CD7BD218A0F59C8 /* ChatChromeViews.swift */,
+				C7A37C2843FDD5A0B0F899F7 /* ChatShellView.swift */,
 				EC5CAD0A4451F7F8A8A3DD81 /* ChatToolsMenu.swift */,
 				59C48A966629944C57FD77A1 /* ChatViewModel.swift */,
 				4000AD866CCDB6D8717E0FC2 /* ContentView.swift */,
+				5B3714ECB32636993376EE67 /* EndpointConfigViews.swift */,
+				119EFC2A3B33D2E2C83C2A74 /* FlashcardsShellView.swift */,
+				CEB9EA752AFEF76921701633 /* HomeHubView.swift */,
 				DBC236E1003984788B17C3E6 /* DatabaseManager.swift */,
+				4DCFE10F00C21FE059854B77 /* SystemPromptModalView.swift */,
 				477AA9EB5AE3D57F533F8B5B /* EssentialVocabCatalog.swift */,
 				64CCF0E19E77DAC4DA249B52 /* EssentialVocabListView.swift */,
 				8246A622119E200D16293D83 /* EssentialVocabModels.swift */,
@@ -281,13 +305,21 @@
 			files = (
 				EBE01AEB25E55906882BB3FD /* APIManager.swift in Sources */,
 				B5F75F6C2E79EE0B220E5887 /* App.swift in Sources */,
+				C7C7BA59D168043CCBEEE18F /* AppNavigation.swift in Sources */,
+				7DC349B3DB40F1F62CD7587A /* AppSidebarView.swift in Sources */,
 				C05C2A8802E702A51EC91771 /* AudioPlayer.swift in Sources */,
 				1DB33D8852782FA344C1C805 /* AudioRecorder.swift in Sources */,
 				5319D819070F07FB7097D766 /* AudioStorage.swift in Sources */,
+				DD9015AF78FEE081AA07DB98 /* ChatChromeViews.swift in Sources */,
+				41B93A49E0EE0D2E944A3116 /* ChatShellView.swift in Sources */,
 				04A56DA210B19D276E0A8CC7 /* ChatToolsMenu.swift in Sources */,
 				5B883FA2DEEFF1F9D2A6DD4A /* ChatViewModel.swift in Sources */,
 				C7E78E43E6AD73050EC448B2 /* ContentView.swift in Sources */,
+				3DB0E68A21A1FA78FC2D8967 /* EndpointConfigViews.swift in Sources */,
+				A8530EF2B9CE5FC59B30781E /* FlashcardsShellView.swift in Sources */,
+				0583A5CA2D7FB8A6DF990C8F /* HomeHubView.swift in Sources */,
 				B1E399AF119BAEC74474E7BA /* DatabaseManager.swift in Sources */,
+				8A77B538910A70B3179079FB /* SystemPromptModalView.swift in Sources */,
 				C59606EF3FB90CDB59828C9D /* EssentialVocabCatalog.swift in Sources */,
 				47B1E91D8CC745C8369CA661 /* EssentialVocabListView.swift in Sources */,
 				AE78D2D028159214702F2FDB /* EssentialVocabModels.swift in Sources */,

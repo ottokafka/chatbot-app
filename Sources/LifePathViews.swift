@@ -3,6 +3,8 @@ import SwiftUI
 struct LifePathRootView: View {
     @ObservedObject var flashcardVM: FlashcardViewModel
     @ObservedObject var chatVM: ChatViewModel
+    /// Leave Life Path feature (typically `nav.goHome`).
+    var onExit: () -> Void = {}
     @StateObject private var vm = LifePathViewModel()
     @Environment(\.appLanguage) private var lang
     @State private var showResetConfirm = false
@@ -38,9 +40,8 @@ struct LifePathRootView: View {
                             vm.endSession()
                         }
                     } else {
-                        Button(L10n.done(lang)) {
-                            chatVM.stopPlayback()
-                            flashcardVM.isShowingLifePath = false
+                        Button(L10n.backToHome(lang)) {
+                            onExit()
                         }
                     }
                 }
@@ -51,10 +52,11 @@ struct LifePathRootView: View {
                 }
             }
         }
-        .frame(minWidth: 480, minHeight: 560)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {
             vm.attach(flashcardVM: flashcardVM, dbManager: flashcardVM.dbManager)
             vm.onLog = flashcardVM.onLog
+            vm.onRequestExit = onExit
             vm.load()
         }
         .onChange(of: vm.isPlaying) { _, playing in

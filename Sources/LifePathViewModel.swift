@@ -31,6 +31,8 @@ final class LifePathViewModel: ObservableObject {
     private var entriesById: [String: LifePathEntry] = [:]
 
     var onLog: ((String) -> Void)?
+    /// Host sets this so language-picker cancel can leave the feature (route `onExit`).
+    var onRequestExit: (() -> Void)?
 
     init(dbManager: DatabaseManager = DatabaseManager(), flashcardVM: FlashcardViewModel? = nil) {
         self.dbManager = dbManager
@@ -130,7 +132,7 @@ final class LifePathViewModel: ObservableObject {
     }
 
     func cancelLanguagePicker() {
-        flashcardVM?.isShowingLifePath = false
+        onRequestExit?()
     }
 
     /// DEV/testing only: wipe progress for the active language and re-seed from Baby.

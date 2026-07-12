@@ -26,6 +26,41 @@ extension EnvironmentValues {
 }
 
 enum L10n {
+    // MARK: - Home & app navigation
+    static func home(_ lang: AppLanguage) -> String {
+        lang == .zh ? "主页" : "Home"
+    }
+
+    static func homeTitle(_ lang: AppLanguage) -> String {
+        lang == .zh ? "主页" : "Home"
+    }
+
+    static func homeSubtitle(_ lang: AppLanguage) -> String {
+        lang == .zh ? "选择要开始的功能" : "Choose what you want to do"
+    }
+
+    static func appsSection(_ lang: AppLanguage) -> String {
+        lang == .zh ? "功能" : "Apps"
+    }
+
+    static func backToHome(_ lang: AppLanguage) -> String {
+        lang == .zh ? "主页" : "Home"
+    }
+
+    static func featureCardOpen(_ lang: AppLanguage) -> String {
+        lang == .zh ? "打开" : "Open"
+    }
+
+    static func restoreLastApp(_ lang: AppLanguage) -> String {
+        lang == .zh ? "启动时打开上次功能" : "Reopen last app on launch"
+    }
+
+    static func restoreLastAppHelp(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "开启后，下次启动将直接进入上次使用的功能（主页、成长之路、闪卡或对话），而不是总是打开主页。"
+            : "When on, the next launch opens the last feature you used (Home, Life Path, Flashcards, or Chat) instead of always starting on Home."
+    }
+
     // MARK: - Sidebar
     static func newChat(_ lang: AppLanguage) -> String {
         lang == .zh ? "新建对话" : "New Chat"

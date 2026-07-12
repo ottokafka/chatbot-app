@@ -1,0 +1,335 @@
+import SwiftUI
+#if canImport(Translation)
+import Translation
+#endif
+
+/// Chat feature detail shell: conversation chrome, messages, input, and macOS log console.
+/// Sheets for prompts/endpoints stay hosted on `ContentView` (root).
+struct ChatShellView: View {
+    @ObservedObject var viewModel: ChatViewModel
+    @ObservedObject var flashcardVM: FlashcardViewModel
+    @Binding var isShowingPromptModal: Bool
+    @Binding var isShowingEndpointModal: Bool
+    @Binding var isLogsExpanded: Bool
+    @Binding var logsHeight: CGFloat
+
+    @Environment(\.appLanguage) private var lang
+
+    @State private var textInput = ""
+    @State private var isPromptHovered = false
+    @State private var isEndpointsHovered = false
+    @State private var isTranslationHovered = false
+    @State private var isPhonicsHovered = false
+
+    var body: some View {
+        VStack(spacing: 0) {
+            chatMain
+            #if os(macOS)
+            #if canImport(Translation)
+            if #available(macOS 15.0, *) {
+                Divider()
+                LogConsolePanel(
+                    viewModel: viewModel,
+                    isExpanded: $isLogsExpanded,
+                    height: $logsHeight
+                )
+            }
+            #endif
+            #endif
+        }
+        .toolbar {
+            #if os(iOS)
+            if viewModel.activeConversation != nil {
+                ToolbarItem(placement: .principal) {
+                    HStack(spacing: 6) {
+                        StatusIndicator(title: "STT", isActive: viewModel.isWebSocketConnected, activeColor: .green, showTitle: false)
+                        StatusIndicator(title: "LLM", isActive: viewModel.isGeneratingText, activeColor: .yellow, showTitle: false)
+                        StatusIndicator(title: "TTS", isActive: viewModel.isGeneratingSpeech, activeColor: .blue, showTitle: false)
+                        StatusIndicator(title: "AUDIO", isActive: viewModel.isPlayingAudio, activeColor: .orange, showTitle: false)
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    ChatToolsMenuButton(
+                        viewModel: viewModel,
+                        isShowingPromptModal: $isShowingPromptModal,
+                        isShowingEndpointModal: $isShowingEndpointModal
+                    )
+                }
+            }
+            #endif
+        }
+    }
+
+    @ViewBuilder
+    private var chatMain: some View {
+        if viewModel.activeConversation != nil {
+            activeConversationView
+        } else {
+            emptyState
+        }
+    }
+
+    private var activeConversationView: some View {
+        VStack(spacing: 0) {
+            #if !os(iOS)
+            chatHeader
+            #endif
+
+            Divider()
+
+            messagesViewport
+
+            Divider()
+
+            inputBar
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    #if !os(iOS)
+    private var chatHeader: some View {
+        HStack {
+            HStack(spacing: 12) {
+                Button(action: {
+                    isShowingPromptModal.toggle()
+                }) {
+                    HStack(spacing: 6) {
+                        Text("💬")
+                        Text(viewModel.activeSystemPrompt?.title ?? L10n.noPrompt(lang))
+                        Text("▾")
+                    }
+                    .font(.system(.body, design: .monospaced))
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(
+                        Capsule()
+                            .fill(isPromptHovered ? Color.gray.opacity(0.2) : Color.platformControlBackground)
+                            .overlay(
+                                Capsule()
+                                    .stroke(Color.gray.opacity(isPromptHovered ? 0.5 : 0.3), lineWidth: 1)
+                            )
+                    )
+                }
+                .buttonStyle(.plain)
+                .onHover { isPromptHovered = $0 }
+                .help(L10n.selectSystemPromptHelp(lang))
+
+                Button(action: {
+                    isShowingEndpointModal.toggle()
+                }) {
+                    HStack(spacing: 6) {
+                        Text("🔌")
+                        Text(L10n.endpoints(lang))
+                    }
+                    .font(.system(.body, design: .monospaced))
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(
+                        Capsule()
+                            .fill(isEndpointsHovered ? Color.gray.opacity(0.2) : Color.platformControlBackground)
+                            .overlay(
+                                Capsule()
+                                    .stroke(Color.gray.opacity(isEndpointsHovered ? 0.5 : 0.3), lineWidth: 1)
+                            )
+                    )
+                }
+                .buttonStyle(.plain)
+                .onHover { isEndpointsHovered = $0 }
+                .help(L10n.manageEndpointsHelp(lang))
+
+                Button(action: {
+                    viewModel.isTranslationEnabled.toggle()
+                }) {
+                    HStack(spacing: 6) {
+                        Text("🌐")
+                        Text(viewModel.isTranslationEnabled ? L10n.messageTranslation(lang) : L10n.messageTranslationOff(lang))
+                    }
+                    .font(.system(.body, design: .monospaced))
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(
+                        Capsule()
+                            .fill(viewModel.isTranslationEnabled ? Color.blue.opacity(0.15) : (isTranslationHovered ? Color.gray.opacity(0.2) : Color.platformControlBackground))
+                            .overlay(
+                                Capsule()
+                                    .stroke(viewModel.isTranslationEnabled ? Color.blue.opacity(0.6) : (Color.gray.opacity(isTranslationHovered ? 0.5 : 0.3)), lineWidth: 1)
+                            )
+                    )
+                }
+                .buttonStyle(.plain)
+                .onHover { isTranslationHovered = $0 }
+                .help(L10n.toggleMessageTranslationHelp(lang))
+
+                Button(action: {
+                    viewModel.isPhonicsEnabled.toggle()
+                }) {
+                    HStack(spacing: 6) {
+                        Text("🗣️")
+                        Text(viewModel.isPhonicsEnabled ? L10n.phonics(lang) : L10n.phonicsOff(lang))
+                    }
+                    .font(.system(.body, design: .monospaced))
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(
+                        Capsule()
+                            .fill(viewModel.isPhonicsEnabled ? Color.blue.opacity(0.15) : (isPhonicsHovered ? Color.gray.opacity(0.2) : Color.platformControlBackground))
+                            .overlay(
+                                Capsule()
+                                    .stroke(viewModel.isPhonicsEnabled ? Color.blue.opacity(0.6) : (Color.gray.opacity(isPhonicsHovered ? 0.5 : 0.3)), lineWidth: 1)
+                            )
+                    )
+                }
+                .buttonStyle(.plain)
+                .onHover { isPhonicsHovered = $0 }
+                .help(L10n.togglePhonicsHelp(lang))
+
+                Picker("", selection: $viewModel.speechPipelineMode) {
+                    Text(L10n.speechPipelineDirect(lang)).tag(SpeechPipelineMode.directSTT)
+                    Text(L10n.speechPipelineSTTPlusLLM(lang)).tag(SpeechPipelineMode.sttPlusLLM)
+                }
+                .pickerStyle(.segmented)
+                .frame(maxWidth: 220)
+                .help(L10n.speechPipelineModeHelp(lang))
+
+                Picker("", selection: $viewModel.sttLanguage) {
+                    ForEach(STTLanguage.allCases) { option in
+                        Text(option.displayName).tag(option)
+                    }
+                }
+                .labelsHidden()
+                .frame(width: 110)
+                .help(L10n.sttLanguageHelp(lang))
+            }
+
+            Spacer()
+
+            HStack(spacing: 12) {
+                StatusIndicator(
+                    title: viewModel.speechPipelineMode == .sttPlusLLM ? "STT+LLM" : "STT",
+                    isActive: viewModel.isWebSocketConnected,
+                    activeColor: .green
+                )
+                StatusIndicator(
+                    title: viewModel.isCorrectingSpeech ? "FIX" : "LLM",
+                    isActive: viewModel.isGeneratingText || viewModel.isCorrectingSpeech,
+                    activeColor: .yellow
+                )
+                StatusIndicator(title: "TTS", isActive: viewModel.isGeneratingSpeech, activeColor: .blue)
+                StatusIndicator(title: "AUDIO", isActive: viewModel.isPlayingAudio, activeColor: .orange)
+            }
+            .padding(.trailing, 10)
+        }
+        .padding()
+        .background(Color.platformWindowBackground)
+    }
+    #endif
+
+    private var messagesViewport: some View {
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    ForEach(viewModel.messages) { message in
+                        MessageRow(
+                            message: message,
+                            flashcardVM: flashcardVM,
+                            isTranslationEnabled: viewModel.isTranslationEnabled,
+                            isPhonicsEnabled: viewModel.isPhonicsEnabled,
+                            isPlaying: viewModel.currentlyPlayingMessageId == message.id && viewModel.isPlayingAudio,
+                            isGeneratingAudio: viewModel.generatingAudioMessageId == message.id,
+                            onPlayAudio: {
+                                viewModel.playMessageAudio(message)
+                            }
+                        )
+                        .id(messageRowID(message.id))
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding()
+            }
+            .frame(maxWidth: .infinity)
+            .background(Color.platformControlBackground)
+            .onChange(of: viewModel.messages) {
+                if let lastMessage = viewModel.messages.last {
+                    withAnimation {
+                        proxy.scrollTo(messageRowID(lastMessage.id), anchor: .bottom)
+                    }
+                }
+            }
+        }
+    }
+
+    private var inputBar: some View {
+        HStack(spacing: 12) {
+            RecordButton(
+                isActive: viewModel.isMicrophoneActive,
+                isConnected: viewModel.isWebSocketConnected,
+                action: {
+                    viewModel.toggleMicrophone()
+                }
+            )
+
+            StopPlaybackButton(
+                isPlaying: viewModel.isPlayingAudio,
+                action: {
+                    viewModel.stopPlayback()
+                }
+            )
+
+            TextField(L10n.messagePlaceholder(lang), text: $textInput, onCommit: {
+                sendText()
+            })
+            .textFieldStyle(.roundedBorder)
+            .font(.body)
+            .controlSize(.large)
+
+            Button(action: {
+                sendText()
+            }) {
+                Image(systemName: "paperplane.fill")
+                    .font(.body)
+                    .padding(.horizontal, 4)
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .disabled(textInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        }
+        #if os(iOS)
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+        #else
+        .padding()
+        #endif
+        .background(Color.platformWindowBackground)
+    }
+
+    private var emptyState: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "bubble.left.and.bubble.right")
+                .font(.system(size: 64))
+                .foregroundColor(.secondary)
+            Text(L10n.noConversationSelected(lang))
+                .font(.title2)
+                .fontWeight(.medium)
+            Text(L10n.emptyStateHint(lang))
+                .foregroundColor(.secondary)
+
+            Button(L10n.startNewChat(lang)) {
+                viewModel.startNewConversation()
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func messageRowID(_ messageID: String) -> String {
+        "\(messageID)-translation-\(viewModel.isTranslationEnabled)"
+    }
+
+    private func sendText() {
+        let text = textInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return }
+        viewModel.sendTextMessage(text)
+        textInput = ""
+    }
+}
