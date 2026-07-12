@@ -489,21 +489,14 @@ struct LifePathRootView: View {
             Text(L10n.lifePathRoundStats(lang, correct: vm.sessionCorrect, wrong: vm.sessionWrong))
                 .foregroundStyle(.secondary)
             Button {
-                vm.endSession()
-            } label: {
-                Text(L10n.lifePathBackHome(lang))
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
-            Button {
+                // Advance into the next stage's full session (or continue current if still open).
                 vm.endSession()
                 vm.startRound()
             } label: {
-                Text(L10n.lifePathPlayAgain(lang))
+                Text(L10n.lifePathNextLevel(lang))
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.borderedProminent)
             .controlSize(.large)
         }
         .padding(32)

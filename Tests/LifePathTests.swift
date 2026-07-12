@@ -9,7 +9,12 @@ final class LifePathCatalogTests: XCTestCase {
         XCTAssertTrue(LifePathValidation.validate(file).isEmpty)
         XCTAssertTrue(file.stages.contains(where: { $0.id == "baby" }))
         XCTAssertTrue(file.stages.contains(where: { $0.id == "toddler" }))
+        XCTAssertTrue(file.stages.contains(where: { $0.id == "preschool" }))
         XCTAssertEqual(file.entries.first?.stageId, "baby")
+        let preschoolCount = file.entries.filter { $0.stageId == "preschool" }.count
+        XCTAssertEqual(preschoolCount, 299)
+        XCTAssertEqual(file.stages.first(where: { $0.id == "preschool" })?.order, 2)
+        XCTAssertEqual(file.entries.count, 412)
     }
 
     func testBundledEnglishListLoadsAndValidates() throws {
@@ -19,12 +24,23 @@ final class LifePathCatalogTests: XCTestCase {
         XCTAssertTrue(LifePathValidation.validate(file).isEmpty)
         let babyCount = file.entries.filter { $0.stageId == "baby" }.count
         XCTAssertEqual(babyCount, 50)
+        XCTAssertTrue(file.stages.contains(where: { $0.id == "preschool" }))
+        let preschoolCount = file.entries.filter { $0.stageId == "preschool" }.count
+        XCTAssertEqual(preschoolCount, 299)
+        XCTAssertEqual(file.entries.count, 415)
+        let firstPreschool = file.entries.first { $0.stageId == "preschool" }
+        XCTAssertEqual(firstPreschool?.front, "teacher")
+        XCTAssertEqual(firstPreschool?.back, "老师")
     }
 
     func testManifestLoads() throws {
         let manifest = try LifePathCatalog.loadManifest()
         XCTAssertEqual(manifest.schemaVersion, 1)
         XCTAssertEqual(manifest.lists.count, 2)
+        let en = try XCTUnwrap(manifest.lists.first { $0.id == "life_path_en" })
+        let zh = try XCTUnwrap(manifest.lists.first { $0.id == "life_path_zh" })
+        XCTAssertEqual(en.entryCount, 415)
+        XCTAssertEqual(zh.entryCount, 412)
     }
 
     func testValidationRejectsDuplicateFront() throws {

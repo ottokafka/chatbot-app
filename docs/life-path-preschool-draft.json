@@ -1,0 +1,3065 @@
+{
+  "stageId": "preschool",
+  "order": 2,
+  "note": "Implemented in life_path_en_v1.json / life_path_zh_v1.json",
+  "targetCount": 299,
+  "pairs": [
+    {
+      "rank": 1,
+      "theme": "School & classroom",
+      "en": "teacher",
+      "zh": "老师",
+      "pinyin": "lǎoshī",
+      "tags": [
+        "people",
+        "school"
+      ]
+    },
+    {
+      "rank": 2,
+      "theme": "School & classroom",
+      "en": "friend",
+      "zh": "朋友",
+      "pinyin": "péngyou",
+      "tags": [
+        "people",
+        "social"
+      ]
+    },
+    {
+      "rank": 3,
+      "theme": "School & classroom",
+      "en": "school",
+      "zh": "学校",
+      "pinyin": "xuéxiào",
+      "tags": [
+        "locations",
+        "school"
+      ]
+    },
+    {
+      "rank": 4,
+      "theme": "School & classroom",
+      "en": "classroom",
+      "zh": "教室",
+      "pinyin": "jiàoshì",
+      "tags": [
+        "locations",
+        "school"
+      ]
+    },
+    {
+      "rank": 5,
+      "theme": "School & classroom",
+      "en": "bag",
+      "zh": "书包",
+      "pinyin": "shūbāo",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "rank": 6,
+      "theme": "School & classroom",
+      "en": "pencil",
+      "zh": "铅笔",
+      "pinyin": "qiānbǐ",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "rank": 7,
+      "theme": "School & classroom",
+      "en": "crayon",
+      "zh": "蜡笔",
+      "pinyin": "làbǐ",
+      "tags": [
+        "school",
+        "toys_play"
+      ]
+    },
+    {
+      "rank": 8,
+      "theme": "School & classroom",
+      "en": "paper",
+      "zh": "纸",
+      "pinyin": "zhǐ",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "rank": 9,
+      "theme": "School & classroom",
+      "en": "eraser",
+      "zh": "橡皮",
+      "pinyin": "xiàngpí",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "rank": 10,
+      "theme": "School & classroom",
+      "en": "scissors",
+      "zh": "剪刀",
+      "pinyin": "jiǎndāo",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "rank": 11,
+      "theme": "School & classroom",
+      "en": "glue",
+      "zh": "胶水",
+      "pinyin": "jiāoshuǐ",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "rank": 12,
+      "theme": "School & classroom",
+      "en": "story",
+      "zh": "故事",
+      "pinyin": "gùshi",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "rank": 13,
+      "theme": "School & classroom",
+      "en": "song",
+      "zh": "歌",
+      "pinyin": "gē",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "rank": 14,
+      "theme": "School & classroom",
+      "en": "picture",
+      "zh": "图画",
+      "pinyin": "túhuà",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "rank": 15,
+      "theme": "School & classroom",
+      "en": "draw",
+      "zh": "画",
+      "pinyin": "huà",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "rank": 16,
+      "theme": "School & classroom",
+      "en": "write",
+      "zh": "写",
+      "pinyin": "xiě",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "rank": 17,
+      "theme": "School & classroom",
+      "en": "read",
+      "zh": "读",
+      "pinyin": "dú",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "rank": 18,
+      "theme": "School & classroom",
+      "en": "count",
+      "zh": "数",
+      "pinyin": "shǔ",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "rank": 19,
+      "theme": "School & classroom",
+      "en": "listen",
+      "zh": "听",
+      "pinyin": "tīng",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "rank": 20,
+      "theme": "School & classroom",
+      "en": "speak",
+      "zh": "说",
+      "pinyin": "shuō",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "rank": 21,
+      "theme": "School & classroom",
+      "en": "sing",
+      "zh": "唱",
+      "pinyin": "chàng",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "rank": 22,
+      "theme": "School & classroom",
+      "en": "dance",
+      "zh": "跳舞",
+      "pinyin": "tiàowǔ",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 23,
+      "theme": "School & classroom",
+      "en": "learn",
+      "zh": "学习",
+      "pinyin": "xuéxí",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "rank": 24,
+      "theme": "School & classroom",
+      "en": "share",
+      "zh": "分享",
+      "pinyin": "fēnxiǎng",
+      "tags": [
+        "actions",
+        "social"
+      ]
+    },
+    {
+      "rank": 25,
+      "theme": "School & classroom",
+      "en": "line up",
+      "zh": "排队",
+      "pinyin": "páiduì",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "rank": 26,
+      "theme": "School & classroom",
+      "en": "raise hand",
+      "zh": "举手",
+      "pinyin": "jǔ shǒu",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "rank": 27,
+      "theme": "School & classroom",
+      "en": "snack",
+      "zh": "点心",
+      "pinyin": "diǎnxin",
+      "tags": [
+        "food",
+        "school"
+      ]
+    },
+    {
+      "rank": 28,
+      "theme": "School & classroom",
+      "en": "nap",
+      "zh": "午睡",
+      "pinyin": "wǔshuì",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "rank": 29,
+      "theme": "School & classroom",
+      "en": "homework",
+      "zh": "作业",
+      "pinyin": "zuòyè",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "rank": 30,
+      "theme": "School & classroom",
+      "en": "desk",
+      "zh": "课桌",
+      "pinyin": "kèzhuō",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "rank": 31,
+      "theme": "School & classroom",
+      "en": "board",
+      "zh": "黑板",
+      "pinyin": "hēibǎn",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "rank": 32,
+      "theme": "School & classroom",
+      "en": "cut",
+      "zh": "剪",
+      "pinyin": "jiǎn",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "rank": 33,
+      "theme": "School & classroom",
+      "en": "paste",
+      "zh": "贴",
+      "pinyin": "tiē",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "rank": 34,
+      "theme": "School & classroom",
+      "en": "color",
+      "zh": "涂色",
+      "pinyin": "tú sè",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "rank": 35,
+      "theme": "School & classroom",
+      "en": "rule",
+      "zh": "规则",
+      "pinyin": "guīzé",
+      "tags": [
+        "school",
+        "social"
+      ]
+    },
+    {
+      "rank": 36,
+      "theme": "People",
+      "en": "brother",
+      "zh": "哥哥",
+      "pinyin": "gēge",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "rank": 37,
+      "theme": "People",
+      "en": "sister",
+      "zh": "姐姐",
+      "pinyin": "jiějie",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "rank": 38,
+      "theme": "People",
+      "en": "younger brother",
+      "zh": "弟弟",
+      "pinyin": "dìdi",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "rank": 39,
+      "theme": "People",
+      "en": "younger sister",
+      "zh": "妹妹",
+      "pinyin": "mèimei",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "rank": 40,
+      "theme": "People",
+      "en": "uncle",
+      "zh": "叔叔",
+      "pinyin": "shūshu",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "rank": 41,
+      "theme": "People",
+      "en": "aunt",
+      "zh": "阿姨",
+      "pinyin": "āyí",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "rank": 42,
+      "theme": "People",
+      "en": "boy",
+      "zh": "男孩",
+      "pinyin": "nánhái",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "rank": 43,
+      "theme": "People",
+      "en": "girl",
+      "zh": "女孩",
+      "pinyin": "nǚhái",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "rank": 44,
+      "theme": "People",
+      "en": "doctor",
+      "zh": "医生",
+      "pinyin": "yīshēng",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "rank": 45,
+      "theme": "People",
+      "en": "nurse",
+      "zh": "护士",
+      "pinyin": "hùshi",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "rank": 46,
+      "theme": "People",
+      "en": "driver",
+      "zh": "司机",
+      "pinyin": "sījī",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "rank": 47,
+      "theme": "People",
+      "en": "police",
+      "zh": "警察",
+      "pinyin": "jǐngchá",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "rank": 48,
+      "theme": "People",
+      "en": "name",
+      "zh": "名字",
+      "pinyin": "míngzi",
+      "tags": [
+        "people",
+        "social"
+      ]
+    },
+    {
+      "rank": 49,
+      "theme": "People",
+      "en": "me",
+      "zh": "我",
+      "pinyin": "wǒ",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "rank": 50,
+      "theme": "People",
+      "en": "you",
+      "zh": "你",
+      "pinyin": "nǐ",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "rank": 51,
+      "theme": "People",
+      "en": "we",
+      "zh": "我们",
+      "pinyin": "wǒmen",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "rank": 52,
+      "theme": "People",
+      "en": "he",
+      "zh": "他",
+      "pinyin": "tā",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "rank": 53,
+      "theme": "People",
+      "en": "she",
+      "zh": "她",
+      "pinyin": "tā",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "rank": 54,
+      "theme": "Daily routine & time",
+      "en": "morning",
+      "zh": "早上",
+      "pinyin": "zǎoshang",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "rank": 55,
+      "theme": "Daily routine & time",
+      "en": "afternoon",
+      "zh": "下午",
+      "pinyin": "xiàwǔ",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "rank": 56,
+      "theme": "Daily routine & time",
+      "en": "evening",
+      "zh": "晚上",
+      "pinyin": "wǎnshang",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "rank": 57,
+      "theme": "Daily routine & time",
+      "en": "night",
+      "zh": "夜里",
+      "pinyin": "yèli",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "rank": 58,
+      "theme": "Daily routine & time",
+      "en": "today",
+      "zh": "今天",
+      "pinyin": "jīntiān",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "rank": 59,
+      "theme": "Daily routine & time",
+      "en": "tomorrow",
+      "zh": "明天",
+      "pinyin": "míngtiān",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "rank": 60,
+      "theme": "Daily routine & time",
+      "en": "yesterday",
+      "zh": "昨天",
+      "pinyin": "zuótiān",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "rank": 61,
+      "theme": "Daily routine & time",
+      "en": "now",
+      "zh": "现在",
+      "pinyin": "xiànzài",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "rank": 62,
+      "theme": "Daily routine & time",
+      "en": "later",
+      "zh": "等一下",
+      "pinyin": "děng yīxià",
+      "tags": [
+        "time",
+        "social"
+      ]
+    },
+    {
+      "rank": 63,
+      "theme": "Daily routine & time",
+      "en": "birthday",
+      "zh": "生日",
+      "pinyin": "shēngrì",
+      "tags": [
+        "time",
+        "social"
+      ]
+    },
+    {
+      "rank": 64,
+      "theme": "Daily routine & time",
+      "en": "wake up",
+      "zh": "起床",
+      "pinyin": "qǐchuáng",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 65,
+      "theme": "Daily routine & time",
+      "en": "get dressed",
+      "zh": "穿衣服",
+      "pinyin": "chuān yīfu",
+      "tags": [
+        "actions",
+        "clothing"
+      ]
+    },
+    {
+      "rank": 66,
+      "theme": "Daily routine & time",
+      "en": "brush teeth",
+      "zh": "刷牙",
+      "pinyin": "shuā yá",
+      "tags": [
+        "actions",
+        "body"
+      ]
+    },
+    {
+      "rank": 67,
+      "theme": "Daily routine & time",
+      "en": "breakfast",
+      "zh": "早餐",
+      "pinyin": "zǎocān",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 68,
+      "theme": "Daily routine & time",
+      "en": "lunch",
+      "zh": "午餐",
+      "pinyin": "wǔcān",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 69,
+      "theme": "Daily routine & time",
+      "en": "dinner",
+      "zh": "晚餐",
+      "pinyin": "wǎncān",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 70,
+      "theme": "Daily routine & time",
+      "en": "ready",
+      "zh": "准备好",
+      "pinyin": "zhǔnbèi hǎo",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 71,
+      "theme": "Daily routine & time",
+      "en": "wait",
+      "zh": "等",
+      "pinyin": "děng",
+      "tags": [
+        "actions",
+        "social"
+      ]
+    },
+    {
+      "rank": 72,
+      "theme": "Daily routine & time",
+      "en": "hurry",
+      "zh": "快点",
+      "pinyin": "kuài diǎn",
+      "tags": [
+        "actions",
+        "social"
+      ]
+    },
+    {
+      "rank": 73,
+      "theme": "Daily routine & time",
+      "en": "rest",
+      "zh": "休息",
+      "pinyin": "xiūxi",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 74,
+      "theme": "Daily routine & time",
+      "en": "finish",
+      "zh": "完成",
+      "pinyin": "wánchéng",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 75,
+      "theme": "Daily routine & time",
+      "en": "start",
+      "zh": "开始",
+      "pinyin": "kāishǐ",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 76,
+      "theme": "Daily routine & time",
+      "en": "try",
+      "zh": "试试",
+      "pinyin": "shìshi",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 77,
+      "theme": "Daily routine & time",
+      "en": "good morning",
+      "zh": "早上好",
+      "pinyin": "zǎoshang hǎo",
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "rank": 78,
+      "theme": "Daily routine & time",
+      "en": "good night",
+      "zh": "晚安",
+      "pinyin": "wǎn'ān",
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "rank": 79,
+      "theme": "Daily routine & time",
+      "en": "you're welcome",
+      "zh": "不客气",
+      "pinyin": "bú kèqi",
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "rank": 80,
+      "theme": "Daily routine & time",
+      "en": "excuse me",
+      "zh": "不好意思",
+      "pinyin": "bù hǎoyìsi",
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "rank": 81,
+      "theme": "Daily routine & time",
+      "en": "together",
+      "zh": "一起",
+      "pinyin": "yīqǐ",
+      "tags": [
+        "social",
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 82,
+      "theme": "Emotion",
+      "en": "angry",
+      "zh": "生气",
+      "pinyin": "shēngqì",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "rank": 83,
+      "theme": "Emotion",
+      "en": "scared",
+      "zh": "害怕",
+      "pinyin": "hàipà",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "rank": 84,
+      "theme": "Emotion",
+      "en": "tired",
+      "zh": "累",
+      "pinyin": "lèi",
+      "tags": [
+        "emotion",
+        "body"
+      ]
+    },
+    {
+      "rank": 85,
+      "theme": "Emotion",
+      "en": "excited",
+      "zh": "兴奋",
+      "pinyin": "xīngfèn",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "rank": 86,
+      "theme": "Emotion",
+      "en": "brave",
+      "zh": "勇敢",
+      "pinyin": "yǒnggǎn",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "rank": 87,
+      "theme": "Emotion",
+      "en": "shy",
+      "zh": "害羞",
+      "pinyin": "hàixiū",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "rank": 88,
+      "theme": "Emotion",
+      "en": "worried",
+      "zh": "担心",
+      "pinyin": "dānxīn",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "rank": 89,
+      "theme": "Emotion",
+      "en": "fun",
+      "zh": "好玩",
+      "pinyin": "hǎowán",
+      "tags": [
+        "emotion",
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 90,
+      "theme": "Emotion",
+      "en": "funny",
+      "zh": "有趣",
+      "pinyin": "yǒuqù",
+      "tags": [
+        "emotion",
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 91,
+      "theme": "Emotion",
+      "en": "proud",
+      "zh": "骄傲",
+      "pinyin": "jiāo'ào",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "rank": 92,
+      "theme": "Emotion",
+      "en": "bored",
+      "zh": "无聊",
+      "pinyin": "wúliáo",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "rank": 93,
+      "theme": "Emotion",
+      "en": "surprised",
+      "zh": "惊讶",
+      "pinyin": "jīngyà",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "rank": 94,
+      "theme": "Body",
+      "en": "hair",
+      "zh": "头发",
+      "pinyin": "tóufa",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "rank": 95,
+      "theme": "Body",
+      "en": "face",
+      "zh": "脸",
+      "pinyin": "liǎn",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "rank": 96,
+      "theme": "Body",
+      "en": "tooth",
+      "zh": "牙齿",
+      "pinyin": "yáchǐ",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "rank": 97,
+      "theme": "Body",
+      "en": "neck",
+      "zh": "脖子",
+      "pinyin": "bózi",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "rank": 98,
+      "theme": "Body",
+      "en": "arm",
+      "zh": "胳膊",
+      "pinyin": "gēbo",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "rank": 99,
+      "theme": "Body",
+      "en": "finger",
+      "zh": "手指",
+      "pinyin": "shǒuzhǐ",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "rank": 100,
+      "theme": "Body",
+      "en": "leg",
+      "zh": "腿",
+      "pinyin": "tuǐ",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "rank": 101,
+      "theme": "Body",
+      "en": "knee",
+      "zh": "膝盖",
+      "pinyin": "xīgài",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "rank": 102,
+      "theme": "Body",
+      "en": "tummy",
+      "zh": "肚子",
+      "pinyin": "dùzi",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "rank": 103,
+      "theme": "Body",
+      "en": "back",
+      "zh": "背",
+      "pinyin": "bèi",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "rank": 104,
+      "theme": "Body",
+      "en": "sick",
+      "zh": "生病",
+      "pinyin": "shēngbìng",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "rank": 105,
+      "theme": "Body",
+      "en": "hurt",
+      "zh": "受伤",
+      "pinyin": "shòushāng",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "rank": 106,
+      "theme": "Body",
+      "en": "medicine",
+      "zh": "药",
+      "pinyin": "yào",
+      "tags": [
+        "body",
+        "home"
+      ]
+    },
+    {
+      "rank": 107,
+      "theme": "Body",
+      "en": "careful",
+      "zh": "小心",
+      "pinyin": "xiǎoxīn",
+      "tags": [
+        "social",
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 108,
+      "theme": "Food",
+      "en": "orange",
+      "zh": "橙子",
+      "pinyin": "chéngzi",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 109,
+      "theme": "Food",
+      "en": "grape",
+      "zh": "葡萄",
+      "pinyin": "pútao",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 110,
+      "theme": "Food",
+      "en": "strawberry",
+      "zh": "草莓",
+      "pinyin": "cǎoméi",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 111,
+      "theme": "Food",
+      "en": "watermelon",
+      "zh": "西瓜",
+      "pinyin": "xīguā",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 112,
+      "theme": "Food",
+      "en": "pear",
+      "zh": "梨",
+      "pinyin": "lí",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 113,
+      "theme": "Food",
+      "en": "vegetable",
+      "zh": "蔬菜",
+      "pinyin": "shūcài",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 114,
+      "theme": "Food",
+      "en": "carrot",
+      "zh": "胡萝卜",
+      "pinyin": "húluóbo",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 115,
+      "theme": "Food",
+      "en": "potato",
+      "zh": "土豆",
+      "pinyin": "tǔdòu",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 116,
+      "theme": "Food",
+      "en": "tomato",
+      "zh": "西红柿",
+      "pinyin": "xīhóngshì",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 117,
+      "theme": "Food",
+      "en": "corn",
+      "zh": "玉米",
+      "pinyin": "yùmǐ",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 118,
+      "theme": "Food",
+      "en": "noodles",
+      "zh": "面条",
+      "pinyin": "miàntiáo",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 119,
+      "theme": "Food",
+      "en": "soup",
+      "zh": "汤",
+      "pinyin": "tāng",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 120,
+      "theme": "Food",
+      "en": "meat",
+      "zh": "肉",
+      "pinyin": "ròu",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 121,
+      "theme": "Food",
+      "en": "tofu",
+      "zh": "豆腐",
+      "pinyin": "dòufu",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 122,
+      "theme": "Food",
+      "en": "yogurt",
+      "zh": "酸奶",
+      "pinyin": "suānnǎi",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 123,
+      "theme": "Food",
+      "en": "ice cream",
+      "zh": "冰淇淋",
+      "pinyin": "bīngqílín",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 124,
+      "theme": "Food",
+      "en": "cake",
+      "zh": "蛋糕",
+      "pinyin": "dàngāo",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 125,
+      "theme": "Food",
+      "en": "candy",
+      "zh": "糖",
+      "pinyin": "táng",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 126,
+      "theme": "Food",
+      "en": "tea",
+      "zh": "茶",
+      "pinyin": "chá",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 127,
+      "theme": "Food",
+      "en": "spoon",
+      "zh": "勺子",
+      "pinyin": "sháozi",
+      "tags": [
+        "food",
+        "home"
+      ]
+    },
+    {
+      "rank": 128,
+      "theme": "Food",
+      "en": "chopsticks",
+      "zh": "筷子",
+      "pinyin": "kuàizi",
+      "tags": [
+        "food",
+        "home"
+      ]
+    },
+    {
+      "rank": 129,
+      "theme": "Food",
+      "en": "bowl",
+      "zh": "碗",
+      "pinyin": "wǎn",
+      "tags": [
+        "food",
+        "home"
+      ]
+    },
+    {
+      "rank": 130,
+      "theme": "Food",
+      "en": "plate",
+      "zh": "盘子",
+      "pinyin": "pánzi",
+      "tags": [
+        "food",
+        "home"
+      ]
+    },
+    {
+      "rank": 131,
+      "theme": "Food",
+      "en": "cup",
+      "zh": "杯子",
+      "pinyin": "bēizi",
+      "tags": [
+        "food",
+        "home"
+      ]
+    },
+    {
+      "rank": 132,
+      "theme": "Food",
+      "en": "fork",
+      "zh": "叉子",
+      "pinyin": "chāzi",
+      "tags": [
+        "food",
+        "home"
+      ]
+    },
+    {
+      "rank": 133,
+      "theme": "Food",
+      "en": "yummy",
+      "zh": "好吃",
+      "pinyin": "hǎochī",
+      "tags": [
+        "food",
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 134,
+      "theme": "Food",
+      "en": "sweet",
+      "zh": "甜",
+      "pinyin": "tián",
+      "tags": [
+        "food",
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 135,
+      "theme": "Food",
+      "en": "spicy",
+      "zh": "辣",
+      "pinyin": "là",
+      "tags": [
+        "food",
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 136,
+      "theme": "Food",
+      "en": "salt",
+      "zh": "盐",
+      "pinyin": "yán",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 137,
+      "theme": "Food",
+      "en": "sandwich",
+      "zh": "三明治",
+      "pinyin": "sānmíngzhì",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "rank": 138,
+      "theme": "Animals",
+      "en": "pig",
+      "zh": "猪",
+      "pinyin": "zhū",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "rank": 139,
+      "theme": "Animals",
+      "en": "sheep",
+      "zh": "羊",
+      "pinyin": "yáng",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "rank": 140,
+      "theme": "Animals",
+      "en": "rabbit",
+      "zh": "兔子",
+      "pinyin": "tùzi",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "rank": 141,
+      "theme": "Animals",
+      "en": "mouse",
+      "zh": "老鼠",
+      "pinyin": "lǎoshǔ",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "rank": 142,
+      "theme": "Animals",
+      "en": "frog",
+      "zh": "青蛙",
+      "pinyin": "qīngwā",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "rank": 143,
+      "theme": "Animals",
+      "en": "bear",
+      "zh": "熊",
+      "pinyin": "xióng",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "rank": 144,
+      "theme": "Animals",
+      "en": "lion",
+      "zh": "狮子",
+      "pinyin": "shīzi",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "rank": 145,
+      "theme": "Animals",
+      "en": "tiger",
+      "zh": "老虎",
+      "pinyin": "lǎohǔ",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "rank": 146,
+      "theme": "Animals",
+      "en": "elephant",
+      "zh": "大象",
+      "pinyin": "dàxiàng",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "rank": 147,
+      "theme": "Animals",
+      "en": "monkey",
+      "zh": "猴子",
+      "pinyin": "hóuzi",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "rank": 148,
+      "theme": "Animals",
+      "en": "panda",
+      "zh": "熊猫",
+      "pinyin": "xióngmāo",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "rank": 149,
+      "theme": "Animals",
+      "en": "butterfly",
+      "zh": "蝴蝶",
+      "pinyin": "húdié",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "rank": 150,
+      "theme": "Animals",
+      "en": "bee",
+      "zh": "蜜蜂",
+      "pinyin": "mìfēng",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "rank": 151,
+      "theme": "Animals",
+      "en": "ant",
+      "zh": "蚂蚁",
+      "pinyin": "mǎyǐ",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "rank": 152,
+      "theme": "Animals",
+      "en": "chick",
+      "zh": "小鸡",
+      "pinyin": "xiǎo jī",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "rank": 153,
+      "theme": "Animals",
+      "en": "pet",
+      "zh": "宠物",
+      "pinyin": "chǒngwù",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "rank": 154,
+      "theme": "Animals",
+      "en": "zoo",
+      "zh": "动物园",
+      "pinyin": "dòngwùyuán",
+      "tags": [
+        "locations",
+        "animals"
+      ]
+    },
+    {
+      "rank": 155,
+      "theme": "Animals",
+      "en": "farm",
+      "zh": "农场",
+      "pinyin": "nóngchǎng",
+      "tags": [
+        "locations",
+        "animals"
+      ]
+    },
+    {
+      "rank": 156,
+      "theme": "Home & community",
+      "en": "house",
+      "zh": "房子",
+      "pinyin": "fángzi",
+      "tags": [
+        "home",
+        "locations"
+      ]
+    },
+    {
+      "rank": 157,
+      "theme": "Home & community",
+      "en": "home",
+      "zh": "家",
+      "pinyin": "jiā",
+      "tags": [
+        "home",
+        "locations"
+      ]
+    },
+    {
+      "rank": 158,
+      "theme": "Home & community",
+      "en": "room",
+      "zh": "房间",
+      "pinyin": "fángjiān",
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "rank": 159,
+      "theme": "Home & community",
+      "en": "kitchen",
+      "zh": "厨房",
+      "pinyin": "chúfáng",
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "rank": 160,
+      "theme": "Home & community",
+      "en": "bathroom",
+      "zh": "卫生间",
+      "pinyin": "wèishēngjiān",
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "rank": 161,
+      "theme": "Home & community",
+      "en": "window",
+      "zh": "窗户",
+      "pinyin": "chuānghu",
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "rank": 162,
+      "theme": "Home & community",
+      "en": "floor",
+      "zh": "地板",
+      "pinyin": "dìbǎn",
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "rank": 163,
+      "theme": "Home & community",
+      "en": "light",
+      "zh": "灯",
+      "pinyin": "dēng",
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "rank": 164,
+      "theme": "Home & community",
+      "en": "key",
+      "zh": "钥匙",
+      "pinyin": "yàoshi",
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "rank": 165,
+      "theme": "Home & community",
+      "en": "clock",
+      "zh": "钟",
+      "pinyin": "zhōng",
+      "tags": [
+        "home",
+        "time"
+      ]
+    },
+    {
+      "rank": 166,
+      "theme": "Home & community",
+      "en": "TV",
+      "zh": "电视",
+      "pinyin": "diànshì",
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "rank": 167,
+      "theme": "Home & community",
+      "en": "computer",
+      "zh": "电脑",
+      "pinyin": "diànnǎo",
+      "tags": [
+        "home",
+        "school"
+      ]
+    },
+    {
+      "rank": 168,
+      "theme": "Home & community",
+      "en": "toy",
+      "zh": "玩具",
+      "pinyin": "wánjù",
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "rank": 169,
+      "theme": "Home & community",
+      "en": "block",
+      "zh": "积木",
+      "pinyin": "jīmù",
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "rank": 170,
+      "theme": "Home & community",
+      "en": "puzzle",
+      "zh": "拼图",
+      "pinyin": "pīntú",
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "rank": 171,
+      "theme": "Home & community",
+      "en": "doll",
+      "zh": "娃娃",
+      "pinyin": "wáwa",
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "rank": 172,
+      "theme": "Home & community",
+      "en": "balloon",
+      "zh": "气球",
+      "pinyin": "qìqiú",
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "rank": 173,
+      "theme": "Home & community",
+      "en": "bike",
+      "zh": "自行车",
+      "pinyin": "zìxíngchē",
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "rank": 174,
+      "theme": "Home & community",
+      "en": "swing",
+      "zh": "秋千",
+      "pinyin": "qiūqiān",
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "rank": 175,
+      "theme": "Home & community",
+      "en": "slide",
+      "zh": "滑梯",
+      "pinyin": "huátī",
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "rank": 176,
+      "theme": "Home & community",
+      "en": "park",
+      "zh": "公园",
+      "pinyin": "gōngyuán",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "rank": 177,
+      "theme": "Home & community",
+      "en": "store",
+      "zh": "商店",
+      "pinyin": "shāngdiàn",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "rank": 178,
+      "theme": "Home & community",
+      "en": "hospital",
+      "zh": "医院",
+      "pinyin": "yīyuàn",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "rank": 179,
+      "theme": "Home & community",
+      "en": "library",
+      "zh": "图书馆",
+      "pinyin": "túshūguǎn",
+      "tags": [
+        "locations",
+        "school"
+      ]
+    },
+    {
+      "rank": 180,
+      "theme": "Home & community",
+      "en": "playground",
+      "zh": "游乐场",
+      "pinyin": "yóulèchǎng",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "rank": 181,
+      "theme": "Home & community",
+      "en": "bus",
+      "zh": "公共汽车",
+      "pinyin": "gōnggòng qìchē",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "rank": 182,
+      "theme": "Home & community",
+      "en": "train",
+      "zh": "火车",
+      "pinyin": "huǒchē",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "rank": 183,
+      "theme": "Home & community",
+      "en": "plane",
+      "zh": "飞机",
+      "pinyin": "fēijī",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "rank": 184,
+      "theme": "Nature & weather",
+      "en": "sun",
+      "zh": "太阳",
+      "pinyin": "tàiyáng",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "rank": 185,
+      "theme": "Nature & weather",
+      "en": "moon",
+      "zh": "月亮",
+      "pinyin": "yuèliang",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "rank": 186,
+      "theme": "Nature & weather",
+      "en": "star",
+      "zh": "星星",
+      "pinyin": "xīngxing",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "rank": 187,
+      "theme": "Nature & weather",
+      "en": "sky",
+      "zh": "天空",
+      "pinyin": "tiānkōng",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "rank": 188,
+      "theme": "Nature & weather",
+      "en": "cloud",
+      "zh": "云",
+      "pinyin": "yún",
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "rank": 189,
+      "theme": "Nature & weather",
+      "en": "rain",
+      "zh": "雨",
+      "pinyin": "yǔ",
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "rank": 190,
+      "theme": "Nature & weather",
+      "en": "snow",
+      "zh": "雪",
+      "pinyin": "xuě",
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "rank": 191,
+      "theme": "Nature & weather",
+      "en": "wind",
+      "zh": "风",
+      "pinyin": "fēng",
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "rank": 192,
+      "theme": "Nature & weather",
+      "en": "rainbow",
+      "zh": "彩虹",
+      "pinyin": "cǎihóng",
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "rank": 193,
+      "theme": "Nature & weather",
+      "en": "tree",
+      "zh": "树",
+      "pinyin": "shù",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "rank": 194,
+      "theme": "Nature & weather",
+      "en": "flower",
+      "zh": "花",
+      "pinyin": "huā",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "rank": 195,
+      "theme": "Nature & weather",
+      "en": "grass",
+      "zh": "草",
+      "pinyin": "cǎo",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "rank": 196,
+      "theme": "Nature & weather",
+      "en": "leaf",
+      "zh": "叶子",
+      "pinyin": "yèzi",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "rank": 197,
+      "theme": "Nature & weather",
+      "en": "sea",
+      "zh": "海",
+      "pinyin": "hǎi",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "rank": 198,
+      "theme": "Nature & weather",
+      "en": "river",
+      "zh": "河",
+      "pinyin": "hé",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "rank": 199,
+      "theme": "Nature & weather",
+      "en": "mountain",
+      "zh": "山",
+      "pinyin": "shān",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "rank": 200,
+      "theme": "Nature & weather",
+      "en": "weather",
+      "zh": "天气",
+      "pinyin": "tiānqì",
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "rank": 201,
+      "theme": "Nature & weather",
+      "en": "sunny",
+      "zh": "晴天",
+      "pinyin": "qíngtiān",
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "rank": 202,
+      "theme": "Nature & weather",
+      "en": "warm",
+      "zh": "暖和",
+      "pinyin": "nuǎnhuo",
+      "tags": [
+        "weather",
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 203,
+      "theme": "Nature & weather",
+      "en": "cool",
+      "zh": "凉快",
+      "pinyin": "liángkuai",
+      "tags": [
+        "weather",
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 204,
+      "theme": "Clothing",
+      "en": "dress",
+      "zh": "裙子",
+      "pinyin": "qúnzi",
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "rank": 205,
+      "theme": "Clothing",
+      "en": "jacket",
+      "zh": "夹克",
+      "pinyin": "jiákè",
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "rank": 206,
+      "theme": "Clothing",
+      "en": "sweater",
+      "zh": "毛衣",
+      "pinyin": "máoyī",
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "rank": 207,
+      "theme": "Clothing",
+      "en": "gloves",
+      "zh": "手套",
+      "pinyin": "shǒutào",
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "rank": 208,
+      "theme": "Clothing",
+      "en": "scarf",
+      "zh": "围巾",
+      "pinyin": "wéijīn",
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "rank": 209,
+      "theme": "Clothing",
+      "en": "pajamas",
+      "zh": "睡衣",
+      "pinyin": "shuìyī",
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "rank": 210,
+      "theme": "Clothing",
+      "en": "boots",
+      "zh": "靴子",
+      "pinyin": "xuēzi",
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "rank": 211,
+      "theme": "Clothing",
+      "en": "backpack",
+      "zh": "背包",
+      "pinyin": "bēibāo",
+      "tags": [
+        "clothing",
+        "school"
+      ]
+    },
+    {
+      "rank": 212,
+      "theme": "Clothing",
+      "en": "umbrella",
+      "zh": "雨伞",
+      "pinyin": "yǔsǎn",
+      "tags": [
+        "clothing",
+        "weather"
+      ]
+    },
+    {
+      "rank": 213,
+      "theme": "Clothing",
+      "en": "glasses",
+      "zh": "眼镜",
+      "pinyin": "yǎnjìng",
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "rank": 214,
+      "theme": "Clothing",
+      "en": "button",
+      "zh": "扣子",
+      "pinyin": "kòuzi",
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "rank": 215,
+      "theme": "Clothing",
+      "en": "zipper",
+      "zh": "拉链",
+      "pinyin": "lāliàn",
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "rank": 216,
+      "theme": "Numbers & colors",
+      "en": "four",
+      "zh": "四",
+      "pinyin": "sì",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "rank": 217,
+      "theme": "Numbers & colors",
+      "en": "five",
+      "zh": "五",
+      "pinyin": "wǔ",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "rank": 218,
+      "theme": "Numbers & colors",
+      "en": "six",
+      "zh": "六",
+      "pinyin": "liù",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "rank": 219,
+      "theme": "Numbers & colors",
+      "en": "seven",
+      "zh": "七",
+      "pinyin": "qī",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "rank": 220,
+      "theme": "Numbers & colors",
+      "en": "eight",
+      "zh": "八",
+      "pinyin": "bā",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "rank": 221,
+      "theme": "Numbers & colors",
+      "en": "nine",
+      "zh": "九",
+      "pinyin": "jiǔ",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "rank": 222,
+      "theme": "Numbers & colors",
+      "en": "ten",
+      "zh": "十",
+      "pinyin": "shí",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "rank": 223,
+      "theme": "Numbers & colors",
+      "en": "green",
+      "zh": "绿",
+      "pinyin": "lǜ",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "rank": 224,
+      "theme": "Numbers & colors",
+      "en": "yellow",
+      "zh": "黄",
+      "pinyin": "huáng",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "rank": 225,
+      "theme": "Numbers & colors",
+      "en": "purple",
+      "zh": "紫",
+      "pinyin": "zǐ",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "rank": 226,
+      "theme": "Numbers & colors",
+      "en": "pink",
+      "zh": "粉红",
+      "pinyin": "fěnhóng",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "rank": 227,
+      "theme": "Numbers & colors",
+      "en": "brown",
+      "zh": "棕",
+      "pinyin": "zōng",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "rank": 228,
+      "theme": "Numbers & colors",
+      "en": "black",
+      "zh": "黑",
+      "pinyin": "hēi",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "rank": 229,
+      "theme": "Numbers & colors",
+      "en": "white",
+      "zh": "白",
+      "pinyin": "bái",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "rank": 230,
+      "theme": "Numbers & colors",
+      "en": "many",
+      "zh": "很多",
+      "pinyin": "hěn duō",
+      "tags": [
+        "numbers_colors",
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 231,
+      "theme": "Numbers & colors",
+      "en": "all",
+      "zh": "全部",
+      "pinyin": "quánbù",
+      "tags": [
+        "numbers_colors",
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 232,
+      "theme": "Numbers & colors",
+      "en": "first",
+      "zh": "第一",
+      "pinyin": "dì yī",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "rank": 233,
+      "theme": "Numbers & colors",
+      "en": "half",
+      "zh": "一半",
+      "pinyin": "yī bàn",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "rank": 234,
+      "theme": "Descriptors & places",
+      "en": "fast",
+      "zh": "快",
+      "pinyin": "kuài",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 235,
+      "theme": "Descriptors & places",
+      "en": "slow",
+      "zh": "慢",
+      "pinyin": "màn",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 236,
+      "theme": "Descriptors & places",
+      "en": "tall",
+      "zh": "高",
+      "pinyin": "gāo",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 237,
+      "theme": "Descriptors & places",
+      "en": "short",
+      "zh": "矮",
+      "pinyin": "ǎi",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 238,
+      "theme": "Descriptors & places",
+      "en": "long",
+      "zh": "长",
+      "pinyin": "cháng",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 239,
+      "theme": "Descriptors & places",
+      "en": "soft",
+      "zh": "软",
+      "pinyin": "ruǎn",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 240,
+      "theme": "Descriptors & places",
+      "en": "hard",
+      "zh": "硬",
+      "pinyin": "yìng",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 241,
+      "theme": "Descriptors & places",
+      "en": "loud",
+      "zh": "大声",
+      "pinyin": "dà shēng",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 242,
+      "theme": "Descriptors & places",
+      "en": "quiet",
+      "zh": "安静",
+      "pinyin": "ānjìng",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 243,
+      "theme": "Descriptors & places",
+      "en": "wet",
+      "zh": "湿",
+      "pinyin": "shī",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 244,
+      "theme": "Descriptors & places",
+      "en": "dry",
+      "zh": "干",
+      "pinyin": "gān",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 245,
+      "theme": "Descriptors & places",
+      "en": "full",
+      "zh": "满",
+      "pinyin": "mǎn",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 246,
+      "theme": "Descriptors & places",
+      "en": "empty",
+      "zh": "空",
+      "pinyin": "kōng",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 247,
+      "theme": "Descriptors & places",
+      "en": "new",
+      "zh": "新",
+      "pinyin": "xīn",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 248,
+      "theme": "Descriptors & places",
+      "en": "old",
+      "zh": "旧",
+      "pinyin": "jiù",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 249,
+      "theme": "Descriptors & places",
+      "en": "same",
+      "zh": "一样",
+      "pinyin": "yīyàng",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 250,
+      "theme": "Descriptors & places",
+      "en": "different",
+      "zh": "不同",
+      "pinyin": "bù tóng",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 251,
+      "theme": "Descriptors & places",
+      "en": "pretty",
+      "zh": "漂亮",
+      "pinyin": "piàoliang",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 252,
+      "theme": "Descriptors & places",
+      "en": "easy",
+      "zh": "容易",
+      "pinyin": "róngyì",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 253,
+      "theme": "Descriptors & places",
+      "en": "difficult",
+      "zh": "难",
+      "pinyin": "nán",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "rank": 254,
+      "theme": "Descriptors & places",
+      "en": "right",
+      "zh": "对",
+      "pinyin": "duì",
+      "tags": [
+        "descriptors",
+        "school"
+      ]
+    },
+    {
+      "rank": 255,
+      "theme": "Descriptors & places",
+      "en": "wrong",
+      "zh": "错",
+      "pinyin": "cuò",
+      "tags": [
+        "descriptors",
+        "school"
+      ]
+    },
+    {
+      "rank": 256,
+      "theme": "Descriptors & places",
+      "en": "left",
+      "zh": "左",
+      "pinyin": "zuǒ",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "rank": 257,
+      "theme": "Descriptors & places",
+      "en": "right side",
+      "zh": "右",
+      "pinyin": "yòu",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "rank": 258,
+      "theme": "Descriptors & places",
+      "en": "front",
+      "zh": "前面",
+      "pinyin": "qiánmiàn",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "rank": 259,
+      "theme": "Descriptors & places",
+      "en": "behind",
+      "zh": "后面",
+      "pinyin": "hòumiàn",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "rank": 260,
+      "theme": "Descriptors & places",
+      "en": "beside",
+      "zh": "旁边",
+      "pinyin": "pángbiān",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "rank": 261,
+      "theme": "Descriptors & places",
+      "en": "inside",
+      "zh": "里面",
+      "pinyin": "lǐmiàn",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "rank": 262,
+      "theme": "Descriptors & places",
+      "en": "outside",
+      "zh": "外面",
+      "pinyin": "wàimiàn",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "rank": 263,
+      "theme": "Descriptors & places",
+      "en": "near",
+      "zh": "近",
+      "pinyin": "jìn",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "rank": 264,
+      "theme": "Descriptors & places",
+      "en": "far",
+      "zh": "远",
+      "pinyin": "yuǎn",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "rank": 265,
+      "theme": "More actions",
+      "en": "close",
+      "zh": "关闭",
+      "pinyin": "guānbì",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 266,
+      "theme": "More actions",
+      "en": "hold",
+      "zh": "握",
+      "pinyin": "wò",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 267,
+      "theme": "More actions",
+      "en": "carry",
+      "zh": "搬",
+      "pinyin": "bān",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 268,
+      "theme": "More actions",
+      "en": "bring",
+      "zh": "带来",
+      "pinyin": "dài lái",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 269,
+      "theme": "More actions",
+      "en": "show",
+      "zh": "给看",
+      "pinyin": "gěi kàn",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 270,
+      "theme": "More actions",
+      "en": "tell",
+      "zh": "告诉",
+      "pinyin": "gàosu",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 271,
+      "theme": "More actions",
+      "en": "ask",
+      "zh": "问",
+      "pinyin": "wèn",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 272,
+      "theme": "More actions",
+      "en": "answer",
+      "zh": "回答",
+      "pinyin": "huídá",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "rank": 273,
+      "theme": "More actions",
+      "en": "make",
+      "zh": "做",
+      "pinyin": "zuò",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 274,
+      "theme": "More actions",
+      "en": "build",
+      "zh": "搭建",
+      "pinyin": "dājiàn",
+      "tags": [
+        "actions",
+        "toys_play"
+      ]
+    },
+    {
+      "rank": 275,
+      "theme": "More actions",
+      "en": "break",
+      "zh": "弄坏",
+      "pinyin": "nòng huài",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 276,
+      "theme": "More actions",
+      "en": "fix",
+      "zh": "修理",
+      "pinyin": "xiūlǐ",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 277,
+      "theme": "More actions",
+      "en": "use",
+      "zh": "用",
+      "pinyin": "yòng",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 278,
+      "theme": "More actions",
+      "en": "need",
+      "zh": "需要",
+      "pinyin": "xūyào",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 279,
+      "theme": "More actions",
+      "en": "like",
+      "zh": "喜欢",
+      "pinyin": "xǐhuan",
+      "tags": [
+        "actions",
+        "emotion"
+      ]
+    },
+    {
+      "rank": 280,
+      "theme": "More actions",
+      "en": "know",
+      "zh": "知道",
+      "pinyin": "zhīdào",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 281,
+      "theme": "More actions",
+      "en": "think",
+      "zh": "想",
+      "pinyin": "xiǎng",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 282,
+      "theme": "More actions",
+      "en": "smell",
+      "zh": "闻",
+      "pinyin": "wén",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 283,
+      "theme": "More actions",
+      "en": "touch",
+      "zh": "摸",
+      "pinyin": "mō",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 284,
+      "theme": "More actions",
+      "en": "hear",
+      "zh": "听见",
+      "pinyin": "tīngjiàn",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 285,
+      "theme": "More actions",
+      "en": "swim",
+      "zh": "游泳",
+      "pinyin": "yóuyǒng",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 286,
+      "theme": "More actions",
+      "en": "ride",
+      "zh": "骑",
+      "pinyin": "qí",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 287,
+      "theme": "More actions",
+      "en": "fly",
+      "zh": "飞",
+      "pinyin": "fēi",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 288,
+      "theme": "More actions",
+      "en": "buy",
+      "zh": "买",
+      "pinyin": "mǎi",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 289,
+      "theme": "More actions",
+      "en": "clean up",
+      "zh": "收拾",
+      "pinyin": "shōushi",
+      "tags": [
+        "actions",
+        "home"
+      ]
+    },
+    {
+      "rank": 290,
+      "theme": "More actions",
+      "en": "hide",
+      "zh": "藏",
+      "pinyin": "cáng",
+      "tags": [
+        "actions",
+        "toys_play"
+      ]
+    },
+    {
+      "rank": 291,
+      "theme": "More actions",
+      "en": "laugh",
+      "zh": "笑",
+      "pinyin": "xiào",
+      "tags": [
+        "actions",
+        "emotion"
+      ]
+    },
+    {
+      "rank": 292,
+      "theme": "More actions",
+      "en": "cry",
+      "zh": "哭",
+      "pinyin": "kū",
+      "tags": [
+        "actions",
+        "emotion"
+      ]
+    },
+    {
+      "rank": 293,
+      "theme": "More actions",
+      "en": "smile",
+      "zh": "微笑",
+      "pinyin": "wēixiào",
+      "tags": [
+        "actions",
+        "emotion"
+      ]
+    },
+    {
+      "rank": 294,
+      "theme": "More actions",
+      "en": "leave",
+      "zh": "离开",
+      "pinyin": "líkāi",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 295,
+      "theme": "More actions",
+      "en": "return",
+      "zh": "回来",
+      "pinyin": "huílai",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 296,
+      "theme": "More actions",
+      "en": "stay",
+      "zh": "留下",
+      "pinyin": "liú xià",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 297,
+      "theme": "More actions",
+      "en": "follow",
+      "zh": "跟着",
+      "pinyin": "gēnzhe",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 298,
+      "theme": "More actions",
+      "en": "choose",
+      "zh": "选择",
+      "pinyin": "xuǎnzé",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "rank": 299,
+      "theme": "More actions",
+      "en": "remember",
+      "zh": "记住",
+      "pinyin": "jìzhù",
+      "tags": [
+        "actions"
+      ]
+    }
+  ]
+}

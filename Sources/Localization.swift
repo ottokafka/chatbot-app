@@ -1351,12 +1351,8 @@ enum L10n {
         lang == .zh ? "正确 \(correct) · 错误 \(wrong)" : "\(correct) correct · \(wrong) wrong"
     }
 
-    static func lifePathBackHome(_ lang: AppLanguage) -> String {
-        lang == .zh ? "返回主页" : "Back to home"
-    }
-
-    static func lifePathPlayAgain(_ lang: AppLanguage) -> String {
-        lang == .zh ? "继续本阶段" : "Continue stage"
+    static func lifePathNextLevel(_ lang: AppLanguage) -> String {
+        lang == .zh ? "下一关" : "Next level"
     }
 
     static func lifePathClaimContinue(_ lang: AppLanguage) -> String {

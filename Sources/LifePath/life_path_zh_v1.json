@@ -36,6 +36,23 @@
         "xp": 150,
         "coins": 75
       }
+    },
+    {
+      "id": "preschool",
+      "order": 2,
+      "title": {
+        "en": "Preschool",
+        "zh": "学前"
+      },
+      "subtitle": {
+        "en": "Daily life & school",
+        "zh": "日常生活与学前"
+      },
+      "targetCount": 299,
+      "clearReward": {
+        "xp": 200,
+        "coins": 100
+      }
     }
   ],
   "entries": [
@@ -1290,6 +1307,3362 @@
       "phonics": "sān",
       "tags": [
         "numbers_colors"
+      ]
+    },
+    {
+      "id": "zh_preschool_001",
+      "stageId": "preschool",
+      "rankInStage": 1,
+      "front": "老师",
+      "back": "teacher",
+      "phonics": "lǎoshī",
+      "tags": [
+        "people",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_002",
+      "stageId": "preschool",
+      "rankInStage": 2,
+      "front": "朋友",
+      "back": "friend",
+      "phonics": "péngyou",
+      "tags": [
+        "people",
+        "social"
+      ]
+    },
+    {
+      "id": "zh_preschool_003",
+      "stageId": "preschool",
+      "rankInStage": 3,
+      "front": "学校",
+      "back": "school",
+      "phonics": "xuéxiào",
+      "tags": [
+        "locations",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_004",
+      "stageId": "preschool",
+      "rankInStage": 4,
+      "front": "教室",
+      "back": "classroom",
+      "phonics": "jiàoshì",
+      "tags": [
+        "locations",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_005",
+      "stageId": "preschool",
+      "rankInStage": 5,
+      "front": "书包",
+      "back": "bag",
+      "phonics": "shūbāo",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_006",
+      "stageId": "preschool",
+      "rankInStage": 6,
+      "front": "铅笔",
+      "back": "pencil",
+      "phonics": "qiānbǐ",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_007",
+      "stageId": "preschool",
+      "rankInStage": 7,
+      "front": "蜡笔",
+      "back": "crayon",
+      "phonics": "làbǐ",
+      "tags": [
+        "school",
+        "toys_play"
+      ]
+    },
+    {
+      "id": "zh_preschool_008",
+      "stageId": "preschool",
+      "rankInStage": 8,
+      "front": "纸",
+      "back": "paper",
+      "phonics": "zhǐ",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_009",
+      "stageId": "preschool",
+      "rankInStage": 9,
+      "front": "橡皮",
+      "back": "eraser",
+      "phonics": "xiàngpí",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_010",
+      "stageId": "preschool",
+      "rankInStage": 10,
+      "front": "剪刀",
+      "back": "scissors",
+      "phonics": "jiǎndāo",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_011",
+      "stageId": "preschool",
+      "rankInStage": 11,
+      "front": "胶水",
+      "back": "glue",
+      "phonics": "jiāoshuǐ",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_012",
+      "stageId": "preschool",
+      "rankInStage": 12,
+      "front": "故事",
+      "back": "story",
+      "phonics": "gùshi",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_013",
+      "stageId": "preschool",
+      "rankInStage": 13,
+      "front": "歌",
+      "back": "song",
+      "phonics": "gē",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_014",
+      "stageId": "preschool",
+      "rankInStage": 14,
+      "front": "图画",
+      "back": "picture",
+      "phonics": "túhuà",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_015",
+      "stageId": "preschool",
+      "rankInStage": 15,
+      "front": "画",
+      "back": "draw",
+      "phonics": "huà",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_016",
+      "stageId": "preschool",
+      "rankInStage": 16,
+      "front": "写",
+      "back": "write",
+      "phonics": "xiě",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_017",
+      "stageId": "preschool",
+      "rankInStage": 17,
+      "front": "读",
+      "back": "read",
+      "phonics": "dú",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_018",
+      "stageId": "preschool",
+      "rankInStage": 18,
+      "front": "数",
+      "back": "count",
+      "phonics": "shǔ",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_019",
+      "stageId": "preschool",
+      "rankInStage": 19,
+      "front": "听",
+      "back": "listen",
+      "phonics": "tīng",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_020",
+      "stageId": "preschool",
+      "rankInStage": 20,
+      "front": "说",
+      "back": "speak",
+      "phonics": "shuō",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_021",
+      "stageId": "preschool",
+      "rankInStage": 21,
+      "front": "唱",
+      "back": "sing",
+      "phonics": "chàng",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_022",
+      "stageId": "preschool",
+      "rankInStage": 22,
+      "front": "跳舞",
+      "back": "dance",
+      "phonics": "tiàowǔ",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_023",
+      "stageId": "preschool",
+      "rankInStage": 23,
+      "front": "学习",
+      "back": "learn",
+      "phonics": "xuéxí",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_024",
+      "stageId": "preschool",
+      "rankInStage": 24,
+      "front": "分享",
+      "back": "share",
+      "phonics": "fēnxiǎng",
+      "tags": [
+        "actions",
+        "social"
+      ]
+    },
+    {
+      "id": "zh_preschool_025",
+      "stageId": "preschool",
+      "rankInStage": 25,
+      "front": "排队",
+      "back": "line up",
+      "phonics": "páiduì",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_026",
+      "stageId": "preschool",
+      "rankInStage": 26,
+      "front": "举手",
+      "back": "raise hand",
+      "phonics": "jǔ shǒu",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_027",
+      "stageId": "preschool",
+      "rankInStage": 27,
+      "front": "点心",
+      "back": "snack",
+      "phonics": "diǎnxin",
+      "tags": [
+        "food",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_028",
+      "stageId": "preschool",
+      "rankInStage": 28,
+      "front": "午睡",
+      "back": "nap",
+      "phonics": "wǔshuì",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_029",
+      "stageId": "preschool",
+      "rankInStage": 29,
+      "front": "作业",
+      "back": "homework",
+      "phonics": "zuòyè",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_030",
+      "stageId": "preschool",
+      "rankInStage": 30,
+      "front": "课桌",
+      "back": "desk",
+      "phonics": "kèzhuō",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_031",
+      "stageId": "preschool",
+      "rankInStage": 31,
+      "front": "黑板",
+      "back": "board",
+      "phonics": "hēibǎn",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_032",
+      "stageId": "preschool",
+      "rankInStage": 32,
+      "front": "剪",
+      "back": "cut",
+      "phonics": "jiǎn",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_033",
+      "stageId": "preschool",
+      "rankInStage": 33,
+      "front": "贴",
+      "back": "paste",
+      "phonics": "tiē",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_034",
+      "stageId": "preschool",
+      "rankInStage": 34,
+      "front": "涂色",
+      "back": "color",
+      "phonics": "tú sè",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_035",
+      "stageId": "preschool",
+      "rankInStage": 35,
+      "front": "规则",
+      "back": "rule",
+      "phonics": "guīzé",
+      "tags": [
+        "school",
+        "social"
+      ]
+    },
+    {
+      "id": "zh_preschool_036",
+      "stageId": "preschool",
+      "rankInStage": 36,
+      "front": "哥哥",
+      "back": "brother",
+      "phonics": "gēge",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_preschool_037",
+      "stageId": "preschool",
+      "rankInStage": 37,
+      "front": "姐姐",
+      "back": "sister",
+      "phonics": "jiějie",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_preschool_038",
+      "stageId": "preschool",
+      "rankInStage": 38,
+      "front": "弟弟",
+      "back": "younger brother",
+      "phonics": "dìdi",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_preschool_039",
+      "stageId": "preschool",
+      "rankInStage": 39,
+      "front": "妹妹",
+      "back": "younger sister",
+      "phonics": "mèimei",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_preschool_040",
+      "stageId": "preschool",
+      "rankInStage": 40,
+      "front": "叔叔",
+      "back": "uncle",
+      "phonics": "shūshu",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_preschool_041",
+      "stageId": "preschool",
+      "rankInStage": 41,
+      "front": "阿姨",
+      "back": "aunt",
+      "phonics": "āyí",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_preschool_042",
+      "stageId": "preschool",
+      "rankInStage": 42,
+      "front": "男孩",
+      "back": "boy",
+      "phonics": "nánhái",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_preschool_043",
+      "stageId": "preschool",
+      "rankInStage": 43,
+      "front": "女孩",
+      "back": "girl",
+      "phonics": "nǚhái",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_preschool_044",
+      "stageId": "preschool",
+      "rankInStage": 44,
+      "front": "医生",
+      "back": "doctor",
+      "phonics": "yīshēng",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_preschool_045",
+      "stageId": "preschool",
+      "rankInStage": 45,
+      "front": "护士",
+      "back": "nurse",
+      "phonics": "hùshi",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_preschool_046",
+      "stageId": "preschool",
+      "rankInStage": 46,
+      "front": "司机",
+      "back": "driver",
+      "phonics": "sījī",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_preschool_047",
+      "stageId": "preschool",
+      "rankInStage": 47,
+      "front": "警察",
+      "back": "police",
+      "phonics": "jǐngchá",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_preschool_048",
+      "stageId": "preschool",
+      "rankInStage": 48,
+      "front": "名字",
+      "back": "name",
+      "phonics": "míngzi",
+      "tags": [
+        "people",
+        "social"
+      ]
+    },
+    {
+      "id": "zh_preschool_049",
+      "stageId": "preschool",
+      "rankInStage": 49,
+      "front": "我",
+      "back": "me",
+      "phonics": "wǒ",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_preschool_050",
+      "stageId": "preschool",
+      "rankInStage": 50,
+      "front": "你",
+      "back": "you",
+      "phonics": "nǐ",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_preschool_051",
+      "stageId": "preschool",
+      "rankInStage": 51,
+      "front": "我们",
+      "back": "we",
+      "phonics": "wǒmen",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_preschool_052",
+      "stageId": "preschool",
+      "rankInStage": 52,
+      "front": "他",
+      "back": "he",
+      "phonics": "tā",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_preschool_053",
+      "stageId": "preschool",
+      "rankInStage": 53,
+      "front": "她",
+      "back": "she",
+      "phonics": "tā",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_preschool_054",
+      "stageId": "preschool",
+      "rankInStage": 54,
+      "front": "早上",
+      "back": "morning",
+      "phonics": "zǎoshang",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "zh_preschool_055",
+      "stageId": "preschool",
+      "rankInStage": 55,
+      "front": "下午",
+      "back": "afternoon",
+      "phonics": "xiàwǔ",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "zh_preschool_056",
+      "stageId": "preschool",
+      "rankInStage": 56,
+      "front": "晚上",
+      "back": "evening",
+      "phonics": "wǎnshang",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "zh_preschool_057",
+      "stageId": "preschool",
+      "rankInStage": 57,
+      "front": "夜里",
+      "back": "night",
+      "phonics": "yèli",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "zh_preschool_058",
+      "stageId": "preschool",
+      "rankInStage": 58,
+      "front": "今天",
+      "back": "today",
+      "phonics": "jīntiān",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "zh_preschool_059",
+      "stageId": "preschool",
+      "rankInStage": 59,
+      "front": "明天",
+      "back": "tomorrow",
+      "phonics": "míngtiān",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "zh_preschool_060",
+      "stageId": "preschool",
+      "rankInStage": 60,
+      "front": "昨天",
+      "back": "yesterday",
+      "phonics": "zuótiān",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "zh_preschool_061",
+      "stageId": "preschool",
+      "rankInStage": 61,
+      "front": "现在",
+      "back": "now",
+      "phonics": "xiànzài",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "zh_preschool_062",
+      "stageId": "preschool",
+      "rankInStage": 62,
+      "front": "等一下",
+      "back": "later",
+      "phonics": "děng yīxià",
+      "tags": [
+        "time",
+        "social"
+      ]
+    },
+    {
+      "id": "zh_preschool_063",
+      "stageId": "preschool",
+      "rankInStage": 63,
+      "front": "生日",
+      "back": "birthday",
+      "phonics": "shēngrì",
+      "tags": [
+        "time",
+        "social"
+      ]
+    },
+    {
+      "id": "zh_preschool_064",
+      "stageId": "preschool",
+      "rankInStage": 64,
+      "front": "起床",
+      "back": "wake up",
+      "phonics": "qǐchuáng",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_065",
+      "stageId": "preschool",
+      "rankInStage": 65,
+      "front": "穿衣服",
+      "back": "get dressed",
+      "phonics": "chuān yīfu",
+      "tags": [
+        "actions",
+        "clothing"
+      ]
+    },
+    {
+      "id": "zh_preschool_066",
+      "stageId": "preschool",
+      "rankInStage": 66,
+      "front": "刷牙",
+      "back": "brush teeth",
+      "phonics": "shuā yá",
+      "tags": [
+        "actions",
+        "body"
+      ]
+    },
+    {
+      "id": "zh_preschool_067",
+      "stageId": "preschool",
+      "rankInStage": 67,
+      "front": "早餐",
+      "back": "breakfast",
+      "phonics": "zǎocān",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_068",
+      "stageId": "preschool",
+      "rankInStage": 68,
+      "front": "午餐",
+      "back": "lunch",
+      "phonics": "wǔcān",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_069",
+      "stageId": "preschool",
+      "rankInStage": 69,
+      "front": "晚餐",
+      "back": "dinner",
+      "phonics": "wǎncān",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_070",
+      "stageId": "preschool",
+      "rankInStage": 70,
+      "front": "准备好",
+      "back": "ready",
+      "phonics": "zhǔnbèi hǎo",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_071",
+      "stageId": "preschool",
+      "rankInStage": 71,
+      "front": "等",
+      "back": "wait",
+      "phonics": "děng",
+      "tags": [
+        "actions",
+        "social"
+      ]
+    },
+    {
+      "id": "zh_preschool_072",
+      "stageId": "preschool",
+      "rankInStage": 72,
+      "front": "快点",
+      "back": "hurry",
+      "phonics": "kuài diǎn",
+      "tags": [
+        "actions",
+        "social"
+      ]
+    },
+    {
+      "id": "zh_preschool_073",
+      "stageId": "preschool",
+      "rankInStage": 73,
+      "front": "休息",
+      "back": "rest",
+      "phonics": "xiūxi",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_074",
+      "stageId": "preschool",
+      "rankInStage": 74,
+      "front": "完成",
+      "back": "finish",
+      "phonics": "wánchéng",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_075",
+      "stageId": "preschool",
+      "rankInStage": 75,
+      "front": "开始",
+      "back": "start",
+      "phonics": "kāishǐ",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_076",
+      "stageId": "preschool",
+      "rankInStage": 76,
+      "front": "试试",
+      "back": "try",
+      "phonics": "shìshi",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_077",
+      "stageId": "preschool",
+      "rankInStage": 77,
+      "front": "早上好",
+      "back": "good morning",
+      "phonics": "zǎoshang hǎo",
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "zh_preschool_078",
+      "stageId": "preschool",
+      "rankInStage": 78,
+      "front": "晚安",
+      "back": "good night",
+      "phonics": "wǎn'ān",
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "zh_preschool_079",
+      "stageId": "preschool",
+      "rankInStage": 79,
+      "front": "不客气",
+      "back": "you're welcome",
+      "phonics": "bú kèqi",
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "zh_preschool_080",
+      "stageId": "preschool",
+      "rankInStage": 80,
+      "front": "不好意思",
+      "back": "excuse me",
+      "phonics": "bù hǎoyìsi",
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "zh_preschool_081",
+      "stageId": "preschool",
+      "rankInStage": 81,
+      "front": "一起",
+      "back": "together",
+      "phonics": "yīqǐ",
+      "tags": [
+        "social",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_082",
+      "stageId": "preschool",
+      "rankInStage": 82,
+      "front": "生气",
+      "back": "angry",
+      "phonics": "shēngqì",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "zh_preschool_083",
+      "stageId": "preschool",
+      "rankInStage": 83,
+      "front": "害怕",
+      "back": "scared",
+      "phonics": "hàipà",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "zh_preschool_084",
+      "stageId": "preschool",
+      "rankInStage": 84,
+      "front": "累",
+      "back": "tired",
+      "phonics": "lèi",
+      "tags": [
+        "emotion",
+        "body"
+      ]
+    },
+    {
+      "id": "zh_preschool_085",
+      "stageId": "preschool",
+      "rankInStage": 85,
+      "front": "兴奋",
+      "back": "excited",
+      "phonics": "xīngfèn",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "zh_preschool_086",
+      "stageId": "preschool",
+      "rankInStage": 86,
+      "front": "勇敢",
+      "back": "brave",
+      "phonics": "yǒnggǎn",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "zh_preschool_087",
+      "stageId": "preschool",
+      "rankInStage": 87,
+      "front": "害羞",
+      "back": "shy",
+      "phonics": "hàixiū",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "zh_preschool_088",
+      "stageId": "preschool",
+      "rankInStage": 88,
+      "front": "担心",
+      "back": "worried",
+      "phonics": "dānxīn",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "zh_preschool_089",
+      "stageId": "preschool",
+      "rankInStage": 89,
+      "front": "好玩",
+      "back": "fun",
+      "phonics": "hǎowán",
+      "tags": [
+        "emotion",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_090",
+      "stageId": "preschool",
+      "rankInStage": 90,
+      "front": "有趣",
+      "back": "funny",
+      "phonics": "yǒuqù",
+      "tags": [
+        "emotion",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_091",
+      "stageId": "preschool",
+      "rankInStage": 91,
+      "front": "骄傲",
+      "back": "proud",
+      "phonics": "jiāo'ào",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "zh_preschool_092",
+      "stageId": "preschool",
+      "rankInStage": 92,
+      "front": "无聊",
+      "back": "bored",
+      "phonics": "wúliáo",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "zh_preschool_093",
+      "stageId": "preschool",
+      "rankInStage": 93,
+      "front": "惊讶",
+      "back": "surprised",
+      "phonics": "jīngyà",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "zh_preschool_094",
+      "stageId": "preschool",
+      "rankInStage": 94,
+      "front": "头发",
+      "back": "hair",
+      "phonics": "tóufa",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "zh_preschool_095",
+      "stageId": "preschool",
+      "rankInStage": 95,
+      "front": "脸",
+      "back": "face",
+      "phonics": "liǎn",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "zh_preschool_096",
+      "stageId": "preschool",
+      "rankInStage": 96,
+      "front": "牙齿",
+      "back": "tooth",
+      "phonics": "yáchǐ",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "zh_preschool_097",
+      "stageId": "preschool",
+      "rankInStage": 97,
+      "front": "脖子",
+      "back": "neck",
+      "phonics": "bózi",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "zh_preschool_098",
+      "stageId": "preschool",
+      "rankInStage": 98,
+      "front": "胳膊",
+      "back": "arm",
+      "phonics": "gēbo",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "zh_preschool_099",
+      "stageId": "preschool",
+      "rankInStage": 99,
+      "front": "手指",
+      "back": "finger",
+      "phonics": "shǒuzhǐ",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "zh_preschool_100",
+      "stageId": "preschool",
+      "rankInStage": 100,
+      "front": "腿",
+      "back": "leg",
+      "phonics": "tuǐ",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "zh_preschool_101",
+      "stageId": "preschool",
+      "rankInStage": 101,
+      "front": "膝盖",
+      "back": "knee",
+      "phonics": "xīgài",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "zh_preschool_102",
+      "stageId": "preschool",
+      "rankInStage": 102,
+      "front": "肚子",
+      "back": "tummy",
+      "phonics": "dùzi",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "zh_preschool_103",
+      "stageId": "preschool",
+      "rankInStage": 103,
+      "front": "背",
+      "back": "back",
+      "phonics": "bèi",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "zh_preschool_104",
+      "stageId": "preschool",
+      "rankInStage": 104,
+      "front": "生病",
+      "back": "sick",
+      "phonics": "shēngbìng",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "zh_preschool_105",
+      "stageId": "preschool",
+      "rankInStage": 105,
+      "front": "受伤",
+      "back": "hurt",
+      "phonics": "shòushāng",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "zh_preschool_106",
+      "stageId": "preschool",
+      "rankInStage": 106,
+      "front": "药",
+      "back": "medicine",
+      "phonics": "yào",
+      "tags": [
+        "body",
+        "home"
+      ]
+    },
+    {
+      "id": "zh_preschool_107",
+      "stageId": "preschool",
+      "rankInStage": 107,
+      "front": "小心",
+      "back": "careful",
+      "phonics": "xiǎoxīn",
+      "tags": [
+        "social",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_108",
+      "stageId": "preschool",
+      "rankInStage": 108,
+      "front": "橙子",
+      "back": "orange",
+      "phonics": "chéngzi",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_109",
+      "stageId": "preschool",
+      "rankInStage": 109,
+      "front": "葡萄",
+      "back": "grape",
+      "phonics": "pútao",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_110",
+      "stageId": "preschool",
+      "rankInStage": 110,
+      "front": "草莓",
+      "back": "strawberry",
+      "phonics": "cǎoméi",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_111",
+      "stageId": "preschool",
+      "rankInStage": 111,
+      "front": "西瓜",
+      "back": "watermelon",
+      "phonics": "xīguā",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_112",
+      "stageId": "preschool",
+      "rankInStage": 112,
+      "front": "梨",
+      "back": "pear",
+      "phonics": "lí",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_113",
+      "stageId": "preschool",
+      "rankInStage": 113,
+      "front": "蔬菜",
+      "back": "vegetable",
+      "phonics": "shūcài",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_114",
+      "stageId": "preschool",
+      "rankInStage": 114,
+      "front": "胡萝卜",
+      "back": "carrot",
+      "phonics": "húluóbo",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_115",
+      "stageId": "preschool",
+      "rankInStage": 115,
+      "front": "土豆",
+      "back": "potato",
+      "phonics": "tǔdòu",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_116",
+      "stageId": "preschool",
+      "rankInStage": 116,
+      "front": "西红柿",
+      "back": "tomato",
+      "phonics": "xīhóngshì",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_117",
+      "stageId": "preschool",
+      "rankInStage": 117,
+      "front": "玉米",
+      "back": "corn",
+      "phonics": "yùmǐ",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_118",
+      "stageId": "preschool",
+      "rankInStage": 118,
+      "front": "面条",
+      "back": "noodles",
+      "phonics": "miàntiáo",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_119",
+      "stageId": "preschool",
+      "rankInStage": 119,
+      "front": "汤",
+      "back": "soup",
+      "phonics": "tāng",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_120",
+      "stageId": "preschool",
+      "rankInStage": 120,
+      "front": "肉",
+      "back": "meat",
+      "phonics": "ròu",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_121",
+      "stageId": "preschool",
+      "rankInStage": 121,
+      "front": "豆腐",
+      "back": "tofu",
+      "phonics": "dòufu",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_122",
+      "stageId": "preschool",
+      "rankInStage": 122,
+      "front": "酸奶",
+      "back": "yogurt",
+      "phonics": "suānnǎi",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_123",
+      "stageId": "preschool",
+      "rankInStage": 123,
+      "front": "冰淇淋",
+      "back": "ice cream",
+      "phonics": "bīngqílín",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_124",
+      "stageId": "preschool",
+      "rankInStage": 124,
+      "front": "蛋糕",
+      "back": "cake",
+      "phonics": "dàngāo",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_125",
+      "stageId": "preschool",
+      "rankInStage": 125,
+      "front": "糖",
+      "back": "candy",
+      "phonics": "táng",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_126",
+      "stageId": "preschool",
+      "rankInStage": 126,
+      "front": "茶",
+      "back": "tea",
+      "phonics": "chá",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_127",
+      "stageId": "preschool",
+      "rankInStage": 127,
+      "front": "勺子",
+      "back": "spoon",
+      "phonics": "sháozi",
+      "tags": [
+        "food",
+        "home"
+      ]
+    },
+    {
+      "id": "zh_preschool_128",
+      "stageId": "preschool",
+      "rankInStage": 128,
+      "front": "筷子",
+      "back": "chopsticks",
+      "phonics": "kuàizi",
+      "tags": [
+        "food",
+        "home"
+      ]
+    },
+    {
+      "id": "zh_preschool_129",
+      "stageId": "preschool",
+      "rankInStage": 129,
+      "front": "碗",
+      "back": "bowl",
+      "phonics": "wǎn",
+      "tags": [
+        "food",
+        "home"
+      ]
+    },
+    {
+      "id": "zh_preschool_130",
+      "stageId": "preschool",
+      "rankInStage": 130,
+      "front": "盘子",
+      "back": "plate",
+      "phonics": "pánzi",
+      "tags": [
+        "food",
+        "home"
+      ]
+    },
+    {
+      "id": "zh_preschool_131",
+      "stageId": "preschool",
+      "rankInStage": 131,
+      "front": "杯子",
+      "back": "cup",
+      "phonics": "bēizi",
+      "tags": [
+        "food",
+        "home"
+      ]
+    },
+    {
+      "id": "zh_preschool_132",
+      "stageId": "preschool",
+      "rankInStage": 132,
+      "front": "叉子",
+      "back": "fork",
+      "phonics": "chāzi",
+      "tags": [
+        "food",
+        "home"
+      ]
+    },
+    {
+      "id": "zh_preschool_133",
+      "stageId": "preschool",
+      "rankInStage": 133,
+      "front": "好吃",
+      "back": "yummy",
+      "phonics": "hǎochī",
+      "tags": [
+        "food",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_134",
+      "stageId": "preschool",
+      "rankInStage": 134,
+      "front": "甜",
+      "back": "sweet",
+      "phonics": "tián",
+      "tags": [
+        "food",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_135",
+      "stageId": "preschool",
+      "rankInStage": 135,
+      "front": "辣",
+      "back": "spicy",
+      "phonics": "là",
+      "tags": [
+        "food",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_136",
+      "stageId": "preschool",
+      "rankInStage": 136,
+      "front": "盐",
+      "back": "salt",
+      "phonics": "yán",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_137",
+      "stageId": "preschool",
+      "rankInStage": 137,
+      "front": "三明治",
+      "back": "sandwich",
+      "phonics": "sānmíngzhì",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "zh_preschool_138",
+      "stageId": "preschool",
+      "rankInStage": 138,
+      "front": "猪",
+      "back": "pig",
+      "phonics": "zhū",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_preschool_139",
+      "stageId": "preschool",
+      "rankInStage": 139,
+      "front": "羊",
+      "back": "sheep",
+      "phonics": "yáng",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_preschool_140",
+      "stageId": "preschool",
+      "rankInStage": 140,
+      "front": "兔子",
+      "back": "rabbit",
+      "phonics": "tùzi",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_preschool_141",
+      "stageId": "preschool",
+      "rankInStage": 141,
+      "front": "老鼠",
+      "back": "mouse",
+      "phonics": "lǎoshǔ",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_preschool_142",
+      "stageId": "preschool",
+      "rankInStage": 142,
+      "front": "青蛙",
+      "back": "frog",
+      "phonics": "qīngwā",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_preschool_143",
+      "stageId": "preschool",
+      "rankInStage": 143,
+      "front": "熊",
+      "back": "bear",
+      "phonics": "xióng",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_preschool_144",
+      "stageId": "preschool",
+      "rankInStage": 144,
+      "front": "狮子",
+      "back": "lion",
+      "phonics": "shīzi",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_preschool_145",
+      "stageId": "preschool",
+      "rankInStage": 145,
+      "front": "老虎",
+      "back": "tiger",
+      "phonics": "lǎohǔ",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_preschool_146",
+      "stageId": "preschool",
+      "rankInStage": 146,
+      "front": "大象",
+      "back": "elephant",
+      "phonics": "dàxiàng",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_preschool_147",
+      "stageId": "preschool",
+      "rankInStage": 147,
+      "front": "猴子",
+      "back": "monkey",
+      "phonics": "hóuzi",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_preschool_148",
+      "stageId": "preschool",
+      "rankInStage": 148,
+      "front": "熊猫",
+      "back": "panda",
+      "phonics": "xióngmāo",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_preschool_149",
+      "stageId": "preschool",
+      "rankInStage": 149,
+      "front": "蝴蝶",
+      "back": "butterfly",
+      "phonics": "húdié",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_preschool_150",
+      "stageId": "preschool",
+      "rankInStage": 150,
+      "front": "蜜蜂",
+      "back": "bee",
+      "phonics": "mìfēng",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_preschool_151",
+      "stageId": "preschool",
+      "rankInStage": 151,
+      "front": "蚂蚁",
+      "back": "ant",
+      "phonics": "mǎyǐ",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_preschool_152",
+      "stageId": "preschool",
+      "rankInStage": 152,
+      "front": "小鸡",
+      "back": "chick",
+      "phonics": "xiǎo jī",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_preschool_153",
+      "stageId": "preschool",
+      "rankInStage": 153,
+      "front": "宠物",
+      "back": "pet",
+      "phonics": "chǒngwù",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_preschool_154",
+      "stageId": "preschool",
+      "rankInStage": 154,
+      "front": "动物园",
+      "back": "zoo",
+      "phonics": "dòngwùyuán",
+      "tags": [
+        "locations",
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_preschool_155",
+      "stageId": "preschool",
+      "rankInStage": 155,
+      "front": "农场",
+      "back": "farm",
+      "phonics": "nóngchǎng",
+      "tags": [
+        "locations",
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_preschool_156",
+      "stageId": "preschool",
+      "rankInStage": 156,
+      "front": "房子",
+      "back": "house",
+      "phonics": "fángzi",
+      "tags": [
+        "home",
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_preschool_157",
+      "stageId": "preschool",
+      "rankInStage": 157,
+      "front": "家",
+      "back": "home",
+      "phonics": "jiā",
+      "tags": [
+        "home",
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_preschool_158",
+      "stageId": "preschool",
+      "rankInStage": 158,
+      "front": "房间",
+      "back": "room",
+      "phonics": "fángjiān",
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "id": "zh_preschool_159",
+      "stageId": "preschool",
+      "rankInStage": 159,
+      "front": "厨房",
+      "back": "kitchen",
+      "phonics": "chúfáng",
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "id": "zh_preschool_160",
+      "stageId": "preschool",
+      "rankInStage": 160,
+      "front": "卫生间",
+      "back": "bathroom",
+      "phonics": "wèishēngjiān",
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "id": "zh_preschool_161",
+      "stageId": "preschool",
+      "rankInStage": 161,
+      "front": "窗户",
+      "back": "window",
+      "phonics": "chuānghu",
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "id": "zh_preschool_162",
+      "stageId": "preschool",
+      "rankInStage": 162,
+      "front": "地板",
+      "back": "floor",
+      "phonics": "dìbǎn",
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "id": "zh_preschool_163",
+      "stageId": "preschool",
+      "rankInStage": 163,
+      "front": "灯",
+      "back": "light",
+      "phonics": "dēng",
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "id": "zh_preschool_164",
+      "stageId": "preschool",
+      "rankInStage": 164,
+      "front": "钥匙",
+      "back": "key",
+      "phonics": "yàoshi",
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "id": "zh_preschool_165",
+      "stageId": "preschool",
+      "rankInStage": 165,
+      "front": "钟",
+      "back": "clock",
+      "phonics": "zhōng",
+      "tags": [
+        "home",
+        "time"
+      ]
+    },
+    {
+      "id": "zh_preschool_166",
+      "stageId": "preschool",
+      "rankInStage": 166,
+      "front": "电视",
+      "back": "TV",
+      "phonics": "diànshì",
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "id": "zh_preschool_167",
+      "stageId": "preschool",
+      "rankInStage": 167,
+      "front": "电脑",
+      "back": "computer",
+      "phonics": "diànnǎo",
+      "tags": [
+        "home",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_168",
+      "stageId": "preschool",
+      "rankInStage": 168,
+      "front": "玩具",
+      "back": "toy",
+      "phonics": "wánjù",
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "id": "zh_preschool_169",
+      "stageId": "preschool",
+      "rankInStage": 169,
+      "front": "积木",
+      "back": "block",
+      "phonics": "jīmù",
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "id": "zh_preschool_170",
+      "stageId": "preschool",
+      "rankInStage": 170,
+      "front": "拼图",
+      "back": "puzzle",
+      "phonics": "pīntú",
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "id": "zh_preschool_171",
+      "stageId": "preschool",
+      "rankInStage": 171,
+      "front": "娃娃",
+      "back": "doll",
+      "phonics": "wáwa",
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "id": "zh_preschool_172",
+      "stageId": "preschool",
+      "rankInStage": 172,
+      "front": "气球",
+      "back": "balloon",
+      "phonics": "qìqiú",
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "id": "zh_preschool_173",
+      "stageId": "preschool",
+      "rankInStage": 173,
+      "front": "自行车",
+      "back": "bike",
+      "phonics": "zìxíngchē",
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "id": "zh_preschool_174",
+      "stageId": "preschool",
+      "rankInStage": 174,
+      "front": "秋千",
+      "back": "swing",
+      "phonics": "qiūqiān",
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "id": "zh_preschool_175",
+      "stageId": "preschool",
+      "rankInStage": 175,
+      "front": "滑梯",
+      "back": "slide",
+      "phonics": "huátī",
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "id": "zh_preschool_176",
+      "stageId": "preschool",
+      "rankInStage": 176,
+      "front": "公园",
+      "back": "park",
+      "phonics": "gōngyuán",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_preschool_177",
+      "stageId": "preschool",
+      "rankInStage": 177,
+      "front": "商店",
+      "back": "store",
+      "phonics": "shāngdiàn",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_preschool_178",
+      "stageId": "preschool",
+      "rankInStage": 178,
+      "front": "医院",
+      "back": "hospital",
+      "phonics": "yīyuàn",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_preschool_179",
+      "stageId": "preschool",
+      "rankInStage": 179,
+      "front": "图书馆",
+      "back": "library",
+      "phonics": "túshūguǎn",
+      "tags": [
+        "locations",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_180",
+      "stageId": "preschool",
+      "rankInStage": 180,
+      "front": "游乐场",
+      "back": "playground",
+      "phonics": "yóulèchǎng",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_preschool_181",
+      "stageId": "preschool",
+      "rankInStage": 181,
+      "front": "公共汽车",
+      "back": "bus",
+      "phonics": "gōnggòng qìchē",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_preschool_182",
+      "stageId": "preschool",
+      "rankInStage": 182,
+      "front": "火车",
+      "back": "train",
+      "phonics": "huǒchē",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_preschool_183",
+      "stageId": "preschool",
+      "rankInStage": 183,
+      "front": "飞机",
+      "back": "plane",
+      "phonics": "fēijī",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_preschool_184",
+      "stageId": "preschool",
+      "rankInStage": 184,
+      "front": "太阳",
+      "back": "sun",
+      "phonics": "tàiyáng",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "zh_preschool_185",
+      "stageId": "preschool",
+      "rankInStage": 185,
+      "front": "月亮",
+      "back": "moon",
+      "phonics": "yuèliang",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "zh_preschool_186",
+      "stageId": "preschool",
+      "rankInStage": 186,
+      "front": "星星",
+      "back": "star",
+      "phonics": "xīngxing",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "zh_preschool_187",
+      "stageId": "preschool",
+      "rankInStage": 187,
+      "front": "天空",
+      "back": "sky",
+      "phonics": "tiānkōng",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "zh_preschool_188",
+      "stageId": "preschool",
+      "rankInStage": 188,
+      "front": "云",
+      "back": "cloud",
+      "phonics": "yún",
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "id": "zh_preschool_189",
+      "stageId": "preschool",
+      "rankInStage": 189,
+      "front": "雨",
+      "back": "rain",
+      "phonics": "yǔ",
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "id": "zh_preschool_190",
+      "stageId": "preschool",
+      "rankInStage": 190,
+      "front": "雪",
+      "back": "snow",
+      "phonics": "xuě",
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "id": "zh_preschool_191",
+      "stageId": "preschool",
+      "rankInStage": 191,
+      "front": "风",
+      "back": "wind",
+      "phonics": "fēng",
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "id": "zh_preschool_192",
+      "stageId": "preschool",
+      "rankInStage": 192,
+      "front": "彩虹",
+      "back": "rainbow",
+      "phonics": "cǎihóng",
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "id": "zh_preschool_193",
+      "stageId": "preschool",
+      "rankInStage": 193,
+      "front": "树",
+      "back": "tree",
+      "phonics": "shù",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "zh_preschool_194",
+      "stageId": "preschool",
+      "rankInStage": 194,
+      "front": "花",
+      "back": "flower",
+      "phonics": "huā",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "zh_preschool_195",
+      "stageId": "preschool",
+      "rankInStage": 195,
+      "front": "草",
+      "back": "grass",
+      "phonics": "cǎo",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "zh_preschool_196",
+      "stageId": "preschool",
+      "rankInStage": 196,
+      "front": "叶子",
+      "back": "leaf",
+      "phonics": "yèzi",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "zh_preschool_197",
+      "stageId": "preschool",
+      "rankInStage": 197,
+      "front": "海",
+      "back": "sea",
+      "phonics": "hǎi",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "zh_preschool_198",
+      "stageId": "preschool",
+      "rankInStage": 198,
+      "front": "河",
+      "back": "river",
+      "phonics": "hé",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "zh_preschool_199",
+      "stageId": "preschool",
+      "rankInStage": 199,
+      "front": "山",
+      "back": "mountain",
+      "phonics": "shān",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "zh_preschool_200",
+      "stageId": "preschool",
+      "rankInStage": 200,
+      "front": "天气",
+      "back": "weather",
+      "phonics": "tiānqì",
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "id": "zh_preschool_201",
+      "stageId": "preschool",
+      "rankInStage": 201,
+      "front": "晴天",
+      "back": "sunny",
+      "phonics": "qíngtiān",
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "id": "zh_preschool_202",
+      "stageId": "preschool",
+      "rankInStage": 202,
+      "front": "暖和",
+      "back": "warm",
+      "phonics": "nuǎnhuo",
+      "tags": [
+        "weather",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_203",
+      "stageId": "preschool",
+      "rankInStage": 203,
+      "front": "凉快",
+      "back": "cool",
+      "phonics": "liángkuai",
+      "tags": [
+        "weather",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_204",
+      "stageId": "preschool",
+      "rankInStage": 204,
+      "front": "裙子",
+      "back": "dress",
+      "phonics": "qúnzi",
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "zh_preschool_205",
+      "stageId": "preschool",
+      "rankInStage": 205,
+      "front": "夹克",
+      "back": "jacket",
+      "phonics": "jiákè",
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "zh_preschool_206",
+      "stageId": "preschool",
+      "rankInStage": 206,
+      "front": "毛衣",
+      "back": "sweater",
+      "phonics": "máoyī",
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "zh_preschool_207",
+      "stageId": "preschool",
+      "rankInStage": 207,
+      "front": "手套",
+      "back": "gloves",
+      "phonics": "shǒutào",
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "zh_preschool_208",
+      "stageId": "preschool",
+      "rankInStage": 208,
+      "front": "围巾",
+      "back": "scarf",
+      "phonics": "wéijīn",
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "zh_preschool_209",
+      "stageId": "preschool",
+      "rankInStage": 209,
+      "front": "睡衣",
+      "back": "pajamas",
+      "phonics": "shuìyī",
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "zh_preschool_210",
+      "stageId": "preschool",
+      "rankInStage": 210,
+      "front": "靴子",
+      "back": "boots",
+      "phonics": "xuēzi",
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "zh_preschool_211",
+      "stageId": "preschool",
+      "rankInStage": 211,
+      "front": "背包",
+      "back": "backpack",
+      "phonics": "bēibāo",
+      "tags": [
+        "clothing",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_212",
+      "stageId": "preschool",
+      "rankInStage": 212,
+      "front": "雨伞",
+      "back": "umbrella",
+      "phonics": "yǔsǎn",
+      "tags": [
+        "clothing",
+        "weather"
+      ]
+    },
+    {
+      "id": "zh_preschool_213",
+      "stageId": "preschool",
+      "rankInStage": 213,
+      "front": "眼镜",
+      "back": "glasses",
+      "phonics": "yǎnjìng",
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "zh_preschool_214",
+      "stageId": "preschool",
+      "rankInStage": 214,
+      "front": "扣子",
+      "back": "button",
+      "phonics": "kòuzi",
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "zh_preschool_215",
+      "stageId": "preschool",
+      "rankInStage": 215,
+      "front": "拉链",
+      "back": "zipper",
+      "phonics": "lāliàn",
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "zh_preschool_216",
+      "stageId": "preschool",
+      "rankInStage": 216,
+      "front": "四",
+      "back": "four",
+      "phonics": "sì",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "zh_preschool_217",
+      "stageId": "preschool",
+      "rankInStage": 217,
+      "front": "五",
+      "back": "five",
+      "phonics": "wǔ",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "zh_preschool_218",
+      "stageId": "preschool",
+      "rankInStage": 218,
+      "front": "六",
+      "back": "six",
+      "phonics": "liù",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "zh_preschool_219",
+      "stageId": "preschool",
+      "rankInStage": 219,
+      "front": "七",
+      "back": "seven",
+      "phonics": "qī",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "zh_preschool_220",
+      "stageId": "preschool",
+      "rankInStage": 220,
+      "front": "八",
+      "back": "eight",
+      "phonics": "bā",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "zh_preschool_221",
+      "stageId": "preschool",
+      "rankInStage": 221,
+      "front": "九",
+      "back": "nine",
+      "phonics": "jiǔ",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "zh_preschool_222",
+      "stageId": "preschool",
+      "rankInStage": 222,
+      "front": "十",
+      "back": "ten",
+      "phonics": "shí",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "zh_preschool_223",
+      "stageId": "preschool",
+      "rankInStage": 223,
+      "front": "绿",
+      "back": "green",
+      "phonics": "lǜ",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "zh_preschool_224",
+      "stageId": "preschool",
+      "rankInStage": 224,
+      "front": "黄",
+      "back": "yellow",
+      "phonics": "huáng",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "zh_preschool_225",
+      "stageId": "preschool",
+      "rankInStage": 225,
+      "front": "紫",
+      "back": "purple",
+      "phonics": "zǐ",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "zh_preschool_226",
+      "stageId": "preschool",
+      "rankInStage": 226,
+      "front": "粉红",
+      "back": "pink",
+      "phonics": "fěnhóng",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "zh_preschool_227",
+      "stageId": "preschool",
+      "rankInStage": 227,
+      "front": "棕",
+      "back": "brown",
+      "phonics": "zōng",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "zh_preschool_228",
+      "stageId": "preschool",
+      "rankInStage": 228,
+      "front": "黑",
+      "back": "black",
+      "phonics": "hēi",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "zh_preschool_229",
+      "stageId": "preschool",
+      "rankInStage": 229,
+      "front": "白",
+      "back": "white",
+      "phonics": "bái",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "zh_preschool_230",
+      "stageId": "preschool",
+      "rankInStage": 230,
+      "front": "很多",
+      "back": "many",
+      "phonics": "hěn duō",
+      "tags": [
+        "numbers_colors",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_231",
+      "stageId": "preschool",
+      "rankInStage": 231,
+      "front": "全部",
+      "back": "all",
+      "phonics": "quánbù",
+      "tags": [
+        "numbers_colors",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_232",
+      "stageId": "preschool",
+      "rankInStage": 232,
+      "front": "第一",
+      "back": "first",
+      "phonics": "dì yī",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "zh_preschool_233",
+      "stageId": "preschool",
+      "rankInStage": 233,
+      "front": "一半",
+      "back": "half",
+      "phonics": "yī bàn",
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "zh_preschool_234",
+      "stageId": "preschool",
+      "rankInStage": 234,
+      "front": "快",
+      "back": "fast",
+      "phonics": "kuài",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_235",
+      "stageId": "preschool",
+      "rankInStage": 235,
+      "front": "慢",
+      "back": "slow",
+      "phonics": "màn",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_236",
+      "stageId": "preschool",
+      "rankInStage": 236,
+      "front": "高",
+      "back": "tall",
+      "phonics": "gāo",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_237",
+      "stageId": "preschool",
+      "rankInStage": 237,
+      "front": "矮",
+      "back": "short",
+      "phonics": "ǎi",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_238",
+      "stageId": "preschool",
+      "rankInStage": 238,
+      "front": "长",
+      "back": "long",
+      "phonics": "cháng",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_239",
+      "stageId": "preschool",
+      "rankInStage": 239,
+      "front": "软",
+      "back": "soft",
+      "phonics": "ruǎn",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_240",
+      "stageId": "preschool",
+      "rankInStage": 240,
+      "front": "硬",
+      "back": "hard",
+      "phonics": "yìng",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_241",
+      "stageId": "preschool",
+      "rankInStage": 241,
+      "front": "大声",
+      "back": "loud",
+      "phonics": "dà shēng",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_242",
+      "stageId": "preschool",
+      "rankInStage": 242,
+      "front": "安静",
+      "back": "quiet",
+      "phonics": "ānjìng",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_243",
+      "stageId": "preschool",
+      "rankInStage": 243,
+      "front": "湿",
+      "back": "wet",
+      "phonics": "shī",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_244",
+      "stageId": "preschool",
+      "rankInStage": 244,
+      "front": "干",
+      "back": "dry",
+      "phonics": "gān",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_245",
+      "stageId": "preschool",
+      "rankInStage": 245,
+      "front": "满",
+      "back": "full",
+      "phonics": "mǎn",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_246",
+      "stageId": "preschool",
+      "rankInStage": 246,
+      "front": "空",
+      "back": "empty",
+      "phonics": "kōng",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_247",
+      "stageId": "preschool",
+      "rankInStage": 247,
+      "front": "新",
+      "back": "new",
+      "phonics": "xīn",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_248",
+      "stageId": "preschool",
+      "rankInStage": 248,
+      "front": "旧",
+      "back": "old",
+      "phonics": "jiù",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_249",
+      "stageId": "preschool",
+      "rankInStage": 249,
+      "front": "一样",
+      "back": "same",
+      "phonics": "yīyàng",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_250",
+      "stageId": "preschool",
+      "rankInStage": 250,
+      "front": "不同",
+      "back": "different",
+      "phonics": "bù tóng",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_251",
+      "stageId": "preschool",
+      "rankInStage": 251,
+      "front": "漂亮",
+      "back": "pretty",
+      "phonics": "piàoliang",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_252",
+      "stageId": "preschool",
+      "rankInStage": 252,
+      "front": "容易",
+      "back": "easy",
+      "phonics": "róngyì",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_253",
+      "stageId": "preschool",
+      "rankInStage": 253,
+      "front": "难",
+      "back": "difficult",
+      "phonics": "nán",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_preschool_254",
+      "stageId": "preschool",
+      "rankInStage": 254,
+      "front": "对",
+      "back": "right",
+      "phonics": "duì",
+      "tags": [
+        "descriptors",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_255",
+      "stageId": "preschool",
+      "rankInStage": 255,
+      "front": "错",
+      "back": "wrong",
+      "phonics": "cuò",
+      "tags": [
+        "descriptors",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_256",
+      "stageId": "preschool",
+      "rankInStage": 256,
+      "front": "左",
+      "back": "left",
+      "phonics": "zuǒ",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_preschool_257",
+      "stageId": "preschool",
+      "rankInStage": 257,
+      "front": "右",
+      "back": "right side",
+      "phonics": "yòu",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_preschool_258",
+      "stageId": "preschool",
+      "rankInStage": 258,
+      "front": "前面",
+      "back": "front",
+      "phonics": "qiánmiàn",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_preschool_259",
+      "stageId": "preschool",
+      "rankInStage": 259,
+      "front": "后面",
+      "back": "behind",
+      "phonics": "hòumiàn",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_preschool_260",
+      "stageId": "preschool",
+      "rankInStage": 260,
+      "front": "旁边",
+      "back": "beside",
+      "phonics": "pángbiān",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_preschool_261",
+      "stageId": "preschool",
+      "rankInStage": 261,
+      "front": "里面",
+      "back": "inside",
+      "phonics": "lǐmiàn",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_preschool_262",
+      "stageId": "preschool",
+      "rankInStage": 262,
+      "front": "外面",
+      "back": "outside",
+      "phonics": "wàimiàn",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_preschool_263",
+      "stageId": "preschool",
+      "rankInStage": 263,
+      "front": "近",
+      "back": "near",
+      "phonics": "jìn",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_preschool_264",
+      "stageId": "preschool",
+      "rankInStage": 264,
+      "front": "远",
+      "back": "far",
+      "phonics": "yuǎn",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_preschool_265",
+      "stageId": "preschool",
+      "rankInStage": 265,
+      "front": "关闭",
+      "back": "close",
+      "phonics": "guānbì",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_266",
+      "stageId": "preschool",
+      "rankInStage": 266,
+      "front": "握",
+      "back": "hold",
+      "phonics": "wò",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_267",
+      "stageId": "preschool",
+      "rankInStage": 267,
+      "front": "搬",
+      "back": "carry",
+      "phonics": "bān",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_268",
+      "stageId": "preschool",
+      "rankInStage": 268,
+      "front": "带来",
+      "back": "bring",
+      "phonics": "dài lái",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_269",
+      "stageId": "preschool",
+      "rankInStage": 269,
+      "front": "给看",
+      "back": "show",
+      "phonics": "gěi kàn",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_270",
+      "stageId": "preschool",
+      "rankInStage": 270,
+      "front": "告诉",
+      "back": "tell",
+      "phonics": "gàosu",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_271",
+      "stageId": "preschool",
+      "rankInStage": 271,
+      "front": "问",
+      "back": "ask",
+      "phonics": "wèn",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_272",
+      "stageId": "preschool",
+      "rankInStage": 272,
+      "front": "回答",
+      "back": "answer",
+      "phonics": "huídá",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_preschool_273",
+      "stageId": "preschool",
+      "rankInStage": 273,
+      "front": "做",
+      "back": "make",
+      "phonics": "zuò",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_274",
+      "stageId": "preschool",
+      "rankInStage": 274,
+      "front": "搭建",
+      "back": "build",
+      "phonics": "dājiàn",
+      "tags": [
+        "actions",
+        "toys_play"
+      ]
+    },
+    {
+      "id": "zh_preschool_275",
+      "stageId": "preschool",
+      "rankInStage": 275,
+      "front": "弄坏",
+      "back": "break",
+      "phonics": "nòng huài",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_276",
+      "stageId": "preschool",
+      "rankInStage": 276,
+      "front": "修理",
+      "back": "fix",
+      "phonics": "xiūlǐ",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_277",
+      "stageId": "preschool",
+      "rankInStage": 277,
+      "front": "用",
+      "back": "use",
+      "phonics": "yòng",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_278",
+      "stageId": "preschool",
+      "rankInStage": 278,
+      "front": "需要",
+      "back": "need",
+      "phonics": "xūyào",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_279",
+      "stageId": "preschool",
+      "rankInStage": 279,
+      "front": "喜欢",
+      "back": "like",
+      "phonics": "xǐhuan",
+      "tags": [
+        "actions",
+        "emotion"
+      ]
+    },
+    {
+      "id": "zh_preschool_280",
+      "stageId": "preschool",
+      "rankInStage": 280,
+      "front": "知道",
+      "back": "know",
+      "phonics": "zhīdào",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_281",
+      "stageId": "preschool",
+      "rankInStage": 281,
+      "front": "想",
+      "back": "think",
+      "phonics": "xiǎng",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_282",
+      "stageId": "preschool",
+      "rankInStage": 282,
+      "front": "闻",
+      "back": "smell",
+      "phonics": "wén",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_283",
+      "stageId": "preschool",
+      "rankInStage": 283,
+      "front": "摸",
+      "back": "touch",
+      "phonics": "mō",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_284",
+      "stageId": "preschool",
+      "rankInStage": 284,
+      "front": "听见",
+      "back": "hear",
+      "phonics": "tīngjiàn",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_285",
+      "stageId": "preschool",
+      "rankInStage": 285,
+      "front": "游泳",
+      "back": "swim",
+      "phonics": "yóuyǒng",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_286",
+      "stageId": "preschool",
+      "rankInStage": 286,
+      "front": "骑",
+      "back": "ride",
+      "phonics": "qí",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_287",
+      "stageId": "preschool",
+      "rankInStage": 287,
+      "front": "飞",
+      "back": "fly",
+      "phonics": "fēi",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_288",
+      "stageId": "preschool",
+      "rankInStage": 288,
+      "front": "买",
+      "back": "buy",
+      "phonics": "mǎi",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_289",
+      "stageId": "preschool",
+      "rankInStage": 289,
+      "front": "收拾",
+      "back": "clean up",
+      "phonics": "shōushi",
+      "tags": [
+        "actions",
+        "home"
+      ]
+    },
+    {
+      "id": "zh_preschool_290",
+      "stageId": "preschool",
+      "rankInStage": 290,
+      "front": "藏",
+      "back": "hide",
+      "phonics": "cáng",
+      "tags": [
+        "actions",
+        "toys_play"
+      ]
+    },
+    {
+      "id": "zh_preschool_291",
+      "stageId": "preschool",
+      "rankInStage": 291,
+      "front": "笑",
+      "back": "laugh",
+      "phonics": "xiào",
+      "tags": [
+        "actions",
+        "emotion"
+      ]
+    },
+    {
+      "id": "zh_preschool_292",
+      "stageId": "preschool",
+      "rankInStage": 292,
+      "front": "哭",
+      "back": "cry",
+      "phonics": "kū",
+      "tags": [
+        "actions",
+        "emotion"
+      ]
+    },
+    {
+      "id": "zh_preschool_293",
+      "stageId": "preschool",
+      "rankInStage": 293,
+      "front": "微笑",
+      "back": "smile",
+      "phonics": "wēixiào",
+      "tags": [
+        "actions",
+        "emotion"
+      ]
+    },
+    {
+      "id": "zh_preschool_294",
+      "stageId": "preschool",
+      "rankInStage": 294,
+      "front": "离开",
+      "back": "leave",
+      "phonics": "líkāi",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_295",
+      "stageId": "preschool",
+      "rankInStage": 295,
+      "front": "回来",
+      "back": "return",
+      "phonics": "huílai",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_296",
+      "stageId": "preschool",
+      "rankInStage": 296,
+      "front": "留下",
+      "back": "stay",
+      "phonics": "liú xià",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_297",
+      "stageId": "preschool",
+      "rankInStage": 297,
+      "front": "跟着",
+      "back": "follow",
+      "phonics": "gēnzhe",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_298",
+      "stageId": "preschool",
+      "rankInStage": 298,
+      "front": "选择",
+      "back": "choose",
+      "phonics": "xuǎnzé",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_preschool_299",
+      "stageId": "preschool",
+      "rankInStage": 299,
+      "front": "记住",
+      "back": "remember",
+      "phonics": "jìzhù",
+      "tags": [
+        "actions"
       ]
     }
   ]

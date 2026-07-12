@@ -36,6 +36,23 @@
         "xp": 150,
         "coins": 75
       }
+    },
+    {
+      "id": "preschool",
+      "order": 2,
+      "title": {
+        "en": "Preschool",
+        "zh": "学前"
+      },
+      "subtitle": {
+        "en": "Daily life & school",
+        "zh": "日常生活与学前"
+      },
+      "targetCount": 299,
+      "clearReward": {
+        "xp": 200,
+        "coins": 100
+      }
     }
   ],
   "entries": [
@@ -1323,6 +1340,3362 @@
       "phonics": null,
       "tags": [
         "numbers_colors"
+      ]
+    },
+    {
+      "id": "en_preschool_001",
+      "stageId": "preschool",
+      "rankInStage": 1,
+      "front": "teacher",
+      "back": "老师",
+      "phonics": null,
+      "tags": [
+        "people",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_002",
+      "stageId": "preschool",
+      "rankInStage": 2,
+      "front": "friend",
+      "back": "朋友",
+      "phonics": null,
+      "tags": [
+        "people",
+        "social"
+      ]
+    },
+    {
+      "id": "en_preschool_003",
+      "stageId": "preschool",
+      "rankInStage": 3,
+      "front": "school",
+      "back": "学校",
+      "phonics": null,
+      "tags": [
+        "locations",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_004",
+      "stageId": "preschool",
+      "rankInStage": 4,
+      "front": "classroom",
+      "back": "教室",
+      "phonics": null,
+      "tags": [
+        "locations",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_005",
+      "stageId": "preschool",
+      "rankInStage": 5,
+      "front": "bag",
+      "back": "书包",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_006",
+      "stageId": "preschool",
+      "rankInStage": 6,
+      "front": "pencil",
+      "back": "铅笔",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_007",
+      "stageId": "preschool",
+      "rankInStage": 7,
+      "front": "crayon",
+      "back": "蜡笔",
+      "phonics": null,
+      "tags": [
+        "school",
+        "toys_play"
+      ]
+    },
+    {
+      "id": "en_preschool_008",
+      "stageId": "preschool",
+      "rankInStage": 8,
+      "front": "paper",
+      "back": "纸",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_009",
+      "stageId": "preschool",
+      "rankInStage": 9,
+      "front": "eraser",
+      "back": "橡皮",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_010",
+      "stageId": "preschool",
+      "rankInStage": 10,
+      "front": "scissors",
+      "back": "剪刀",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_011",
+      "stageId": "preschool",
+      "rankInStage": 11,
+      "front": "glue",
+      "back": "胶水",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_012",
+      "stageId": "preschool",
+      "rankInStage": 12,
+      "front": "story",
+      "back": "故事",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_013",
+      "stageId": "preschool",
+      "rankInStage": 13,
+      "front": "song",
+      "back": "歌",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_014",
+      "stageId": "preschool",
+      "rankInStage": 14,
+      "front": "picture",
+      "back": "图画",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_015",
+      "stageId": "preschool",
+      "rankInStage": 15,
+      "front": "draw",
+      "back": "画",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_016",
+      "stageId": "preschool",
+      "rankInStage": 16,
+      "front": "write",
+      "back": "写",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_017",
+      "stageId": "preschool",
+      "rankInStage": 17,
+      "front": "read",
+      "back": "读",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_018",
+      "stageId": "preschool",
+      "rankInStage": 18,
+      "front": "count",
+      "back": "数",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_019",
+      "stageId": "preschool",
+      "rankInStage": 19,
+      "front": "listen",
+      "back": "听",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_020",
+      "stageId": "preschool",
+      "rankInStage": 20,
+      "front": "speak",
+      "back": "说",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_021",
+      "stageId": "preschool",
+      "rankInStage": 21,
+      "front": "sing",
+      "back": "唱",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_022",
+      "stageId": "preschool",
+      "rankInStage": 22,
+      "front": "dance",
+      "back": "跳舞",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_023",
+      "stageId": "preschool",
+      "rankInStage": 23,
+      "front": "learn",
+      "back": "学习",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_024",
+      "stageId": "preschool",
+      "rankInStage": 24,
+      "front": "share",
+      "back": "分享",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "social"
+      ]
+    },
+    {
+      "id": "en_preschool_025",
+      "stageId": "preschool",
+      "rankInStage": 25,
+      "front": "line up",
+      "back": "排队",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_026",
+      "stageId": "preschool",
+      "rankInStage": 26,
+      "front": "raise hand",
+      "back": "举手",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_027",
+      "stageId": "preschool",
+      "rankInStage": 27,
+      "front": "snack",
+      "back": "点心",
+      "phonics": null,
+      "tags": [
+        "food",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_028",
+      "stageId": "preschool",
+      "rankInStage": 28,
+      "front": "nap",
+      "back": "午睡",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_029",
+      "stageId": "preschool",
+      "rankInStage": 29,
+      "front": "homework",
+      "back": "作业",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_030",
+      "stageId": "preschool",
+      "rankInStage": 30,
+      "front": "desk",
+      "back": "课桌",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_031",
+      "stageId": "preschool",
+      "rankInStage": 31,
+      "front": "board",
+      "back": "黑板",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_032",
+      "stageId": "preschool",
+      "rankInStage": 32,
+      "front": "cut",
+      "back": "剪",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_033",
+      "stageId": "preschool",
+      "rankInStage": 33,
+      "front": "paste",
+      "back": "贴",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_034",
+      "stageId": "preschool",
+      "rankInStage": 34,
+      "front": "color",
+      "back": "涂色",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_035",
+      "stageId": "preschool",
+      "rankInStage": 35,
+      "front": "rule",
+      "back": "规则",
+      "phonics": null,
+      "tags": [
+        "school",
+        "social"
+      ]
+    },
+    {
+      "id": "en_preschool_036",
+      "stageId": "preschool",
+      "rankInStage": 36,
+      "front": "brother",
+      "back": "哥哥",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_preschool_037",
+      "stageId": "preschool",
+      "rankInStage": 37,
+      "front": "sister",
+      "back": "姐姐",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_preschool_038",
+      "stageId": "preschool",
+      "rankInStage": 38,
+      "front": "younger brother",
+      "back": "弟弟",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_preschool_039",
+      "stageId": "preschool",
+      "rankInStage": 39,
+      "front": "younger sister",
+      "back": "妹妹",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_preschool_040",
+      "stageId": "preschool",
+      "rankInStage": 40,
+      "front": "uncle",
+      "back": "叔叔",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_preschool_041",
+      "stageId": "preschool",
+      "rankInStage": 41,
+      "front": "aunt",
+      "back": "阿姨",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_preschool_042",
+      "stageId": "preschool",
+      "rankInStage": 42,
+      "front": "boy",
+      "back": "男孩",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_preschool_043",
+      "stageId": "preschool",
+      "rankInStage": 43,
+      "front": "girl",
+      "back": "女孩",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_preschool_044",
+      "stageId": "preschool",
+      "rankInStage": 44,
+      "front": "doctor",
+      "back": "医生",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_preschool_045",
+      "stageId": "preschool",
+      "rankInStage": 45,
+      "front": "nurse",
+      "back": "护士",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_preschool_046",
+      "stageId": "preschool",
+      "rankInStage": 46,
+      "front": "driver",
+      "back": "司机",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_preschool_047",
+      "stageId": "preschool",
+      "rankInStage": 47,
+      "front": "police",
+      "back": "警察",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_preschool_048",
+      "stageId": "preschool",
+      "rankInStage": 48,
+      "front": "name",
+      "back": "名字",
+      "phonics": null,
+      "tags": [
+        "people",
+        "social"
+      ]
+    },
+    {
+      "id": "en_preschool_049",
+      "stageId": "preschool",
+      "rankInStage": 49,
+      "front": "me",
+      "back": "我",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_preschool_050",
+      "stageId": "preschool",
+      "rankInStage": 50,
+      "front": "you",
+      "back": "你",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_preschool_051",
+      "stageId": "preschool",
+      "rankInStage": 51,
+      "front": "we",
+      "back": "我们",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_preschool_052",
+      "stageId": "preschool",
+      "rankInStage": 52,
+      "front": "he",
+      "back": "他",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_preschool_053",
+      "stageId": "preschool",
+      "rankInStage": 53,
+      "front": "she",
+      "back": "她",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_preschool_054",
+      "stageId": "preschool",
+      "rankInStage": 54,
+      "front": "morning",
+      "back": "早上",
+      "phonics": null,
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "en_preschool_055",
+      "stageId": "preschool",
+      "rankInStage": 55,
+      "front": "afternoon",
+      "back": "下午",
+      "phonics": null,
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "en_preschool_056",
+      "stageId": "preschool",
+      "rankInStage": 56,
+      "front": "evening",
+      "back": "晚上",
+      "phonics": null,
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "en_preschool_057",
+      "stageId": "preschool",
+      "rankInStage": 57,
+      "front": "night",
+      "back": "夜里",
+      "phonics": null,
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "en_preschool_058",
+      "stageId": "preschool",
+      "rankInStage": 58,
+      "front": "today",
+      "back": "今天",
+      "phonics": null,
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "en_preschool_059",
+      "stageId": "preschool",
+      "rankInStage": 59,
+      "front": "tomorrow",
+      "back": "明天",
+      "phonics": null,
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "en_preschool_060",
+      "stageId": "preschool",
+      "rankInStage": 60,
+      "front": "yesterday",
+      "back": "昨天",
+      "phonics": null,
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "en_preschool_061",
+      "stageId": "preschool",
+      "rankInStage": 61,
+      "front": "now",
+      "back": "现在",
+      "phonics": null,
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "en_preschool_062",
+      "stageId": "preschool",
+      "rankInStage": 62,
+      "front": "later",
+      "back": "等一下",
+      "phonics": null,
+      "tags": [
+        "time",
+        "social"
+      ]
+    },
+    {
+      "id": "en_preschool_063",
+      "stageId": "preschool",
+      "rankInStage": 63,
+      "front": "birthday",
+      "back": "生日",
+      "phonics": null,
+      "tags": [
+        "time",
+        "social"
+      ]
+    },
+    {
+      "id": "en_preschool_064",
+      "stageId": "preschool",
+      "rankInStage": 64,
+      "front": "wake up",
+      "back": "起床",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_065",
+      "stageId": "preschool",
+      "rankInStage": 65,
+      "front": "get dressed",
+      "back": "穿衣服",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "clothing"
+      ]
+    },
+    {
+      "id": "en_preschool_066",
+      "stageId": "preschool",
+      "rankInStage": 66,
+      "front": "brush teeth",
+      "back": "刷牙",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "body"
+      ]
+    },
+    {
+      "id": "en_preschool_067",
+      "stageId": "preschool",
+      "rankInStage": 67,
+      "front": "breakfast",
+      "back": "早餐",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_068",
+      "stageId": "preschool",
+      "rankInStage": 68,
+      "front": "lunch",
+      "back": "午餐",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_069",
+      "stageId": "preschool",
+      "rankInStage": 69,
+      "front": "dinner",
+      "back": "晚餐",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_070",
+      "stageId": "preschool",
+      "rankInStage": 70,
+      "front": "ready",
+      "back": "准备好",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_071",
+      "stageId": "preschool",
+      "rankInStage": 71,
+      "front": "wait",
+      "back": "等",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "social"
+      ]
+    },
+    {
+      "id": "en_preschool_072",
+      "stageId": "preschool",
+      "rankInStage": 72,
+      "front": "hurry",
+      "back": "快点",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "social"
+      ]
+    },
+    {
+      "id": "en_preschool_073",
+      "stageId": "preschool",
+      "rankInStage": 73,
+      "front": "rest",
+      "back": "休息",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_074",
+      "stageId": "preschool",
+      "rankInStage": 74,
+      "front": "finish",
+      "back": "完成",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_075",
+      "stageId": "preschool",
+      "rankInStage": 75,
+      "front": "start",
+      "back": "开始",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_076",
+      "stageId": "preschool",
+      "rankInStage": 76,
+      "front": "try",
+      "back": "试试",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_077",
+      "stageId": "preschool",
+      "rankInStage": 77,
+      "front": "good morning",
+      "back": "早上好",
+      "phonics": null,
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "en_preschool_078",
+      "stageId": "preschool",
+      "rankInStage": 78,
+      "front": "good night",
+      "back": "晚安",
+      "phonics": null,
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "en_preschool_079",
+      "stageId": "preschool",
+      "rankInStage": 79,
+      "front": "you're welcome",
+      "back": "不客气",
+      "phonics": null,
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "en_preschool_080",
+      "stageId": "preschool",
+      "rankInStage": 80,
+      "front": "excuse me",
+      "back": "不好意思",
+      "phonics": null,
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "en_preschool_081",
+      "stageId": "preschool",
+      "rankInStage": 81,
+      "front": "together",
+      "back": "一起",
+      "phonics": null,
+      "tags": [
+        "social",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_082",
+      "stageId": "preschool",
+      "rankInStage": 82,
+      "front": "angry",
+      "back": "生气",
+      "phonics": null,
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_preschool_083",
+      "stageId": "preschool",
+      "rankInStage": 83,
+      "front": "scared",
+      "back": "害怕",
+      "phonics": null,
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_preschool_084",
+      "stageId": "preschool",
+      "rankInStage": 84,
+      "front": "tired",
+      "back": "累",
+      "phonics": null,
+      "tags": [
+        "emotion",
+        "body"
+      ]
+    },
+    {
+      "id": "en_preschool_085",
+      "stageId": "preschool",
+      "rankInStage": 85,
+      "front": "excited",
+      "back": "兴奋",
+      "phonics": null,
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_preschool_086",
+      "stageId": "preschool",
+      "rankInStage": 86,
+      "front": "brave",
+      "back": "勇敢",
+      "phonics": null,
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_preschool_087",
+      "stageId": "preschool",
+      "rankInStage": 87,
+      "front": "shy",
+      "back": "害羞",
+      "phonics": null,
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_preschool_088",
+      "stageId": "preschool",
+      "rankInStage": 88,
+      "front": "worried",
+      "back": "担心",
+      "phonics": null,
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_preschool_089",
+      "stageId": "preschool",
+      "rankInStage": 89,
+      "front": "fun",
+      "back": "好玩",
+      "phonics": null,
+      "tags": [
+        "emotion",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_090",
+      "stageId": "preschool",
+      "rankInStage": 90,
+      "front": "funny",
+      "back": "有趣",
+      "phonics": null,
+      "tags": [
+        "emotion",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_091",
+      "stageId": "preschool",
+      "rankInStage": 91,
+      "front": "proud",
+      "back": "骄傲",
+      "phonics": null,
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_preschool_092",
+      "stageId": "preschool",
+      "rankInStage": 92,
+      "front": "bored",
+      "back": "无聊",
+      "phonics": null,
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_preschool_093",
+      "stageId": "preschool",
+      "rankInStage": 93,
+      "front": "surprised",
+      "back": "惊讶",
+      "phonics": null,
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_preschool_094",
+      "stageId": "preschool",
+      "rankInStage": 94,
+      "front": "hair",
+      "back": "头发",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_preschool_095",
+      "stageId": "preschool",
+      "rankInStage": 95,
+      "front": "face",
+      "back": "脸",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_preschool_096",
+      "stageId": "preschool",
+      "rankInStage": 96,
+      "front": "tooth",
+      "back": "牙齿",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_preschool_097",
+      "stageId": "preschool",
+      "rankInStage": 97,
+      "front": "neck",
+      "back": "脖子",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_preschool_098",
+      "stageId": "preschool",
+      "rankInStage": 98,
+      "front": "arm",
+      "back": "胳膊",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_preschool_099",
+      "stageId": "preschool",
+      "rankInStage": 99,
+      "front": "finger",
+      "back": "手指",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_preschool_100",
+      "stageId": "preschool",
+      "rankInStage": 100,
+      "front": "leg",
+      "back": "腿",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_preschool_101",
+      "stageId": "preschool",
+      "rankInStage": 101,
+      "front": "knee",
+      "back": "膝盖",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_preschool_102",
+      "stageId": "preschool",
+      "rankInStage": 102,
+      "front": "tummy",
+      "back": "肚子",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_preschool_103",
+      "stageId": "preschool",
+      "rankInStage": 103,
+      "front": "back",
+      "back": "背",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_preschool_104",
+      "stageId": "preschool",
+      "rankInStage": 104,
+      "front": "sick",
+      "back": "生病",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_preschool_105",
+      "stageId": "preschool",
+      "rankInStage": 105,
+      "front": "hurt",
+      "back": "受伤",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_preschool_106",
+      "stageId": "preschool",
+      "rankInStage": 106,
+      "front": "medicine",
+      "back": "药",
+      "phonics": null,
+      "tags": [
+        "body",
+        "home"
+      ]
+    },
+    {
+      "id": "en_preschool_107",
+      "stageId": "preschool",
+      "rankInStage": 107,
+      "front": "careful",
+      "back": "小心",
+      "phonics": null,
+      "tags": [
+        "social",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_108",
+      "stageId": "preschool",
+      "rankInStage": 108,
+      "front": "orange",
+      "back": "橙子",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_109",
+      "stageId": "preschool",
+      "rankInStage": 109,
+      "front": "grape",
+      "back": "葡萄",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_110",
+      "stageId": "preschool",
+      "rankInStage": 110,
+      "front": "strawberry",
+      "back": "草莓",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_111",
+      "stageId": "preschool",
+      "rankInStage": 111,
+      "front": "watermelon",
+      "back": "西瓜",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_112",
+      "stageId": "preschool",
+      "rankInStage": 112,
+      "front": "pear",
+      "back": "梨",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_113",
+      "stageId": "preschool",
+      "rankInStage": 113,
+      "front": "vegetable",
+      "back": "蔬菜",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_114",
+      "stageId": "preschool",
+      "rankInStage": 114,
+      "front": "carrot",
+      "back": "胡萝卜",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_115",
+      "stageId": "preschool",
+      "rankInStage": 115,
+      "front": "potato",
+      "back": "土豆",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_116",
+      "stageId": "preschool",
+      "rankInStage": 116,
+      "front": "tomato",
+      "back": "西红柿",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_117",
+      "stageId": "preschool",
+      "rankInStage": 117,
+      "front": "corn",
+      "back": "玉米",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_118",
+      "stageId": "preschool",
+      "rankInStage": 118,
+      "front": "noodles",
+      "back": "面条",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_119",
+      "stageId": "preschool",
+      "rankInStage": 119,
+      "front": "soup",
+      "back": "汤",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_120",
+      "stageId": "preschool",
+      "rankInStage": 120,
+      "front": "meat",
+      "back": "肉",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_121",
+      "stageId": "preschool",
+      "rankInStage": 121,
+      "front": "tofu",
+      "back": "豆腐",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_122",
+      "stageId": "preschool",
+      "rankInStage": 122,
+      "front": "yogurt",
+      "back": "酸奶",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_123",
+      "stageId": "preschool",
+      "rankInStage": 123,
+      "front": "ice cream",
+      "back": "冰淇淋",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_124",
+      "stageId": "preschool",
+      "rankInStage": 124,
+      "front": "cake",
+      "back": "蛋糕",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_125",
+      "stageId": "preschool",
+      "rankInStage": 125,
+      "front": "candy",
+      "back": "糖",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_126",
+      "stageId": "preschool",
+      "rankInStage": 126,
+      "front": "tea",
+      "back": "茶",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_127",
+      "stageId": "preschool",
+      "rankInStage": 127,
+      "front": "spoon",
+      "back": "勺子",
+      "phonics": null,
+      "tags": [
+        "food",
+        "home"
+      ]
+    },
+    {
+      "id": "en_preschool_128",
+      "stageId": "preschool",
+      "rankInStage": 128,
+      "front": "chopsticks",
+      "back": "筷子",
+      "phonics": null,
+      "tags": [
+        "food",
+        "home"
+      ]
+    },
+    {
+      "id": "en_preschool_129",
+      "stageId": "preschool",
+      "rankInStage": 129,
+      "front": "bowl",
+      "back": "碗",
+      "phonics": null,
+      "tags": [
+        "food",
+        "home"
+      ]
+    },
+    {
+      "id": "en_preschool_130",
+      "stageId": "preschool",
+      "rankInStage": 130,
+      "front": "plate",
+      "back": "盘子",
+      "phonics": null,
+      "tags": [
+        "food",
+        "home"
+      ]
+    },
+    {
+      "id": "en_preschool_131",
+      "stageId": "preschool",
+      "rankInStage": 131,
+      "front": "cup",
+      "back": "杯子",
+      "phonics": null,
+      "tags": [
+        "food",
+        "home"
+      ]
+    },
+    {
+      "id": "en_preschool_132",
+      "stageId": "preschool",
+      "rankInStage": 132,
+      "front": "fork",
+      "back": "叉子",
+      "phonics": null,
+      "tags": [
+        "food",
+        "home"
+      ]
+    },
+    {
+      "id": "en_preschool_133",
+      "stageId": "preschool",
+      "rankInStage": 133,
+      "front": "yummy",
+      "back": "好吃",
+      "phonics": null,
+      "tags": [
+        "food",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_134",
+      "stageId": "preschool",
+      "rankInStage": 134,
+      "front": "sweet",
+      "back": "甜",
+      "phonics": null,
+      "tags": [
+        "food",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_135",
+      "stageId": "preschool",
+      "rankInStage": 135,
+      "front": "spicy",
+      "back": "辣",
+      "phonics": null,
+      "tags": [
+        "food",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_136",
+      "stageId": "preschool",
+      "rankInStage": 136,
+      "front": "salt",
+      "back": "盐",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_137",
+      "stageId": "preschool",
+      "rankInStage": 137,
+      "front": "sandwich",
+      "back": "三明治",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_preschool_138",
+      "stageId": "preschool",
+      "rankInStage": 138,
+      "front": "pig",
+      "back": "猪",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_preschool_139",
+      "stageId": "preschool",
+      "rankInStage": 139,
+      "front": "sheep",
+      "back": "羊",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_preschool_140",
+      "stageId": "preschool",
+      "rankInStage": 140,
+      "front": "rabbit",
+      "back": "兔子",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_preschool_141",
+      "stageId": "preschool",
+      "rankInStage": 141,
+      "front": "mouse",
+      "back": "老鼠",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_preschool_142",
+      "stageId": "preschool",
+      "rankInStage": 142,
+      "front": "frog",
+      "back": "青蛙",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_preschool_143",
+      "stageId": "preschool",
+      "rankInStage": 143,
+      "front": "bear",
+      "back": "熊",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_preschool_144",
+      "stageId": "preschool",
+      "rankInStage": 144,
+      "front": "lion",
+      "back": "狮子",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_preschool_145",
+      "stageId": "preschool",
+      "rankInStage": 145,
+      "front": "tiger",
+      "back": "老虎",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_preschool_146",
+      "stageId": "preschool",
+      "rankInStage": 146,
+      "front": "elephant",
+      "back": "大象",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_preschool_147",
+      "stageId": "preschool",
+      "rankInStage": 147,
+      "front": "monkey",
+      "back": "猴子",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_preschool_148",
+      "stageId": "preschool",
+      "rankInStage": 148,
+      "front": "panda",
+      "back": "熊猫",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_preschool_149",
+      "stageId": "preschool",
+      "rankInStage": 149,
+      "front": "butterfly",
+      "back": "蝴蝶",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_preschool_150",
+      "stageId": "preschool",
+      "rankInStage": 150,
+      "front": "bee",
+      "back": "蜜蜂",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_preschool_151",
+      "stageId": "preschool",
+      "rankInStage": 151,
+      "front": "ant",
+      "back": "蚂蚁",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_preschool_152",
+      "stageId": "preschool",
+      "rankInStage": 152,
+      "front": "chick",
+      "back": "小鸡",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_preschool_153",
+      "stageId": "preschool",
+      "rankInStage": 153,
+      "front": "pet",
+      "back": "宠物",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_preschool_154",
+      "stageId": "preschool",
+      "rankInStage": 154,
+      "front": "zoo",
+      "back": "动物园",
+      "phonics": null,
+      "tags": [
+        "locations",
+        "animals"
+      ]
+    },
+    {
+      "id": "en_preschool_155",
+      "stageId": "preschool",
+      "rankInStage": 155,
+      "front": "farm",
+      "back": "农场",
+      "phonics": null,
+      "tags": [
+        "locations",
+        "animals"
+      ]
+    },
+    {
+      "id": "en_preschool_156",
+      "stageId": "preschool",
+      "rankInStage": 156,
+      "front": "house",
+      "back": "房子",
+      "phonics": null,
+      "tags": [
+        "home",
+        "locations"
+      ]
+    },
+    {
+      "id": "en_preschool_157",
+      "stageId": "preschool",
+      "rankInStage": 157,
+      "front": "home",
+      "back": "家",
+      "phonics": null,
+      "tags": [
+        "home",
+        "locations"
+      ]
+    },
+    {
+      "id": "en_preschool_158",
+      "stageId": "preschool",
+      "rankInStage": 158,
+      "front": "room",
+      "back": "房间",
+      "phonics": null,
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "id": "en_preschool_159",
+      "stageId": "preschool",
+      "rankInStage": 159,
+      "front": "kitchen",
+      "back": "厨房",
+      "phonics": null,
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "id": "en_preschool_160",
+      "stageId": "preschool",
+      "rankInStage": 160,
+      "front": "bathroom",
+      "back": "卫生间",
+      "phonics": null,
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "id": "en_preschool_161",
+      "stageId": "preschool",
+      "rankInStage": 161,
+      "front": "window",
+      "back": "窗户",
+      "phonics": null,
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "id": "en_preschool_162",
+      "stageId": "preschool",
+      "rankInStage": 162,
+      "front": "floor",
+      "back": "地板",
+      "phonics": null,
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "id": "en_preschool_163",
+      "stageId": "preschool",
+      "rankInStage": 163,
+      "front": "light",
+      "back": "灯",
+      "phonics": null,
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "id": "en_preschool_164",
+      "stageId": "preschool",
+      "rankInStage": 164,
+      "front": "key",
+      "back": "钥匙",
+      "phonics": null,
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "id": "en_preschool_165",
+      "stageId": "preschool",
+      "rankInStage": 165,
+      "front": "clock",
+      "back": "钟",
+      "phonics": null,
+      "tags": [
+        "home",
+        "time"
+      ]
+    },
+    {
+      "id": "en_preschool_166",
+      "stageId": "preschool",
+      "rankInStage": 166,
+      "front": "TV",
+      "back": "电视",
+      "phonics": null,
+      "tags": [
+        "home"
+      ]
+    },
+    {
+      "id": "en_preschool_167",
+      "stageId": "preschool",
+      "rankInStage": 167,
+      "front": "computer",
+      "back": "电脑",
+      "phonics": null,
+      "tags": [
+        "home",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_168",
+      "stageId": "preschool",
+      "rankInStage": 168,
+      "front": "toy",
+      "back": "玩具",
+      "phonics": null,
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "id": "en_preschool_169",
+      "stageId": "preschool",
+      "rankInStage": 169,
+      "front": "block",
+      "back": "积木",
+      "phonics": null,
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "id": "en_preschool_170",
+      "stageId": "preschool",
+      "rankInStage": 170,
+      "front": "puzzle",
+      "back": "拼图",
+      "phonics": null,
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "id": "en_preschool_171",
+      "stageId": "preschool",
+      "rankInStage": 171,
+      "front": "doll",
+      "back": "娃娃",
+      "phonics": null,
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "id": "en_preschool_172",
+      "stageId": "preschool",
+      "rankInStage": 172,
+      "front": "balloon",
+      "back": "气球",
+      "phonics": null,
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "id": "en_preschool_173",
+      "stageId": "preschool",
+      "rankInStage": 173,
+      "front": "bike",
+      "back": "自行车",
+      "phonics": null,
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "id": "en_preschool_174",
+      "stageId": "preschool",
+      "rankInStage": 174,
+      "front": "swing",
+      "back": "秋千",
+      "phonics": null,
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "id": "en_preschool_175",
+      "stageId": "preschool",
+      "rankInStage": 175,
+      "front": "slide",
+      "back": "滑梯",
+      "phonics": null,
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "id": "en_preschool_176",
+      "stageId": "preschool",
+      "rankInStage": 176,
+      "front": "park",
+      "back": "公园",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_preschool_177",
+      "stageId": "preschool",
+      "rankInStage": 177,
+      "front": "store",
+      "back": "商店",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_preschool_178",
+      "stageId": "preschool",
+      "rankInStage": 178,
+      "front": "hospital",
+      "back": "医院",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_preschool_179",
+      "stageId": "preschool",
+      "rankInStage": 179,
+      "front": "library",
+      "back": "图书馆",
+      "phonics": null,
+      "tags": [
+        "locations",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_180",
+      "stageId": "preschool",
+      "rankInStage": 180,
+      "front": "playground",
+      "back": "游乐场",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_preschool_181",
+      "stageId": "preschool",
+      "rankInStage": 181,
+      "front": "bus",
+      "back": "公共汽车",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_preschool_182",
+      "stageId": "preschool",
+      "rankInStage": 182,
+      "front": "train",
+      "back": "火车",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_preschool_183",
+      "stageId": "preschool",
+      "rankInStage": 183,
+      "front": "plane",
+      "back": "飞机",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_preschool_184",
+      "stageId": "preschool",
+      "rankInStage": 184,
+      "front": "sun",
+      "back": "太阳",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_preschool_185",
+      "stageId": "preschool",
+      "rankInStage": 185,
+      "front": "moon",
+      "back": "月亮",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_preschool_186",
+      "stageId": "preschool",
+      "rankInStage": 186,
+      "front": "star",
+      "back": "星星",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_preschool_187",
+      "stageId": "preschool",
+      "rankInStage": 187,
+      "front": "sky",
+      "back": "天空",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_preschool_188",
+      "stageId": "preschool",
+      "rankInStage": 188,
+      "front": "cloud",
+      "back": "云",
+      "phonics": null,
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "id": "en_preschool_189",
+      "stageId": "preschool",
+      "rankInStage": 189,
+      "front": "rain",
+      "back": "雨",
+      "phonics": null,
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "id": "en_preschool_190",
+      "stageId": "preschool",
+      "rankInStage": 190,
+      "front": "snow",
+      "back": "雪",
+      "phonics": null,
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "id": "en_preschool_191",
+      "stageId": "preschool",
+      "rankInStage": 191,
+      "front": "wind",
+      "back": "风",
+      "phonics": null,
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "id": "en_preschool_192",
+      "stageId": "preschool",
+      "rankInStage": 192,
+      "front": "rainbow",
+      "back": "彩虹",
+      "phonics": null,
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "id": "en_preschool_193",
+      "stageId": "preschool",
+      "rankInStage": 193,
+      "front": "tree",
+      "back": "树",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_preschool_194",
+      "stageId": "preschool",
+      "rankInStage": 194,
+      "front": "flower",
+      "back": "花",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_preschool_195",
+      "stageId": "preschool",
+      "rankInStage": 195,
+      "front": "grass",
+      "back": "草",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_preschool_196",
+      "stageId": "preschool",
+      "rankInStage": 196,
+      "front": "leaf",
+      "back": "叶子",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_preschool_197",
+      "stageId": "preschool",
+      "rankInStage": 197,
+      "front": "sea",
+      "back": "海",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_preschool_198",
+      "stageId": "preschool",
+      "rankInStage": 198,
+      "front": "river",
+      "back": "河",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_preschool_199",
+      "stageId": "preschool",
+      "rankInStage": 199,
+      "front": "mountain",
+      "back": "山",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_preschool_200",
+      "stageId": "preschool",
+      "rankInStage": 200,
+      "front": "weather",
+      "back": "天气",
+      "phonics": null,
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "id": "en_preschool_201",
+      "stageId": "preschool",
+      "rankInStage": 201,
+      "front": "sunny",
+      "back": "晴天",
+      "phonics": null,
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "id": "en_preschool_202",
+      "stageId": "preschool",
+      "rankInStage": 202,
+      "front": "warm",
+      "back": "暖和",
+      "phonics": null,
+      "tags": [
+        "weather",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_203",
+      "stageId": "preschool",
+      "rankInStage": 203,
+      "front": "cool",
+      "back": "凉快",
+      "phonics": null,
+      "tags": [
+        "weather",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_204",
+      "stageId": "preschool",
+      "rankInStage": 204,
+      "front": "dress",
+      "back": "裙子",
+      "phonics": null,
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "en_preschool_205",
+      "stageId": "preschool",
+      "rankInStage": 205,
+      "front": "jacket",
+      "back": "夹克",
+      "phonics": null,
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "en_preschool_206",
+      "stageId": "preschool",
+      "rankInStage": 206,
+      "front": "sweater",
+      "back": "毛衣",
+      "phonics": null,
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "en_preschool_207",
+      "stageId": "preschool",
+      "rankInStage": 207,
+      "front": "gloves",
+      "back": "手套",
+      "phonics": null,
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "en_preschool_208",
+      "stageId": "preschool",
+      "rankInStage": 208,
+      "front": "scarf",
+      "back": "围巾",
+      "phonics": null,
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "en_preschool_209",
+      "stageId": "preschool",
+      "rankInStage": 209,
+      "front": "pajamas",
+      "back": "睡衣",
+      "phonics": null,
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "en_preschool_210",
+      "stageId": "preschool",
+      "rankInStage": 210,
+      "front": "boots",
+      "back": "靴子",
+      "phonics": null,
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "en_preschool_211",
+      "stageId": "preschool",
+      "rankInStage": 211,
+      "front": "backpack",
+      "back": "背包",
+      "phonics": null,
+      "tags": [
+        "clothing",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_212",
+      "stageId": "preschool",
+      "rankInStage": 212,
+      "front": "umbrella",
+      "back": "雨伞",
+      "phonics": null,
+      "tags": [
+        "clothing",
+        "weather"
+      ]
+    },
+    {
+      "id": "en_preschool_213",
+      "stageId": "preschool",
+      "rankInStage": 213,
+      "front": "glasses",
+      "back": "眼镜",
+      "phonics": null,
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "en_preschool_214",
+      "stageId": "preschool",
+      "rankInStage": 214,
+      "front": "button",
+      "back": "扣子",
+      "phonics": null,
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "en_preschool_215",
+      "stageId": "preschool",
+      "rankInStage": 215,
+      "front": "zipper",
+      "back": "拉链",
+      "phonics": null,
+      "tags": [
+        "clothing"
+      ]
+    },
+    {
+      "id": "en_preschool_216",
+      "stageId": "preschool",
+      "rankInStage": 216,
+      "front": "four",
+      "back": "四",
+      "phonics": null,
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "en_preschool_217",
+      "stageId": "preschool",
+      "rankInStage": 217,
+      "front": "five",
+      "back": "五",
+      "phonics": null,
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "en_preschool_218",
+      "stageId": "preschool",
+      "rankInStage": 218,
+      "front": "six",
+      "back": "六",
+      "phonics": null,
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "en_preschool_219",
+      "stageId": "preschool",
+      "rankInStage": 219,
+      "front": "seven",
+      "back": "七",
+      "phonics": null,
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "en_preschool_220",
+      "stageId": "preschool",
+      "rankInStage": 220,
+      "front": "eight",
+      "back": "八",
+      "phonics": null,
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "en_preschool_221",
+      "stageId": "preschool",
+      "rankInStage": 221,
+      "front": "nine",
+      "back": "九",
+      "phonics": null,
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "en_preschool_222",
+      "stageId": "preschool",
+      "rankInStage": 222,
+      "front": "ten",
+      "back": "十",
+      "phonics": null,
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "en_preschool_223",
+      "stageId": "preschool",
+      "rankInStage": 223,
+      "front": "green",
+      "back": "绿",
+      "phonics": null,
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "en_preschool_224",
+      "stageId": "preschool",
+      "rankInStage": 224,
+      "front": "yellow",
+      "back": "黄",
+      "phonics": null,
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "en_preschool_225",
+      "stageId": "preschool",
+      "rankInStage": 225,
+      "front": "purple",
+      "back": "紫",
+      "phonics": null,
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "en_preschool_226",
+      "stageId": "preschool",
+      "rankInStage": 226,
+      "front": "pink",
+      "back": "粉红",
+      "phonics": null,
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "en_preschool_227",
+      "stageId": "preschool",
+      "rankInStage": 227,
+      "front": "brown",
+      "back": "棕",
+      "phonics": null,
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "en_preschool_228",
+      "stageId": "preschool",
+      "rankInStage": 228,
+      "front": "black",
+      "back": "黑",
+      "phonics": null,
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "en_preschool_229",
+      "stageId": "preschool",
+      "rankInStage": 229,
+      "front": "white",
+      "back": "白",
+      "phonics": null,
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "en_preschool_230",
+      "stageId": "preschool",
+      "rankInStage": 230,
+      "front": "many",
+      "back": "很多",
+      "phonics": null,
+      "tags": [
+        "numbers_colors",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_231",
+      "stageId": "preschool",
+      "rankInStage": 231,
+      "front": "all",
+      "back": "全部",
+      "phonics": null,
+      "tags": [
+        "numbers_colors",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_232",
+      "stageId": "preschool",
+      "rankInStage": 232,
+      "front": "first",
+      "back": "第一",
+      "phonics": null,
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "en_preschool_233",
+      "stageId": "preschool",
+      "rankInStage": 233,
+      "front": "half",
+      "back": "一半",
+      "phonics": null,
+      "tags": [
+        "numbers_colors"
+      ]
+    },
+    {
+      "id": "en_preschool_234",
+      "stageId": "preschool",
+      "rankInStage": 234,
+      "front": "fast",
+      "back": "快",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_235",
+      "stageId": "preschool",
+      "rankInStage": 235,
+      "front": "slow",
+      "back": "慢",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_236",
+      "stageId": "preschool",
+      "rankInStage": 236,
+      "front": "tall",
+      "back": "高",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_237",
+      "stageId": "preschool",
+      "rankInStage": 237,
+      "front": "short",
+      "back": "矮",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_238",
+      "stageId": "preschool",
+      "rankInStage": 238,
+      "front": "long",
+      "back": "长",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_239",
+      "stageId": "preschool",
+      "rankInStage": 239,
+      "front": "soft",
+      "back": "软",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_240",
+      "stageId": "preschool",
+      "rankInStage": 240,
+      "front": "hard",
+      "back": "硬",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_241",
+      "stageId": "preschool",
+      "rankInStage": 241,
+      "front": "loud",
+      "back": "大声",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_242",
+      "stageId": "preschool",
+      "rankInStage": 242,
+      "front": "quiet",
+      "back": "安静",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_243",
+      "stageId": "preschool",
+      "rankInStage": 243,
+      "front": "wet",
+      "back": "湿",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_244",
+      "stageId": "preschool",
+      "rankInStage": 244,
+      "front": "dry",
+      "back": "干",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_245",
+      "stageId": "preschool",
+      "rankInStage": 245,
+      "front": "full",
+      "back": "满",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_246",
+      "stageId": "preschool",
+      "rankInStage": 246,
+      "front": "empty",
+      "back": "空",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_247",
+      "stageId": "preschool",
+      "rankInStage": 247,
+      "front": "new",
+      "back": "新",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_248",
+      "stageId": "preschool",
+      "rankInStage": 248,
+      "front": "old",
+      "back": "旧",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_249",
+      "stageId": "preschool",
+      "rankInStage": 249,
+      "front": "same",
+      "back": "一样",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_250",
+      "stageId": "preschool",
+      "rankInStage": 250,
+      "front": "different",
+      "back": "不同",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_251",
+      "stageId": "preschool",
+      "rankInStage": 251,
+      "front": "pretty",
+      "back": "漂亮",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_252",
+      "stageId": "preschool",
+      "rankInStage": 252,
+      "front": "easy",
+      "back": "容易",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_253",
+      "stageId": "preschool",
+      "rankInStage": 253,
+      "front": "difficult",
+      "back": "难",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_preschool_254",
+      "stageId": "preschool",
+      "rankInStage": 254,
+      "front": "right",
+      "back": "对",
+      "phonics": null,
+      "tags": [
+        "descriptors",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_255",
+      "stageId": "preschool",
+      "rankInStage": 255,
+      "front": "wrong",
+      "back": "错",
+      "phonics": null,
+      "tags": [
+        "descriptors",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_256",
+      "stageId": "preschool",
+      "rankInStage": 256,
+      "front": "left",
+      "back": "左",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_preschool_257",
+      "stageId": "preschool",
+      "rankInStage": 257,
+      "front": "right side",
+      "back": "右",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_preschool_258",
+      "stageId": "preschool",
+      "rankInStage": 258,
+      "front": "front",
+      "back": "前面",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_preschool_259",
+      "stageId": "preschool",
+      "rankInStage": 259,
+      "front": "behind",
+      "back": "后面",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_preschool_260",
+      "stageId": "preschool",
+      "rankInStage": 260,
+      "front": "beside",
+      "back": "旁边",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_preschool_261",
+      "stageId": "preschool",
+      "rankInStage": 261,
+      "front": "inside",
+      "back": "里面",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_preschool_262",
+      "stageId": "preschool",
+      "rankInStage": 262,
+      "front": "outside",
+      "back": "外面",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_preschool_263",
+      "stageId": "preschool",
+      "rankInStage": 263,
+      "front": "near",
+      "back": "近",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_preschool_264",
+      "stageId": "preschool",
+      "rankInStage": 264,
+      "front": "far",
+      "back": "远",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_preschool_265",
+      "stageId": "preschool",
+      "rankInStage": 265,
+      "front": "close",
+      "back": "关闭",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_266",
+      "stageId": "preschool",
+      "rankInStage": 266,
+      "front": "hold",
+      "back": "握",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_267",
+      "stageId": "preschool",
+      "rankInStage": 267,
+      "front": "carry",
+      "back": "搬",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_268",
+      "stageId": "preschool",
+      "rankInStage": 268,
+      "front": "bring",
+      "back": "带来",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_269",
+      "stageId": "preschool",
+      "rankInStage": 269,
+      "front": "show",
+      "back": "给看",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_270",
+      "stageId": "preschool",
+      "rankInStage": 270,
+      "front": "tell",
+      "back": "告诉",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_271",
+      "stageId": "preschool",
+      "rankInStage": 271,
+      "front": "ask",
+      "back": "问",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_272",
+      "stageId": "preschool",
+      "rankInStage": 272,
+      "front": "answer",
+      "back": "回答",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "en_preschool_273",
+      "stageId": "preschool",
+      "rankInStage": 273,
+      "front": "make",
+      "back": "做",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_274",
+      "stageId": "preschool",
+      "rankInStage": 274,
+      "front": "build",
+      "back": "搭建",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "toys_play"
+      ]
+    },
+    {
+      "id": "en_preschool_275",
+      "stageId": "preschool",
+      "rankInStage": 275,
+      "front": "break",
+      "back": "弄坏",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_276",
+      "stageId": "preschool",
+      "rankInStage": 276,
+      "front": "fix",
+      "back": "修理",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_277",
+      "stageId": "preschool",
+      "rankInStage": 277,
+      "front": "use",
+      "back": "用",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_278",
+      "stageId": "preschool",
+      "rankInStage": 278,
+      "front": "need",
+      "back": "需要",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_279",
+      "stageId": "preschool",
+      "rankInStage": 279,
+      "front": "like",
+      "back": "喜欢",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_preschool_280",
+      "stageId": "preschool",
+      "rankInStage": 280,
+      "front": "know",
+      "back": "知道",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_281",
+      "stageId": "preschool",
+      "rankInStage": 281,
+      "front": "think",
+      "back": "想",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_282",
+      "stageId": "preschool",
+      "rankInStage": 282,
+      "front": "smell",
+      "back": "闻",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_283",
+      "stageId": "preschool",
+      "rankInStage": 283,
+      "front": "touch",
+      "back": "摸",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_284",
+      "stageId": "preschool",
+      "rankInStage": 284,
+      "front": "hear",
+      "back": "听见",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_285",
+      "stageId": "preschool",
+      "rankInStage": 285,
+      "front": "swim",
+      "back": "游泳",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_286",
+      "stageId": "preschool",
+      "rankInStage": 286,
+      "front": "ride",
+      "back": "骑",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_287",
+      "stageId": "preschool",
+      "rankInStage": 287,
+      "front": "fly",
+      "back": "飞",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_288",
+      "stageId": "preschool",
+      "rankInStage": 288,
+      "front": "buy",
+      "back": "买",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_289",
+      "stageId": "preschool",
+      "rankInStage": 289,
+      "front": "clean up",
+      "back": "收拾",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "home"
+      ]
+    },
+    {
+      "id": "en_preschool_290",
+      "stageId": "preschool",
+      "rankInStage": 290,
+      "front": "hide",
+      "back": "藏",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "toys_play"
+      ]
+    },
+    {
+      "id": "en_preschool_291",
+      "stageId": "preschool",
+      "rankInStage": 291,
+      "front": "laugh",
+      "back": "笑",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_preschool_292",
+      "stageId": "preschool",
+      "rankInStage": 292,
+      "front": "cry",
+      "back": "哭",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_preschool_293",
+      "stageId": "preschool",
+      "rankInStage": 293,
+      "front": "smile",
+      "back": "微笑",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_preschool_294",
+      "stageId": "preschool",
+      "rankInStage": 294,
+      "front": "leave",
+      "back": "离开",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_295",
+      "stageId": "preschool",
+      "rankInStage": 295,
+      "front": "return",
+      "back": "回来",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_296",
+      "stageId": "preschool",
+      "rankInStage": 296,
+      "front": "stay",
+      "back": "留下",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_297",
+      "stageId": "preschool",
+      "rankInStage": 297,
+      "front": "follow",
+      "back": "跟着",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_298",
+      "stageId": "preschool",
+      "rankInStage": 298,
+      "front": "choose",
+      "back": "选择",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_preschool_299",
+      "stageId": "preschool",
+      "rankInStage": 299,
+      "front": "remember",
+      "back": "记住",
+      "phonics": null,
+      "tags": [
+        "actions"
       ]
     }
   ]

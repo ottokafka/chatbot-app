@@ -89,7 +89,7 @@ Shared stage IDs for EN + ZH catalogs. v1 content can ship only early stages.
 |----------|--------------|--------------|-------------|------------------------|----------|
 | `baby` | Baby | 婴儿 | First words | ~50 | **Yes** |
 | `toddler` | Toddler | 幼儿 | First 100–150 | ~150 | **Yes** |
-| `preschool` | Preschool | 学前 | Daily life | ~250 | Yes if ready |
+| `preschool` | Preschool | 学前 | Daily life | 299 | **Yes** (shipped) |
 | `grade1` | Grade 1 | 一年级 | School start | ~300 | Later |
 | `grade2` … `grade6` | Grade 2–6 | 二–六年级 | School growth | ~300–400 each | Later |
 
