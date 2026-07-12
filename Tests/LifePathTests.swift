@@ -147,6 +147,11 @@ final class LifePathDBTests: XCTestCase {
         let rewards = db.fetchRecentLifePathRewards(language: "en")
         XCTAssertEqual(rewards.count, 1)
         XCTAssertEqual(rewards.first?.amount, 100)
+
+        db.resetLifePathProgress(language: "en")
+        XCTAssertEqual(db.countLifePathList(language: "en"), 0)
+        XCTAssertNil(db.fetchLifePathProfile(language: "en"))
+        XCTAssertTrue(db.fetchRecentLifePathRewards(language: "en").isEmpty)
     }
 }
 
@@ -179,8 +184,6 @@ final class LifePathViewModelTests: XCTestCase {
         XCTAssertEqual(afterOne?.correctCount, 1)
         XCTAssertEqual(afterOne?.status, .mastered)
         XCTAssertGreaterThanOrEqual(vm.masteredInCurrentStage, 1)
-        XCTAssertGreaterThan(vm.profile?.xp ?? 0, 0)
-        XCTAssertGreaterThan(vm.profile?.coins ?? 0, 0)
 
         LifePathPreferences.language = nil
     }

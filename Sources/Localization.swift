@@ -1253,8 +1253,8 @@ enum L10n {
 
     static func lifePathBrowseHelp(_ lang: AppLanguage) -> String {
         lang == .zh
-            ? "从婴儿词汇开始，闯关长大并获得奖励"
-            : "Start as a baby, grow through stages, earn rewards"
+            ? "从婴儿词汇开始，按阶段掌握成长词汇"
+            : "Start as a baby and master vocabulary stage by stage"
     }
 
     static func lifePathPickLanguage(_ lang: AppLanguage) -> String {
@@ -1289,6 +1289,12 @@ enum L10n {
 
     static func lifePathStageProgress(_ lang: AppLanguage) -> String {
         lang == .zh ? "本阶段进度" : "Stage progress"
+    }
+
+    static func lifePathStageProgressSummary(_ lang: AppLanguage, mastered: Int, total: Int) -> String {
+        lang == .zh
+            ? "词汇 \(mastered)/\(total) 已掌握"
+            : "\(mastered)/\(total) words mastered"
     }
 
     static func lifePathMasteryHint(_ lang: AppLanguage) -> String {
@@ -1345,10 +1351,6 @@ enum L10n {
         lang == .zh ? "正确 \(correct) · 错误 \(wrong)" : "\(correct) correct · \(wrong) wrong"
     }
 
-    static func lifePathRoundRewards(_ lang: AppLanguage, xp: Int, coins: Int) -> String {
-        lang == .zh ? "本轮 +\(xp) XP · +\(coins) 金币" : "Round +\(xp) XP · +\(coins) coins"
-    }
-
     static func lifePathBackHome(_ lang: AppLanguage) -> String {
         lang == .zh ? "返回主页" : "Back to home"
     }
@@ -1358,7 +1360,31 @@ enum L10n {
     }
 
     static func lifePathClaimContinue(_ lang: AppLanguage) -> String {
-        lang == .zh ? "领取并继续" : "Claim & continue"
+        lang == .zh ? "继续" : "Continue"
+    }
+
+    static func lifePathContinue(_ lang: AppLanguage) -> String {
+        lang == .zh ? "继续" : "Continue"
+    }
+
+    // MARK: Life Path DEV / testing (temporary)
+
+    static func lifePathDevReset(_ lang: AppLanguage) -> String {
+        lang == .zh ? "DEV 重置进度" : "DEV Reset progress"
+    }
+
+    static func lifePathDevResetTitle(_ lang: AppLanguage) -> String {
+        lang == .zh ? "重置成长之路？" : "Reset Life Path?"
+    }
+
+    static func lifePathDevResetMessage(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "清除当前语言的阶段进度，从婴儿阶段重新开始。仅用于开发测试。"
+            : "Clears stage progress for the current language and restarts at Baby. For development testing only."
+    }
+
+    static func lifePathDevResetConfirm(_ lang: AppLanguage) -> String {
+        lang == .zh ? "重置" : "Reset"
     }
 
     static func lifePathErrorTitle(_ lang: AppLanguage) -> String {

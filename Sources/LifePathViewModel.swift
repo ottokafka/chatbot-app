@@ -11,7 +11,6 @@ final class LifePathViewModel: ObservableObject {
     @Published private(set) var listRowsByEntryId: [String: LifePathListRow] = [:]
     @Published private(set) var profile: LifePathProfile?
     @Published private(set) var loadError: String?
-    @Published var toastMessage: String?
     @Published var actionError: String?
 
     // Session
@@ -22,8 +21,6 @@ final class LifePathViewModel: ObservableObject {
     @Published private(set) var sessionCorrect = 0
     @Published private(set) var sessionWrong = 0
     @Published private(set) var sessionFinished = false
-    @Published private(set) var lastGainXP = 0
-    @Published private(set) var lastGainCoins = 0
 
     // Level-up
     @Published var pendingLevelUp: LifePathLevelUpNotify?
@@ -32,7 +29,6 @@ final class LifePathViewModel: ObservableObject {
     private var dbManager: DatabaseManager
     private weak var flashcardVM: FlashcardViewModel?
     private var entriesById: [String: LifePathEntry] = [:]
-    private var sessionXPEarnedToday: Int = 0
 
     var onLog: ((String) -> Void)?
 
@@ -137,6 +133,22 @@ final class LifePathViewModel: ObservableObject {
         flashcardVM?.isShowingLifePath = false
     }
 
+    /// DEV/testing only: wipe progress for the active language and re-seed from Baby.
+    func resetProgressForTesting() {
+        guard let language else { return }
+        endSession()
+        showLevelUp = false
+        pendingLevelUp = nil
+        loadError = nil
+        actionError = nil
+        dbManager.resetLifePathProgress(language: language.rawValue)
+        listRowsByEntryId = [:]
+        profile = nil
+        // Re-seed + reload via normal load path
+        load()
+        onLog?("Life Path DEV reset for \(language.rawValue) — back to Baby")
+    }
+
     // MARK: - Play
 
     /// Starts a full-stage session: every unmastered word in the current life stage.
@@ -162,15 +174,12 @@ final class LifePathViewModel: ObservableObject {
             actionError = "No words left in this stage."
             return
         }
-        applyDailyBonusIfNeeded()
         sessionQueue = queue
         sessionIndex = 0
         sessionCorrect = 0
         sessionWrong = 0
         isAnswerRevealed = false
         sessionFinished = false
-        lastGainXP = 0
-        lastGainCoins = 0
         isPlaying = true
         onLog?("Life Path stage session started (\(queue.count) unmastered cards in \(stageId))")
     }
@@ -217,16 +226,13 @@ final class LifePathViewModel: ObservableObject {
     // MARK: - Private game logic
 
     private func grade(correct: Bool) {
-        guard let language,
+        guard language != nil,
               let entry = currentCard,
               var row = listRowsByEntryId[entry.id],
               var profile else { return }
 
         let now = Date()
-        var gainedXP = 0
-        var gainedCoins = 0
         let wasMastered = row.status == .mastered
-        let firstCorrect = correct && row.correctCount == 0
 
         if correct {
             row.correctCount += 1
@@ -236,37 +242,13 @@ final class LifePathViewModel: ObservableObject {
             }
             sessionCorrect += 1
 
-            gainedXP += LifePathGame.xpCorrect
-            gainedCoins += LifePathGame.coinsCorrect
-            if firstCorrect {
-                gainedXP += LifePathGame.xpFirstCorrectBonus
-            }
-
-            var justMastered = false
             if !wasMastered && row.correctStreak >= LifePathGame.masteryStreak {
                 row.status = .mastered
                 row.masteredAt = now
                 row.correctStreak = LifePathGame.masteryStreak
-                gainedXP += LifePathGame.xpMastered
-                gainedCoins += LifePathGame.coinsMastered
                 profile.totalMastered += 1
-                justMastered = true
             }
             row.dueAt = now.addingTimeInterval(wasMastered || row.status == .mastered ? 86400 : 3600)
-
-            // Ledger: base review + optional mastery (no double-count)
-            let baseXP = LifePathGame.xpCorrect + (firstCorrect ? LifePathGame.xpFirstCorrectBonus : 0)
-            let baseCoins = LifePathGame.coinsCorrect
-            if baseXP > 0 {
-                grantReward(language: language.rawValue, type: .xp, amount: baseXP, reason: "review_correct", stageId: row.stageId, entryId: row.entryId)
-            }
-            if baseCoins > 0 {
-                grantReward(language: language.rawValue, type: .coins, amount: baseCoins, reason: "review_correct", stageId: row.stageId, entryId: row.entryId)
-            }
-            if justMastered {
-                grantReward(language: language.rawValue, type: .xp, amount: LifePathGame.xpMastered, reason: "word_mastered", stageId: row.stageId, entryId: row.entryId)
-                grantReward(language: language.rawValue, type: .coins, amount: LifePathGame.coinsMastered, reason: "word_mastered", stageId: row.stageId, entryId: row.entryId)
-            }
         } else {
             row.wrongCount += 1
             row.correctStreak = 0
@@ -281,9 +263,7 @@ final class LifePathViewModel: ObservableObject {
                 }
             }
             sessionWrong += 1
-            gainedXP += 2
             row.dueAt = now.addingTimeInterval(300)
-            grantReward(language: language.rawValue, type: .xp, amount: 2, reason: "review_wrong", stageId: row.stageId, entryId: row.entryId)
         }
 
         row.lastReviewedAt = now
@@ -291,22 +271,10 @@ final class LifePathViewModel: ObservableObject {
         dbManager.upsertLifePathListRow(row)
         listRowsByEntryId[entry.id] = row
 
-        // Daily XP cap
-        let applyXP = min(gainedXP, max(0, LifePathGame.dailyXpCap - sessionXPEarnedToday))
-        sessionXPEarnedToday += applyXP
-        profile.xp += applyXP
-        profile.lifetimeXp += applyXP
-        profile.coins += gainedCoins
         profile.totalReviews += 1
         profile.updatedAt = now
-
         dbManager.upsertLifePathProfile(profile)
         self.profile = profile
-        lastGainXP = applyXP
-        lastGainCoins = gainedCoins
-        toastMessage = applyXP > 0
-            ? "+\(applyXP) XP" + (gainedCoins > 0 ? " · +\(gainedCoins) coins" : "")
-            : (gainedCoins > 0 ? "+\(gainedCoins) coins" : nil)
 
         // Re-queue if not mastered so the player can clear the whole stage in one session.
         let stillNeedsPractice = listRowsByEntryId[entry.id]?.status != .mastered
@@ -355,26 +323,7 @@ final class LifePathViewModel: ObservableObject {
     private func finishRound() {
         sessionFinished = true
         isPlaying = false
-        // Perfect round bonus
-        if sessionWrong == 0, sessionCorrect > 0, let language, var profile {
-            let xp = LifePathGame.xpPerfectRound
-            let coins = LifePathGame.coinsPerfectRound
-            let applyXP = min(xp, max(0, LifePathGame.dailyXpCap - sessionXPEarnedToday))
-            sessionXPEarnedToday += applyXP
-            profile.xp += applyXP
-            profile.lifetimeXp += applyXP
-            profile.coins += coins
-            profile.updatedAt = Date()
-            dbManager.upsertLifePathProfile(profile)
-            self.profile = profile
-            if applyXP > 0 {
-                grantReward(language: language.rawValue, type: .xp, amount: applyXP, reason: "perfect_round", stageId: profile.currentStageId, entryId: nil)
-            }
-            grantReward(language: language.rawValue, type: .coins, amount: coins, reason: "perfect_round", stageId: profile.currentStageId, entryId: nil)
-            lastGainXP += applyXP
-            lastGainCoins += coins
-        }
-        onLog?("Life Path round finished correct=\(sessionCorrect) wrong=\(sessionWrong)")
+        onLog?("Life Path stage session finished correct=\(sessionCorrect) wrong=\(sessionWrong)")
     }
 
     private func checkStageClear() {
@@ -389,42 +338,16 @@ final class LifePathViewModel: ObservableObject {
         guard allMastered else { return }
 
         let stageMeta = stages.first { $0.id == stageId }
-        let rewardXP = stageMeta?.clearReward?.xp ?? 100
-        let rewardCoins = stageMeta?.clearReward?.coins ?? 50
         let next = LifePathGame.nextStage(after: stageId, available: stages)
 
         profile.stagesCleared.append(stageId)
-        profile.xp += rewardXP
-        profile.lifetimeXp += rewardXP
-        profile.coins += rewardCoins
         profile.updatedAt = Date()
-
-        grantReward(language: language.rawValue, type: .xp, amount: rewardXP, reason: "stage_clear", stageId: stageId, entryId: nil)
-        grantReward(language: language.rawValue, type: .coins, amount: rewardCoins, reason: "stage_clear", stageId: stageId, entryId: nil)
-        grantReward(
-            language: language.rawValue,
-            type: .title,
-            amount: 0,
-            reason: "stage_clear",
-            stageId: stageId,
-            entryId: nil,
-            metaJSON: "{\"id\":\"\(LifePathGame.titleId(forClearedStage: stageId))\"}"
-        )
 
         let toStageId = next?.id ?? stageId
         if let next {
             dbManager.unlockLifePathStage(language: language.rawValue, stageId: next.id)
             profile.currentStageId = next.id
             profile.highestStageId = next.id
-            grantReward(
-                language: language.rawValue,
-                type: .frame,
-                amount: 0,
-                reason: "stage_unlock",
-                stageId: next.id,
-                entryId: nil,
-                metaJSON: "{\"id\":\"\(LifePathGame.frameId(forStage: next.id))\"}"
-            )
         }
 
         let notify = LifePathLevelUpNotify(
@@ -437,18 +360,13 @@ final class LifePathViewModel: ObservableObject {
             ],
             body: [
                 "en": next != nil
-                    ? "\(stageMeta?.title(for: .en) ?? stageId) complete. Welcome to \(next?.title(for: .en) ?? toStageId)!"
-                    : "\(stageMeta?.title(for: .en) ?? stageId) complete. You've finished the current path!",
+                    ? "\(stageMeta?.title(for: .en) ?? stageId) vocabulary complete. Welcome to \(next?.title(for: .en) ?? toStageId)!"
+                    : "\(stageMeta?.title(for: .en) ?? stageId) vocabulary complete. You've finished the current path!",
                 "zh": next != nil
-                    ? "\(stageMeta?.title(for: .zh) ?? stageId) 已完成，欢迎进入\(next?.title(for: .zh) ?? toStageId)！"
-                    : "\(stageMeta?.title(for: .zh) ?? stageId) 已完成，当前成长之路已全部通关！"
+                    ? "\(stageMeta?.title(for: .zh) ?? stageId) 词汇已掌握，欢迎进入\(next?.title(for: .zh) ?? toStageId)！"
+                    : "\(stageMeta?.title(for: .zh) ?? stageId) 词汇已掌握，当前成长之路已全部通关！"
             ],
-            rewards: [
-                .init(type: "xp", amount: rewardXP, id: nil),
-                .init(type: "coins", amount: rewardCoins, id: nil),
-                .init(type: "title", amount: nil, id: LifePathGame.titleId(forClearedStage: stageId)),
-                .init(type: "frame", amount: nil, id: LifePathGame.frameId(forStage: toStageId))
-            ]
+            rewards: []
         )
         if let data = try? JSONEncoder().encode(notify),
            let json = String(data: data, encoding: .utf8) {
@@ -464,74 +382,6 @@ final class LifePathViewModel: ObservableObject {
         isPlaying = false
         sessionFinished = true
         onLog?("Life Path stage cleared: \(stageId) → \(toStageId)")
-    }
-
-    private func applyDailyBonusIfNeeded() {
-        guard let language, var profile else { return }
-        let day = Self.todayString()
-        if profile.lastPlayDay == day { return }
-
-        let cal = Calendar.current
-        var streak = 1
-        if let last = profile.lastPlayDay,
-           let lastDate = Self.parseDay(last),
-           let yesterday = cal.date(byAdding: .day, value: -1, to: Date()) {
-            let y = Self.dayString(yesterday)
-            if last == y {
-                streak = profile.streakDays + 1
-            }
-            _ = lastDate
-        }
-        profile.streakDays = streak
-        profile.lastPlayDay = day
-        profile.xp += LifePathGame.xpDailyFirst
-        profile.lifetimeXp += LifePathGame.xpDailyFirst
-        profile.coins += LifePathGame.coinsDailyFirst
-        profile.updatedAt = Date()
-        sessionXPEarnedToday += LifePathGame.xpDailyFirst
-        dbManager.upsertLifePathProfile(profile)
-        self.profile = profile
-        grantReward(language: language.rawValue, type: .xp, amount: LifePathGame.xpDailyFirst, reason: "daily_first", stageId: profile.currentStageId, entryId: nil)
-        grantReward(language: language.rawValue, type: .coins, amount: LifePathGame.coinsDailyFirst, reason: "daily_first", stageId: profile.currentStageId, entryId: nil)
-
-        // Streak milestones
-        let milestones = [3, 7, 14]
-        if milestones.contains(streak) {
-            let xp = streak == 3 ? 20 : (streak == 7 ? 50 : 100)
-            let coins = streak == 3 ? 10 : (streak == 7 ? 25 : 50)
-            profile.xp += xp
-            profile.lifetimeXp += xp
-            profile.coins += coins
-            profile.updatedAt = Date()
-            dbManager.upsertLifePathProfile(profile)
-            self.profile = profile
-            grantReward(language: language.rawValue, type: .xp, amount: xp, reason: "streak_\(streak)", stageId: profile.currentStageId, entryId: nil)
-            grantReward(language: language.rawValue, type: .coins, amount: coins, reason: "streak_\(streak)", stageId: profile.currentStageId, entryId: nil)
-        }
-        toastMessage = "Daily bonus +\(LifePathGame.xpDailyFirst) XP"
-    }
-
-    private func grantReward(
-        language: String,
-        type: LifePathRewardType,
-        amount: Int,
-        reason: String,
-        stageId: String?,
-        entryId: String?,
-        metaJSON: String? = nil
-    ) {
-        let reward = LifePathRewardRow(
-            id: UUID().uuidString,
-            language: language,
-            rewardType: type,
-            amount: amount,
-            reason: reason,
-            stageId: stageId,
-            entryId: entryId,
-            metaJSON: metaJSON,
-            createdAt: Date()
-        )
-        dbManager.insertLifePathReward(reward)
     }
 
     private func seedIfNeeded(language: LifePathLanguage, file: LifePathListFile) {
@@ -651,23 +501,4 @@ final class LifePathViewModel: ObservableObject {
         showLevelUp = true
     }
 
-    private static func todayString() -> String {
-        dayString(Date())
-    }
-
-    private static func dayString(_ date: Date) -> String {
-        let f = DateFormatter()
-        f.calendar = Calendar.current
-        f.locale = Locale(identifier: "en_US_POSIX")
-        f.dateFormat = "yyyy-MM-dd"
-        return f.string(from: date)
-    }
-
-    private static func parseDay(_ s: String) -> Date? {
-        let f = DateFormatter()
-        f.calendar = Calendar.current
-        f.locale = Locale(identifier: "en_US_POSIX")
-        f.dateFormat = "yyyy-MM-dd"
-        return f.date(from: s)
-    }
 }

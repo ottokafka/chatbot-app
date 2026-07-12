@@ -1379,6 +1379,27 @@ class DatabaseManager {
         return rows
     }
 
+    /// DEV/testing: wipe all Life Path rows for one learning language (list + profile + rewards).
+    func resetLifePathProgress(language: String) {
+        let tables = [
+            "DELETE FROM baby_to_child_list WHERE language = ?;",
+            "DELETE FROM baby_to_child_profile WHERE language = ?;",
+            "DELETE FROM baby_to_child_rewards WHERE language = ?;",
+        ]
+        for sql in tables {
+            var statement: OpaquePointer?
+            if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+                sqlite3_bind_text(statement, 1, (language as NSString).utf8String, -1, nil)
+                if sqlite3_step(statement) != SQLITE_DONE {
+                    printLifePathDBError("resetLifePathProgress")
+                }
+            } else {
+                printLifePathDBError("prepare resetLifePathProgress")
+            }
+            sqlite3_finalize(statement)
+        }
+    }
+
     private func bindLifePathListRow(_ statement: OpaquePointer?, row: LifePathListRow) {
         guard let statement else { return }
         sqlite3_bind_text(statement, 1, (row.rowId as NSString).utf8String, -1, nil)

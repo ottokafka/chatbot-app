@@ -5,6 +5,7 @@ struct LifePathRootView: View {
     @ObservedObject var chatVM: ChatViewModel
     @StateObject private var vm = LifePathViewModel()
     @Environment(\.appLanguage) private var lang
+    @State private var showResetConfirm = false
 
     var body: some View {
         NavigationStack {
@@ -83,22 +84,6 @@ struct LifePathRootView: View {
                 }
             }
         }
-        .overlay(alignment: .bottom) {
-            if let toast = vm.toastMessage {
-                Text(toast)
-                    .font(.subheadline.weight(.semibold))
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 10)
-                    .background(.ultraThinMaterial, in: Capsule())
-                    .padding(.bottom, 28)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                    .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) {
-                            withAnimation { vm.toastMessage = nil }
-                        }
-                    }
-            }
-        }
         .alert(
             L10n.lifePathErrorTitle(lang),
             isPresented: Binding(
@@ -111,6 +96,19 @@ struct LifePathRootView: View {
             }
         } message: {
             Text(vm.actionError ?? "")
+        }
+        .alert(
+            L10n.lifePathDevResetTitle(lang),
+            isPresented: $showResetConfirm
+        ) {
+            Button(L10n.cancel(lang), role: .cancel) {}
+            Button(L10n.lifePathDevResetConfirm(lang), role: .destructive) {
+                chatVM.stopPlayback()
+                chatVM.clearEphemeralAudioCache()
+                vm.resetProgressForTesting()
+            }
+        } message: {
+            Text(L10n.lifePathDevResetMessage(lang))
         }
     }
 
@@ -223,6 +221,16 @@ struct LifePathRootView: View {
                 .controlSize(.large)
                 .disabled(vm.totalInCurrentStage == 0)
 
+                // Temporary DEV control — remove before shipping.
+                Button(role: .destructive) {
+                    showResetConfirm = true
+                } label: {
+                    Label(L10n.lifePathDevReset(lang), systemImage: "arrow.counterclockwise")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+
                 wordListSection
             }
             .padding(20)
@@ -246,13 +254,11 @@ struct LifePathRootView: View {
                 }
                 Spacer()
             }
-            HStack(spacing: 16) {
-                Label("\(vm.profile?.xp ?? 0) XP", systemImage: "star.fill")
-                Label("\(vm.profile?.coins ?? 0)", systemImage: "circle.hexagongrid.fill")
-                if let streak = vm.profile?.streakDays, streak > 0 {
-                    Label("\(streak)d", systemImage: "flame.fill")
-                }
-            }
+            Text(L10n.lifePathStageProgressSummary(
+                lang,
+                mastered: vm.masteredInCurrentStage,
+                total: vm.totalInCurrentStage
+            ))
             .font(.subheadline.weight(.medium))
             .foregroundStyle(.secondary)
         }
@@ -482,10 +488,6 @@ struct LifePathRootView: View {
                 .font(.title2.weight(.bold))
             Text(L10n.lifePathRoundStats(lang, correct: vm.sessionCorrect, wrong: vm.sessionWrong))
                 .foregroundStyle(.secondary)
-            if vm.lastGainXP > 0 || vm.lastGainCoins > 0 {
-                Text(L10n.lifePathRoundRewards(lang, xp: vm.lastGainXP, coins: vm.lastGainCoins))
-                    .font(.headline)
-            }
             Button {
                 vm.endSession()
             } label: {
@@ -575,24 +577,10 @@ struct LifePathLevelUpView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
-            VStack(alignment: .leading, spacing: 8) {
-                ForEach(Array(notify.rewards.enumerated()), id: \.offset) { _, reward in
-                    HStack {
-                        Image(systemName: icon(for: reward.type))
-                        Text(rewardLabel(reward))
-                        Spacer()
-                    }
-                    .font(.subheadline.weight(.medium))
-                }
-            }
-            .padding()
-            .background(Color.platformControlBackground, in: RoundedRectangle(cornerRadius: 12))
-            .padding(.horizontal, 32)
-
             Button {
                 onContinue()
             } label: {
-                Text(L10n.lifePathClaimContinue(lang))
+                Text(L10n.lifePathContinue(lang))
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
@@ -601,30 +589,5 @@ struct LifePathLevelUpView: View {
             Spacer()
         }
         .frame(minWidth: 400, minHeight: 480)
-    }
-
-    private func icon(for type: String) -> String {
-        switch type {
-        case "xp": return "star.fill"
-        case "coins": return "circle.hexagongrid.fill"
-        case "title": return "text.badge.star"
-        case "frame": return "person.crop.circle"
-        default: return "gift.fill"
-        }
-    }
-
-    private func rewardLabel(_ reward: LifePathLevelUpNotify.LifePathNotifyReward) -> String {
-        switch reward.type {
-        case "xp":
-            return "+\(reward.amount ?? 0) XP"
-        case "coins":
-            return "+\(reward.amount ?? 0) " + (lang == .zh ? "金币" : "coins")
-        case "title":
-            return (lang == .zh ? "称号" : "Title") + ": \(reward.id ?? "")"
-        case "frame":
-            return (lang == .zh ? "头像框" : "Frame") + ": \(reward.id ?? "")"
-        default:
-            return reward.type
-        }
     }
 }

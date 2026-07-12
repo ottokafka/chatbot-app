@@ -202,16 +202,6 @@ enum LifePathPreferences {
 enum LifePathGame {
     /// Correct answers in a row required to master a word (1 = first "Got it" masters).
     static let masteryStreak = 1
-    static let xpCorrect = 10
-    static let coinsCorrect = 1
-    static let xpFirstCorrectBonus = 5
-    static let xpMastered = 25
-    static let coinsMastered = 5
-    static let xpDailyFirst = 15
-    static let coinsDailyFirst = 5
-    static let xpPerfectRound = 15
-    static let coinsPerfectRound = 5
-    static let dailyXpCap = 500
 
     static let stageOrder = ["baby", "toddler", "preschool", "grade1", "grade2", "grade3", "grade4", "grade5", "grade6"]
 
@@ -222,22 +212,5 @@ enum LifePathGame {
         }
         let next = sorted.index(after: idx)
         return next < sorted.endIndex ? sorted[next] : nil
-    }
-
-    static func titleId(forClearedStage stageId: String) -> String {
-        switch stageId {
-        case "baby": return "first_words"
-        case "toddler": return "toddler_talk"
-        default: return "stage_\(stageId)"
-        }
-    }
-
-    static func frameId(forStage stageId: String) -> String {
-        switch stageId {
-        case "baby": return "baby"
-        case "toddler": return "toddler"
-        case "preschool": return "kid"
-        default: return stageId
-        }
     }
 }
