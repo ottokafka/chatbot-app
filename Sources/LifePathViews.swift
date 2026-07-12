@@ -595,6 +595,10 @@ struct LifePathLevelUpView: View {
             .padding(.horizontal, 32)
             Spacer()
         }
+        #if os(iOS)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        #else
         .frame(minWidth: 400, minHeight: 480)
+        #endif
     }
 }

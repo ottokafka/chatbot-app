@@ -36,7 +36,11 @@ struct SpeakingSetupSheet: View {
             }
         }
         .padding(24)
+        #if os(iOS)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        #else
         .frame(minWidth: 440, minHeight: 460)
+        #endif
         .onAppear {
             if let config = speakingVM.pendingConfig {
                 topicHint = config.topicHint

@@ -93,7 +93,11 @@ struct FlashcardCreateSheet: View {
             }
         }
         .padding(24)
+        #if os(iOS)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        #else
         .frame(minWidth: 420, minHeight: 360)
+        #endif
         .onAppear {
             updateTranslationConfiguration()
         }

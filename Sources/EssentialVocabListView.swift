@@ -44,7 +44,11 @@ struct EssentialVocabListView: View {
                 }
             }
         }
+        #if os(iOS)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        #else
         .frame(minWidth: 480, minHeight: 520)
+        #endif
         .onAppear {
             essentialVM.attach(flashcardVM: flashcardVM, dbManager: flashcardVM.dbManager)
             essentialVM.onLog = flashcardVM.onLog
