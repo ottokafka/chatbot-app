@@ -5,6 +5,7 @@ struct HomeHubView: View {
     @ObservedObject var nav: AppNavigationModel
     @ObservedObject var flashcardVM: FlashcardViewModel
     @ObservedObject var chatVM: ChatViewModel
+    @Binding var appLanguage: AppLanguage
     /// Compact iOS: reveal the split-view sidebar column.
     var onPreferSidebar: () -> Void = {}
     @Environment(\.appLanguage) private var lang
@@ -49,8 +50,14 @@ struct HomeHubView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: isCompactLayout ? 16 : 24) {
-                Text(L10n.homeTitle(lang))
-                    .font(.largeTitle.weight(.bold))
+                HStack(alignment: .center, spacing: 12) {
+                    Text(L10n.homeTitle(lang))
+                        .font(.largeTitle.weight(.bold))
+                    Spacer(minLength: 8)
+                    LanguageToggle(language: $appLanguage)
+                        .controlSize(.small)
+                        .frame(width: isCompactLayout ? 96 : 110)
+                }
                 Text(L10n.homeSubtitle(lang))
                     .foregroundStyle(.secondary)
 

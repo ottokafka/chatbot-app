@@ -63,6 +63,7 @@ public struct ContentView: View {
                     nav: nav,
                     flashcardVM: flashcardVM,
                     chatVM: viewModel,
+                    appLanguage: $viewModel.appLanguage,
                     onPreferSidebar: { preferSidebarColumn() }
                 )
             case .lifePath:
