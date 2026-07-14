@@ -222,6 +222,14 @@ class DatabaseManager {
         if !columnExists(table: "endpoints", column: "pronunciation_url") {
             execute(sql: "ALTER TABLE endpoints ADD COLUMN pronunciation_url TEXT;")
         }
+        // Existing installs often have NULL/empty pronunciation_url after the column was added.
+        // Backfill the production default so Life Path assessment works out of the box.
+        execute(sql: """
+            UPDATE endpoints
+            SET pronunciation_url = '\(PronunciationEndpoint.defaultAssessURL)'
+            WHERE pronunciation_url IS NULL
+               OR TRIM(pronunciation_url) = '';
+            """)
         if !columnExists(table: "messages", column: "audio_path") {
             execute(sql: "ALTER TABLE messages ADD COLUMN audio_path TEXT;")
         }
@@ -671,7 +679,7 @@ class DatabaseManager {
             let stt = defaults.string(forKey: "sttURL") ?? "wss://speech_to_text.npro.ai?silence_duration_ms=1000"
             let llm = defaults.string(forKey: "llmURL") ?? "https://text_gen.npro.ai/v1/chat/completions"
             let tts = defaults.string(forKey: "ttsURL") ?? "https://text_to_speech.npro.ai/v1/audio/speech"
-            let pronunciation = "https://pronunciation_assessment.npro.ai/assess"
+            let pronunciation = PronunciationEndpoint.defaultAssessURL
             
             _ = createEndpoint(name: "Default Config", textGenURL: llm, ttsURL: tts, sttURL: stt, pronunciationURL: pronunciation, isActive: true)
         }
@@ -694,7 +702,9 @@ class DatabaseManager {
                 let textGenURL = sqlite3_column_text(statement, 3).map { String(cString: $0) } ?? ""
                 let ttsURL = sqlite3_column_text(statement, 4).map { String(cString: $0) } ?? ""
                 let sttURL = sqlite3_column_text(statement, 5).map { String(cString: $0) } ?? ""
-                let pronunciationURL = sqlite3_column_text(statement, 6).map { String(cString: $0) } ?? ""
+                let pronunciationURL = PronunciationEndpoint.resolvedAssessURL(
+                    sqlite3_column_text(statement, 6).map { String(cString: $0) }
+                )
                 
                 var createdAt = Date()
                 if let dateCol = sqlite3_column_text(statement, 7) {

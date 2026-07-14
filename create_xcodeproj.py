@@ -38,6 +38,7 @@ def main():
         "LifePathModels.swift",
         "LifePathViewModel.swift",
         "LifePathViews.swift",
+        "PronunciationFeedbackView.swift",
         "Flashcard.swift",
         "FlashcardCreateSheet.swift",
         "FlashcardDeckView.swift",

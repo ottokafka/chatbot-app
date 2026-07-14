@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - Pronunciation Mic Button
 
-/// A large mic button that cycles through idle → recording → stop → assessing states.
+/// Large mic control: idle → recording (tap to finish) → assessing → try again.
 struct PronunciationMicButton: View {
     let pronunciationState: LifePathViewModel.PronunciationState
     var isArmed: Bool = false   // true = TTS playing, recording will auto-start
@@ -14,51 +14,79 @@ struct PronunciationMicButton: View {
         switch pronunciationState {
         case .idle:
             if isArmed {
-                // TTS is playing — show a "ready to record" pending state
-                HStack {
+                HStack(spacing: 8) {
                     ProgressView()
                         .tint(.blue)
-                        .scaleEffect(0.8)
-                    Text("Listening soon…")
+                        .scaleEffect(0.85)
+                    Text("Get ready…")
                         .foregroundStyle(.secondary)
                         .font(.subheadline)
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 8)
+                .padding(.vertical, 10)
             } else {
                 Button(action: onStart) {
                     Label("Say It", systemImage: "mic.fill")
+                        .font(.body.weight(.semibold))
                         .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(.borderedProminent)
                 .tint(.blue)
                 .controlSize(.large)
             }
 
         case .recording:
-            Button(action: onCancel) {
-                HStack(spacing: 8) {
-                    RecordingPulse()
-                    Text("Listening… Tap to Cancel")
-                        .fontWeight(.semibold)
+            VStack(spacing: 10) {
+                Button(action: onStop) {
+                    HStack(spacing: 10) {
+                        RecordingPulse()
+                        Text("Listening… Tap when done")
+                            .fontWeight(.semibold)
+                    }
+                    .frame(maxWidth: .infinity)
                 }
-                .frame(maxWidth: .infinity)
+                .buttonStyle(.borderedProminent)
+                .tint(.red)
+                .controlSize(.large)
+
+                Button("Cancel", action: onCancel)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
-            .buttonStyle(.bordered)
-            .tint(.red)
-            .controlSize(.large)
 
         case .assessing:
-            HStack {
+            HStack(spacing: 10) {
                 ProgressView()
                     .tint(.accentColor)
-                Text("Analyzing…")
+                Text("Checking pronunciation…")
                     .foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 8)
+            .padding(.vertical, 12)
 
-        case .feedback, .error:
+        case .feedback(let result):
+            if result.is_correct {
+                HStack(spacing: 8) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                    Text("Nice! Moving on…")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(.green)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+            } else {
+                Button(action: onStart) {
+                    Label("Try Again", systemImage: "arrow.counterclockwise")
+                        .font(.body.weight(.semibold))
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.orange)
+                .controlSize(.large)
+            }
+
+        case .error:
             Button(action: onStart) {
                 Label("Try Again", systemImage: "arrow.counterclockwise")
                     .frame(maxWidth: .infinity)
@@ -85,98 +113,114 @@ private struct RecordingPulse: View {
     }
 }
 
+// MARK: - Inline phoneme-highlighted word
+
+/// Renders the target word as colored grapheme slices from an assessment result.
+struct PhonemeHighlightedWord: View {
+    let result: PronunciationAssessmentResponse
+    var font: Font = .system(size: 40, weight: .bold)
+
+    var body: some View {
+        HStack(spacing: 3) {
+            ForEach(Array(result.phonemes.enumerated()), id: \.offset) { _, phoneme in
+                Text(phoneme.grapheme)
+                    .font(font)
+                    .foregroundStyle(color(for: phoneme))
+                    .padding(.horizontal, 2)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(color(for: phoneme).opacity(0.14))
+                    )
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(accessibilityLabel)
+    }
+
+    private func color(for phoneme: PronunciationPhoneme) -> Color {
+        if phoneme.score >= 0.8 { return .green }
+        if phoneme.score >= 0.5 { return .orange }
+        return .red
+    }
+
+    private var accessibilityLabel: String {
+        result.phonemes.map { p in
+            let status = p.is_correct ? "correct" : "needs work"
+            return "\(p.grapheme), \(status)"
+        }.joined(separator: ", ")
+    }
+}
+
 // MARK: - Pronunciation Feedback View
 
-/// Shows the result of pronunciation assessment: overall score, pass/fail badge,
-/// and per-grapheme phoneme breakdown.
+/// Compact result panel: score, tip, and optional phoneme chips.
 struct PronunciationFeedbackView: View {
     let result: PronunciationAssessmentResponse
     let targetWord: String
+    var showDismiss: Bool = true
     let onDismiss: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            // Header: word + overall badge
+        VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .center, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(targetWord)
-                        .font(.title.bold())
-                    Text(result.is_correct ? "Great pronunciation!" : "Keep practicing!")
+                    Text(result.is_correct ? "Great pronunciation!" : "Almost — try again")
+                        .font(.headline)
+                    Text(result.displayFeedback)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-                Spacer()
+                Spacer(minLength: 8)
                 ScoreBadge(score: result.overall_score, isCorrect: result.is_correct)
             }
 
-            // Grapheme / phoneme breakdown
             if !result.phonemes.isEmpty {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("PHONEME BREAKDOWN")
-                        .font(.system(size: 11, weight: .bold))
-                        .foregroundStyle(.secondary)
-                        .padding(.bottom, 2)
-
-                    // Scrollable row of phoneme chips
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(alignment: .bottom, spacing: 10) {
-                            ForEach(Array(result.phonemes.enumerated()), id: \.offset) { _, phoneme in
-                                PhonemeChip(phoneme: phoneme)
-                            }
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(alignment: .bottom, spacing: 10) {
+                        ForEach(Array(result.phonemes.enumerated()), id: \.offset) { _, phoneme in
+                            PhonemeChip(phoneme: phoneme)
                         }
-                        .padding(.vertical, 4)
+                    }
+                    .padding(.vertical, 2)
+                }
+            }
+
+            // Diagnostic line: what the model heard (helps debug always-0% / silence issues)
+            if !result.is_correct {
+                VStack(alignment: .leading, spacing: 4) {
+                    if !result.predicted_phonemes.isEmpty {
+                        Text("Heard: /\(result.predicted_phonemes.joined(separator: " "))/")
+                            .font(.system(.caption, design: .monospaced))
+                            .foregroundStyle(.secondary)
+                    } else {
+                        Text("Heard: (nothing) — check mic level / silence")
+                            .font(.caption)
+                            .foregroundStyle(.orange)
+                    }
+                    if let audio = result.debug?.audio ?? result.debug?.post_trim {
+                        Text(String(format: "Audio: %.0f ms · RMS %.3f%@",
+                                    Double(audio.duration_ms ?? 0),
+                                    audio.rms,
+                                    audio.is_silent ? " · SILENT" : ""))
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
                     }
                 }
             }
 
-            // Target vs predicted phonemes (compact)
-            targetVsPredictedRow
-
-            // Dismiss button
-            Button(action: onDismiss) {
-                Text("Dismiss")
-                    .frame(maxWidth: .infinity)
+            if showDismiss && !result.is_correct {
+                Button(action: onDismiss) {
+                    Text("Dismiss")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.regular)
             }
-            .buttonStyle(.bordered)
-            .controlSize(.regular)
         }
         .padding()
         .background(Color.platformControlBackground, in: RoundedRectangle(cornerRadius: 16))
         .padding(.horizontal)
-    }
-
-    // MARK: - Sub-views
-
-    private var targetVsPredictedRow: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            if !result.target_phonemes.isEmpty {
-                phonemeRow(label: "Target", phonemes: result.target_phonemes, color: .blue)
-            }
-            if !result.predicted_phonemes.isEmpty {
-                phonemeRow(label: "Heard", phonemes: result.predicted_phonemes, color: result.is_correct ? .green : .orange)
-            }
-        }
-    }
-
-    private func phonemeRow(label: String, phonemes: [String], color: Color) -> some View {
-        HStack(alignment: .firstTextBaseline, spacing: 6) {
-            Text(label + ":")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-                .frame(width: 48, alignment: .leading)
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 4) {
-                    ForEach(Array(phonemes.enumerated()), id: \.offset) { _, p in
-                        Text("/\(p)/")
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundStyle(color)
-                            .padding(.horizontal, 5)
-                            .padding(.vertical, 2)
-                            .background(color.opacity(0.12), in: RoundedRectangle(cornerRadius: 4))
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -186,7 +230,7 @@ private struct ScoreBadge: View {
     let score: Double
     let isCorrect: Bool
 
-    private var percentage: Int { Int(score * 100) }
+    private var percentage: Int { Int((score * 100).rounded()) }
 
     private var badgeColor: Color {
         if percentage >= 80 { return .green }
@@ -198,16 +242,16 @@ private struct ScoreBadge: View {
         ZStack {
             Circle()
                 .stroke(badgeColor.opacity(0.25), lineWidth: 5)
-                .frame(width: 62, height: 62)
+                .frame(width: 58, height: 58)
             Circle()
-                .trim(from: 0, to: score)
+                .trim(from: 0, to: min(max(score, 0), 1))
                 .stroke(badgeColor, style: StrokeStyle(lineWidth: 5, lineCap: .round))
-                .frame(width: 62, height: 62)
+                .frame(width: 58, height: 58)
                 .rotationEffect(.degrees(-90))
-                .animation(.easeOut(duration: 0.6), value: score)
+                .animation(.easeOut(duration: 0.55), value: score)
             VStack(spacing: 0) {
                 Text("\(percentage)")
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .font(.system(size: 15, weight: .bold, design: .rounded))
                     .foregroundStyle(badgeColor)
                 Text("%")
                     .font(.system(size: 9, weight: .medium))
@@ -230,27 +274,26 @@ private struct PhonemeChip: View {
 
     var body: some View {
         VStack(spacing: 4) {
-            // Score bar
             GeometryReader { geo in
                 ZStack(alignment: .bottom) {
                     RoundedRectangle(cornerRadius: 3)
                         .fill(chipColor.opacity(0.15))
                     RoundedRectangle(cornerRadius: 3)
                         .fill(chipColor)
-                        .frame(height: geo.size.height * phoneme.score)
+                        .frame(height: geo.size.height * min(max(phoneme.score, 0), 1))
                 }
             }
-            .frame(width: 30, height: 40)
+            .frame(width: 28, height: 36)
 
-            // Grapheme
             Text(phoneme.grapheme)
-                .font(.system(size: 16, weight: .bold))
+                .font(.system(size: 15, weight: .bold))
                 .foregroundStyle(chipColor)
 
-            // Phoneme symbol
             Text("/\(phoneme.phoneme)/")
-                .font(.system(size: 10, design: .monospaced))
+                .font(.system(size: 9, design: .monospaced))
                 .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
         }
         .frame(width: 40)
     }

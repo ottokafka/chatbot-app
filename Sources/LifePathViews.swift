@@ -11,67 +11,92 @@ struct LifePathRootView: View {
     @StateObject private var vm = LifePathViewModel()
     @Environment(\.appLanguage) private var lang
     @State private var showResetConfirm = false
+    #if os(macOS)
+    /// Bottom console (same pattern as ChatShellView) for pronunciation / Life Path debug.
+    @State private var isLogsExpanded = true
+    @State private var logsHeight: CGFloat = 180
+    #endif
 
     var body: some View {
-        NavigationStack {
-            Group {
-                if vm.showLanguagePicker {
-                    languagePicker
-                } else if let error = vm.loadError {
-                    errorState(error)
-                } else if vm.sessionFinished && !vm.showLevelUp && !vm.isPlaying {
-                    sessionSummary
-                } else if vm.isPlaying {
-                    playView
-                } else {
-                    homeView
-                }
-            }
-            .navigationTitle(L10n.lifePathTitle(lang))
-            #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-            #endif
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
+        VStack(spacing: 0) {
+            NavigationStack {
+                Group {
                     if vm.showLanguagePicker {
-                        Button(L10n.cancel(lang)) {
-                            vm.cancelLanguagePicker()
-                        }
+                        languagePicker
+                    } else if let error = vm.loadError {
+                        errorState(error)
+                    } else if vm.sessionFinished && !vm.showLevelUp && !vm.isPlaying {
+                        sessionSummary
                     } else if vm.isPlaying {
-                        Button(L10n.lifePathEndRound(lang)) {
-                            chatVM.stopPlayback()
-                            vm.endSession()
-                        }
+                        playView
                     } else {
-                        Button(L10n.backToHome(lang)) {
-                            onExit()
+                        homeView
+                    }
+                }
+                .navigationTitle(L10n.lifePathTitle(lang))
+                #if os(iOS)
+                .navigationBarTitleDisplayMode(.inline)
+                #endif
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        if vm.showLanguagePicker {
+                            Button(L10n.cancel(lang)) {
+                                vm.cancelLanguagePicker()
+                            }
+                        } else if vm.isPlaying {
+                            Button(L10n.lifePathEndRound(lang)) {
+                                chatVM.stopPlayback()
+                                vm.endSession()
+                            }
+                        } else {
+                            Button(L10n.backToHome(lang)) {
+                                onExit()
+                            }
+                        }
+                    }
+                    ToolbarItem(placement: .primaryAction) {
+                        if vm.isPlaying {
+                            autoPlayToggleButton
                         }
                     }
                 }
-                ToolbarItem(placement: .primaryAction) {
-                    if vm.isPlaying {
-                        autoPlayToggleButton
-                    }
-                }
+                // Inside stack so Menu appears on Life Path chrome (K5a); no leading sidebar button
+                // — leading already has Home / Cancel / End round.
+                .compactFeatureChrome(
+                    nav: nav,
+                    lang: lang,
+                    dueCount: flashcardVM.dueCount,
+                    onPreferSidebar: onPreferSidebar,
+                    showSidebarButton: false
+                )
             }
-            // Inside stack so Menu appears on Life Path chrome (K5a); no leading sidebar button
-            // — leading already has Home / Cancel / End round.
-            .compactFeatureChrome(
-                nav: nav,
-                lang: lang,
-                dueCount: flashcardVM.dueCount,
-                onPreferSidebar: onPreferSidebar,
-                showSidebarButton: false
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            #if os(macOS)
+            Divider()
+            LogConsolePanel(
+                viewModel: chatVM,
+                isExpanded: $isLogsExpanded,
+                height: $logsHeight
             )
+            #endif
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {
             vm.attach(flashcardVM: flashcardVM, dbManager: flashcardVM.dbManager)
-            vm.onLog = flashcardVM.onLog
+            // Route Life Path / pronunciation logs into the shared console with clear tags.
+            vm.onLog = { [weak chatVM] message in
+                chatVM?.log(message, tag: Self.logTag(for: message))
+            }
             vm.onRequestExit = onExit
-            vm.pronunciationURLProvider = { [weak chatVM] in chatVM?.pronunciationURL ?? "" }
+            vm.pronunciationURLProvider = { [weak chatVM] in
+                PronunciationEndpoint.resolvedAssessURL(chatVM?.pronunciationURL)
+            }
             vm.sttURLProvider = { [weak chatVM] in chatVM?.sttURL ?? "" }
             vm.load()
+            #if os(macOS)
+            chatVM.log("Life Path: console ready (pronunciation logs use [PRON])", tag: "LIFE")
+            #endif
         }
         .onChange(of: vm.isPlaying) { _, playing in
             if playing {
@@ -144,6 +169,30 @@ struct LifePathRootView: View {
         } message: {
             Text(L10n.lifePathDevResetMessage(lang))
         }
+    }
+
+    // MARK: - Logging
+
+    /// Maps log message content to console tags (PRON / LIFE / AUDIO / ERROR).
+    private static func logTag(for message: String) -> String {
+        let lower = message.lowercased()
+        if lower.contains("error") || lower.contains("failed") || lower.contains("fail:") {
+            // Keep pronunciation errors under PRON so the feature stream stays readable.
+            if lower.contains("pronunciation") || lower.contains("phoneme") || lower.contains("assess") {
+                return "PRON"
+            }
+            return "ERROR"
+        }
+        if lower.contains("pronunciation")
+            || lower.contains("phoneme")
+            || lower.contains("assess")
+            || lower.contains("[pronunciation]") {
+            return "PRON"
+        }
+        if lower.contains("audio") || lower.contains("playback") || lower.contains("tts") {
+            return "AUDIO"
+        }
+        return "LIFE"
     }
 
     // MARK: - TTS (shared chat ephemeral speech API)
@@ -411,7 +460,7 @@ struct LifePathRootView: View {
                     cardFace(card)
                 }
 
-                // Pronunciation mic button
+                // Pronunciation mic — primary path: speak → instant feedback → auto-grade
                 if let card = vm.currentCard {
                     PronunciationMicButton(
                         pronunciationState: vm.pronunciationState,
@@ -428,17 +477,18 @@ struct LifePathRootView: View {
                     PronunciationFeedbackView(
                         result: result,
                         targetWord: vm.pronunciationTargetWord,
+                        showDismiss: !result.is_correct,
                         onDismiss: { vm.dismissPronunciationFeedback() }
                     )
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                 } else if case .error(let msg) = vm.pronunciationState {
-                    HStack {
+                    HStack(alignment: .top, spacing: 8) {
                         Image(systemName: "exclamationmark.triangle.fill")
                             .foregroundStyle(.orange)
                         Text(msg)
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                        Spacer()
+                        Spacer(minLength: 4)
                         Button("Dismiss") { vm.cancelPronunciationRecording() }
                             .font(.caption)
                     }
@@ -447,10 +497,11 @@ struct LifePathRootView: View {
 
                 Divider().padding(.horizontal)
 
-                // Grade buttons (show answer)
+                // Manual grade remains as escape hatch (e.g. no mic / offline)
                 if vm.isAnswerRevealed {
                     HStack(spacing: 16) {
                         Button {
+                            vm.cancelPronunciationRecording()
                             vm.gradeWrong()
                         } label: {
                             Label(L10n.lifePathAgain(lang), systemImage: "xmark")
@@ -461,6 +512,7 @@ struct LifePathRootView: View {
                         .controlSize(.large)
 
                         Button {
+                            vm.cancelPronunciationRecording()
                             vm.gradeCorrect()
                         } label: {
                             Label(L10n.lifePathGotIt(lang), systemImage: "checkmark")
@@ -471,6 +523,17 @@ struct LifePathRootView: View {
                         .controlSize(.large)
                     }
                     .padding(.horizontal)
+                } else if case .feedback = vm.pronunciationState {
+                    // After a failed attempt, still allow manual override without extra tap
+                    Button {
+                        vm.revealAnswer()
+                    } label: {
+                        Text(L10n.lifePathShowAnswer(lang))
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.large)
+                    .padding(.horizontal)
                 } else {
                     Button {
                         vm.revealAnswer()
@@ -478,7 +541,7 @@ struct LifePathRootView: View {
                         Text(L10n.lifePathShowAnswer(lang))
                             .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(.bordered)
                     .controlSize(.large)
                     .padding(.horizontal)
                 }
@@ -495,11 +558,20 @@ struct LifePathRootView: View {
 
         return VStack(spacing: 16) {
             HStack(alignment: .center, spacing: 12) {
-                Text(card.front)
-                    .font(.system(size: 40, weight: .bold))
-                    .multilineTextAlignment(.center)
-                    .minimumScaleFactor(0.5)
-                    .frame(maxWidth: .infinity)
+                Group {
+                    if case .feedback(let result) = vm.pronunciationState, !result.phonemes.isEmpty {
+                        // Inline green/red grapheme highlights after assessment
+                        PhonemeHighlightedWord(result: result)
+                            .frame(maxWidth: .infinity)
+                            .multilineTextAlignment(.center)
+                    } else {
+                        Text(card.front)
+                            .font(.system(size: 40, weight: .bold))
+                            .multilineTextAlignment(.center)
+                            .minimumScaleFactor(0.5)
+                            .frame(maxWidth: .infinity)
+                    }
+                }
 
                 MessageAudioButton(
                     accent: .flashcard,
@@ -511,7 +583,13 @@ struct LifePathRootView: View {
                 .accessibilityLabel(L10n.lifePathPlayAudio(lang))
             }
 
-            if let phonics = card.phonics, !phonics.isEmpty {
+            if case .feedback(let result) = vm.pronunciationState {
+                Text(result.displayFeedback)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(result.is_correct ? .green : .orange)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
+            } else if let phonics = card.phonics, !phonics.isEmpty {
                 Text(phonics)
                     .font(.title3)
                     .foregroundStyle(.secondary)

@@ -485,6 +485,9 @@ struct LogRow: View {
         case "TTS": return .cyan
         case "AUDIO": return .orange
         case "DB": return .purple
+        case "PRON": return Color(red: 0.45, green: 0.85, blue: 1.0) // light blue
+        case "LIFE": return Color(red: 0.75, green: 0.55, blue: 1.0) // lavender
+        case "NAV": return .mint
         case "ERROR": return .red
         default: return .white
         }
@@ -501,7 +504,7 @@ struct LogRow: View {
             Text("[\(log.tag)]")
                 .font(.system(size: 10, weight: .bold, design: .monospaced))
                 .foregroundColor(colorForTag)
-                .frame(width: 60, alignment: .leading)
+                .frame(width: 64, alignment: .leading)
             
             // Message
             Text(log.message)

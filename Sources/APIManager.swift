@@ -49,6 +49,150 @@ struct PronunciationAssessmentResponse: Decodable, Equatable {
     let phonemes: [PronunciationPhoneme]
     let predicted_phonemes: [String]
     let target_phonemes: [String]
+    /// Human-readable tip, e.g. `Focus on the "tt" sound (/T/)`. Optional for older servers.
+    let feedback: String?
+    /// Present when the server was called with `"debug": true`.
+    let debug: PronunciationDebugInfo?
+
+    init(
+        overall_score: Double,
+        is_correct: Bool,
+        phonemes: [PronunciationPhoneme],
+        predicted_phonemes: [String],
+        target_phonemes: [String],
+        feedback: String? = nil,
+        debug: PronunciationDebugInfo? = nil
+    ) {
+        self.overall_score = overall_score
+        self.is_correct = is_correct
+        self.phonemes = phonemes
+        self.predicted_phonemes = predicted_phonemes
+        self.target_phonemes = target_phonemes
+        self.feedback = feedback
+        self.debug = debug
+    }
+
+    /// Prefer server `feedback`; otherwise synthesize a short tip from weak phonemes.
+    var displayFeedback: String {
+        if let feedback, !feedback.isEmpty { return feedback }
+        if is_correct { return "Great pronunciation!" }
+        if let worst = phonemes.min(by: { $0.score < $1.score }), !worst.is_correct {
+            return "Focus on the \"\(worst.grapheme)\" sound (/\(worst.phoneme)/)"
+        }
+        return "Keep practicing!"
+    }
+
+    /// Compact line for logs / debug UI: what the model heard vs expected.
+    var diagnosticSummary: String {
+        let pct = Int((overall_score * 100).rounded())
+        let heard = predicted_phonemes.isEmpty ? "(none)" : predicted_phonemes.joined(separator: " ")
+        let target = target_phonemes.isEmpty ? "(none)" : target_phonemes.joined(separator: " ")
+        var line = "score=\(pct)% correct=\(is_correct) target=[\(target)] heard=[\(heard)]"
+        if let dbg = debug {
+            if let audio = dbg.audio ?? dbg.post_trim {
+                line += " rms=\(audio.rms) dur=\(audio.duration_ms)ms silent=\(audio.is_silent)"
+            }
+            if let reason = dbg.reason {
+                line += " reason=\(reason)"
+            }
+        }
+        return line
+    }
+}
+
+struct PronunciationAudioStats: Decodable, Equatable {
+    let duration_ms: Int?
+    let samples: Int?
+    let rms: Double
+    let peak: Double?
+    let is_silent: Bool
+}
+
+struct PronunciationDebugInfo: Decodable, Equatable {
+    let audio: PronunciationAudioStats?
+    let pre_trim: PronunciationAudioStats?
+    let post_trim: PronunciationAudioStats?
+    let reason: String?
+    let target_normalized: [String]?
+    let predicted_normalized: [String]?
+    let predicted_raw_string: String?
+    let payload_bytes: Int?
+    let decoded_sr: Int?
+}
+
+// MARK: - Pronunciation WebSocket URL helpers
+
+enum PronunciationEndpoint {
+    /// Production default used when UserDefaults / endpoint row has no URL yet.
+    static let defaultAssessURL = "https://pronunciation_assessment.npro.ai/assess"
+
+    /// Returns a non-empty assess URL, falling back to `defaultAssessURL`.
+    static func resolvedAssessURL(_ raw: String?) -> String {
+        let trimmed = (raw ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? defaultAssessURL : trimmed
+    }
+
+    /// Converts a configured HTTP(S) assess URL into the streaming WebSocket path.
+    /// `https://host/assess` → `wss://host/ws/assess`
+    /// `http://host:8086/assess` → `ws://host:8086/ws/assess`
+    /// Already-`ws(s):` URLs are returned (path normalized to `/ws/assess` when needed).
+    static func webSocketURL(from endpoint: String) -> String? {
+        let trimmed = endpoint.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, var components = URLComponents(string: trimmed) else { return nil }
+
+        switch components.scheme?.lowercased() {
+        case "https":
+            components.scheme = "wss"
+        case "http":
+            components.scheme = "ws"
+        case "wss", "ws":
+            break
+        default:
+            return nil
+        }
+
+        var path = components.path
+        if path.hasSuffix("/assess") && !path.hasSuffix("/ws/assess") {
+            path = String(path.dropLast("/assess".count)) + "/ws/assess"
+        } else if path.isEmpty || path == "/" {
+            path = "/ws/assess"
+        } else if !path.contains("ws") {
+            // e.g. bare host root → /ws/assess
+            if path.hasSuffix("/") {
+                path += "ws/assess"
+            } else {
+                path += "/ws/assess"
+            }
+        }
+        components.path = path
+        return components.string
+    }
+
+    /// Maps ws(s) assess URLs back to HTTP POST `/assess` for the one-shot fallback.
+    static func httpAssessURL(from endpoint: String) -> String? {
+        let trimmed = endpoint.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, var components = URLComponents(string: trimmed) else { return nil }
+        switch components.scheme?.lowercased() {
+        case "wss":
+            components.scheme = "https"
+        case "ws":
+            components.scheme = "http"
+        case "https", "http":
+            break
+        default:
+            return nil
+        }
+        var path = components.path
+        if path.hasSuffix("/ws/assess") {
+            path = String(path.dropLast("/ws/assess".count)) + "/assess"
+        } else if path.isEmpty || path == "/" {
+            path = "/assess"
+        } else if !path.hasSuffix("/assess") {
+            path = path.hasSuffix("/") ? path + "assess" : path + "/assess"
+        }
+        components.path = path
+        return components.string
+    }
 }
 
 
@@ -196,46 +340,54 @@ class APIManager {
         return decoded.voices
     }
     
-    /// Submits audio for pronunciation assessment
+    /// Submits audio for pronunciation assessment (HTTP one-shot fallback).
+    /// `audioData` may be raw float32 PCM @ 16 kHz or a WAV container.
     func submitPronunciationAssessment(
         endpoint: String,
         audioData: Data,
         targetWord: String
     ) async throws -> PronunciationAssessmentResponse {
-        guard let url = URL(string: endpoint) else {
+        // Prefer the HTTP /assess path even if the user pasted a WS URL.
+        let httpEndpoint = PronunciationEndpoint.httpAssessURL(from: endpoint) ?? endpoint
+        guard let url = URL(string: httpEndpoint) else {
             throw NSError(domain: "APIManager", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid Pronunciation Endpoint URL"])
         }
-        
+
         let base64Audio = audioData.base64EncodedString()
+        // Always request debug metadata so logs show RMS/duration/heard phonemes when scores look wrong.
         let payload: [String: Any] = [
             "audio_base64": base64Audio,
-            "target_text": targetWord
+            "target_text": targetWord,
+            "debug": true
         ]
-        
+
         let jsonData = try JSONSerialization.data(withJSONObject: payload)
-        
-        onLog?("APIManager [Pronunciation]: Sending POST to \(endpoint) for word '\(targetWord)'")
-        
+
+        onLog?("APIManager [Pronunciation]: Sending POST to \(httpEndpoint) for word '\(targetWord)' (\(audioData.count) bytes)")
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = jsonData
-        
+        request.timeoutInterval = 30
+
         let (data, response) = try await URLSession.shared.data(for: request)
-        
+
         guard let httpResponse = response as? HTTPURLResponse else {
             throw NSError(domain: "APIManager", code: 500, userInfo: [NSLocalizedDescriptionKey: "Invalid HTTP Response"])
         }
-        
+
         onLog?("APIManager [Pronunciation]: Received Response (Status Code: \(httpResponse.statusCode))")
-        
+
         guard httpResponse.statusCode == 200 else {
             let errBody = String(data: data, encoding: .utf8) ?? "No body"
             onLog?("APIManager [Pronunciation]: Error Response: \(errBody)")
             throw NSError(domain: "APIManager", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP Error \(httpResponse.statusCode): \(errBody)"])
         }
-        
-        return try JSONDecoder().decode(PronunciationAssessmentResponse.self, from: data)
+
+        let decoded = try JSONDecoder().decode(PronunciationAssessmentResponse.self, from: data)
+        onLog?("APIManager [Pronunciation]: \(decoded.diagnosticSummary)")
+        return decoded
     }
 
     

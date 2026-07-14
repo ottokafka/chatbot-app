@@ -40,11 +40,30 @@ final class LifePathViewModel: ObservableObject {
     /// The word currently being assessed. Set when recording starts.
     private(set) var pronunciationTargetWord: String = ""
 
-    private var pronunciationAudioEngine: AVAudioEngine?
+    /// Latest assessment result (mirrors `.feedback` for convenient view binding).
+    var latestPronunciationResult: PronunciationAssessmentResponse? {
+        if case .feedback(let r) = pronunciationState { return r }
+        return nil
+    }
+
+    private let pronunciationRecorder = AudioRecorder()
     private var pronunciationAccumulatedData: Data = Data()
     private var pronunciationAPIManager: APIManager?
-    private var pronunciationEndpoint: String = ""
-    private var pronunciationWebSocketManager: WebSocketManager?
+    private var pronunciationAssessWS: WebSocketManager?
+    private var pronunciationWSReady = false
+    private var pronunciationResultFromWS = false
+    private var pronunciationAutoGradeTask: Task<Void, Never>?
+
+    // Client-side energy VAD (does not require correct STT recognition)
+    private var vadHeardSpeech = false
+    private var vadSpeechSamples = 0
+    private var vadSilenceSamples = 0
+    private var vadTotalSamples = 0
+    private let vadSampleRate = 16000
+    private let vadSpeechRMS: Float = 0.012
+    private let vadMinSpeechMs = 280
+    private let vadSilenceMs = 700
+    private let vadMaxMs = 5000
 
     private var dbManager: DatabaseManager
     private weak var flashcardVM: FlashcardViewModel?
@@ -55,13 +74,31 @@ final class LifePathViewModel: ObservableObject {
     var onRequestExit: (() -> Void)?
     /// Must be provided by the host (LifePathRootView) so assessment uses the active endpoint.
     var pronunciationURLProvider: (() -> String)?
-    /// Must be provided by the host (LifePathRootView) so we can run auto-stop on target word match.
+    /// Optional STT base URL (no longer required for pronunciation auto-stop).
     var sttURLProvider: (() -> String)?
 
     init(dbManager: DatabaseManager = DatabaseManager(), flashcardVM: FlashcardViewModel? = nil) {
         self.dbManager = dbManager
         self.flashcardVM = flashcardVM
         self.pronunciationAPIManager = APIManager()
+        self.pronunciationAPIManager?.onLog = { [weak self] msg in self?.onLog?(msg) }
+        configurePronunciationRecorder()
+    }
+
+    private func configurePronunciationRecorder() {
+        pronunciationRecorder.onLog = { [weak self] msg in
+            self?.onLog?("Pronunciation mic: \(msg)")
+        }
+        pronunciationRecorder.onError = { [weak self] err in
+            Task { @MainActor in
+                self?.pronunciationState = .error(err)
+            }
+        }
+        pronunciationRecorder.onAudioData = { [weak self] data in
+            Task { @MainActor in
+                self?.handlePronunciationAudioChunk(data)
+            }
+        }
     }
 
     func attach(flashcardVM: FlashcardViewModel, dbManager: DatabaseManager? = nil) {
@@ -236,6 +273,7 @@ final class LifePathViewModel: ObservableObject {
     }
 
     func endSession() {
+        cancelPronunciationRecording()
         isPlaying = false
         sessionQueue = []
         sessionIndex = 0
@@ -265,184 +303,343 @@ final class LifePathViewModel: ObservableObject {
     func triggerAutoRecordIfWaiting(for word: String) {
         guard isWaitingToAutoRecord, pronunciationState == .idle else { return }
         isWaitingToAutoRecord = false
+        onLog?("Pronunciation: auto-record after TTS for '\(word)'")
         startPronunciationRecording(for: word)
     }
 
     func armAutoRecord() {
         guard pronunciationState == .idle else { return }
         isWaitingToAutoRecord = true
+        onLog?("Pronunciation: armed (will record after TTS finishes)")
     }
 
     func startPronunciationRecording(for word: String) {
-        guard pronunciationState == .idle else { return }
+        guard pronunciationState == .idle || isFeedbackOrError else { return }
+        pronunciationAutoGradeTask?.cancel()
+        pronunciationAutoGradeTask = nil
+
+        teardownPronunciationWS()
+        pronunciationRecorder.stop()
+
         pronunciationTargetWord = word
         pronunciationAccumulatedData = Data()
+        pronunciationWSReady = false
+        pronunciationResultFromWS = false
+        resetVAD()
         isWaitingToAutoRecord = false
 
-        // Connect STT WebSocket for real-time target word matching
-        if let baseSTT = sttURLProvider?() {
-            let sttLang: STTLanguage = (language == .zh) ? .chinese : .english
-            let wsURL = SpeechCorrection.sttURL(base: baseSTT, language: sttLang)
-            let ws = WebSocketManager(urlString: wsURL)
-            self.pronunciationWebSocketManager = ws
-
-            ws.onMessageReceived = { [weak self] transcription in
-                guard let self else { return }
-                Task { @MainActor in
-                    self.handleSTTTranscription(transcription)
-                }
-            }
-            ws.onLog = { [weak self] msg in
-                self?.onLog?("Pronunciation STT: \(msg)")
-            }
-            ws.connect()
-        }
-
-        let engine = AVAudioEngine()
-        pronunciationAudioEngine = engine
-
-        #if os(iOS)
-        do {
-            let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.record, mode: .default)
-            try session.setActive(true)
-        } catch {
-            pronunciationState = .error("Audio session error: \(error.localizedDescription)")
-            return
-        }
-        #endif
-
-        let inputNode = engine.inputNode
-        let inputFormat = inputNode.inputFormat(forBus: 0)
-        guard let targetFormat = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: 16000, channels: 1, interleaved: false),
-              let converter = AVAudioConverter(from: inputFormat, to: targetFormat) else {
-            pronunciationState = .error("Failed to create audio converter")
+        let endpoint = PronunciationEndpoint.resolvedAssessURL(pronunciationURLProvider?())
+        if endpoint.isEmpty {
+            onLog?("Pronunciation: ERROR — URL not configured (Settings → Endpoint Config)")
+            pronunciationState = .error("Pronunciation URL not configured. Set it in Settings → Endpoint Config.")
             return
         }
 
-        inputNode.installTap(onBus: 0, bufferSize: 4096, format: inputFormat) { [weak self] buffer, _ in
-            guard let self else { return }
-            let ratio = inputFormat.sampleRate / targetFormat.sampleRate
-            let capacity = AVAudioFrameCount(Double(buffer.frameLength) / ratio) + 16
-            guard let outBuf = AVAudioPCMBuffer(pcmFormat: targetFormat, frameCapacity: capacity) else { return }
-            var inputUsed = false
-            converter.convert(to: outBuf, error: nil) { _, outStatus in
-                if inputUsed { outStatus.pointee = .noDataNow; return nil }
-                outStatus.pointee = .haveData
-                inputUsed = true
-                return buffer
-            }
-            if let channelData = outBuf.floatChannelData?[0] {
-                let bytes = Int(outBuf.frameLength) * MemoryLayout<Float32>.size
-                let data = Data(bytes: channelData, count: bytes)
-                Task { @MainActor [weak self] in
-                    guard let self = self else { return }
-                    self.pronunciationAccumulatedData.append(data)
-                    self.pronunciationWebSocketManager?.sendAudio(data: data)
-                }
-            }
+        onLog?("Pronunciation: start word='\(word)' http=\(endpoint)")
+
+        // Prefer streaming WebSocket for lower latency; HTTP POST remains the fallback.
+        if let wsURL = PronunciationEndpoint.webSocketURL(from: endpoint) {
+            onLog?("Pronunciation: streaming WS \(wsURL)")
+            connectPronunciationWS(url: wsURL, targetWord: word)
+        } else {
+            onLog?("Pronunciation: no WS URL derived — will use HTTP POST on stop")
         }
 
-        do {
-            engine.prepare()
-            try engine.start()
-            pronunciationState = .recording
-            onLog?("Pronunciation: recording started for '\(word)'")
-        } catch {
-            pronunciationState = .error("Failed to start engine: \(error.localizedDescription)")
-        }
+        pronunciationState = .recording
+        pronunciationRecorder.start()
+        onLog?("Pronunciation: mic recording started for '\(word)'")
     }
 
+    /// Tap-to-stop: ends capture and runs assessment (WS end frame or HTTP fallback).
     func stopPronunciationRecordingAndAssess() {
         guard case .recording = pronunciationState else { return }
-        pronunciationAudioEngine?.inputNode.removeTap(onBus: 0)
-        pronunciationAudioEngine?.stop()
-        pronunciationAudioEngine = nil
-        pronunciationWebSocketManager?.disconnect()
-        pronunciationWebSocketManager = nil
-
-        pronunciationState = .assessing
-        onLog?("Pronunciation: stopped recording (\(pronunciationAccumulatedData.count) bytes), sending to server")
-
-        // Wrap raw Float32 PCM in a WAV container so the server's soundfile can decode it
-        let rawData = pronunciationAccumulatedData
-        let audioData = Self.wrapFloat32PCMasWAV(rawData, sampleRate: 16000) ?? rawData
-        let word = pronunciationTargetWord
-        let endpoint = pronunciationURLProvider?() ?? ""
-
-        Task {
-            await runAssessment(audioData: audioData, word: word, endpoint: endpoint)
-        }
+        finalizeRecordingAndAssess(reason: "manual")
     }
 
     func cancelPronunciationRecording() {
-        pronunciationAudioEngine?.inputNode.removeTap(onBus: 0)
-        pronunciationAudioEngine?.stop()
-        pronunciationAudioEngine = nil
-        pronunciationWebSocketManager?.disconnect()
-        pronunciationWebSocketManager = nil
+        onLog?("Pronunciation: cancelled (state was \(String(describing: pronunciationState)))")
+        pronunciationAutoGradeTask?.cancel()
+        pronunciationAutoGradeTask = nil
+        pronunciationRecorder.stop()
+        teardownPronunciationWS()
         pronunciationAccumulatedData = Data()
+        resetVAD()
         pronunciationState = .idle
         isWaitingToAutoRecord = false
     }
 
     func dismissPronunciationFeedback() {
-        pronunciationWebSocketManager?.disconnect()
-        pronunciationWebSocketManager = nil
+        onLog?("Pronunciation: feedback dismissed")
+        pronunciationAutoGradeTask?.cancel()
+        pronunciationAutoGradeTask = nil
+        teardownPronunciationWS()
         pronunciationState = .idle
         isWaitingToAutoRecord = false
     }
 
-    private func runAssessment(audioData: Data, word: String, endpoint: String) async {
+    private var isFeedbackOrError: Bool {
+        switch pronunciationState {
+        case .feedback, .error: return true
+        default: return false
+        }
+    }
+
+    private func resetVAD() {
+        vadHeardSpeech = false
+        vadSpeechSamples = 0
+        vadSilenceSamples = 0
+        vadTotalSamples = 0
+    }
+
+    private func handlePronunciationAudioChunk(_ data: Data) {
+        guard case .recording = pronunciationState else { return }
+        guard !data.isEmpty else { return }
+
+        pronunciationAccumulatedData.append(data)
+        if pronunciationWSReady {
+            pronunciationAssessWS?.sendAudio(data: data)
+        }
+
+        // Energy VAD — stop after speech + silence, independent of correct recognition.
+        let sampleCount = data.count / MemoryLayout<Float32>.size
+        guard sampleCount > 0 else { return }
+        let rms: Float = data.withUnsafeBytes { raw in
+            let buf = raw.bindMemory(to: Float32.self)
+            var sum: Float = 0
+            for i in 0..<sampleCount {
+                let v = buf[i]
+                sum += v * v
+            }
+            return sqrt(sum / Float(sampleCount))
+        }
+
+        vadTotalSamples += sampleCount
+        if rms >= vadSpeechRMS {
+            vadHeardSpeech = true
+            vadSpeechSamples += sampleCount
+            vadSilenceSamples = 0
+        } else if vadHeardSpeech {
+            vadSilenceSamples += sampleCount
+        }
+
+        let minSpeech = vadSampleRate * vadMinSpeechMs / 1000
+        let silenceNeed = vadSampleRate * vadSilenceMs / 1000
+        let maxSamples = vadSampleRate * vadMaxMs / 1000
+
+        if vadTotalSamples >= maxSamples {
+            onLog?("Pronunciation: max duration reached — auto-stopping")
+            finalizeRecordingAndAssess(reason: "max_duration")
+        } else if vadHeardSpeech && vadSpeechSamples >= minSpeech && vadSilenceSamples >= silenceNeed {
+            onLog?("Pronunciation: silence after speech — auto-stopping")
+            finalizeRecordingAndAssess(reason: "silence")
+        }
+    }
+
+    private func finalizeRecordingAndAssess(reason: String) {
+        guard case .recording = pronunciationState else { return }
+        pronunciationRecorder.stop()
+        pronunciationState = .assessing
+        let bytes = pronunciationAccumulatedData.count
+        let ms = bytes / (MemoryLayout<Float32>.size * 16) // 16 kHz float32 mono ≈ samples/ms
+        onLog?(
+            "Pronunciation: stop reason=\(reason) bytes=\(bytes) ~\(ms)ms speechDetected=\(vadHeardSpeech)"
+        )
+
+        // If WS session is live, ask server to score streamed audio (instant path).
+        if pronunciationWSReady, let ws = pronunciationAssessWS, ws.isConnected {
+            pronunciationResultFromWS = false
+            onLog?("Pronunciation: sending WS end (awaiting result…)")
+            ws.sendText("{\"type\":\"end\"}")
+            // Safety: if WS never replies, fall back to HTTP after a short wait.
+            let raw = pronunciationAccumulatedData
+            let word = pronunciationTargetWord
+            let endpoint = PronunciationEndpoint.resolvedAssessURL(pronunciationURLProvider?())
+            Task { [weak self] in
+                try? await Task.sleep(nanoseconds: 2_500_000_000)
+                guard let self else { return }
+                guard case .assessing = self.pronunciationState, !self.pronunciationResultFromWS else { return }
+                self.onLog?("Pronunciation: WS timeout — falling back to HTTP POST")
+                await self.runHTTPAssessment(audioData: raw, word: word, endpoint: endpoint)
+            }
+            return
+        }
+
+        // HTTP fallback (no WS or not ready)
+        onLog?("Pronunciation: assessing via HTTP POST (WS not ready)")
+        let raw = pronunciationAccumulatedData
+        let word = pronunciationTargetWord
+        let endpoint = PronunciationEndpoint.resolvedAssessURL(pronunciationURLProvider?())
+        Task {
+            await runHTTPAssessment(audioData: raw, word: word, endpoint: endpoint)
+        }
+    }
+
+    private func connectPronunciationWS(url: String, targetWord: String) {
+        let ws = WebSocketManager(urlString: url)
+        pronunciationAssessWS = ws
+        pronunciationWSReady = false
+
+        ws.onLog = { [weak self] msg in
+            self?.onLog?("Pronunciation WS: \(msg)")
+        }
+        ws.onError = { [weak self] err in
+            Task { @MainActor in
+                self?.onLog?("Pronunciation WS error: \(err)")
+                // Stay recording — HTTP fallback will handle assess on stop.
+                self?.pronunciationWSReady = false
+            }
+        }
+        ws.onConnectionStateChange = { [weak self] connected in
+            Task { @MainActor in
+                guard let self else { return }
+                if connected {
+                    // Request debug metadata so logs show RMS / heard phonemes on device.
+                    let payload = "{\"type\":\"start\",\"target_text\":\(Self.jsonString(targetWord)),\"debug\":true}"
+                    ws.sendText(payload)
+                } else {
+                    self.pronunciationWSReady = false
+                }
+            }
+        }
+        ws.onMessageReceived = { [weak self] text in
+            Task { @MainActor in
+                self?.handlePronunciationWSMessage(text)
+            }
+        }
+        ws.connect()
+    }
+
+    private func handlePronunciationWSMessage(_ text: String) {
+        guard let data = text.data(using: .utf8),
+              let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let type = obj["type"] as? String else {
+            onLog?("Pronunciation WS: unparseable message: \(text.prefix(120))")
+            return
+        }
+
+        switch type {
+        case "ready":
+            pronunciationWSReady = true
+            onLog?("Pronunciation WS: ready")
+            // Flush any audio already buffered before ready.
+            if case .recording = pronunciationState, !pronunciationAccumulatedData.isEmpty {
+                pronunciationAssessWS?.sendAudio(data: pronunciationAccumulatedData)
+            }
+
+        case "result":
+            pronunciationResultFromWS = true
+            do {
+                let result = try JSONDecoder().decode(PronunciationAssessmentResponse.self, from: data)
+                applyAssessmentResult(result)
+            } catch {
+                // `type` field is extra — strip and decode the rest if needed.
+                if let result = decodeAssessmentFromWS(obj) {
+                    applyAssessmentResult(result)
+                } else {
+                    pronunciationState = .error("Could not parse assessment result")
+                    onLog?("Pronunciation WS decode error: \(error.localizedDescription)")
+                }
+            }
+
+        case "error":
+            let msg = obj["message"] as? String ?? "Assessment error"
+            onLog?("Pronunciation WS server error: \(msg)")
+            if case .assessing = pronunciationState {
+                // Fall back to HTTP with whatever we captured.
+                let raw = pronunciationAccumulatedData
+                let word = pronunciationTargetWord
+                let endpoint = PronunciationEndpoint.resolvedAssessURL(pronunciationURLProvider?())
+                Task {
+                    await runHTTPAssessment(audioData: raw, word: word, endpoint: endpoint)
+                }
+            }
+
+        default:
+            break
+        }
+    }
+
+    private func decodeAssessmentFromWS(_ obj: [String: Any]) -> PronunciationAssessmentResponse? {
+        var copy = obj
+        copy.removeValue(forKey: "type")
+        guard let data = try? JSONSerialization.data(withJSONObject: copy) else { return nil }
+        return try? JSONDecoder().decode(PronunciationAssessmentResponse.self, from: data)
+    }
+
+    private func runHTTPAssessment(audioData: Data, word: String, endpoint: String) async {
         guard !endpoint.isEmpty else {
+            onLog?("Pronunciation: ERROR — empty endpoint on HTTP assess")
             pronunciationState = .error("Pronunciation URL not configured. Set it in Settings → Endpoint Config.")
             return
         }
+        if audioData.isEmpty {
+            onLog?("Pronunciation: ERROR — no audio captured (0 bytes)")
+            pronunciationState = .error("No audio captured — try speaking closer to the mic.")
+            return
+        }
+        // Prefer WAV so any server version can decode via soundfile.
+        let payload = Self.wrapFloat32PCMasWAV(audioData, sampleRate: 16000) ?? audioData
+        onLog?("Pronunciation: HTTP POST word='\(word)' pcm=\(audioData.count)B wav=\(payload.count)B")
         do {
             let result = try await pronunciationAPIManager!.submitPronunciationAssessment(
                 endpoint: endpoint,
-                audioData: audioData,
+                audioData: payload,
                 targetWord: word
             )
-            onLog?("Pronunciation: score \(String(format: "%.0f", result.overall_score * 100))% for '\(word)'")
-            pronunciationState = .feedback(result)
+            applyAssessmentResult(result)
         } catch {
+            onLog?("Pronunciation: ERROR assess failed — \(error.localizedDescription)")
             pronunciationState = .error("Assessment failed: \(error.localizedDescription)")
         }
     }
 
-    private func handleSTTTranscription(_ transcription: String) {
-        guard case .recording = pronunciationState else { return }
-        let cleanTranscription = transcription
-            .lowercased()
-            .components(separatedBy: CharacterSet.alphanumerics.inverted)
-            .filter { !$0.isEmpty }
-
-        let cleanTarget = pronunciationTargetWord
-            .lowercased()
-            .components(separatedBy: CharacterSet.alphanumerics.inverted)
-            .filter { !$0.isEmpty }
-
-        guard !cleanTarget.isEmpty else { return }
-
-        // Check if all parts of target word are found in the transcription
-        let matched = cleanTarget.allSatisfy { targetPart in
-            cleanTranscription.contains(targetPart)
+    private func applyAssessmentResult(_ result: PronunciationAssessmentResponse) {
+        teardownPronunciationWS()
+        onLog?("Pronunciation: RESULT word='\(pronunciationTargetWord)' \(result.diagnosticSummary)")
+        if !result.phonemes.isEmpty {
+            let chips = result.phonemes.map { p in
+                let mark = p.is_correct ? "✓" : "✗"
+                return "\(p.grapheme):\(Int((p.score * 100).rounded()))%\(mark)"
+            }.joined(separator: " ")
+            onLog?("Pronunciation: phonemes \(chips)")
         }
+        if let tip = result.feedback, !tip.isEmpty {
+            onLog?("Pronunciation: feedback \"\(tip)\"")
+        }
+        pronunciationState = .feedback(result)
 
-        if matched {
-            onLog?("Pronunciation: matched target word '\(pronunciationTargetWord)' in transcription '\(transcription)'. Auto-stopping.")
-            stopPronunciationRecordingAndAssess()
+        // Instant learning loop: pass → auto-grade correct after a short celebration beat.
+        if result.is_correct {
+            pronunciationAutoGradeTask?.cancel()
+            pronunciationAutoGradeTask = Task { [weak self] in
+                try? await Task.sleep(nanoseconds: 1_100_000_000)
+                guard let self, !Task.isCancelled else { return }
+                guard case .feedback(let r) = self.pronunciationState, r.is_correct else { return }
+                self.onLog?("Pronunciation: auto-grading correct → next card")
+                self.pronunciationState = .idle
+                self.gradeCorrect()
+            }
         } else {
-            onLog?("Pronunciation: transcription '\(transcription)' did not match target '\(pronunciationTargetWord)'. Continuing listening.")
+            onLog?("Pronunciation: not correct — waiting for Try Again or manual grade")
         }
+    }
+
+    private func teardownPronunciationWS() {
+        pronunciationAssessWS?.disconnect()
+        pronunciationAssessWS = nil
+        pronunciationWSReady = false
+    }
+
+    private static func jsonString(_ value: String) -> String {
+        let data = try? JSONSerialization.data(withJSONObject: value, options: .fragmentsAllowed)
+        return data.flatMap { String(data: $0, encoding: .utf8) } ?? "\"\""
     }
 
     // MARK: - WAV encoding
 
     /// Wraps raw interleaved Float32 PCM samples (mono, 16 kHz) in a standard WAV/RIFF header.
     /// Returns nil if data is empty or would produce a malformed header.
-    static func wrapFloat32PCMasWAV(_ pcmData: Data, sampleRate: Int) -> Data? {
+    nonisolated static func wrapFloat32PCMasWAV(_ pcmData: Data, sampleRate: Int) -> Data? {
         guard !pcmData.isEmpty else { return nil }
         let numChannels: UInt16 = 1
         let bitsPerSample: UInt16 = 32

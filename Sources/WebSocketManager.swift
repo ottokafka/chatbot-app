@@ -51,6 +51,21 @@ final class WebSocketManager: NSObject, URLSessionWebSocketDelegate, @unchecked 
             }
         }
     }
+
+    /// Sends a UTF-8 text frame (JSON control messages for pronunciation assessment, etc.).
+    func sendText(_ text: String) {
+        guard isConnected else {
+            onLog?("WebSocketManager: sendText skipped — not connected.")
+            return
+        }
+        let message = URLSessionWebSocketTask.Message.string(text)
+        webSocketTask?.send(message) { [weak self] error in
+            if let error = error {
+                self?.onLog?("WebSocketManager: Error sending text: \(error.localizedDescription)")
+                self?.onError?("WebSocket send failed: \(error.localizedDescription)")
+            }
+        }
+    }
     
     private func listen() {
         webSocketTask?.receive { [weak self] result in

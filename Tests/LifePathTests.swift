@@ -214,3 +214,163 @@ final class LifePathViewModelTests: XCTestCase {
         XCTAssertNil(db.fetchLifePathProfile(language: "en"))
     }
 }
+
+// MARK: - Pronunciation assessment client contracts
+
+final class PronunciationAssessmentTests: XCTestCase {
+    func testDecodeAssessResponseWithFeedback() throws {
+        let json = """
+        {
+          "overall_score": 0.78,
+          "is_correct": false,
+          "phonemes": [
+            {"grapheme":"b","phoneme":"B","score":0.98,"is_correct":true},
+            {"grapheme":"o","phoneme":"AA1","score":0.92,"is_correct":true},
+            {"grapheme":"tt","phoneme":"T","score":0.2,"is_correct":false},
+            {"grapheme":"le","phoneme":"AH0","score":0.85,"is_correct":true}
+          ],
+          "predicted_phonemes": ["B","AA1","D","AH0","L"],
+          "target_phonemes": ["B","AA1","T","AH0","L"],
+          "feedback": "Focus on the \\"tt\\" sound (/T/)"
+        }
+        """.data(using: .utf8)!
+
+        let result = try JSONDecoder().decode(PronunciationAssessmentResponse.self, from: json)
+        XCTAssertEqual(result.overall_score, 0.78, accuracy: 0.001)
+        XCTAssertFalse(result.is_correct)
+        XCTAssertEqual(result.phonemes.count, 4)
+        XCTAssertEqual(result.phonemes[2].grapheme, "tt")
+        XCTAssertFalse(result.phonemes[2].is_correct)
+        XCTAssertEqual(result.displayFeedback, "Focus on the \"tt\" sound (/T/)")
+        XCTAssertTrue(result.diagnosticSummary.contains("heard="))
+    }
+
+    func testDecodeAssessResponseWithDebugBlock() throws {
+        let json = """
+        {
+          "overall_score": 0.0,
+          "is_correct": false,
+          "phonemes": [
+            {"grapheme":"b","phoneme":"B","score":0.0,"is_correct":false}
+          ],
+          "predicted_phonemes": [],
+          "target_phonemes": ["B","EY1","B","IY0"],
+          "feedback": "No speech detected — try again closer to the mic.",
+          "debug": {
+            "reason": "silent_audio",
+            "audio": {"duration_ms": 400, "samples": 6400, "rms": 0.001, "peak": 0.002, "is_silent": true},
+            "target_normalized": ["b","ey","b","iy"],
+            "predicted_normalized": []
+          }
+        }
+        """.data(using: .utf8)!
+
+        let result = try JSONDecoder().decode(PronunciationAssessmentResponse.self, from: json)
+        XCTAssertEqual(result.debug?.reason, "silent_audio")
+        XCTAssertEqual(result.debug?.audio?.is_silent, true)
+        XCTAssertTrue(result.diagnosticSummary.contains("SILENT") || result.diagnosticSummary.contains("silent=true"))
+    }
+
+    func testDecodeAssessResponseWithoutFeedback() throws {
+        let json = """
+        {
+          "overall_score": 0.9,
+          "is_correct": true,
+          "phonemes": [
+            {"grapheme":"h","phoneme":"HH","score":1.0,"is_correct":true},
+            {"grapheme":"i","phoneme":"AY1","score":0.95,"is_correct":true}
+          ],
+          "predicted_phonemes": ["HH","AY1"],
+          "target_phonemes": ["HH","AY1"]
+        }
+        """.data(using: .utf8)!
+
+        let result = try JSONDecoder().decode(PronunciationAssessmentResponse.self, from: json)
+        XCTAssertTrue(result.is_correct)
+        XCTAssertNil(result.feedback)
+        XCTAssertEqual(result.displayFeedback, "Great pronunciation!")
+    }
+
+    func testDecodeWebSocketResultEnvelope() throws {
+        // Server sends {"type":"result", ...fields}. Extra keys must be ignored.
+        let json = """
+        {
+          "type": "result",
+          "overall_score": 0.5,
+          "is_correct": false,
+          "phonemes": [
+            {"grapheme":"c","phoneme":"K","score":0.5,"is_correct":true},
+            {"grapheme":"a","phoneme":"AE1","score":0.1,"is_correct":false},
+            {"grapheme":"t","phoneme":"T","score":0.9,"is_correct":true}
+          ],
+          "predicted_phonemes": ["K","T"],
+          "target_phonemes": ["K","AE1","T"],
+          "feedback": "Focus on the \\"a\\" sound (/AE/)"
+        }
+        """.data(using: .utf8)!
+
+        let result = try JSONDecoder().decode(PronunciationAssessmentResponse.self, from: json)
+        XCTAssertEqual(result.phonemes.count, 3)
+        XCTAssertEqual(result.displayFeedback.contains("a"), true)
+    }
+
+    func testDefaultAssessURL() {
+        XCTAssertEqual(
+            PronunciationEndpoint.defaultAssessURL,
+            "https://pronunciation_assessment.npro.ai/assess"
+        )
+        XCTAssertEqual(
+            PronunciationEndpoint.resolvedAssessURL(nil),
+            PronunciationEndpoint.defaultAssessURL
+        )
+        XCTAssertEqual(
+            PronunciationEndpoint.resolvedAssessURL(""),
+            PronunciationEndpoint.defaultAssessURL
+        )
+        XCTAssertEqual(
+            PronunciationEndpoint.resolvedAssessURL("   "),
+            PronunciationEndpoint.defaultAssessURL
+        )
+        XCTAssertEqual(
+            PronunciationEndpoint.resolvedAssessURL("https://custom.example/assess"),
+            "https://custom.example/assess"
+        )
+    }
+
+    func testWebSocketURLConversion() {
+        XCTAssertEqual(
+            PronunciationEndpoint.webSocketURL(from: "https://pronunciation_assessment.npro.ai/assess"),
+            "wss://pronunciation_assessment.npro.ai/ws/assess"
+        )
+        XCTAssertEqual(
+            PronunciationEndpoint.webSocketURL(from: "http://192.168.1.10:8086/assess"),
+            "ws://192.168.1.10:8086/ws/assess"
+        )
+        XCTAssertEqual(
+            PronunciationEndpoint.webSocketURL(from: "wss://pronunciation_assessment.npro.ai/ws/assess"),
+            "wss://pronunciation_assessment.npro.ai/ws/assess"
+        )
+    }
+
+    func testHTTPAssessURLConversion() {
+        XCTAssertEqual(
+            PronunciationEndpoint.httpAssessURL(from: "wss://pronunciation_assessment.npro.ai/ws/assess"),
+            "https://pronunciation_assessment.npro.ai/assess"
+        )
+        XCTAssertEqual(
+            PronunciationEndpoint.httpAssessURL(from: "https://pronunciation_assessment.npro.ai/assess"),
+            "https://pronunciation_assessment.npro.ai/assess"
+        )
+    }
+
+    func testWAVHeaderWrapsFloat32PCM() {
+        let samples = [Float32](repeating: 0.1, count: 160)
+        let pcm = samples.withUnsafeBufferPointer { Data(buffer: $0) }
+        let wav = LifePathViewModel.wrapFloat32PCMasWAV(pcm, sampleRate: 16000)
+        XCTAssertNotNil(wav)
+        guard let wav else { return }
+        XCTAssertEqual(String(data: wav.prefix(4), encoding: .ascii), "RIFF")
+        XCTAssertEqual(String(data: wav.subdata(in: 8..<12), encoding: .ascii), "WAVE")
+        XCTAssertEqual(wav.count, 44 + pcm.count)
+    }
+}

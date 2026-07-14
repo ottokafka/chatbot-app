@@ -5,7 +5,7 @@ import Combine
 struct LogEntry: Identifiable, Equatable {
     let id = UUID()
     let timestamp: Date
-    let tag: String // "STT", "LLM", "TTS", "DB", "AUDIO", "ERROR", "SYSTEM"
+    let tag: String // "STT", "LLM", "TTS", "DB", "AUDIO", "PRON", "LIFE", "ERROR", "SYSTEM"
     let message: String
 }
 
@@ -133,7 +133,9 @@ class ChatViewModel: ObservableObject {
     init() {
         // Load settings from UserDefaults or use defaults from readme
         self.sttURL = UserDefaults.standard.string(forKey: "sttURL") ?? "wss://speech_to_text.npro.ai?silence_duration_ms=1000"
-        self.pronunciationURL = UserDefaults.standard.string(forKey: "pronunciationURL") ?? "https://pronunciation_assessment.npro.ai/assess"
+        self.pronunciationURL = PronunciationEndpoint.resolvedAssessURL(
+            UserDefaults.standard.string(forKey: "pronunciationURL")
+        )
         self.llmURL = UserDefaults.standard.string(forKey: "llmURL") ?? "https://text_gen.npro.ai/v1/chat/completions"
         self.llmModel = UserDefaults.standard.string(forKey: "llmModel") ?? "Qwen3.5-35B-A3B-Q4_K_M.gguf"
         self.ttsURL = UserDefaults.standard.string(forKey: "ttsURL") ?? "https://text_to_speech.npro.ai/v1/audio/speech"
@@ -806,7 +808,7 @@ class ChatViewModel: ObservableObject {
             let stt = "wss://speech_to_text.npro.ai?silence_duration_ms=1000"
             let llm = "https://text_gen.npro.ai/v1/chat/completions"
             let tts = "https://text_to_speech.npro.ai/v1/audio/speech"
-            let pron = "https://pronunciation_assessment.npro.ai/assess"
+            let pron = PronunciationEndpoint.defaultAssessURL
             _ = dbManager.createEndpoint(name: L10n.defaultConfigName(appLanguage), textGenURL: llm, ttsURL: tts, sttURL: stt, pronunciationURL: pron, isActive: true)
             fetched = dbManager.fetchEndpoints()
         }
@@ -819,7 +821,18 @@ class ChatViewModel: ObservableObject {
             sttURL = active.sttURL
             llmURL = active.textGenURL
             ttsURL = active.ttsURL
-            pronunciationURL = active.pronunciationURL
+            // Empty DB values (pre-migration endpoints) must not wipe the default.
+            pronunciationURL = PronunciationEndpoint.resolvedAssessURL(active.pronunciationURL)
+            if active.pronunciationURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                dbManager.updateEndpoint(
+                    id: active.id,
+                    name: active.name,
+                    textGenURL: active.textGenURL,
+                    ttsURL: active.ttsURL,
+                    sttURL: active.sttURL,
+                    pronunciationURL: pronunciationURL
+                )
+            }
         }
     }
     

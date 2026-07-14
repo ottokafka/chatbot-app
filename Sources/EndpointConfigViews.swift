@@ -5,7 +5,7 @@ private enum EndpointConfigTemplate {
     static let stt = "wss://speech_to_text.npro.ai?silence_duration_ms=1000"
     static let llm = "https://text_gen.npro.ai/v1/chat/completions"
     static let tts = "https://text_to_speech.npro.ai/v1/audio/speech"
-    static let pronunciation = "https://pronunciation_assessment.npro.ai/assess"
+    static let pronunciation = PronunciationEndpoint.defaultAssessURL
 }
 
 private func endpointHostSummary(from urlString: String, language: AppLanguage) -> String {
@@ -443,6 +443,9 @@ struct EndpointConfigDetailView: View {
             
             Section {
                 DisclosureGroup("Pronunciation", isExpanded: .constant(true)) {
+                    Text("HTTP `/assess` URL. App upgrades to WebSocket `/ws/assess` automatically for streaming feedback.")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
                     TextField("Pronunciation URL", text: $pronunciationURL, axis: .vertical)
                         .lineLimit(1...4)
                         .textInputAutocapitalization(.never)
