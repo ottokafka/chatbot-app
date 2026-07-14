@@ -5,6 +5,7 @@ import SwiftUI
 /// A large mic button that cycles through idle → recording → stop → assessing states.
 struct PronunciationMicButton: View {
     let pronunciationState: LifePathViewModel.PronunciationState
+    var isArmed: Bool = false   // true = TTS playing, recording will auto-start
     let onStart: () -> Void
     let onStop: () -> Void
     let onCancel: () -> Void
@@ -12,35 +13,40 @@ struct PronunciationMicButton: View {
     var body: some View {
         switch pronunciationState {
         case .idle:
-            Button(action: onStart) {
-                Label("Say It", systemImage: "mic.fill")
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.bordered)
-            .tint(.blue)
-            .controlSize(.large)
-
-        case .recording:
-            HStack(spacing: 12) {
-                Button(action: onCancel) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.title2)
-                        .foregroundStyle(.red)
+            if isArmed {
+                // TTS is playing — show a "ready to record" pending state
+                HStack {
+                    ProgressView()
+                        .tint(.blue)
+                        .scaleEffect(0.8)
+                    Text("Listening soon…")
+                        .foregroundStyle(.secondary)
+                        .font(.subheadline)
                 }
-                .buttonStyle(.plain)
-
-                Button(action: onStop) {
-                    HStack {
-                        RecordingPulse()
-                        Text("Stop Recording")
-                            .fontWeight(.semibold)
-                    }
-                    .frame(maxWidth: .infinity)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+            } else {
+                Button(action: onStart) {
+                    Label("Say It", systemImage: "mic.fill")
+                        .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.red)
+                .buttonStyle(.bordered)
+                .tint(.blue)
                 .controlSize(.large)
             }
+
+        case .recording:
+            Button(action: onCancel) {
+                HStack(spacing: 8) {
+                    RecordingPulse()
+                    Text("Listening… Tap to Cancel")
+                        .fontWeight(.semibold)
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .tint(.red)
+            .controlSize(.large)
 
         case .assessing:
             HStack {

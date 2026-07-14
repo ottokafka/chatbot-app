@@ -70,6 +70,7 @@ struct LifePathRootView: View {
             vm.onLog = flashcardVM.onLog
             vm.onRequestExit = onExit
             vm.pronunciationURLProvider = { [weak chatVM] in chatVM?.pronunciationURL ?? "" }
+            vm.sttURLProvider = { [weak chatVM] in chatVM?.sttURL ?? "" }
             vm.load()
         }
         .onChange(of: vm.isPlaying) { _, playing in
@@ -82,12 +83,29 @@ struct LifePathRootView: View {
         }
         .onChange(of: vm.sessionIndex) { _, _ in
             autoPlayFrontIfNeeded()
+            // Reset any lingering arm when card changes
+            if vm.pronunciationState == .idle {
+                vm.armAutoRecord()
+            }
         }
         .onChange(of: chatVM.isFlashcardAutoPlayEnabled) { _, enabled in
             if enabled {
                 autoPlayFrontIfNeeded()
             } else {
                 chatVM.stopPlayback()
+            }
+        }
+        // Auto-start recording once the front audio finishes playing
+        .onChange(of: chatVM.isPlayingAudio) { _, isPlaying in
+            guard !isPlaying, vm.isPlaying, !vm.sessionFinished else { return }
+            guard let card = vm.currentCard else { return }
+            let frontId = frontPlaybackId(for: card)
+            // Only trigger if it was the front of THIS card that just stopped
+            guard chatVM.currentlyPlayingEphemeralId == nil else { return }
+            let wasPlayingFront = !chatVM.isPlayingEphemeralAudio(id: frontId)
+                && chatVM.isFlashcardAutoPlayEnabled
+            if wasPlayingFront {
+                vm.triggerAutoRecordIfWaiting(for: card.front)
             }
         }
         .onDisappear {
@@ -153,6 +171,8 @@ struct LifePathRootView: View {
             return
         }
 
+        // Arm auto-record so it fires once the TTS finishes
+        vm.armAutoRecord()
         chatVM.playEphemeralSpeech(text: front, playbackId: playbackId)
     }
 
@@ -395,6 +415,7 @@ struct LifePathRootView: View {
                 if let card = vm.currentCard {
                     PronunciationMicButton(
                         pronunciationState: vm.pronunciationState,
+                        isArmed: vm.isWaitingToAutoRecord,
                         onStart: { vm.startPronunciationRecording(for: card.front) },
                         onStop: { vm.stopPronunciationRecordingAndAssess() },
                         onCancel: { vm.cancelPronunciationRecording() }

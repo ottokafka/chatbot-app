@@ -44,6 +44,7 @@ final class LifePathViewModel: ObservableObject {
     private var pronunciationAccumulatedData: Data = Data()
     private var pronunciationAPIManager: APIManager?
     private var pronunciationEndpoint: String = ""
+    private var pronunciationWebSocketManager: WebSocketManager?
 
     private var dbManager: DatabaseManager
     private weak var flashcardVM: FlashcardViewModel?
@@ -54,6 +55,8 @@ final class LifePathViewModel: ObservableObject {
     var onRequestExit: (() -> Void)?
     /// Must be provided by the host (LifePathRootView) so assessment uses the active endpoint.
     var pronunciationURLProvider: (() -> String)?
+    /// Must be provided by the host (LifePathRootView) so we can run auto-stop on target word match.
+    var sttURLProvider: (() -> String)?
 
     init(dbManager: DatabaseManager = DatabaseManager(), flashcardVM: FlashcardViewModel? = nil) {
         self.dbManager = dbManager
@@ -256,10 +259,44 @@ final class LifePathViewModel: ObservableObject {
 
     // MARK: - Pronunciation Assessment
 
+    /// When true, recording will auto-start for the current card after the host signals TTS finished.
+    @Published private(set) var isWaitingToAutoRecord = false
+
+    func triggerAutoRecordIfWaiting(for word: String) {
+        guard isWaitingToAutoRecord, pronunciationState == .idle else { return }
+        isWaitingToAutoRecord = false
+        startPronunciationRecording(for: word)
+    }
+
+    func armAutoRecord() {
+        guard pronunciationState == .idle else { return }
+        isWaitingToAutoRecord = true
+    }
+
     func startPronunciationRecording(for word: String) {
         guard pronunciationState == .idle else { return }
         pronunciationTargetWord = word
         pronunciationAccumulatedData = Data()
+        isWaitingToAutoRecord = false
+
+        // Connect STT WebSocket for real-time target word matching
+        if let baseSTT = sttURLProvider?() {
+            let sttLang: STTLanguage = (language == .zh) ? .chinese : .english
+            let wsURL = SpeechCorrection.sttURL(base: baseSTT, language: sttLang)
+            let ws = WebSocketManager(urlString: wsURL)
+            self.pronunciationWebSocketManager = ws
+
+            ws.onMessageReceived = { [weak self] transcription in
+                guard let self else { return }
+                Task { @MainActor in
+                    self.handleSTTTranscription(transcription)
+                }
+            }
+            ws.onLog = { [weak self] msg in
+                self?.onLog?("Pronunciation STT: \(msg)")
+            }
+            ws.connect()
+        }
 
         let engine = AVAudioEngine()
         pronunciationAudioEngine = engine
@@ -299,7 +336,9 @@ final class LifePathViewModel: ObservableObject {
                 let bytes = Int(outBuf.frameLength) * MemoryLayout<Float32>.size
                 let data = Data(bytes: channelData, count: bytes)
                 Task { @MainActor [weak self] in
-                    self?.pronunciationAccumulatedData.append(data)
+                    guard let self = self else { return }
+                    self.pronunciationAccumulatedData.append(data)
+                    self.pronunciationWebSocketManager?.sendAudio(data: data)
                 }
             }
         }
@@ -319,11 +358,15 @@ final class LifePathViewModel: ObservableObject {
         pronunciationAudioEngine?.inputNode.removeTap(onBus: 0)
         pronunciationAudioEngine?.stop()
         pronunciationAudioEngine = nil
+        pronunciationWebSocketManager?.disconnect()
+        pronunciationWebSocketManager = nil
 
         pronunciationState = .assessing
         onLog?("Pronunciation: stopped recording (\(pronunciationAccumulatedData.count) bytes), sending to server")
 
-        let audioData = pronunciationAccumulatedData
+        // Wrap raw Float32 PCM in a WAV container so the server's soundfile can decode it
+        let rawData = pronunciationAccumulatedData
+        let audioData = Self.wrapFloat32PCMasWAV(rawData, sampleRate: 16000) ?? rawData
         let word = pronunciationTargetWord
         let endpoint = pronunciationURLProvider?() ?? ""
 
@@ -336,12 +379,18 @@ final class LifePathViewModel: ObservableObject {
         pronunciationAudioEngine?.inputNode.removeTap(onBus: 0)
         pronunciationAudioEngine?.stop()
         pronunciationAudioEngine = nil
+        pronunciationWebSocketManager?.disconnect()
+        pronunciationWebSocketManager = nil
         pronunciationAccumulatedData = Data()
         pronunciationState = .idle
+        isWaitingToAutoRecord = false
     }
 
     func dismissPronunciationFeedback() {
+        pronunciationWebSocketManager?.disconnect()
+        pronunciationWebSocketManager = nil
         pronunciationState = .idle
+        isWaitingToAutoRecord = false
     }
 
     private func runAssessment(audioData: Data, word: String, endpoint: String) async {
@@ -360,6 +409,67 @@ final class LifePathViewModel: ObservableObject {
         } catch {
             pronunciationState = .error("Assessment failed: \(error.localizedDescription)")
         }
+    }
+
+    private func handleSTTTranscription(_ transcription: String) {
+        guard case .recording = pronunciationState else { return }
+        let cleanTranscription = transcription
+            .lowercased()
+            .components(separatedBy: CharacterSet.alphanumerics.inverted)
+            .filter { !$0.isEmpty }
+
+        let cleanTarget = pronunciationTargetWord
+            .lowercased()
+            .components(separatedBy: CharacterSet.alphanumerics.inverted)
+            .filter { !$0.isEmpty }
+
+        guard !cleanTarget.isEmpty else { return }
+
+        // Check if all parts of target word are found in the transcription
+        let matched = cleanTarget.allSatisfy { targetPart in
+            cleanTranscription.contains(targetPart)
+        }
+
+        if matched {
+            onLog?("Pronunciation: matched target word '\(pronunciationTargetWord)' in transcription '\(transcription)'. Auto-stopping.")
+            stopPronunciationRecordingAndAssess()
+        } else {
+            onLog?("Pronunciation: transcription '\(transcription)' did not match target '\(pronunciationTargetWord)'. Continuing listening.")
+        }
+    }
+
+    // MARK: - WAV encoding
+
+    /// Wraps raw interleaved Float32 PCM samples (mono, 16 kHz) in a standard WAV/RIFF header.
+    /// Returns nil if data is empty or would produce a malformed header.
+    static func wrapFloat32PCMasWAV(_ pcmData: Data, sampleRate: Int) -> Data? {
+        guard !pcmData.isEmpty else { return nil }
+        let numChannels: UInt16 = 1
+        let bitsPerSample: UInt16 = 32
+        let byteRate = UInt32(sampleRate) * UInt32(numChannels) * UInt32(bitsPerSample) / 8
+        let blockAlign: UInt16 = numChannels * bitsPerSample / 8
+        let dataSize = UInt32(pcmData.count)
+        let chunkSize = 36 + dataSize  // = fileSize - 8
+
+        var wav = Data()
+        // RIFF header
+        wav.append(contentsOf: Array("RIFF".utf8))
+        wav.append(contentsOf: withUnsafeBytes(of: chunkSize.littleEndian, Array.init))
+        wav.append(contentsOf: Array("WAVE".utf8))
+        // fmt  sub-chunk
+        wav.append(contentsOf: Array("fmt ".utf8))
+        wav.append(contentsOf: withUnsafeBytes(of: UInt32(16).littleEndian,  Array.init)) // sub-chunk size
+        wav.append(contentsOf: withUnsafeBytes(of: UInt16(3).littleEndian,   Array.init)) // PCM float = 3
+        wav.append(contentsOf: withUnsafeBytes(of: numChannels.littleEndian, Array.init))
+        wav.append(contentsOf: withUnsafeBytes(of: UInt32(sampleRate).littleEndian, Array.init))
+        wav.append(contentsOf: withUnsafeBytes(of: byteRate.littleEndian,    Array.init))
+        wav.append(contentsOf: withUnsafeBytes(of: blockAlign.littleEndian,  Array.init))
+        wav.append(contentsOf: withUnsafeBytes(of: bitsPerSample.littleEndian, Array.init))
+        // data sub-chunk
+        wav.append(contentsOf: Array("data".utf8))
+        wav.append(contentsOf: withUnsafeBytes(of: dataSize.littleEndian, Array.init))
+        wav.append(pcmData)
+        return wav
     }
 
     // MARK: - Private game logic
