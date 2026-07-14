@@ -215,7 +215,7 @@ final class LifePathViewModelTests: XCTestCase {
     }
 }
 
-// MARK: - Pronunciation assessment client contracts
+// MARK: - Pronunciation assessment client contracts (v2.2 — word-level only)
 
 final class PronunciationAssessmentTests: XCTestCase {
     func testDecodeAssessResponseWithFeedback() throws {
@@ -223,25 +223,18 @@ final class PronunciationAssessmentTests: XCTestCase {
         {
           "overall_score": 0.78,
           "is_correct": false,
-          "phonemes": [
-            {"grapheme":"b","phoneme":"B","score":0.98,"is_correct":true},
-            {"grapheme":"o","phoneme":"AA1","score":0.92,"is_correct":true},
-            {"grapheme":"tt","phoneme":"T","score":0.2,"is_correct":false},
-            {"grapheme":"le","phoneme":"AH0","score":0.85,"is_correct":true}
-          ],
           "predicted_phonemes": ["B","AA1","D","AH0","L"],
           "target_phonemes": ["B","AA1","T","AH0","L"],
-          "feedback": "Focus on the \\"tt\\" sound (/T/)"
+          "feedback": "Close — try once more, a bit clearer."
         }
         """.data(using: .utf8)!
 
         let result = try JSONDecoder().decode(PronunciationAssessmentResponse.self, from: json)
         XCTAssertEqual(result.overall_score, 0.78, accuracy: 0.001)
         XCTAssertFalse(result.is_correct)
-        XCTAssertEqual(result.phonemes.count, 4)
-        XCTAssertEqual(result.phonemes[2].grapheme, "tt")
-        XCTAssertFalse(result.phonemes[2].is_correct)
-        XCTAssertEqual(result.displayFeedback, "Focus on the \"tt\" sound (/T/)")
+        XCTAssertNil(result.phonemes)
+        XCTAssertEqual(result.feedback, "Close — try once more, a bit clearer.")
+        XCTAssertEqual(result.displayFeedback, "Close — try once more, a bit clearer.")
         XCTAssertTrue(result.diagnosticSummary.contains("heard="))
     }
 
@@ -250,9 +243,6 @@ final class PronunciationAssessmentTests: XCTestCase {
         {
           "overall_score": 0.0,
           "is_correct": false,
-          "phonemes": [
-            {"grapheme":"b","phoneme":"B","score":0.0,"is_correct":false}
-          ],
           "predicted_phonemes": [],
           "target_phonemes": ["B","EY1","B","IY0"],
           "feedback": "No speech detected — try again closer to the mic.",
@@ -276,10 +266,6 @@ final class PronunciationAssessmentTests: XCTestCase {
         {
           "overall_score": 0.9,
           "is_correct": true,
-          "phonemes": [
-            {"grapheme":"h","phoneme":"HH","score":1.0,"is_correct":true},
-            {"grapheme":"i","phoneme":"AY1","score":0.95,"is_correct":true}
-          ],
           "predicted_phonemes": ["HH","AY1"],
           "target_phonemes": ["HH","AY1"]
         }
@@ -288,30 +274,27 @@ final class PronunciationAssessmentTests: XCTestCase {
         let result = try JSONDecoder().decode(PronunciationAssessmentResponse.self, from: json)
         XCTAssertTrue(result.is_correct)
         XCTAssertNil(result.feedback)
+        XCTAssertNil(result.phonemes)
         XCTAssertEqual(result.displayFeedback, "Great pronunciation!")
     }
 
     func testDecodeWebSocketResultEnvelope() throws {
         // Server sends {"type":"result", ...fields}. Extra keys must be ignored.
+        // v2.2+: no phonemes array; word-level feedback only.
         let json = """
         {
           "type": "result",
           "overall_score": 0.5,
           "is_correct": false,
-          "phonemes": [
-            {"grapheme":"c","phoneme":"K","score":0.5,"is_correct":true},
-            {"grapheme":"a","phoneme":"AE1","score":0.1,"is_correct":false},
-            {"grapheme":"t","phoneme":"T","score":0.9,"is_correct":true}
-          ],
           "predicted_phonemes": ["K","T"],
           "target_phonemes": ["K","AE1","T"],
-          "feedback": "Focus on the \\"a\\" sound (/AE/)"
+          "feedback": "Close — try once more, a bit clearer."
         }
         """.data(using: .utf8)!
 
         let result = try JSONDecoder().decode(PronunciationAssessmentResponse.self, from: json)
-        XCTAssertEqual(result.phonemes.count, 3)
-        XCTAssertEqual(result.displayFeedback.contains("a"), true)
+        XCTAssertNil(result.phonemes)
+        XCTAssertEqual(result.displayFeedback, "Close — try once more, a bit clearer.")
     }
 
     func testDefaultAssessURL() {

@@ -46,10 +46,12 @@ struct PronunciationPhoneme: Decodable, Equatable, Hashable {
 struct PronunciationAssessmentResponse: Decodable, Equatable {
     let overall_score: Double
     let is_correct: Bool
-    let phonemes: [PronunciationPhoneme]
+    /// Per-phoneme breakdown (removed in server v2.2+ — word-level assessment only).
+    /// Optional for backward compatibility with older servers.
+    let phonemes: [PronunciationPhoneme]?
     let predicted_phonemes: [String]
     let target_phonemes: [String]
-    /// Human-readable tip, e.g. `Focus on the "tt" sound (/T/)`. Optional for older servers.
+    /// Human-readable tip from the server (word-level feedback in v2.2+).
     let feedback: String?
     /// Present when the server was called with `"debug": true`.
     let debug: PronunciationDebugInfo?
@@ -57,7 +59,7 @@ struct PronunciationAssessmentResponse: Decodable, Equatable {
     init(
         overall_score: Double,
         is_correct: Bool,
-        phonemes: [PronunciationPhoneme],
+        phonemes: [PronunciationPhoneme]? = nil,
         predicted_phonemes: [String],
         target_phonemes: [String],
         feedback: String? = nil,
@@ -72,14 +74,13 @@ struct PronunciationAssessmentResponse: Decodable, Equatable {
         self.debug = debug
     }
 
-    /// Prefer server `feedback`; otherwise synthesize a short tip from weak phonemes.
+    /// Returns server `feedback` if present, otherwise synthesizes word-level feedback.
     var displayFeedback: String {
         if let feedback, !feedback.isEmpty { return feedback }
         if is_correct { return "Great pronunciation!" }
-        if let worst = phonemes.min(by: { $0.score < $1.score }), !worst.is_correct {
-            return "Focus on the \"\(worst.grapheme)\" sound (/\(worst.phoneme)/)"
-        }
-        return "Keep practicing!"
+        if overall_score >= 0.50 { return "Close — try once more, a bit clearer." }
+        if overall_score >= 0.25 { return "Not quite — give it another try." }
+        return "Let's try that word again."
     }
 
     /// Compact line for logs / debug UI: what the model heard vs expected.
@@ -90,7 +91,7 @@ struct PronunciationAssessmentResponse: Decodable, Equatable {
         var line = "score=\(pct)% correct=\(is_correct) target=[\(target)] heard=[\(heard)]"
         if let dbg = debug {
             if let audio = dbg.audio ?? dbg.post_trim {
-                line += " rms=\(audio.rms) dur=\(audio.duration_ms)ms silent=\(audio.is_silent)"
+                line += " rms=\(audio.rms) dur=\(audio.duration_ms ?? 0)ms silent=\(audio.is_silent)"
             }
             if let reason = dbg.reason {
                 line += " reason=\(reason)"

@@ -2,10 +2,13 @@ import SwiftUI
 
 // MARK: - Pronunciation Mic Button
 
-/// Large mic control: idle → recording (tap to finish) → assessing → try again.
+/// Mic control for continuous listen-until-correct flow.
+/// Wrong attempts keep results on screen; the mic re-opens automatically (no “Try Again”).
 struct PronunciationMicButton: View {
     let pronunciationState: LifePathViewModel.PronunciationState
     var isArmed: Bool = false   // true = TTS playing, recording will auto-start
+    /// True when a previous miss is still shown while we listen again.
+    var hasStickyResult: Bool = false
     let onStart: () -> Void
     let onStop: () -> Void
     let onCancel: () -> Void
@@ -40,13 +43,13 @@ struct PronunciationMicButton: View {
                 Button(action: onStop) {
                     HStack(spacing: 10) {
                         RecordingPulse()
-                        Text("Listening… Tap when done")
+                        Text(hasStickyResult ? "Keep going… Tap when done" : "Listening… Tap when done")
                             .fontWeight(.semibold)
                     }
                     .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(.red)
+                .tint(hasStickyResult ? .orange : .red)
                 .controlSize(.large)
 
                 Button("Cancel", action: onCancel)
@@ -58,7 +61,7 @@ struct PronunciationMicButton: View {
             HStack(spacing: 10) {
                 ProgressView()
                     .tint(.accentColor)
-                Text("Checking pronunciation…")
+                Text(hasStickyResult ? "Checking again…" : "Checking pronunciation…")
                     .foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity)
@@ -76,24 +79,38 @@ struct PronunciationMicButton: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 10)
             } else {
-                Button(action: onStart) {
-                    Label("Try Again", systemImage: "arrow.counterclockwise")
-                        .font(.body.weight(.semibold))
-                        .frame(maxWidth: .infinity)
+                // Results stay visible in the panel below; mic reopens automatically.
+                HStack(spacing: 8) {
+                    ProgressView()
+                        .tint(.orange)
+                        .scaleEffect(0.85)
+                    Text("Listen again…")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(.orange)
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.orange)
-                .controlSize(.large)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
             }
 
-        case .error:
-            Button(action: onStart) {
-                Label("Try Again", systemImage: "arrow.counterclockwise")
-                    .frame(maxWidth: .infinity)
+        case .error(let msg):
+            VStack(spacing: 6) {
+                HStack(spacing: 8) {
+                    ProgressView()
+                        .scaleEffect(0.85)
+                    Text("Still listening…")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(.secondary)
+                }
+                Text(msg)
+                    .font(.caption2)
+                    .foregroundStyle(.orange)
+                    .multilineTextAlignment(.center)
+                Button("Cancel", action: onCancel)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
-            .buttonStyle(.bordered)
-            .tint(.blue)
-            .controlSize(.large)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
         }
     }
 }
@@ -113,80 +130,59 @@ private struct RecordingPulse: View {
     }
 }
 
-// MARK: - Inline phoneme-highlighted word
+// MARK: - Simple target word display
 
-/// Renders the target word as colored grapheme slices from an assessment result.
-struct PhonemeHighlightedWord: View {
-    let result: PronunciationAssessmentResponse
+/// Displays the target word for pronunciation (no per-letter breakdown in v2.2+).
+struct TargetWordDisplay: View {
+    let word: String
+    let isCorrect: Bool
     var font: Font = .system(size: 40, weight: .bold)
 
     var body: some View {
-        HStack(spacing: 3) {
-            ForEach(Array(result.phonemes.enumerated()), id: \.offset) { _, phoneme in
-                Text(phoneme.grapheme)
-                    .font(font)
-                    .foregroundStyle(color(for: phoneme))
-                    .padding(.horizontal, 2)
-                    .background(
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(color(for: phoneme).opacity(0.14))
-                    )
-            }
-        }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(accessibilityLabel)
-    }
-
-    private func color(for phoneme: PronunciationPhoneme) -> Color {
-        if phoneme.score >= 0.8 { return .green }
-        if phoneme.score >= 0.5 { return .orange }
-        return .red
-    }
-
-    private var accessibilityLabel: String {
-        result.phonemes.map { p in
-            let status = p.is_correct ? "correct" : "needs work"
-            return "\(p.grapheme), \(status)"
-        }.joined(separator: ", ")
+        Text(word)
+            .font(font)
+            .foregroundStyle(isCorrect ? .green : .primary)
+            .padding(.horizontal, 4)
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(isCorrect ? Color.green.opacity(0.14) : Color.clear)
+            )
     }
 }
 
 // MARK: - Pronunciation Feedback View
 
-/// Compact result panel: score, tip, and optional phoneme chips.
+/// Compact result panel: score, tip, and word-level feedback.
+/// For misses this stays on screen while the mic keeps listening.
 struct PronunciationFeedbackView: View {
     let result: PronunciationAssessmentResponse
     let targetWord: String
-    var showDismiss: Bool = true
+    /// When true, learner is still in the listen loop (miss / re-recording).
+    var isListeningLoop: Bool = false
+    var showDismiss: Bool = false
     let onDismiss: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .center, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(result.is_correct ? "Great pronunciation!" : "Almost — try again")
+                    Text(headerTitle)
                         .font(.headline)
                     Text(result.displayFeedback)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
+                    if isListeningLoop && !result.is_correct {
+                        Text("Keep saying the word — I’ll check each try.")
+                            .font(.caption)
+                            .foregroundStyle(.orange)
+                    }
                 }
                 Spacer(minLength: 8)
                 ScoreBadge(score: result.overall_score, isCorrect: result.is_correct)
             }
 
-            if !result.phonemes.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(alignment: .bottom, spacing: 10) {
-                        ForEach(Array(result.phonemes.enumerated()), id: \.offset) { _, phoneme in
-                            PhonemeChip(phoneme: phoneme)
-                        }
-                    }
-                    .padding(.vertical, 2)
-                }
-            }
-
-            // Diagnostic line: what the model heard (helps debug always-0% / silence issues)
+            // Diagnostic line: what the model heard
             if !result.is_correct {
                 VStack(alignment: .leading, spacing: 4) {
                     if !result.predicted_phonemes.isEmpty {
@@ -194,7 +190,7 @@ struct PronunciationFeedbackView: View {
                             .font(.system(.caption, design: .monospaced))
                             .foregroundStyle(.secondary)
                     } else {
-                        Text("Heard: (nothing) — check mic level / silence")
+                        Text("Heard: (nothing) — speak a bit louder")
                             .font(.caption)
                             .foregroundStyle(.orange)
                     }
@@ -211,7 +207,7 @@ struct PronunciationFeedbackView: View {
 
             if showDismiss && !result.is_correct {
                 Button(action: onDismiss) {
-                    Text("Dismiss")
+                    Text("Stop listening")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
@@ -221,6 +217,12 @@ struct PronunciationFeedbackView: View {
         .padding()
         .background(Color.platformControlBackground, in: RoundedRectangle(cornerRadius: 16))
         .padding(.horizontal)
+    }
+
+    private var headerTitle: String {
+        if result.is_correct { return "Great pronunciation!" }
+        if isListeningLoop { return "Almost — keep going" }
+        return "Almost — try again"
     }
 }
 
@@ -261,40 +263,4 @@ private struct ScoreBadge: View {
     }
 }
 
-// MARK: - Phoneme Chip
 
-private struct PhonemeChip: View {
-    let phoneme: PronunciationPhoneme
-
-    private var chipColor: Color {
-        if phoneme.score >= 0.8 { return .green }
-        if phoneme.score >= 0.5 { return .orange }
-        return .red
-    }
-
-    var body: some View {
-        VStack(spacing: 4) {
-            GeometryReader { geo in
-                ZStack(alignment: .bottom) {
-                    RoundedRectangle(cornerRadius: 3)
-                        .fill(chipColor.opacity(0.15))
-                    RoundedRectangle(cornerRadius: 3)
-                        .fill(chipColor)
-                        .frame(height: geo.size.height * min(max(phoneme.score, 0), 1))
-                }
-            }
-            .frame(width: 28, height: 36)
-
-            Text(phoneme.grapheme)
-                .font(.system(size: 15, weight: .bold))
-                .foregroundStyle(chipColor)
-
-            Text("/\(phoneme.phoneme)/")
-                .font(.system(size: 9, design: .monospaced))
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-        }
-        .frame(width: 40)
-    }
-}

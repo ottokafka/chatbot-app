@@ -40,8 +40,13 @@ final class LifePathViewModel: ObservableObject {
     /// The word currently being assessed. Set when recording starts.
     private(set) var pronunciationTargetWord: String = ""
 
-    /// Latest assessment result (mirrors `.feedback` for convenient view binding).
+    /// Most recent assessment for the current card. Kept visible while re-listening after a miss
+    /// so the learner sees phoneme highlights without tapping “Try Again”.
+    @Published private(set) var lastPronunciationResult: PronunciationAssessmentResponse?
+
+    /// Convenience: last result, or in-flight feedback state.
     var latestPronunciationResult: PronunciationAssessmentResponse? {
+        if let last = lastPronunciationResult { return last }
         if case .feedback(let r) = pronunciationState { return r }
         return nil
     }
@@ -53,6 +58,7 @@ final class LifePathViewModel: ObservableObject {
     private var pronunciationWSReady = false
     private var pronunciationResultFromWS = false
     private var pronunciationAutoGradeTask: Task<Void, Never>?
+    private var pronunciationRetryTask: Task<Void, Never>?
 
     // Client-side energy VAD (does not require correct STT recognition)
     private var vadHeardSpeech = false
@@ -313,15 +319,29 @@ final class LifePathViewModel: ObservableObject {
         onLog?("Pronunciation: armed (will record after TTS finishes)")
     }
 
-    func startPronunciationRecording(for word: String) {
-        guard pronunciationState == .idle || isFeedbackOrError else { return }
+    /// Begins (or restarts) capture for `word`.
+    /// - Parameter preserveLastResult: when true (auto-retry after a miss), keep phoneme highlights on screen.
+    func startPronunciationRecording(for word: String, preserveLastResult: Bool = false) {
+        switch pronunciationState {
+        case .idle, .feedback, .error:
+            break
+        case .recording, .assessing:
+            return
+        }
+
         pronunciationAutoGradeTask?.cancel()
         pronunciationAutoGradeTask = nil
+        pronunciationRetryTask?.cancel()
+        pronunciationRetryTask = nil
 
         teardownPronunciationWS()
         pronunciationRecorder.stop()
 
+        let wordChanged = pronunciationTargetWord != word
         pronunciationTargetWord = word
+        if !preserveLastResult || wordChanged {
+            lastPronunciationResult = nil
+        }
         pronunciationAccumulatedData = Data()
         pronunciationWSReady = false
         pronunciationResultFromWS = false
@@ -335,7 +355,10 @@ final class LifePathViewModel: ObservableObject {
             return
         }
 
-        onLog?("Pronunciation: start word='\(word)' http=\(endpoint)")
+        onLog?(
+            "Pronunciation: start word='\(word)' http=\(endpoint)"
+                + (preserveLastResult ? " (continue until correct)" : "")
+        )
 
         // Prefer streaming WebSocket for lower latency; HTTP POST remains the fallback.
         if let wsURL = PronunciationEndpoint.webSocketURL(from: endpoint) {
@@ -347,7 +370,7 @@ final class LifePathViewModel: ObservableObject {
 
         pronunciationState = .recording
         pronunciationRecorder.start()
-        onLog?("Pronunciation: mic recording started for '\(word)'")
+        onLog?("Pronunciation: mic listening for '\(word)'")
     }
 
     /// Tap-to-stop: ends capture and runs assessment (WS end frame or HTTP fallback).
@@ -360,10 +383,13 @@ final class LifePathViewModel: ObservableObject {
         onLog?("Pronunciation: cancelled (state was \(String(describing: pronunciationState)))")
         pronunciationAutoGradeTask?.cancel()
         pronunciationAutoGradeTask = nil
+        pronunciationRetryTask?.cancel()
+        pronunciationRetryTask = nil
         pronunciationRecorder.stop()
         teardownPronunciationWS()
         pronunciationAccumulatedData = Data()
         resetVAD()
+        lastPronunciationResult = nil
         pronunciationState = .idle
         isWaitingToAutoRecord = false
     }
@@ -372,15 +398,21 @@ final class LifePathViewModel: ObservableObject {
         onLog?("Pronunciation: feedback dismissed")
         pronunciationAutoGradeTask?.cancel()
         pronunciationAutoGradeTask = nil
+        pronunciationRetryTask?.cancel()
+        pronunciationRetryTask = nil
         teardownPronunciationWS()
+        lastPronunciationResult = nil
         pronunciationState = .idle
         isWaitingToAutoRecord = false
     }
 
-    private var isFeedbackOrError: Bool {
-        switch pronunciationState {
-        case .feedback, .error: return true
-        default: return false
+    /// Clears sticky phoneme results when the card advances.
+    func clearPronunciationResultForNewCard() {
+        pronunciationRetryTask?.cancel()
+        pronunciationRetryTask = nil
+        lastPronunciationResult = nil
+        if case .feedback = pronunciationState {
+            pronunciationState = .idle
         }
     }
 
@@ -538,6 +570,7 @@ final class LifePathViewModel: ObservableObject {
                 } else {
                     pronunciationState = .error("Could not parse assessment result")
                     onLog?("Pronunciation WS decode error: \(error.localizedDescription)")
+                    scheduleListenRetryAfterError(word: pronunciationTargetWord)
                 }
             }
 
@@ -574,7 +607,8 @@ final class LifePathViewModel: ObservableObject {
         }
         if audioData.isEmpty {
             onLog?("Pronunciation: ERROR — no audio captured (0 bytes)")
-            pronunciationState = .error("No audio captured — try speaking closer to the mic.")
+            pronunciationState = .error("No audio captured — speak a bit louder, still listening…")
+            scheduleListenRetryAfterError(word: word)
             return
         }
         // Prefer WAV so any server version can decode via soundfile.
@@ -590,37 +624,61 @@ final class LifePathViewModel: ObservableObject {
         } catch {
             onLog?("Pronunciation: ERROR assess failed — \(error.localizedDescription)")
             pronunciationState = .error("Assessment failed: \(error.localizedDescription)")
+            scheduleListenRetryAfterError(word: word)
+        }
+    }
+
+    /// After a transient error, keep the loop going without a “Try Again” tap.
+    private func scheduleListenRetryAfterError(word: String) {
+        pronunciationRetryTask?.cancel()
+        pronunciationRetryTask = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 900_000_000)
+            guard let self, !Task.isCancelled else { return }
+            guard self.pronunciationTargetWord == word else { return }
+            if case .error = self.pronunciationState {
+                self.onLog?("Pronunciation: retry after error — keep listening")
+                self.startPronunciationRecording(for: word, preserveLastResult: true)
+            }
         }
     }
 
     private func applyAssessmentResult(_ result: PronunciationAssessmentResponse) {
         teardownPronunciationWS()
         onLog?("Pronunciation: RESULT word='\(pronunciationTargetWord)' \(result.diagnosticSummary)")
-        if !result.phonemes.isEmpty {
-            let chips = result.phonemes.map { p in
-                let mark = p.is_correct ? "✓" : "✗"
-                return "\(p.grapheme):\(Int((p.score * 100).rounded()))%\(mark)"
-            }.joined(separator: " ")
-            onLog?("Pronunciation: phonemes \(chips)")
-        }
         if let tip = result.feedback, !tip.isEmpty {
             onLog?("Pronunciation: feedback \"\(tip)\"")
         }
+
+        lastPronunciationResult = result
         pronunciationState = .feedback(result)
 
-        // Instant learning loop: pass → auto-grade correct after a short celebration beat.
+        pronunciationAutoGradeTask?.cancel()
+        pronunciationRetryTask?.cancel()
+
         if result.is_correct {
-            pronunciationAutoGradeTask?.cancel()
+            // Pass → short celebration, then auto-grade and move on.
             pronunciationAutoGradeTask = Task { [weak self] in
                 try? await Task.sleep(nanoseconds: 1_100_000_000)
                 guard let self, !Task.isCancelled else { return }
                 guard case .feedback(let r) = self.pronunciationState, r.is_correct else { return }
                 self.onLog?("Pronunciation: auto-grading correct → next card")
+                self.lastPronunciationResult = nil
                 self.pronunciationState = .idle
                 self.gradeCorrect()
             }
         } else {
-            onLog?("Pronunciation: not correct — waiting for Try Again or manual grade")
+            // Miss → keep highlights on screen and keep listening until correct.
+            // Brief pause so the learner can see which sounds need work.
+            let word = pronunciationTargetWord
+            onLog?("Pronunciation: not correct — keep listening for '\(word)'")
+            pronunciationRetryTask = Task { [weak self] in
+                try? await Task.sleep(nanoseconds: 650_000_000)
+                guard let self, !Task.isCancelled else { return }
+                guard self.pronunciationTargetWord == word else { return }
+                guard case .feedback(let r) = self.pronunciationState, !r.is_correct else { return }
+                self.onLog?("Pronunciation: resuming listen (until correct)")
+                self.startPronunciationRecording(for: word, preserveLastResult: true)
+            }
         }
     }
 
@@ -746,6 +804,7 @@ final class LifePathViewModel: ObservableObject {
 
     private func advanceOrFinish() {
         isAnswerRevealed = false
+        clearPronunciationResultForNewCard()
         // Drop mastered cards that were already past the cursor? keep simple: only advance.
         if sessionIndex + 1 < sessionQueue.count {
             sessionIndex += 1

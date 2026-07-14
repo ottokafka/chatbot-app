@@ -460,11 +460,12 @@ struct LifePathRootView: View {
                     cardFace(card)
                 }
 
-                // Pronunciation mic — primary path: speak → instant feedback → auto-grade
+                // Pronunciation mic — listen until correct; results stay on screen after misses
                 if let card = vm.currentCard {
                     PronunciationMicButton(
                         pronunciationState: vm.pronunciationState,
                         isArmed: vm.isWaitingToAutoRecord,
+                        hasStickyResult: vm.lastPronunciationResult.map { !$0.is_correct } ?? false,
                         onStart: { vm.startPronunciationRecording(for: card.front) },
                         onStop: { vm.stopPronunciationRecordingAndAssess() },
                         onCancel: { vm.cancelPronunciationRecording() }
@@ -472,27 +473,19 @@ struct LifePathRootView: View {
                     .padding(.horizontal)
                 }
 
-                // Pronunciation Feedback panel
-                if case .feedback(let result) = vm.pronunciationState {
+                // Sticky feedback: latest miss stays visible while we keep listening
+                if let result = vm.lastPronunciationResult {
                     PronunciationFeedbackView(
                         result: result,
-                        targetWord: vm.pronunciationTargetWord,
+                        targetWord: vm.pronunciationTargetWord.isEmpty
+                            ? (vm.currentCard?.front ?? "")
+                            : vm.pronunciationTargetWord,
+                        isListeningLoop: !result.is_correct
+                            && vm.pronunciationState != .idle,
                         showDismiss: !result.is_correct,
-                        onDismiss: { vm.dismissPronunciationFeedback() }
+                        onDismiss: { vm.cancelPronunciationRecording() }
                     )
                     .transition(.move(edge: .bottom).combined(with: .opacity))
-                } else if case .error(let msg) = vm.pronunciationState {
-                    HStack(alignment: .top, spacing: 8) {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundStyle(.orange)
-                        Text(msg)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                        Spacer(minLength: 4)
-                        Button("Dismiss") { vm.cancelPronunciationRecording() }
-                            .font(.caption)
-                    }
-                    .padding(.horizontal)
                 }
 
                 Divider().padding(.horizontal)
@@ -523,17 +516,6 @@ struct LifePathRootView: View {
                         .controlSize(.large)
                     }
                     .padding(.horizontal)
-                } else if case .feedback = vm.pronunciationState {
-                    // After a failed attempt, still allow manual override without extra tap
-                    Button {
-                        vm.revealAnswer()
-                    } label: {
-                        Text(L10n.lifePathShowAnswer(lang))
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.bordered)
-                    .controlSize(.large)
-                    .padding(.horizontal)
                 } else {
                     Button {
                         vm.revealAnswer()
@@ -559,9 +541,8 @@ struct LifePathRootView: View {
         return VStack(spacing: 16) {
             HStack(alignment: .center, spacing: 12) {
                 Group {
-                    if case .feedback(let result) = vm.pronunciationState, !result.phonemes.isEmpty {
-                        // Inline green/red grapheme highlights after assessment
-                        PhonemeHighlightedWord(result: result)
+                    if let result = vm.lastPronunciationResult {
+                        TargetWordDisplay(word: card.front, isCorrect: result.is_correct)
                             .frame(maxWidth: .infinity)
                             .multilineTextAlignment(.center)
                     } else {
@@ -583,7 +564,7 @@ struct LifePathRootView: View {
                 .accessibilityLabel(L10n.lifePathPlayAudio(lang))
             }
 
-            if case .feedback(let result) = vm.pronunciationState {
+            if let result = vm.lastPronunciationResult {
                 Text(result.displayFeedback)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(result.is_correct ? .green : .orange)
