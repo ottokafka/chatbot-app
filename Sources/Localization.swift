@@ -1420,8 +1420,8 @@ enum L10n {
 
     static func lifePathDevResetMessage(_ lang: AppLanguage) -> String {
         lang == .zh
-            ? "清除当前语言的阶段进度，从婴儿阶段重新开始。仅用于开发测试。"
-            : "Clears stage progress for the current language and restarts at Baby. For development testing only."
+            ? "清除当前语言的阶段进度，并重新选择学习语言。仅用于开发测试。"
+            : "Clears stage progress for the current language and asks you to choose a study language again. For development testing only."
     }
 
     static func lifePathDevResetConfirm(_ lang: AppLanguage) -> String {
