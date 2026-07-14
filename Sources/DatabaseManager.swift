@@ -56,6 +56,7 @@ struct EndpointConfig: Identifiable, Equatable, Hashable {
     var textGenURL: String
     var ttsURL: String
     var sttURL: String
+    var pronunciationURL: String
     let createdAt: Date
 }
 
@@ -133,6 +134,7 @@ class DatabaseManager {
             text_gen_url TEXT,
             tts_url TEXT,
             stt_url TEXT,
+            pronunciation_url TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         );
         """
@@ -217,6 +219,9 @@ class DatabaseManager {
     }
 
     private func migrateDatabase() {
+        if !columnExists(table: "endpoints", column: "pronunciation_url") {
+            execute(sql: "ALTER TABLE endpoints ADD COLUMN pronunciation_url TEXT;")
+        }
         if !columnExists(table: "messages", column: "audio_path") {
             execute(sql: "ALTER TABLE messages ADD COLUMN audio_path TEXT;")
         }
@@ -666,14 +671,15 @@ class DatabaseManager {
             let stt = defaults.string(forKey: "sttURL") ?? "wss://speech_to_text.npro.ai?silence_duration_ms=1000"
             let llm = defaults.string(forKey: "llmURL") ?? "https://text_gen.npro.ai/v1/chat/completions"
             let tts = defaults.string(forKey: "ttsURL") ?? "https://text_to_speech.npro.ai/v1/audio/speech"
+            let pronunciation = "https://pronunciation_assessment.npro.ai/assess"
             
-            _ = createEndpoint(name: "Default Config", textGenURL: llm, ttsURL: tts, sttURL: stt, isActive: true)
+            _ = createEndpoint(name: "Default Config", textGenURL: llm, ttsURL: tts, sttURL: stt, pronunciationURL: pronunciation, isActive: true)
         }
     }
     
     func fetchEndpoints() -> [EndpointConfig] {
         var configs: [EndpointConfig] = []
-        let sql = "SELECT id, name, is_active, text_gen_url, tts_url, stt_url, created_at FROM endpoints ORDER BY created_at ASC;"
+        let sql = "SELECT id, name, is_active, text_gen_url, tts_url, stt_url, pronunciation_url, created_at FROM endpoints ORDER BY created_at ASC;"
         var statement: OpaquePointer?
         
         if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
@@ -688,9 +694,10 @@ class DatabaseManager {
                 let textGenURL = sqlite3_column_text(statement, 3).map { String(cString: $0) } ?? ""
                 let ttsURL = sqlite3_column_text(statement, 4).map { String(cString: $0) } ?? ""
                 let sttURL = sqlite3_column_text(statement, 5).map { String(cString: $0) } ?? ""
+                let pronunciationURL = sqlite3_column_text(statement, 6).map { String(cString: $0) } ?? ""
                 
                 var createdAt = Date()
-                if let dateCol = sqlite3_column_text(statement, 6) {
+                if let dateCol = sqlite3_column_text(statement, 7) {
                     let dateStr = String(cString: dateCol)
                     let formatter = DateFormatter()
                     formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -711,6 +718,7 @@ class DatabaseManager {
                     textGenURL: textGenURL,
                     ttsURL: ttsURL,
                     sttURL: sttURL,
+                    pronunciationURL: pronunciationURL,
                     createdAt: createdAt
                 ))
             }
@@ -722,8 +730,8 @@ class DatabaseManager {
         return configs
     }
     
-    func createEndpoint(name: String, textGenURL: String, ttsURL: String, sttURL: String, isActive: Bool = false) -> Int64 {
-        let sql = "INSERT INTO endpoints (name, is_active, text_gen_url, tts_url, stt_url) VALUES (?, ?, ?, ?, ?);"
+    func createEndpoint(name: String, textGenURL: String, ttsURL: String, sttURL: String, pronunciationURL: String, isActive: Bool = false) -> Int64 {
+        let sql = "INSERT INTO endpoints (name, is_active, text_gen_url, tts_url, stt_url, pronunciation_url) VALUES (?, ?, ?, ?, ?, ?);"
         var statement: OpaquePointer?
         var newId: Int64 = -1
         
@@ -733,6 +741,7 @@ class DatabaseManager {
             sqlite3_bind_text(statement, 3, (textGenURL as NSString).utf8String, -1, nil)
             sqlite3_bind_text(statement, 4, (ttsURL as NSString).utf8String, -1, nil)
             sqlite3_bind_text(statement, 5, (sttURL as NSString).utf8String, -1, nil)
+            sqlite3_bind_text(statement, 6, (pronunciationURL as NSString).utf8String, -1, nil)
             
             if sqlite3_step(statement) == SQLITE_DONE {
                 newId = sqlite3_last_insert_rowid(db)
@@ -748,15 +757,16 @@ class DatabaseManager {
         return newId
     }
     
-    func updateEndpoint(id: Int64, name: String, textGenURL: String, ttsURL: String, sttURL: String) {
-        let sql = "UPDATE endpoints SET name = ?, text_gen_url = ?, tts_url = ?, stt_url = ? WHERE id = ?;"
+    func updateEndpoint(id: Int64, name: String, textGenURL: String, ttsURL: String, sttURL: String, pronunciationURL: String) {
+        let sql = "UPDATE endpoints SET name = ?, text_gen_url = ?, tts_url = ?, stt_url = ?, pronunciation_url = ? WHERE id = ?;"
         var statement: OpaquePointer?
         if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
             sqlite3_bind_text(statement, 1, (name as NSString).utf8String, -1, nil)
             sqlite3_bind_text(statement, 2, (textGenURL as NSString).utf8String, -1, nil)
             sqlite3_bind_text(statement, 3, (ttsURL as NSString).utf8String, -1, nil)
             sqlite3_bind_text(statement, 4, (sttURL as NSString).utf8String, -1, nil)
-            sqlite3_bind_int64(statement, 5, id)
+            sqlite3_bind_text(statement, 5, (pronunciationURL as NSString).utf8String, -1, nil)
+            sqlite3_bind_int64(statement, 6, id)
             
             if sqlite3_step(statement) != SQLITE_DONE {
                 let errmsg = sqlite3_errmsg(db) != nil ? String(cString: sqlite3_errmsg(db)!) : "Unknown error"

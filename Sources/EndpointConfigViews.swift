@@ -5,6 +5,7 @@ private enum EndpointConfigTemplate {
     static let stt = "wss://speech_to_text.npro.ai?silence_duration_ms=1000"
     static let llm = "https://text_gen.npro.ai/v1/chat/completions"
     static let tts = "https://text_to_speech.npro.ai/v1/audio/speech"
+    static let pronunciation = "https://pronunciation_assessment.npro.ai/assess"
 }
 
 private func endpointHostSummary(from urlString: String, language: AppLanguage) -> String {
@@ -58,7 +59,8 @@ struct EndpointConfigModalView: View {
                         name: L10n.newConfigName(lang),
                         textGenURL: EndpointConfigTemplate.llm,
                         ttsURL: EndpointConfigTemplate.tts,
-                        sttURL: EndpointConfigTemplate.stt
+                        sttURL: EndpointConfigTemplate.stt,
+                        pronunciationURL: EndpointConfigTemplate.pronunciation
                     )
                     // Select the newly created configuration
                     if let last = viewModel.endpointConfigs.last {
@@ -230,7 +232,8 @@ struct EndpointConfigListView: View {
             name: L10n.newConfigName(lang),
             textGenURL: EndpointConfigTemplate.llm,
             ttsURL: EndpointConfigTemplate.tts,
-            sttURL: EndpointConfigTemplate.stt
+            sttURL: EndpointConfigTemplate.stt,
+            pronunciationURL: EndpointConfigTemplate.pronunciation
         )
         if let newConfig = viewModel.endpointConfigs.last {
             navigationPath.append(newConfig)
@@ -289,6 +292,7 @@ struct EndpointConfigDetailView: View {
     @State private var textGenURL: String = ""
     @State private var ttsURL: String = ""
     @State private var sttURL: String = ""
+    @State private var pronunciationURL: String = ""
     
     @State private var textGenResult: String = ""
     @State private var isTestingTextGen = false
@@ -436,6 +440,17 @@ struct EndpointConfigDetailView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
             }
+            
+            Section {
+                DisclosureGroup("Pronunciation", isExpanded: .constant(true)) {
+                    TextField("Pronunciation URL", text: $pronunciationURL, axis: .vertical)
+                        .lineLimit(1...4)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .keyboardType(.URL)
+                        .font(.system(.body, design: .monospaced))
+                }
+            }
         }
         .navigationTitle(name.isEmpty ? L10n.configuration(lang) : name)
         .navigationBarTitleDisplayMode(.inline)
@@ -474,6 +489,7 @@ struct EndpointConfigDetailView: View {
         textGenURL = source.textGenURL
         ttsURL = source.ttsURL
         sttURL = source.sttURL
+        pronunciationURL = source.pronunciationURL
     }
     
     private func saveConfig() {
@@ -482,7 +498,8 @@ struct EndpointConfigDetailView: View {
             name: name,
             textGenURL: textGenURL,
             ttsURL: ttsURL,
-            sttURL: sttURL
+            sttURL: sttURL,
+            pronunciationURL: pronunciationURL
         )
     }
     
@@ -538,6 +555,7 @@ struct EndpointConfigCard: View {
     @State private var textGenURL: String = ""
     @State private var ttsURL: String = ""
     @State private var sttURL: String = ""
+    @State private var pronunciationURL: String = ""
     
     @State private var textGenResult: String = ""
     @State private var isTestingTextGen: Bool = false
@@ -785,6 +803,23 @@ struct EndpointConfigCard: View {
                     )
             }
             
+            // Pronunciation Field
+            VStack(alignment: .leading, spacing: 6) {
+                Text("PRONUNCIATION")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(.gray)
+                TextField("Pronunciation URL", text: $pronunciationURL)
+                    .textFieldStyle(.plain)
+                    .padding(8)
+                    .background(Color.black.opacity(0.3))
+                    .cornerRadius(6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                    )
+                    .font(.system(.body, design: .monospaced))
+            }
+            
             // Save Button
             HStack {
                 Spacer()
@@ -794,7 +829,8 @@ struct EndpointConfigCard: View {
                         name: name,
                         textGenURL: textGenURL,
                         ttsURL: ttsURL,
-                        sttURL: sttURL
+                        sttURL: sttURL,
+                        pronunciationURL: pronunciationURL
                     )
                 }) {
                     Text(L10n.save(lang))

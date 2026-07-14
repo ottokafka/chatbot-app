@@ -45,6 +45,12 @@ class ChatViewModel: ObservableObject {
             updateActiveConfigFromSettings()
         }
     }
+    @Published var pronunciationURL: String {
+        didSet {
+            UserDefaults.standard.set(pronunciationURL, forKey: "pronunciationURL")
+            updateActiveConfigFromSettings()
+        }
+    }
     @Published var llmURL: String {
         didSet {
             UserDefaults.standard.set(llmURL, forKey: "llmURL")
@@ -127,6 +133,7 @@ class ChatViewModel: ObservableObject {
     init() {
         // Load settings from UserDefaults or use defaults from readme
         self.sttURL = UserDefaults.standard.string(forKey: "sttURL") ?? "wss://speech_to_text.npro.ai?silence_duration_ms=1000"
+        self.pronunciationURL = UserDefaults.standard.string(forKey: "pronunciationURL") ?? "https://pronunciation_assessment.npro.ai/assess"
         self.llmURL = UserDefaults.standard.string(forKey: "llmURL") ?? "https://text_gen.npro.ai/v1/chat/completions"
         self.llmModel = UserDefaults.standard.string(forKey: "llmModel") ?? "Qwen3.5-35B-A3B-Q4_K_M.gguf"
         self.ttsURL = UserDefaults.standard.string(forKey: "ttsURL") ?? "https://text_to_speech.npro.ai/v1/audio/speech"
@@ -799,7 +806,8 @@ class ChatViewModel: ObservableObject {
             let stt = "wss://speech_to_text.npro.ai?silence_duration_ms=1000"
             let llm = "https://text_gen.npro.ai/v1/chat/completions"
             let tts = "https://text_to_speech.npro.ai/v1/audio/speech"
-            _ = dbManager.createEndpoint(name: L10n.defaultConfigName(appLanguage), textGenURL: llm, ttsURL: tts, sttURL: stt, isActive: true)
+            let pron = "https://pronunciation_assessment.npro.ai/assess"
+            _ = dbManager.createEndpoint(name: L10n.defaultConfigName(appLanguage), textGenURL: llm, ttsURL: tts, sttURL: stt, pronunciationURL: pron, isActive: true)
             fetched = dbManager.fetchEndpoints()
         }
         endpointConfigs = fetched
@@ -811,6 +819,7 @@ class ChatViewModel: ObservableObject {
             sttURL = active.sttURL
             llmURL = active.textGenURL
             ttsURL = active.ttsURL
+            pronunciationURL = active.pronunciationURL
         }
     }
     
@@ -825,13 +834,13 @@ class ChatViewModel: ObservableObject {
         }
     }
     
-    func createEndpointConfig(name: String, textGenURL: String, ttsURL: String, sttURL: String) {
-        _ = dbManager.createEndpoint(name: name, textGenURL: textGenURL, ttsURL: ttsURL, sttURL: sttURL, isActive: false)
+    func createEndpointConfig(name: String, textGenURL: String, ttsURL: String, sttURL: String, pronunciationURL: String) {
+        _ = dbManager.createEndpoint(name: name, textGenURL: textGenURL, ttsURL: ttsURL, sttURL: sttURL, pronunciationURL: pronunciationURL, isActive: false)
         loadEndpointConfigs()
     }
     
-    func updateEndpointConfig(id: Int64, name: String, textGenURL: String, ttsURL: String, sttURL: String) {
-        dbManager.updateEndpoint(id: id, name: name, textGenURL: textGenURL, ttsURL: ttsURL, sttURL: sttURL)
+    func updateEndpointConfig(id: Int64, name: String, textGenURL: String, ttsURL: String, sttURL: String, pronunciationURL: String) {
+        dbManager.updateEndpoint(id: id, name: name, textGenURL: textGenURL, ttsURL: ttsURL, sttURL: sttURL, pronunciationURL: pronunciationURL)
         loadEndpointConfigs()
         
         // If we updated the active configuration, reconnect pipeline if active
@@ -849,19 +858,21 @@ class ChatViewModel: ObservableObject {
     
     private func updateActiveConfigFromSettings() {
         guard let active = activeEndpointConfig else { return }
-        if active.sttURL != sttURL || active.textGenURL != llmURL || active.ttsURL != ttsURL {
-            dbManager.updateEndpoint(id: active.id, name: active.name, textGenURL: llmURL, ttsURL: ttsURL, sttURL: sttURL)
+        if active.sttURL != sttURL || active.textGenURL != llmURL || active.ttsURL != ttsURL || active.pronunciationURL != pronunciationURL {
+            dbManager.updateEndpoint(id: active.id, name: active.name, textGenURL: llmURL, ttsURL: ttsURL, sttURL: sttURL, pronunciationURL: pronunciationURL)
             // Update active config in memory too
             if var currentActive = activeEndpointConfig {
                 currentActive.sttURL = sttURL
                 currentActive.textGenURL = llmURL
                 currentActive.ttsURL = ttsURL
+                currentActive.pronunciationURL = pronunciationURL
                 activeEndpointConfig = currentActive
             }
             if let idx = endpointConfigs.firstIndex(where: { $0.id == active.id }) {
                 endpointConfigs[idx].sttURL = sttURL
                 endpointConfigs[idx].textGenURL = llmURL
                 endpointConfigs[idx].ttsURL = ttsURL
+                endpointConfigs[idx].pronunciationURL = pronunciationURL
             }
         }
     }

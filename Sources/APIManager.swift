@@ -36,6 +36,22 @@ struct VoicesResponse: Codable {
     let voices: [String]
 }
 
+struct PronunciationPhoneme: Decodable, Equatable, Hashable {
+    let grapheme: String
+    let phoneme: String
+    let score: Double
+    let is_correct: Bool
+}
+
+struct PronunciationAssessmentResponse: Decodable, Equatable {
+    let overall_score: Double
+    let is_correct: Bool
+    let phonemes: [PronunciationPhoneme]
+    let predicted_phonemes: [String]
+    let target_phonemes: [String]
+}
+
+
 @MainActor
 class APIManager {
     var onLog: ((String) -> Void)?
@@ -179,6 +195,49 @@ class APIManager {
         let decoded = try JSONDecoder().decode(VoicesResponse.self, from: data)
         return decoded.voices
     }
+    
+    /// Submits audio for pronunciation assessment
+    func submitPronunciationAssessment(
+        endpoint: String,
+        audioData: Data,
+        targetWord: String
+    ) async throws -> PronunciationAssessmentResponse {
+        guard let url = URL(string: endpoint) else {
+            throw NSError(domain: "APIManager", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid Pronunciation Endpoint URL"])
+        }
+        
+        let base64Audio = audioData.base64EncodedString()
+        let payload: [String: Any] = [
+            "audio_base64": base64Audio,
+            "target_text": targetWord
+        ]
+        
+        let jsonData = try JSONSerialization.data(withJSONObject: payload)
+        
+        onLog?("APIManager [Pronunciation]: Sending POST to \(endpoint) for word '\(targetWord)'")
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = jsonData
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw NSError(domain: "APIManager", code: 500, userInfo: [NSLocalizedDescriptionKey: "Invalid HTTP Response"])
+        }
+        
+        onLog?("APIManager [Pronunciation]: Received Response (Status Code: \(httpResponse.statusCode))")
+        
+        guard httpResponse.statusCode == 200 else {
+            let errBody = String(data: data, encoding: .utf8) ?? "No body"
+            onLog?("APIManager [Pronunciation]: Error Response: \(errBody)")
+            throw NSError(domain: "APIManager", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP Error \(httpResponse.statusCode): \(errBody)"])
+        }
+        
+        return try JSONDecoder().decode(PronunciationAssessmentResponse.self, from: data)
+    }
+
     
     /// Connection verifier for Text Generation endpoint
     func testTextGenConnection(url: String) async -> Bool {

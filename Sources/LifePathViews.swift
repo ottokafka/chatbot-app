@@ -69,6 +69,7 @@ struct LifePathRootView: View {
             vm.attach(flashcardVM: flashcardVM, dbManager: flashcardVM.dbManager)
             vm.onLog = flashcardVM.onLog
             vm.onRequestExit = onExit
+            vm.pronunciationURLProvider = { [weak chatVM] in chatVM?.pronunciationURL ?? "" }
             vm.load()
         }
         .onChange(of: vm.isPlaying) { _, playing in
@@ -76,6 +77,7 @@ struct LifePathRootView: View {
                 autoPlayFrontIfNeeded()
             } else {
                 chatVM.stopPlayback()
+                vm.cancelPronunciationRecording()
             }
         }
         .onChange(of: vm.sessionIndex) { _, _ in
@@ -363,68 +365,107 @@ struct LifePathRootView: View {
     // MARK: - Play
 
     private var playView: some View {
-        VStack(spacing: 20) {
-            VStack(alignment: .leading, spacing: 6) {
-                HStack {
-                    Text(L10n.lifePathStageSessionProgress(
-                        lang,
-                        mastered: vm.masteredInCurrentStage,
-                        total: vm.totalInCurrentStage
-                    ))
-                    .font(.subheadline.weight(.medium))
-                    Spacer()
-                    Text("\(vm.sessionCorrect)✓  \(vm.sessionWrong)✗")
-                        .font(.subheadline.monospacedDigit())
-                }
-                ProgressView(value: vm.stageProgress)
-                    .tint(.accentColor)
-                Text(L10n.lifePathSessionRemaining(lang, remaining: vm.sessionRemainingCount))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            .padding(.horizontal)
-
-            if let card = vm.currentCard {
-                cardFace(card)
-            }
-
-            if vm.isAnswerRevealed {
-                HStack(spacing: 16) {
-                    Button {
-                        vm.gradeWrong()
-                    } label: {
-                        Label(L10n.lifePathAgain(lang), systemImage: "xmark")
-                            .frame(maxWidth: .infinity)
+        ScrollView {
+            VStack(spacing: 20) {
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text(L10n.lifePathStageSessionProgress(
+                            lang,
+                            mastered: vm.masteredInCurrentStage,
+                            total: vm.totalInCurrentStage
+                        ))
+                        .font(.subheadline.weight(.medium))
+                        Spacer()
+                        Text("\(vm.sessionCorrect)✓  \(vm.sessionWrong)✗")
+                            .font(.subheadline.monospacedDigit())
                     }
-                    .buttonStyle(.bordered)
-                    .tint(.red)
-                    .controlSize(.large)
+                    ProgressView(value: vm.stageProgress)
+                        .tint(.accentColor)
+                    Text(L10n.lifePathSessionRemaining(lang, remaining: vm.sessionRemainingCount))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.horizontal)
 
+                if let card = vm.currentCard {
+                    cardFace(card)
+                }
+
+                // Pronunciation mic button
+                if let card = vm.currentCard {
+                    PronunciationMicButton(
+                        pronunciationState: vm.pronunciationState,
+                        onStart: { vm.startPronunciationRecording(for: card.front) },
+                        onStop: { vm.stopPronunciationRecordingAndAssess() },
+                        onCancel: { vm.cancelPronunciationRecording() }
+                    )
+                    .padding(.horizontal)
+                }
+
+                // Pronunciation Feedback panel
+                if case .feedback(let result) = vm.pronunciationState {
+                    PronunciationFeedbackView(
+                        result: result,
+                        targetWord: vm.pronunciationTargetWord,
+                        onDismiss: { vm.dismissPronunciationFeedback() }
+                    )
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                } else if case .error(let msg) = vm.pronunciationState {
+                    HStack {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.orange)
+                        Text(msg)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Button("Dismiss") { vm.cancelPronunciationRecording() }
+                            .font(.caption)
+                    }
+                    .padding(.horizontal)
+                }
+
+                Divider().padding(.horizontal)
+
+                // Grade buttons (show answer)
+                if vm.isAnswerRevealed {
+                    HStack(spacing: 16) {
+                        Button {
+                            vm.gradeWrong()
+                        } label: {
+                            Label(L10n.lifePathAgain(lang), systemImage: "xmark")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.red)
+                        .controlSize(.large)
+
+                        Button {
+                            vm.gradeCorrect()
+                        } label: {
+                            Label(L10n.lifePathGotIt(lang), systemImage: "checkmark")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.green)
+                        .controlSize(.large)
+                    }
+                    .padding(.horizontal)
+                } else {
                     Button {
-                        vm.gradeCorrect()
+                        vm.revealAnswer()
                     } label: {
-                        Label(L10n.lifePathGotIt(lang), systemImage: "checkmark")
+                        Text(L10n.lifePathShowAnswer(lang))
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
-                    .tint(.green)
                     .controlSize(.large)
+                    .padding(.horizontal)
                 }
-                .padding(.horizontal)
-            } else {
-                Button {
-                    vm.revealAnswer()
-                } label: {
-                    Text(L10n.lifePathShowAnswer(lang))
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                .padding(.horizontal)
+                Spacer(minLength: 32)
             }
-            Spacer()
+            .animation(.spring(response: 0.35), value: vm.pronunciationState == .idle)
+            .padding(.top, 16)
         }
-        .padding(.top, 16)
     }
 
     private func cardFace(_ card: LifePathEntry) -> some View {

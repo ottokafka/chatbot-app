@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import AVFoundation
 
 @MainActor
 final class LifePathViewModel: ObservableObject {
@@ -26,6 +27,24 @@ final class LifePathViewModel: ObservableObject {
     @Published var pendingLevelUp: LifePathLevelUpNotify?
     @Published var showLevelUp = false
 
+    // Pronunciation Assessment
+    enum PronunciationState: Equatable {
+        case idle
+        case recording
+        case assessing
+        case feedback(PronunciationAssessmentResponse)
+        case error(String)
+    }
+    @Published private(set) var pronunciationState: PronunciationState = .idle
+
+    /// The word currently being assessed. Set when recording starts.
+    private(set) var pronunciationTargetWord: String = ""
+
+    private var pronunciationAudioEngine: AVAudioEngine?
+    private var pronunciationAccumulatedData: Data = Data()
+    private var pronunciationAPIManager: APIManager?
+    private var pronunciationEndpoint: String = ""
+
     private var dbManager: DatabaseManager
     private weak var flashcardVM: FlashcardViewModel?
     private var entriesById: [String: LifePathEntry] = [:]
@@ -33,10 +52,13 @@ final class LifePathViewModel: ObservableObject {
     var onLog: ((String) -> Void)?
     /// Host sets this so language-picker cancel can leave the feature (route `onExit`).
     var onRequestExit: (() -> Void)?
+    /// Must be provided by the host (LifePathRootView) so assessment uses the active endpoint.
+    var pronunciationURLProvider: (() -> String)?
 
     init(dbManager: DatabaseManager = DatabaseManager(), flashcardVM: FlashcardViewModel? = nil) {
         self.dbManager = dbManager
         self.flashcardVM = flashcardVM
+        self.pronunciationAPIManager = APIManager()
     }
 
     func attach(flashcardVM: FlashcardViewModel, dbManager: DatabaseManager? = nil) {
@@ -223,6 +245,114 @@ final class LifePathViewModel: ObservableObject {
         self.profile = profile
         showLevelUp = false
         pendingLevelUp = nil
+    }
+
+    // MARK: - Pronunciation Assessment
+
+    func startPronunciationRecording(for word: String) {
+        guard pronunciationState == .idle else { return }
+        pronunciationTargetWord = word
+        pronunciationAccumulatedData = Data()
+
+        let engine = AVAudioEngine()
+        pronunciationAudioEngine = engine
+
+        #if os(iOS)
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.record, mode: .default)
+            try session.setActive(true)
+        } catch {
+            pronunciationState = .error("Audio session error: \(error.localizedDescription)")
+            return
+        }
+        #endif
+
+        let inputNode = engine.inputNode
+        let inputFormat = inputNode.inputFormat(forBus: 0)
+        guard let targetFormat = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: 16000, channels: 1, interleaved: false),
+              let converter = AVAudioConverter(from: inputFormat, to: targetFormat) else {
+            pronunciationState = .error("Failed to create audio converter")
+            return
+        }
+
+        inputNode.installTap(onBus: 0, bufferSize: 4096, format: inputFormat) { [weak self] buffer, _ in
+            guard let self else { return }
+            let ratio = inputFormat.sampleRate / targetFormat.sampleRate
+            let capacity = AVAudioFrameCount(Double(buffer.frameLength) / ratio) + 16
+            guard let outBuf = AVAudioPCMBuffer(pcmFormat: targetFormat, frameCapacity: capacity) else { return }
+            var inputUsed = false
+            converter.convert(to: outBuf, error: nil) { _, outStatus in
+                if inputUsed { outStatus.pointee = .noDataNow; return nil }
+                outStatus.pointee = .haveData
+                inputUsed = true
+                return buffer
+            }
+            if let channelData = outBuf.floatChannelData?[0] {
+                let bytes = Int(outBuf.frameLength) * MemoryLayout<Float32>.size
+                let data = Data(bytes: channelData, count: bytes)
+                Task { @MainActor [weak self] in
+                    self?.pronunciationAccumulatedData.append(data)
+                }
+            }
+        }
+
+        do {
+            engine.prepare()
+            try engine.start()
+            pronunciationState = .recording
+            onLog?("Pronunciation: recording started for '\(word)'")
+        } catch {
+            pronunciationState = .error("Failed to start engine: \(error.localizedDescription)")
+        }
+    }
+
+    func stopPronunciationRecordingAndAssess() {
+        guard case .recording = pronunciationState else { return }
+        pronunciationAudioEngine?.inputNode.removeTap(onBus: 0)
+        pronunciationAudioEngine?.stop()
+        pronunciationAudioEngine = nil
+
+        pronunciationState = .assessing
+        onLog?("Pronunciation: stopped recording (\(pronunciationAccumulatedData.count) bytes), sending to server")
+
+        let audioData = pronunciationAccumulatedData
+        let word = pronunciationTargetWord
+        let endpoint = pronunciationURLProvider?() ?? ""
+
+        Task {
+            await runAssessment(audioData: audioData, word: word, endpoint: endpoint)
+        }
+    }
+
+    func cancelPronunciationRecording() {
+        pronunciationAudioEngine?.inputNode.removeTap(onBus: 0)
+        pronunciationAudioEngine?.stop()
+        pronunciationAudioEngine = nil
+        pronunciationAccumulatedData = Data()
+        pronunciationState = .idle
+    }
+
+    func dismissPronunciationFeedback() {
+        pronunciationState = .idle
+    }
+
+    private func runAssessment(audioData: Data, word: String, endpoint: String) async {
+        guard !endpoint.isEmpty else {
+            pronunciationState = .error("Pronunciation URL not configured. Set it in Settings → Endpoint Config.")
+            return
+        }
+        do {
+            let result = try await pronunciationAPIManager!.submitPronunciationAssessment(
+                endpoint: endpoint,
+                audioData: audioData,
+                targetWord: word
+            )
+            onLog?("Pronunciation: score \(String(format: "%.0f", result.overall_score * 100))% for '\(word)'")
+            pronunciationState = .feedback(result)
+        } catch {
+            pronunciationState = .error("Assessment failed: \(error.localizedDescription)")
+        }
     }
 
     // MARK: - Private game logic
