@@ -135,20 +135,27 @@ final class LifePathViewModel: ObservableObject {
         onRequestExit?()
     }
 
-    /// DEV/testing only: wipe progress for the active language and re-seed from Baby.
+    /// DEV/testing only: wipe progress for the active language and clear language choice
+    /// so the study-language picker is shown again.
     func resetProgressForTesting() {
         guard let language else { return }
+        let cleared = language.rawValue
         endSession()
         showLevelUp = false
         pendingLevelUp = nil
         loadError = nil
         actionError = nil
-        dbManager.resetLifePathProgress(language: language.rawValue)
+        dbManager.resetLifePathProgress(language: cleared)
         listRowsByEntryId = [:]
         profile = nil
-        // Re-seed + reload via normal load path
+        stages = []
+        entries = []
+        entriesById = [:]
+        // Clear chosen learning language so load() presents the picker.
+        LifePathPreferences.language = nil
+        self.language = nil
         load()
-        onLog?("Life Path DEV reset for \(language.rawValue) — back to Baby")
+        onLog?("Life Path DEV reset for \(cleared) — language cleared, back to picker")
     }
 
     // MARK: - Play

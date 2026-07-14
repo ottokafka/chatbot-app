@@ -189,4 +189,28 @@ final class LifePathViewModelTests: XCTestCase {
 
         LifePathPreferences.language = nil
     }
+
+    func testDevResetClearsLanguageAndShowsPicker() throws {
+        let path = NSTemporaryDirectory() + "life-path-reset-\(UUID().uuidString).sqlite"
+        defer { try? FileManager.default.removeItem(atPath: path) }
+
+        let db = DatabaseManager(databasePath: path)
+        LifePathPreferences.language = .en
+        defer { LifePathPreferences.language = nil }
+
+        let vm = LifePathViewModel(dbManager: db)
+        vm.load()
+        XCTAssertEqual(vm.language, .en)
+        XCTAssertFalse(vm.showLanguagePicker)
+        XCTAssertGreaterThan(db.countLifePathList(language: "en"), 0)
+
+        vm.resetProgressForTesting()
+
+        XCTAssertNil(LifePathPreferences.language)
+        XCTAssertNil(vm.language)
+        XCTAssertTrue(vm.showLanguagePicker)
+        XCTAssertNil(vm.profile)
+        XCTAssertEqual(db.countLifePathList(language: "en"), 0)
+        XCTAssertNil(db.fetchLifePathProfile(language: "en"))
+    }
 }
