@@ -334,7 +334,6 @@ final class LifePathViewModel: ObservableObject {
         pronunciationRetryTask?.cancel()
         pronunciationRetryTask = nil
 
-        teardownPronunciationWS()
         pronunciationRecorder.stop()
 
         let wordChanged = pronunciationTargetWord != word
@@ -362,8 +361,15 @@ final class LifePathViewModel: ObservableObject {
 
         // Prefer streaming WebSocket for lower latency; HTTP POST remains the fallback.
         if let wsURL = PronunciationEndpoint.webSocketURL(from: endpoint) {
-            onLog?("Pronunciation: streaming WS \(wsURL)")
-            connectPronunciationWS(url: wsURL, targetWord: word)
+            if let ws = pronunciationAssessWS, ws.isConnected {
+                // Reuse existing connection — skip TLS + WS handshake.
+                onLog?("Pronunciation: reusing WS \(wsURL)")
+                let payload = "{\"type\":\"start\",\"target_text\":\(Self.jsonString(word)),\"debug\":true}"
+                ws.sendText(payload)
+            } else {
+                onLog?("Pronunciation: streaming WS \(wsURL)")
+                connectPronunciationWS(url: wsURL, targetWord: word)
+            }
         } else {
             onLog?("Pronunciation: no WS URL derived — will use HTTP POST on stop")
         }
@@ -643,7 +649,7 @@ final class LifePathViewModel: ObservableObject {
     }
 
     private func applyAssessmentResult(_ result: PronunciationAssessmentResponse) {
-        teardownPronunciationWS()
+        // Keep WS alive for the next word/retry — teardown only on cancel/dismiss/endSession.
         onLog?("Pronunciation: RESULT word='\(pronunciationTargetWord)' \(result.diagnosticSummary)")
         if let tip = result.feedback, !tip.isEmpty {
             onLog?("Pronunciation: feedback \"\(tip)\"")

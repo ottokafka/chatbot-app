@@ -418,8 +418,16 @@ class ChatViewModel: ObservableObject {
     }
 
     func playEphemeralSpeech(text: String, playbackId: String) {
-        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        var trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
+
+        // Append period to single-word utterances — helps TTS prosody for isolated words.
+        if !trimmed.contains(" ") {
+            let last = trimmed.last
+            if last != "." && last != "!" && last != "?" {
+                trimmed += "?"
+            }
+        }
 
         if currentlyPlayingEphemeralId == playbackId && isPlayingAudio {
             stopPlayback()
