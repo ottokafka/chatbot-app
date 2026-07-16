@@ -44,6 +44,18 @@ final class LifePathViewModel: ObservableObject {
     /// so the learner sees phoneme highlights without tapping “Try Again”.
     @Published private(set) var lastPronunciationResult: PronunciationAssessmentResponse?
 
+    /// Passing threshold for pronunciation assessment (client-side, persisted).
+    /// Score >= this value counts as correct.
+    @Published var pronunciationThreshold: Double {
+        didSet {
+            guard pronunciationThreshold != oldValue else { return }
+            UserDefaults.standard.set(pronunciationThreshold, forKey: Self.pronThresholdKey)
+        }
+    }
+    private static let pronThresholdKey = "pronunciation.threshold"
+    static let defaultPronThreshold: Double = 0.51
+    static let availableThresholds: [Double] = [0.51, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80]
+
     /// Convenience: last result, or in-flight feedback state.
     var latestPronunciationResult: PronunciationAssessmentResponse? {
         if let last = lastPronunciationResult { return last }
@@ -86,6 +98,8 @@ final class LifePathViewModel: ObservableObject {
     init(dbManager: DatabaseManager = DatabaseManager(), flashcardVM: FlashcardViewModel? = nil) {
         self.dbManager = dbManager
         self.flashcardVM = flashcardVM
+        let saved = UserDefaults.standard.double(forKey: Self.pronThresholdKey)
+        self.pronunciationThreshold = saved > 0 ? saved : Self.defaultPronThreshold
         self.pronunciationAPIManager = APIManager()
         self.pronunciationAPIManager?.onLog = { [weak self] msg in self?.onLog?(msg) }
         configurePronunciationRecorder()
@@ -661,12 +675,12 @@ final class LifePathViewModel: ObservableObject {
         pronunciationAutoGradeTask?.cancel()
         pronunciationRetryTask?.cancel()
 
-        if result.is_correct {
+        if result.isPassing(threshold: pronunciationThreshold) {
             // Pass → short celebration, then auto-grade and move on.
             pronunciationAutoGradeTask = Task { [weak self] in
                 try? await Task.sleep(nanoseconds: 1_100_000_000)
                 guard let self, !Task.isCancelled else { return }
-                guard case .feedback(let r) = self.pronunciationState, r.is_correct else { return }
+                guard case .feedback(let r) = self.pronunciationState, r.isPassing(threshold: self.pronunciationThreshold) else { return }
                 self.onLog?("Pronunciation: auto-grading correct → next card")
                 self.lastPronunciationResult = nil
                 self.pronunciationState = .idle
@@ -681,7 +695,7 @@ final class LifePathViewModel: ObservableObject {
                 try? await Task.sleep(nanoseconds: 650_000_000)
                 guard let self, !Task.isCancelled else { return }
                 guard self.pronunciationTargetWord == word else { return }
-                guard case .feedback(let r) = self.pronunciationState, !r.is_correct else { return }
+                guard case .feedback(let r) = self.pronunciationState, !r.isPassing(threshold: self.pronunciationThreshold) else { return }
                 self.onLog?("Pronunciation: resuming listen (until correct)")
                 self.startPronunciationRecording(for: word, preserveLastResult: true)
             }

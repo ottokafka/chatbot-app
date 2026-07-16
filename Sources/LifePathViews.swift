@@ -456,6 +456,26 @@ struct LifePathRootView: View {
                 }
                 .padding(.horizontal)
 
+                // Pronunciation threshold picker
+                HStack {
+                    Label("Pass at", systemImage: "slider.horizontal.3")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Picker("", selection: Binding(
+                        get: { vm.pronunciationThreshold },
+                        set: { vm.pronunciationThreshold = $0 }
+                    )) {
+                        ForEach(LifePathViewModel.availableThresholds, id: \.self) { t in
+                            Text("\(Int(t * 100))%").tag(t)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .labelsHidden()
+                    .tint(.accentColor)
+                    Spacer()
+                }
+                .padding(.horizontal)
+
                 if let card = vm.currentCard {
                     cardFace(card)
                 }
@@ -465,7 +485,8 @@ struct LifePathRootView: View {
                     PronunciationMicButton(
                         pronunciationState: vm.pronunciationState,
                         isArmed: vm.isWaitingToAutoRecord,
-                        hasStickyResult: vm.lastPronunciationResult.map { !$0.is_correct } ?? false,
+                        hasStickyResult: vm.lastPronunciationResult.map { $0.overall_score < vm.pronunciationThreshold } ?? false,
+                        threshold: vm.pronunciationThreshold,
                         onStart: { vm.startPronunciationRecording(for: card.front) },
                         onStop: { vm.stopPronunciationRecordingAndAssess() },
                         onCancel: { vm.cancelPronunciationRecording() }
@@ -480,9 +501,10 @@ struct LifePathRootView: View {
                         targetWord: vm.pronunciationTargetWord.isEmpty
                             ? (vm.currentCard?.front ?? "")
                             : vm.pronunciationTargetWord,
-                        isListeningLoop: !result.is_correct
+                        threshold: vm.pronunciationThreshold,
+                        isListeningLoop: !result.isPassing(threshold: vm.pronunciationThreshold)
                             && vm.pronunciationState != .idle,
-                        showDismiss: !result.is_correct,
+                        showDismiss: !result.isPassing(threshold: vm.pronunciationThreshold),
                         onDismiss: { vm.cancelPronunciationRecording() }
                     )
                     .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -542,7 +564,7 @@ struct LifePathRootView: View {
             HStack(alignment: .center, spacing: 12) {
                 Group {
                     if let result = vm.lastPronunciationResult {
-                        TargetWordDisplay(word: card.front, isCorrect: result.is_correct)
+                        TargetWordDisplay(word: card.front, isCorrect: result.isPassing(threshold: vm.pronunciationThreshold))
                             .frame(maxWidth: .infinity)
                             .multilineTextAlignment(.center)
                     } else {
@@ -567,7 +589,7 @@ struct LifePathRootView: View {
             if let result = vm.lastPronunciationResult {
                 Text(result.displayFeedback)
                     .font(.subheadline.weight(.medium))
-                    .foregroundStyle(result.is_correct ? .green : .orange)
+                    .foregroundStyle(result.isPassing(threshold: vm.pronunciationThreshold) ? .green : .orange)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
             } else if let phonics = card.phonics, !phonics.isEmpty {

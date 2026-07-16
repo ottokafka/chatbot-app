@@ -83,6 +83,11 @@ struct PronunciationAssessmentResponse: Decodable, Equatable {
         return "Let's try that word again."
     }
 
+    /// Client-side pass/fail against a configurable threshold.
+    func isPassing(threshold: Double) -> Bool {
+        overall_score >= threshold
+    }
+
     /// Compact line for logs / debug UI: what the model heard vs expected.
     var diagnosticSummary: String {
         let pct = Int((overall_score * 100).rounded())

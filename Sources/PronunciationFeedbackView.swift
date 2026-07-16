@@ -9,6 +9,8 @@ struct PronunciationMicButton: View {
     var isArmed: Bool = false   // true = TTS playing, recording will auto-start
     /// True when a previous miss is still shown while we listen again.
     var hasStickyResult: Bool = false
+    /// Client-side passing threshold for isPassing checks.
+    var threshold: Double = LifePathViewModel.defaultPronThreshold
     let onStart: () -> Void
     let onStop: () -> Void
     let onCancel: () -> Void
@@ -68,7 +70,7 @@ struct PronunciationMicButton: View {
             .padding(.vertical, 12)
 
         case .feedback(let result):
-            if result.is_correct {
+            if result.isPassing(threshold: threshold) {
                 HStack(spacing: 8) {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(.green)
@@ -157,6 +159,8 @@ struct TargetWordDisplay: View {
 struct PronunciationFeedbackView: View {
     let result: PronunciationAssessmentResponse
     let targetWord: String
+    /// Client-side passing threshold (e.g. 0.51 = 51%).
+    let threshold: Double
     /// When true, learner is still in the listen loop (miss / re-recording).
     var isListeningLoop: Bool = false
     var showDismiss: Bool = false
@@ -172,18 +176,18 @@ struct PronunciationFeedbackView: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
-                    if isListeningLoop && !result.is_correct {
+                    if isListeningLoop && !result.isPassing(threshold: threshold) {
                         Text("Keep saying the word — I’ll check each try.")
                             .font(.caption)
                             .foregroundStyle(.orange)
                     }
                 }
                 Spacer(minLength: 8)
-                ScoreBadge(score: result.overall_score, isCorrect: result.is_correct)
+                ScoreBadge(score: result.overall_score, isCorrect: result.isPassing(threshold: threshold))
             }
 
             // Diagnostic line: what the model heard
-            if !result.is_correct {
+            if !result.isPassing(threshold: threshold) {
                 VStack(alignment: .leading, spacing: 4) {
                     if !result.predicted_phonemes.isEmpty {
                         Text("Heard: /\(result.predicted_phonemes.joined(separator: " "))/")
@@ -205,7 +209,7 @@ struct PronunciationFeedbackView: View {
                 }
             }
 
-            if showDismiss && !result.is_correct {
+            if showDismiss && !result.isPassing(threshold: threshold) {
                 Button(action: onDismiss) {
                     Text("Stop listening")
                         .frame(maxWidth: .infinity)
@@ -220,7 +224,7 @@ struct PronunciationFeedbackView: View {
     }
 
     private var headerTitle: String {
-        if result.is_correct { return "Great pronunciation!" }
+        if result.isPassing(threshold: threshold) { return "Great pronunciation!" }
         if isListeningLoop { return "Almost — keep going" }
         return "Almost — try again"
     }
