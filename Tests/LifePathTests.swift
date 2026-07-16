@@ -14,7 +14,7 @@ final class LifePathCatalogTests: XCTestCase {
         let preschoolCount = file.entries.filter { $0.stageId == "preschool" }.count
         XCTAssertEqual(preschoolCount, 299)
         XCTAssertEqual(file.stages.first(where: { $0.id == "preschool" })?.order, 2)
-        XCTAssertEqual(file.entries.count, 412)
+        XCTAssertEqual(file.entries.count, 409)
     }
 
     func testBundledEnglishListLoadsAndValidates() throws {
@@ -23,11 +23,11 @@ final class LifePathCatalogTests: XCTestCase {
         XCTAssertFalse(file.entries.isEmpty)
         XCTAssertTrue(LifePathValidation.validate(file).isEmpty)
         let babyCount = file.entries.filter { $0.stageId == "baby" }.count
-        XCTAssertEqual(babyCount, 50)
+        XCTAssertEqual(babyCount, 47)
         XCTAssertTrue(file.stages.contains(where: { $0.id == "preschool" }))
         let preschoolCount = file.entries.filter { $0.stageId == "preschool" }.count
         XCTAssertEqual(preschoolCount, 299)
-        XCTAssertEqual(file.entries.count, 415)
+        XCTAssertEqual(file.entries.count, 412)
         let firstPreschool = file.entries.first { $0.stageId == "preschool" }
         XCTAssertEqual(firstPreschool?.front, "teacher")
         XCTAssertEqual(firstPreschool?.back, "老师")

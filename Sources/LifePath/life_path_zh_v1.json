@@ -192,40 +192,6 @@
       "id": "zh_baby_014",
       "stageId": "baby",
       "rankInStage": 14,
-      "front": "奶瓶",
-      "back": "bottle",
-      "phonics": "nǎipíng",
-      "tags": [
-        "food",
-        "home"
-      ]
-    },
-    {
-      "id": "zh_baby_015",
-      "stageId": "baby",
-      "rankInStage": 15,
-      "front": "泡泡",
-      "back": "bubble",
-      "phonics": "pàopao",
-      "tags": [
-        "toys_play"
-      ]
-    },
-    {
-      "id": "zh_baby_016",
-      "stageId": "baby",
-      "rankInStage": 16,
-      "front": "哎呀",
-      "back": "uh-oh",
-      "phonics": "āiyā",
-      "tags": [
-        "social"
-      ]
-    },
-    {
-      "id": "zh_baby_017",
-      "stageId": "baby",
-      "rankInStage": 17,
       "front": "还要",
       "back": "more",
       "phonics": "hái yào",
@@ -234,9 +200,9 @@
       ]
     },
     {
-      "id": "zh_baby_018",
+      "id": "zh_baby_015",
       "stageId": "baby",
-      "rankInStage": 18,
+      "rankInStage": 15,
       "front": "鞋",
       "back": "shoe",
       "phonics": "xié",
@@ -245,9 +211,9 @@
       ]
     },
     {
-      "id": "zh_baby_019",
+      "id": "zh_baby_016",
       "stageId": "baby",
-      "rankInStage": 19,
+      "rankInStage": 16,
       "front": "帽子",
       "back": "hat",
       "phonics": "màozi",
@@ -256,9 +222,9 @@
       ]
     },
     {
-      "id": "zh_baby_020",
+      "id": "zh_baby_017",
       "stageId": "baby",
-      "rankInStage": 20,
+      "rankInStage": 17,
       "front": "书",
       "back": "book",
       "phonics": "shū",
@@ -268,9 +234,9 @@
       ]
     },
     {
-      "id": "zh_baby_021",
+      "id": "zh_baby_018",
       "stageId": "baby",
-      "rankInStage": 21,
+      "rankInStage": 18,
       "front": "车",
       "back": "car",
       "phonics": "chē",
@@ -279,9 +245,9 @@
       ]
     },
     {
-      "id": "zh_baby_022",
+      "id": "zh_baby_019",
       "stageId": "baby",
-      "rankInStage": 22,
+      "rankInStage": 19,
       "front": "烫",
       "back": "hot",
       "phonics": "tàng",
@@ -290,9 +256,9 @@
       ]
     },
     {
-      "id": "zh_baby_023",
+      "id": "zh_baby_020",
       "stageId": "baby",
-      "rankInStage": 23,
+      "rankInStage": 20,
       "front": "洗澡",
       "back": "bath",
       "phonics": "xǐzǎo",
@@ -302,9 +268,9 @@
       ]
     },
     {
-      "id": "zh_baby_024",
+      "id": "zh_baby_021",
       "stageId": "baby",
-      "rankInStage": 24,
+      "rankInStage": 21,
       "front": "鼻子",
       "back": "nose",
       "phonics": "bízi",
@@ -313,9 +279,9 @@
       ]
     },
     {
-      "id": "zh_baby_025",
+      "id": "zh_baby_022",
       "stageId": "baby",
-      "rankInStage": 25,
+      "rankInStage": 22,
       "front": "眼睛",
       "back": "eye",
       "phonics": "yǎnjing",
@@ -324,9 +290,9 @@
       ]
     },
     {
-      "id": "zh_baby_026",
+      "id": "zh_baby_023",
       "stageId": "baby",
-      "rankInStage": 26,
+      "rankInStage": 23,
       "front": "饼干",
       "back": "cookie",
       "phonics": "bǐnggān",
@@ -335,9 +301,9 @@
       ]
     },
     {
-      "id": "zh_baby_027",
+      "id": "zh_baby_024",
       "stageId": "baby",
-      "rankInStage": 27,
+      "rankInStage": 24,
       "front": "果汁",
       "back": "juice",
       "phonics": "guǒzhī",
@@ -346,9 +312,9 @@
       ]
     },
     {
-      "id": "zh_baby_028",
+      "id": "zh_baby_025",
       "stageId": "baby",
-      "rankInStage": 28,
+      "rankInStage": 25,
       "front": "谢谢",
       "back": "thank you",
       "phonics": "xièxie",
@@ -357,9 +323,9 @@
       ]
     },
     {
-      "id": "zh_baby_029",
+      "id": "zh_baby_026",
       "stageId": "baby",
-      "rankInStage": 29,
+      "rankInStage": 26,
       "front": "请",
       "back": "please",
       "phonics": "qǐng",
@@ -368,9 +334,9 @@
       ]
     },
     {
-      "id": "zh_baby_030",
+      "id": "zh_baby_027",
       "stageId": "baby",
-      "rankInStage": 30,
+      "rankInStage": 27,
       "front": "上",
       "back": "up",
       "phonics": "shàng",
@@ -379,9 +345,9 @@
       ]
     },
     {
-      "id": "zh_baby_031",
+      "id": "zh_baby_028",
       "stageId": "baby",
-      "rankInStage": 31,
+      "rankInStage": 28,
       "front": "下",
       "back": "down",
       "phonics": "xià",
@@ -390,9 +356,9 @@
       ]
     },
     {
-      "id": "zh_baby_032",
+      "id": "zh_baby_029",
       "stageId": "baby",
-      "rankInStage": 32,
+      "rankInStage": 29,
       "front": "吃",
       "back": "eat",
       "phonics": "chī",
@@ -401,9 +367,9 @@
       ]
     },
     {
-      "id": "zh_baby_033",
+      "id": "zh_baby_030",
       "stageId": "baby",
-      "rankInStage": 33,
+      "rankInStage": 30,
       "front": "去",
       "back": "go",
       "phonics": "qù",
@@ -412,9 +378,9 @@
       ]
     },
     {
-      "id": "zh_baby_034",
+      "id": "zh_baby_031",
       "stageId": "baby",
-      "rankInStage": 34,
+      "rankInStage": 31,
       "front": "睡觉",
       "back": "sleep",
       "phonics": "shuìjiào",
@@ -423,9 +389,9 @@
       ]
     },
     {
-      "id": "zh_baby_035",
+      "id": "zh_baby_032",
       "stageId": "baby",
-      "rankInStage": 35,
+      "rankInStage": 32,
       "front": "要",
       "back": "want",
       "phonics": "yào",
@@ -434,9 +400,9 @@
       ]
     },
     {
-      "id": "zh_baby_036",
+      "id": "zh_baby_033",
       "stageId": "baby",
-      "rankInStage": 36,
+      "rankInStage": 33,
       "front": "没了",
       "back": "all gone",
       "phonics": "méi le",
@@ -445,9 +411,9 @@
       ]
     },
     {
-      "id": "zh_baby_037",
+      "id": "zh_baby_034",
       "stageId": "baby",
-      "rankInStage": 37,
+      "rankInStage": 34,
       "front": "抱抱",
       "back": "hug",
       "phonics": "bàobao",
@@ -456,9 +422,9 @@
       ]
     },
     {
-      "id": "zh_baby_038",
+      "id": "zh_baby_035",
       "stageId": "baby",
-      "rankInStage": 38,
+      "rankInStage": 35,
       "front": "亲亲",
       "back": "kiss",
       "phonics": "qīnqīn",
@@ -467,9 +433,9 @@
       ]
     },
     {
-      "id": "zh_baby_039",
+      "id": "zh_baby_036",
       "stageId": "baby",
-      "rankInStage": 39,
+      "rankInStage": 36,
       "front": "帮忙",
       "back": "help",
       "phonics": "bāngmáng",
@@ -478,9 +444,9 @@
       ]
     },
     {
-      "id": "zh_baby_040",
+      "id": "zh_baby_037",
       "stageId": "baby",
-      "rankInStage": 40,
+      "rankInStage": 37,
       "front": "打开",
       "back": "open",
       "phonics": "dǎkāi",
@@ -489,9 +455,9 @@
       ]
     },
     {
-      "id": "zh_baby_041",
+      "id": "zh_baby_038",
       "stageId": "baby",
-      "rankInStage": 41,
+      "rankInStage": 38,
       "front": "坐",
       "back": "sit",
       "phonics": "zuò",
@@ -500,9 +466,9 @@
       ]
     },
     {
-      "id": "zh_baby_042",
+      "id": "zh_baby_039",
       "stageId": "baby",
-      "rankInStage": 42,
+      "rankInStage": 39,
       "front": "站",
       "back": "stand",
       "phonics": "zhàn",
@@ -511,9 +477,9 @@
       ]
     },
     {
-      "id": "zh_baby_043",
+      "id": "zh_baby_040",
       "stageId": "baby",
-      "rankInStage": 43,
+      "rankInStage": 40,
       "front": "跑",
       "back": "run",
       "phonics": "pǎo",
@@ -522,9 +488,9 @@
       ]
     },
     {
-      "id": "zh_baby_044",
+      "id": "zh_baby_041",
       "stageId": "baby",
-      "rankInStage": 44,
+      "rankInStage": 41,
       "front": "玩",
       "back": "play",
       "phonics": "wán",
@@ -533,9 +499,9 @@
       ]
     },
     {
-      "id": "zh_baby_045",
+      "id": "zh_baby_042",
       "stageId": "baby",
-      "rankInStage": 45,
+      "rankInStage": 42,
       "front": "爱",
       "back": "love",
       "phonics": "ài",
@@ -545,9 +511,9 @@
       ]
     },
     {
-      "id": "zh_baby_046",
+      "id": "zh_baby_043",
       "stageId": "baby",
-      "rankInStage": 46,
+      "rankInStage": 43,
       "front": "奶奶",
       "back": "grandma",
       "phonics": "nǎinai",
@@ -556,9 +522,9 @@
       ]
     },
     {
-      "id": "zh_baby_047",
+      "id": "zh_baby_044",
       "stageId": "baby",
-      "rankInStage": 47,
+      "rankInStage": 44,
       "front": "爷爷",
       "back": "grandpa",
       "phonics": "yéye",
@@ -567,9 +533,9 @@
       ]
     },
     {
-      "id": "zh_baby_048",
+      "id": "zh_baby_045",
       "stageId": "baby",
-      "rankInStage": 48,
+      "rankInStage": 45,
       "front": "哇",
       "back": "wow",
       "phonics": "wā",
@@ -578,9 +544,9 @@
       ]
     },
     {
-      "id": "zh_baby_049",
+      "id": "zh_baby_046",
       "stageId": "baby",
-      "rankInStage": 49,
+      "rankInStage": 46,
       "front": "疼",
       "back": "ouch / hurt",
       "phonics": "téng",
@@ -590,9 +556,9 @@
       ]
     },
     {
-      "id": "zh_baby_050",
+      "id": "zh_baby_047",
       "stageId": "baby",
-      "rankInStage": 50,
+      "rankInStage": 47,
       "front": "好了",
       "back": "done",
       "phonics": "hǎo le",
