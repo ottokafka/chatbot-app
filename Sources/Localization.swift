@@ -1723,6 +1723,85 @@ enum L10n {
             ? "没有可练习的词汇。请先学习一些卡片，或等到有卡片到期。"
             : "No vocabulary available to speak with. Study some cards first, or wait until cards are due."
     }
+
+    // MARK: - Pronunciation assessment (Life Path mic button + feedback panel)
+
+    static func pronGetReady(_ lang: AppLanguage) -> String {
+        lang == .zh ? "准备…" : "Get ready…"
+    }
+
+    static func pronSayIt(_ lang: AppLanguage) -> String {
+        lang == .zh ? "发音" : "Say It"
+    }
+
+    static func pronKeepGoingTapDone(_ lang: AppLanguage) -> String {
+        lang == .zh ? "继续说… 点按完成" : "Keep going… Tap when done"
+    }
+
+    static func pronListeningTapDone(_ lang: AppLanguage) -> String {
+        lang == .zh ? "正在听… 点按完成" : "Listening… Tap when done"
+    }
+
+    static func pronCheckingAgain(_ lang: AppLanguage) -> String {
+        lang == .zh ? "重新评估…" : "Checking again…"
+    }
+
+    static func pronCheckingPronunciation(_ lang: AppLanguage) -> String {
+        lang == .zh ? "评估发音…" : "Checking pronunciation…"
+    }
+
+    static func pronNiceMovingOn(_ lang: AppLanguage) -> String {
+        lang == .zh ? "很好！继续…" : "Nice! Moving on…"
+    }
+
+    static func pronListenAgain(_ lang: AppLanguage) -> String {
+        lang == .zh ? "再听一次…" : "Listen again…"
+    }
+
+    static func pronStillListening(_ lang: AppLanguage) -> String {
+        lang == .zh ? "仍在聆听…" : "Still listening…"
+    }
+
+    static func pronKeepSayingHint(_ lang: AppLanguage) -> String {
+        lang == .zh ? "继续练习发音 — 每次都会重新评估。" : "Keep saying the word — I'll check each try."
+    }
+
+    static func pronHeard(_ lang: AppLanguage) -> String {
+        lang == .zh ? "识别：" : "Heard:"
+    }
+
+    static func pronHeardNothing(_ lang: AppLanguage) -> String {
+        lang == .zh ? "识别：（无）— 请大声一点" : "Heard: (nothing) — speak a bit louder"
+    }
+
+    static func pronStopListening(_ lang: AppLanguage) -> String {
+        lang == .zh ? "停止聆听" : "Stop listening"
+    }
+
+    static func pronGreatPronunciation(_ lang: AppLanguage) -> String {
+        lang == .zh ? "发音很棒！" : "Great pronunciation!"
+    }
+
+    static func pronAlmostKeepGoing(_ lang: AppLanguage) -> String {
+        lang == .zh ? "差一点 — 继续努力" : "Almost — keep going"
+    }
+
+    static func pronAlmostTryAgain(_ lang: AppLanguage) -> String {
+        lang == .zh ? "差一点 — 再来一次" : "Almost — try again"
+    }
+
+    /// Fallback displayFeedback when the server doesn't provide a message.
+    static func pronFeedbackClose(_ lang: AppLanguage) -> String {
+        lang == .zh ? "接近了 — 再试一次，说清楚一点。" : "Close — try once more, a bit clearer."
+    }
+
+    static func pronFeedbackNotQuite(_ lang: AppLanguage) -> String {
+        lang == .zh ? "不对 — 再来一次。" : "Not quite — give it another try."
+    }
+
+    static func pronFeedbackTryAgain(_ lang: AppLanguage) -> String {
+        lang == .zh ? "再试一次看看。" : "Let's try that word again."
+    }
 }
 
 // MARK: - Language Toggle

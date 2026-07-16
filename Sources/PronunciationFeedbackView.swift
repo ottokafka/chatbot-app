@@ -5,6 +5,7 @@ import SwiftUI
 /// Mic control for continuous listen-until-correct flow.
 /// Wrong attempts keep results on screen; the mic re-opens automatically (no “Try Again”).
 struct PronunciationMicButton: View {
+    @Environment(\.appLanguage) private var lang
     let pronunciationState: LifePathViewModel.PronunciationState
     var isArmed: Bool = false   // true = TTS playing, recording will auto-start
     /// True when a previous miss is still shown while we listen again.
@@ -23,7 +24,7 @@ struct PronunciationMicButton: View {
                     ProgressView()
                         .tint(.blue)
                         .scaleEffect(0.85)
-                    Text("Get ready…")
+                    Text(L10n.pronGetReady(lang))
                         .foregroundStyle(.secondary)
                         .font(.subheadline)
                 }
@@ -31,7 +32,7 @@ struct PronunciationMicButton: View {
                 .padding(.vertical, 10)
             } else {
                 Button(action: onStart) {
-                    Label("Say It", systemImage: "mic.fill")
+                    Label(L10n.pronSayIt(lang), systemImage: "mic.fill")
                         .font(.body.weight(.semibold))
                         .frame(maxWidth: .infinity)
                 }
@@ -45,7 +46,7 @@ struct PronunciationMicButton: View {
                 Button(action: onStop) {
                     HStack(spacing: 10) {
                         RecordingPulse()
-                        Text(hasStickyResult ? "Keep going… Tap when done" : "Listening… Tap when done")
+                        Text(hasStickyResult ? L10n.pronKeepGoingTapDone(lang) : L10n.pronListeningTapDone(lang))
                             .fontWeight(.semibold)
                     }
                     .frame(maxWidth: .infinity)
@@ -54,7 +55,7 @@ struct PronunciationMicButton: View {
                 .tint(hasStickyResult ? .orange : .red)
                 .controlSize(.large)
 
-                Button("Cancel", action: onCancel)
+                Button(L10n.cancel(lang), action: onCancel)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -63,7 +64,7 @@ struct PronunciationMicButton: View {
             HStack(spacing: 10) {
                 ProgressView()
                     .tint(.accentColor)
-                Text(hasStickyResult ? "Checking again…" : "Checking pronunciation…")
+                Text(hasStickyResult ? L10n.pronCheckingAgain(lang) : L10n.pronCheckingPronunciation(lang))
                     .foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity)
@@ -74,7 +75,7 @@ struct PronunciationMicButton: View {
                 HStack(spacing: 8) {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(.green)
-                    Text("Nice! Moving on…")
+                    Text(L10n.pronNiceMovingOn(lang))
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(.green)
                 }
@@ -86,7 +87,7 @@ struct PronunciationMicButton: View {
                     ProgressView()
                         .tint(.orange)
                         .scaleEffect(0.85)
-                    Text("Listen again…")
+                    Text(L10n.pronListenAgain(lang))
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(.orange)
                 }
@@ -99,7 +100,7 @@ struct PronunciationMicButton: View {
                 HStack(spacing: 8) {
                     ProgressView()
                         .scaleEffect(0.85)
-                    Text("Still listening…")
+                    Text(L10n.pronStillListening(lang))
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(.secondary)
                 }
@@ -107,7 +108,7 @@ struct PronunciationMicButton: View {
                     .font(.caption2)
                     .foregroundStyle(.orange)
                     .multilineTextAlignment(.center)
-                Button("Cancel", action: onCancel)
+                Button(L10n.cancel(lang), action: onCancel)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -157,6 +158,7 @@ struct TargetWordDisplay: View {
 /// Compact result panel: score, tip, and word-level feedback.
 /// For misses this stays on screen while the mic keeps listening.
 struct PronunciationFeedbackView: View {
+    @Environment(\.appLanguage) private var lang
     let result: PronunciationAssessmentResponse
     let targetWord: String
     /// Client-side passing threshold (e.g. 0.51 = 51%).
@@ -172,12 +174,12 @@ struct PronunciationFeedbackView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(headerTitle)
                         .font(.headline)
-                    Text(result.displayFeedback)
+                    Text(displayFeedback)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                     if isListeningLoop && !result.isPassing(threshold: threshold) {
-                        Text("Keep saying the word — I’ll check each try.")
+                        Text(L10n.pronKeepSayingHint(lang))
                             .font(.caption)
                             .foregroundStyle(.orange)
                     }
@@ -190,11 +192,11 @@ struct PronunciationFeedbackView: View {
             if !result.isPassing(threshold: threshold) {
                 VStack(alignment: .leading, spacing: 4) {
                     if !result.predicted_phonemes.isEmpty {
-                        Text("Heard: /\(result.predicted_phonemes.joined(separator: " "))/")
+                        Text("\(L10n.pronHeard(lang)) /\(result.predicted_phonemes.joined(separator: " "))/")
                             .font(.system(.caption, design: .monospaced))
                             .foregroundStyle(.secondary)
                     } else {
-                        Text("Heard: (nothing) — speak a bit louder")
+                        Text(L10n.pronHeardNothing(lang))
                             .font(.caption)
                             .foregroundStyle(.orange)
                     }
@@ -211,7 +213,7 @@ struct PronunciationFeedbackView: View {
 
             if showDismiss && !result.isPassing(threshold: threshold) {
                 Button(action: onDismiss) {
-                    Text("Stop listening")
+                    Text(L10n.pronStopListening(lang))
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
@@ -223,10 +225,19 @@ struct PronunciationFeedbackView: View {
         .padding(.horizontal)
     }
 
+    private var displayFeedback: String {
+        // Use server-provided feedback when available.
+        if let fb = result.feedback, !fb.isEmpty { return fb }
+        if result.is_correct { return L10n.pronGreatPronunciation(lang) }
+        if result.overall_score >= 0.50 { return L10n.pronFeedbackClose(lang) }
+        if result.overall_score >= 0.25 { return L10n.pronFeedbackNotQuite(lang) }
+        return L10n.pronFeedbackTryAgain(lang)
+    }
+
     private var headerTitle: String {
-        if result.isPassing(threshold: threshold) { return "Great pronunciation!" }
-        if isListeningLoop { return "Almost — keep going" }
-        return "Almost — try again"
+        if result.isPassing(threshold: threshold) { return L10n.pronGreatPronunciation(lang) }
+        if isListeningLoop { return L10n.pronAlmostKeepGoing(lang) }
+        return L10n.pronAlmostTryAgain(lang)
     }
 }
 
