@@ -41,6 +41,19 @@
         "zh": "日常生活与学前"
       },
       "targetCount": 299
+    },
+    {
+      "id": "grade1",
+      "order": 3,
+      "title": {
+        "en": "Grade 1",
+        "zh": "一年级"
+      },
+      "subtitle": {
+        "en": "School start",
+        "zh": "开学了"
+      },
+      "targetCount": 88
     }
   ],
   "entries": [
@@ -4650,6 +4663,994 @@
       "phonics": null,
       "tags": [
         "actions"
+      ]
+    },
+    {
+      "id": "en_grade1_001",
+      "stageId": "grade1",
+      "rankInStage": 1,
+      "front": "math",
+      "back": "数学",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade1_002",
+      "stageId": "grade1",
+      "rankInStage": 2,
+      "front": "science",
+      "back": "科学",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade1_003",
+      "stageId": "grade1",
+      "rankInStage": 3,
+      "front": "art class",
+      "back": "美术课",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade1_004",
+      "stageId": "grade1",
+      "rankInStage": 4,
+      "front": "music",
+      "back": "音乐",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade1_005",
+      "stageId": "grade1",
+      "rankInStage": 5,
+      "front": "history",
+      "back": "历史",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade1_006",
+      "stageId": "grade1",
+      "rankInStage": 6,
+      "front": "exam",
+      "back": "考试",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade1_007",
+      "stageId": "grade1",
+      "rankInStage": 7,
+      "front": "test",
+      "back": "考试",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade1_008",
+      "stageId": "grade1",
+      "rankInStage": 8,
+      "front": "subject",
+      "back": "科目",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade1_009",
+      "stageId": "grade1",
+      "rankInStage": 9,
+      "front": "grade",
+      "back": "年级",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade1_010",
+      "stageId": "grade1",
+      "rankInStage": 10,
+      "front": "recess",
+      "back": "课间休息",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade1_011",
+      "stageId": "grade1",
+      "rankInStage": 11,
+      "front": "principal",
+      "back": "校长",
+      "phonics": null,
+      "tags": [
+        "school",
+        "people"
+      ]
+    },
+    {
+      "id": "en_grade1_012",
+      "stageId": "grade1",
+      "rankInStage": 12,
+      "front": "textbook",
+      "back": "课本",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade1_013",
+      "stageId": "grade1",
+      "rankInStage": 13,
+      "front": "explain",
+      "back": "解释",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade1_014",
+      "stageId": "grade1",
+      "rankInStage": 14,
+      "front": "describe",
+      "back": "描述",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade1_015",
+      "stageId": "grade1",
+      "rankInStage": 15,
+      "front": "compare",
+      "back": "比较",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade1_016",
+      "stageId": "grade1",
+      "rankInStage": 16,
+      "front": "solve",
+      "back": "解决",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade1_017",
+      "stageId": "grade1",
+      "rankInStage": 17,
+      "front": "create",
+      "back": "创造",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade1_018",
+      "stageId": "grade1",
+      "rankInStage": 18,
+      "front": "imagine",
+      "back": "想象",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade1_019",
+      "stageId": "grade1",
+      "rankInStage": 19,
+      "front": "explore",
+      "back": "探索",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade1_020",
+      "stageId": "grade1",
+      "rankInStage": 20,
+      "front": "discover",
+      "back": "发现",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade1_021",
+      "stageId": "grade1",
+      "rankInStage": 21,
+      "front": "understand",
+      "back": "理解",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade1_022",
+      "stageId": "grade1",
+      "rankInStage": 22,
+      "front": "decide",
+      "back": "决定",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade1_023",
+      "stageId": "grade1",
+      "rankInStage": 23,
+      "front": "agree",
+      "back": "同意",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "social"
+      ]
+    },
+    {
+      "id": "en_grade1_024",
+      "stageId": "grade1",
+      "rankInStage": 24,
+      "front": "promise",
+      "back": "承诺",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "social"
+      ]
+    },
+    {
+      "id": "en_grade1_025",
+      "stageId": "grade1",
+      "rankInStage": 25,
+      "front": "guess",
+      "back": "猜",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade1_026",
+      "stageId": "grade1",
+      "rankInStage": 26,
+      "front": "collect",
+      "back": "收集",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade1_027",
+      "stageId": "grade1",
+      "rankInStage": 27,
+      "front": "organize",
+      "back": "组织",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade1_028",
+      "stageId": "grade1",
+      "rankInStage": 28,
+      "front": "practice",
+      "back": "练习",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade1_029",
+      "stageId": "grade1",
+      "rankInStage": 29,
+      "front": "succeed",
+      "back": "成功",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade1_030",
+      "stageId": "grade1",
+      "rankInStage": 30,
+      "front": "check",
+      "back": "检查",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade1_031",
+      "stageId": "grade1",
+      "rankInStage": 31,
+      "front": "minute",
+      "back": "分钟",
+      "phonics": null,
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "en_grade1_032",
+      "stageId": "grade1",
+      "rankInStage": 32,
+      "front": "weekend",
+      "back": "周末",
+      "phonics": null,
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "en_grade1_033",
+      "stageId": "grade1",
+      "rankInStage": 33,
+      "front": "during",
+      "back": "在…期间",
+      "phonics": null,
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "en_grade1_034",
+      "stageId": "grade1",
+      "rankInStage": 34,
+      "front": "early",
+      "back": "早",
+      "phonics": null,
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "en_grade1_035",
+      "stageId": "grade1",
+      "rankInStage": 35,
+      "front": "idea",
+      "back": "主意",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade1_036",
+      "stageId": "grade1",
+      "rankInStage": 36,
+      "front": "secret",
+      "back": "秘密",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade1_037",
+      "stageId": "grade1",
+      "rankInStage": 37,
+      "front": "truth",
+      "back": "真相",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade1_038",
+      "stageId": "grade1",
+      "rankInStage": 38,
+      "front": "mistake",
+      "back": "错误",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade1_039",
+      "stageId": "grade1",
+      "rankInStage": 39,
+      "front": "problem",
+      "back": "问题",
+      "phonics": null,
+      "tags": [
+        "school",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade1_040",
+      "stageId": "grade1",
+      "rankInStage": 40,
+      "front": "neighbor",
+      "back": "邻居",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_grade1_041",
+      "stageId": "grade1",
+      "rankInStage": 41,
+      "front": "team",
+      "back": "团队",
+      "phonics": null,
+      "tags": [
+        "people",
+        "social"
+      ]
+    },
+    {
+      "id": "en_grade1_042",
+      "stageId": "grade1",
+      "rankInStage": 42,
+      "front": "leader",
+      "back": "队长",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_grade1_043",
+      "stageId": "grade1",
+      "rankInStage": 43,
+      "front": "hero",
+      "back": "英雄",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_grade1_044",
+      "stageId": "grade1",
+      "rankInStage": 44,
+      "front": "stranger",
+      "back": "陌生人",
+      "phonics": null,
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "en_grade1_045",
+      "stageId": "grade1",
+      "rankInStage": 45,
+      "front": "clever",
+      "back": "聪明的",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade1_046",
+      "stageId": "grade1",
+      "rankInStage": 46,
+      "front": "honest",
+      "back": "诚实的",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade1_047",
+      "stageId": "grade1",
+      "rankInStage": 47,
+      "front": "patient",
+      "back": "耐心的",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade1_048",
+      "stageId": "grade1",
+      "rankInStage": 48,
+      "front": "polite",
+      "back": "有礼貌的",
+      "phonics": null,
+      "tags": [
+        "descriptors",
+        "social"
+      ]
+    },
+    {
+      "id": "en_grade1_049",
+      "stageId": "grade1",
+      "rankInStage": 49,
+      "front": "friendly",
+      "back": "友好的",
+      "phonics": null,
+      "tags": [
+        "descriptors",
+        "social"
+      ]
+    },
+    {
+      "id": "en_grade1_050",
+      "stageId": "grade1",
+      "rankInStage": 50,
+      "front": "serious",
+      "back": "认真的",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade1_051",
+      "stageId": "grade1",
+      "rankInStage": 51,
+      "front": "lonely",
+      "back": "孤独的",
+      "phonics": null,
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_grade1_052",
+      "stageId": "grade1",
+      "rankInStage": 52,
+      "front": "nervous",
+      "back": "紧张的",
+      "phonics": null,
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_grade1_053",
+      "stageId": "grade1",
+      "rankInStage": 53,
+      "front": "grateful",
+      "back": "感恩的",
+      "phonics": null,
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_grade1_054",
+      "stageId": "grade1",
+      "rankInStage": 54,
+      "front": "confused",
+      "back": "困惑的",
+      "phonics": null,
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_grade1_055",
+      "stageId": "grade1",
+      "rankInStage": 55,
+      "front": "forest",
+      "back": "森林",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_grade1_056",
+      "stageId": "grade1",
+      "rankInStage": 56,
+      "front": "lake",
+      "back": "湖",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_grade1_057",
+      "stageId": "grade1",
+      "rankInStage": 57,
+      "front": "island",
+      "back": "岛",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_grade1_058",
+      "stageId": "grade1",
+      "rankInStage": 58,
+      "front": "desert",
+      "back": "沙漠",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_grade1_059",
+      "stageId": "grade1",
+      "rankInStage": 59,
+      "front": "airport",
+      "back": "机场",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_grade1_060",
+      "stageId": "grade1",
+      "rankInStage": 60,
+      "front": "bridge",
+      "back": "桥",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_grade1_061",
+      "stageId": "grade1",
+      "rankInStage": 61,
+      "front": "museum",
+      "back": "博物馆",
+      "phonics": null,
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "en_grade1_062",
+      "stageId": "grade1",
+      "rankInStage": 62,
+      "front": "eagle",
+      "back": "鹰",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_grade1_063",
+      "stageId": "grade1",
+      "rankInStage": 63,
+      "front": "whale",
+      "back": "鲸鱼",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_grade1_064",
+      "stageId": "grade1",
+      "rankInStage": 64,
+      "front": "shark",
+      "back": "鲨鱼",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_grade1_065",
+      "stageId": "grade1",
+      "rankInStage": 65,
+      "front": "celebrate",
+      "back": "庆祝",
+      "phonics": null,
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "en_grade1_066",
+      "stageId": "grade1",
+      "rankInStage": 66,
+      "front": "winter break",
+      "back": "寒假",
+      "phonics": null,
+      "tags": [
+        "school",
+        "time"
+      ]
+    },
+    {
+      "id": "en_grade1_067",
+      "stageId": "grade1",
+      "rankInStage": 67,
+      "front": "motherland",
+      "back": "祖国",
+      "phonics": null,
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "en_grade1_068",
+      "stageId": "grade1",
+      "rankInStage": 68,
+      "front": "classmate",
+      "back": "同学",
+      "phonics": null,
+      "tags": [
+        "school",
+        "people"
+      ]
+    },
+    {
+      "id": "en_grade1_069",
+      "stageId": "grade1",
+      "rankInStage": 69,
+      "front": "ruler",
+      "back": "尺子",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade1_070",
+      "stageId": "grade1",
+      "rankInStage": 70,
+      "front": "sunshine",
+      "back": "阳光",
+      "phonics": null,
+      "tags": [
+        "nature",
+        "weather"
+      ]
+    },
+    {
+      "id": "en_grade1_071",
+      "stageId": "grade1",
+      "rankInStage": 71,
+      "front": "ocean",
+      "back": "大海",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_grade1_072",
+      "stageId": "grade1",
+      "rankInStage": 72,
+      "front": "field",
+      "back": "田野",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_grade1_073",
+      "stageId": "grade1",
+      "rankInStage": 73,
+      "front": "spring",
+      "back": "春天",
+      "phonics": null,
+      "tags": [
+        "time",
+        "nature",
+        "weather"
+      ]
+    },
+    {
+      "id": "en_grade1_074",
+      "stageId": "grade1",
+      "rankInStage": 74,
+      "front": "summer",
+      "back": "夏天",
+      "phonics": null,
+      "tags": [
+        "time",
+        "nature",
+        "weather"
+      ]
+    },
+    {
+      "id": "en_grade1_075",
+      "stageId": "grade1",
+      "rankInStage": 75,
+      "front": "autumn",
+      "back": "秋天",
+      "phonics": null,
+      "tags": [
+        "time",
+        "nature",
+        "weather"
+      ]
+    },
+    {
+      "id": "en_grade1_076",
+      "stageId": "grade1",
+      "rankInStage": 76,
+      "front": "winter",
+      "back": "冬天",
+      "phonics": null,
+      "tags": [
+        "time",
+        "nature",
+        "weather"
+      ]
+    },
+    {
+      "id": "en_grade1_077",
+      "stageId": "grade1",
+      "rankInStage": 77,
+      "front": "beautiful",
+      "back": "美丽的",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade1_078",
+      "stageId": "grade1",
+      "rankInStage": 78,
+      "front": "cute",
+      "back": "可爱的",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade1_079",
+      "stageId": "grade1",
+      "rankInStage": 79,
+      "front": "glad",
+      "back": "高兴的",
+      "phonics": null,
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_grade1_080",
+      "stageId": "grade1",
+      "rankInStage": 80,
+      "front": "tidy",
+      "back": "整齐的",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade1_081",
+      "stageId": "grade1",
+      "rankInStage": 81,
+      "front": "flag",
+      "back": "国旗",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade1_082",
+      "stageId": "grade1",
+      "rankInStage": 82,
+      "front": "hometown",
+      "back": "家乡",
+      "phonics": null,
+      "tags": [
+        "locations",
+        "home"
+      ]
+    },
+    {
+      "id": "en_grade1_083",
+      "stageId": "grade1",
+      "rankInStage": 83,
+      "front": "sports",
+      "back": "运动",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade1_084",
+      "stageId": "grade1",
+      "rankInStage": 84,
+      "front": "animal",
+      "back": "动物",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_grade1_085",
+      "stageId": "grade1",
+      "rankInStage": 85,
+      "front": "plant",
+      "back": "植物",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_grade1_086",
+      "stageId": "grade1",
+      "rankInStage": 86,
+      "front": "game",
+      "back": "游戏",
+      "phonics": null,
+      "tags": [
+        "toys_play"
+      ]
+    },
+    {
+      "id": "en_grade1_087",
+      "stageId": "grade1",
+      "rankInStage": 87,
+      "front": "sound",
+      "back": "声音",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_grade1_088",
+      "stageId": "grade1",
+      "rankInStage": 88,
+      "front": "stream",
+      "back": "小河",
+      "phonics": null,
+      "tags": [
+        "nature"
       ]
     }
   ]

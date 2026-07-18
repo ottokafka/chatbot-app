@@ -91,7 +91,7 @@ Shared stage IDs for EN + ZH catalogs. v1 content can ship only early stages.
 | `baby` | Baby | 婴儿 | First words | ~50 | **Yes** |
 | `toddler` | Toddler | 幼儿 | First 100–150 | ~150 | **Yes** |
 | `preschool` | Preschool | 学前 | Daily life | 299 | **Yes** (shipped) |
-| `grade1` | Grade 1 | 一年级 | School start | ~300 | Later |
+| `grade1` | Grade 1 | 一年级 | School start | 99 (ZH) / 88 (EN) | **Yes** |
 | `grade2` … `grade6` | Grade 2–6 | 二–六年级 | School growth | ~300–400 each | Later |
 
 **Unlock rule (hard):**  
@@ -476,7 +476,7 @@ Both systems can feed the library; only Life Path has **stages, mastery progress
 ### Shipped
 
 - Schema: `baby_to_child_list` + `baby_to_child_profile` (+ legacy rewards table inert).  
-- Catalog: baby + toddler + preschool (EN + ZH).  
+- Catalog: baby + toddler + preschool + **grade1** (EN + ZH).  
 - Play loop: full-stage session, Got it / Again, mastery.  
 - Progression: stage clear → level-up modal → unlock next stage → **Next level**.  
 - **No XP/coins economy.**

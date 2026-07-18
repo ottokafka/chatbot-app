@@ -41,6 +41,19 @@
         "zh": "日常生活与学前"
       },
       "targetCount": 299
+    },
+    {
+      "id": "grade1",
+      "order": 3,
+      "title": {
+        "en": "Grade 1",
+        "zh": "一年级"
+      },
+      "subtitle": {
+        "en": "School start",
+        "zh": "开学了"
+      },
+      "targetCount": 99
     }
   ],
   "entries": [
@@ -4617,6 +4630,1126 @@
       "phonics": "jìzhù",
       "tags": [
         "actions"
+      ]
+    },
+    {
+      "id": "zh_grade1_001",
+      "stageId": "grade1",
+      "rankInStage": 1,
+      "front": "拼音",
+      "back": "pinyin",
+      "phonics": "pīnyīn",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_grade1_002",
+      "stageId": "grade1",
+      "rankInStage": 2,
+      "front": "考试",
+      "back": "test",
+      "phonics": "kǎoshì",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_grade1_003",
+      "stageId": "grade1",
+      "rankInStage": 3,
+      "front": "数学",
+      "back": "math",
+      "phonics": "shùxué",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_grade1_004",
+      "stageId": "grade1",
+      "rankInStage": 4,
+      "front": "科学",
+      "back": "science",
+      "phonics": "kēxué",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_grade1_005",
+      "stageId": "grade1",
+      "rankInStage": 5,
+      "front": "美术",
+      "back": "art",
+      "phonics": "měishù",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_grade1_006",
+      "stageId": "grade1",
+      "rankInStage": 6,
+      "front": "体育",
+      "back": "PE",
+      "phonics": "tǐyù",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_grade1_007",
+      "stageId": "grade1",
+      "rankInStage": 7,
+      "front": "音乐",
+      "back": "music",
+      "phonics": "yīnyuè",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_grade1_008",
+      "stageId": "grade1",
+      "rankInStage": 8,
+      "front": "年级",
+      "back": "grade level",
+      "phonics": "niánjí",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_grade1_009",
+      "stageId": "grade1",
+      "rankInStage": 9,
+      "front": "课本",
+      "back": "textbook",
+      "phonics": "kèběn",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_grade1_010",
+      "stageId": "grade1",
+      "rankInStage": 10,
+      "front": "汉字",
+      "back": "Chinese character",
+      "phonics": "hànzì",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_grade1_011",
+      "stageId": "grade1",
+      "rankInStage": 11,
+      "front": "纪律",
+      "back": "discipline",
+      "phonics": "jìlǜ",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_grade1_012",
+      "stageId": "grade1",
+      "rankInStage": 12,
+      "front": "发现",
+      "back": "discover",
+      "phonics": "fāxiàn",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_grade1_013",
+      "stageId": "grade1",
+      "rankInStage": 13,
+      "front": "决定",
+      "back": "decide",
+      "phonics": "juédìng",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_grade1_014",
+      "stageId": "grade1",
+      "rankInStage": 14,
+      "front": "解决",
+      "back": "solve",
+      "phonics": "jiějué",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_grade1_015",
+      "stageId": "grade1",
+      "rankInStage": 15,
+      "front": "创造",
+      "back": "create",
+      "phonics": "chuàngzào",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_grade1_016",
+      "stageId": "grade1",
+      "rankInStage": 16,
+      "front": "想象",
+      "back": "imagine",
+      "phonics": "xiǎngxiàng",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_grade1_017",
+      "stageId": "grade1",
+      "rankInStage": 17,
+      "front": "解释",
+      "back": "explain",
+      "phonics": "jiěshì",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_grade1_018",
+      "stageId": "grade1",
+      "rankInStage": 18,
+      "front": "同意",
+      "back": "agree",
+      "phonics": "tóngyì",
+      "tags": [
+        "actions",
+        "social"
+      ]
+    },
+    {
+      "id": "zh_grade1_019",
+      "stageId": "grade1",
+      "rankInStage": 19,
+      "front": "比较",
+      "back": "compare",
+      "phonics": "bǐjiào",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_grade1_020",
+      "stageId": "grade1",
+      "rankInStage": 20,
+      "front": "收集",
+      "back": "collect",
+      "phonics": "shōují",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_grade1_021",
+      "stageId": "grade1",
+      "rankInStage": 21,
+      "front": "建造",
+      "back": "build",
+      "phonics": "jiànzào",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_grade1_022",
+      "stageId": "grade1",
+      "rankInStage": 22,
+      "front": "保护",
+      "back": "protect",
+      "phonics": "bǎohù",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_grade1_023",
+      "stageId": "grade1",
+      "rankInStage": 23,
+      "front": "努力",
+      "back": "work hard",
+      "phonics": "nǔlì",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_grade1_024",
+      "stageId": "grade1",
+      "rankInStage": 24,
+      "front": "练习",
+      "back": "practice",
+      "phonics": "liànxí",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_grade1_025",
+      "stageId": "grade1",
+      "rankInStage": 25,
+      "front": "检查",
+      "back": "check",
+      "phonics": "jiǎnchá",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_grade1_026",
+      "stageId": "grade1",
+      "rankInStage": 26,
+      "front": "成功",
+      "back": "succeed",
+      "phonics": "chénggōng",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_grade1_027",
+      "stageId": "grade1",
+      "rankInStage": 27,
+      "front": "重要",
+      "back": "important",
+      "phonics": "zhòngyào",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_grade1_028",
+      "stageId": "grade1",
+      "rankInStage": 28,
+      "front": "聪明",
+      "back": "clever",
+      "phonics": "cōngmíng",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_grade1_029",
+      "stageId": "grade1",
+      "rankInStage": 29,
+      "front": "诚实",
+      "back": "honest",
+      "phonics": "chéngshí",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_grade1_030",
+      "stageId": "grade1",
+      "rankInStage": 30,
+      "front": "耐心",
+      "back": "patient",
+      "phonics": "nàixīn",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_grade1_031",
+      "stageId": "grade1",
+      "rankInStage": 31,
+      "front": "认真",
+      "back": "serious",
+      "phonics": "rènzhēn",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_grade1_032",
+      "stageId": "grade1",
+      "rankInStage": 32,
+      "front": "友好",
+      "back": "friendly",
+      "phonics": "yǒuhǎo",
+      "tags": [
+        "descriptors",
+        "social"
+      ]
+    },
+    {
+      "id": "zh_grade1_033",
+      "stageId": "grade1",
+      "rankInStage": 33,
+      "front": "秘密",
+      "back": "secret",
+      "phonics": "mìmì",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_grade1_034",
+      "stageId": "grade1",
+      "rankInStage": 34,
+      "front": "真相",
+      "back": "truth",
+      "phonics": "zhēnxiàng",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_grade1_035",
+      "stageId": "grade1",
+      "rankInStage": 35,
+      "front": "主意",
+      "back": "idea",
+      "phonics": "zhǔyi",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_grade1_036",
+      "stageId": "grade1",
+      "rankInStage": 36,
+      "front": "紧张",
+      "back": "nervous",
+      "phonics": "jǐnzhāng",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "zh_grade1_037",
+      "stageId": "grade1",
+      "rankInStage": 37,
+      "front": "孤单",
+      "back": "lonely",
+      "phonics": "gūdān",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "zh_grade1_038",
+      "stageId": "grade1",
+      "rankInStage": 38,
+      "front": "感动",
+      "back": "moved",
+      "phonics": "gǎndòng",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "zh_grade1_039",
+      "stageId": "grade1",
+      "rankInStage": 39,
+      "front": "森林",
+      "back": "forest",
+      "phonics": "sēnlín",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "zh_grade1_040",
+      "stageId": "grade1",
+      "rankInStage": 40,
+      "front": "湖",
+      "back": "lake",
+      "phonics": "hú",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "zh_grade1_041",
+      "stageId": "grade1",
+      "rankInStage": 41,
+      "front": "岛",
+      "back": "island",
+      "phonics": "dǎo",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "zh_grade1_042",
+      "stageId": "grade1",
+      "rankInStage": 42,
+      "front": "沙漠",
+      "back": "desert",
+      "phonics": "shāmò",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "zh_grade1_043",
+      "stageId": "grade1",
+      "rankInStage": 43,
+      "front": "海滩",
+      "back": "beach",
+      "phonics": "hǎitān",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "zh_grade1_044",
+      "stageId": "grade1",
+      "rankInStage": 44,
+      "front": "暴风雨",
+      "back": "storm",
+      "phonics": "bàofēngyǔ",
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "id": "zh_grade1_045",
+      "stageId": "grade1",
+      "rankInStage": 45,
+      "front": "温暖",
+      "back": "warmth",
+      "phonics": "wēnnuǎn",
+      "tags": [
+        "weather",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_grade1_046",
+      "stageId": "grade1",
+      "rankInStage": 46,
+      "front": "老鹰",
+      "back": "eagle",
+      "phonics": "lǎoyīng",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_grade1_047",
+      "stageId": "grade1",
+      "rankInStage": 47,
+      "front": "鲸鱼",
+      "back": "whale",
+      "phonics": "jīngyú",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_grade1_048",
+      "stageId": "grade1",
+      "rankInStage": 48,
+      "front": "鲨鱼",
+      "back": "shark",
+      "phonics": "shāyú",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_grade1_049",
+      "stageId": "grade1",
+      "rankInStage": 49,
+      "front": "邻居",
+      "back": "neighbor",
+      "phonics": "línjū",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_grade1_050",
+      "stageId": "grade1",
+      "rankInStage": 50,
+      "front": "队长",
+      "back": "team leader",
+      "phonics": "duìzhǎng",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_grade1_051",
+      "stageId": "grade1",
+      "rankInStage": 51,
+      "front": "英雄",
+      "back": "hero",
+      "phonics": "yīngxióng",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_grade1_052",
+      "stageId": "grade1",
+      "rankInStage": 52,
+      "front": "陌生人",
+      "back": "stranger",
+      "phonics": "mòshēngrén",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_grade1_053",
+      "stageId": "grade1",
+      "rankInStage": 53,
+      "front": "校长",
+      "back": "principal",
+      "phonics": "xiàozhǎng",
+      "tags": [
+        "people"
+      ]
+    },
+    {
+      "id": "zh_grade1_054",
+      "stageId": "grade1",
+      "rankInStage": 54,
+      "front": "分钟",
+      "back": "minute",
+      "phonics": "fēnzhōng",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "zh_grade1_055",
+      "stageId": "grade1",
+      "rankInStage": 55,
+      "front": "周末",
+      "back": "weekend",
+      "phonics": "zhōumò",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "zh_grade1_056",
+      "stageId": "grade1",
+      "rankInStage": 56,
+      "front": "迟到",
+      "back": "late",
+      "phonics": "chídào",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "zh_grade1_057",
+      "stageId": "grade1",
+      "rankInStage": 57,
+      "front": "寒假",
+      "back": "winter break",
+      "phonics": "hánjià",
+      "tags": [
+        "school",
+        "time"
+      ]
+    },
+    {
+      "id": "zh_grade1_058",
+      "stageId": "grade1",
+      "rankInStage": 58,
+      "front": "机场",
+      "back": "airport",
+      "phonics": "jīchǎng",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_grade1_059",
+      "stageId": "grade1",
+      "rankInStage": 59,
+      "front": "博物馆",
+      "back": "museum",
+      "phonics": "bówùguǎn",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_grade1_060",
+      "stageId": "grade1",
+      "rankInStage": 60,
+      "front": "桥",
+      "back": "bridge",
+      "phonics": "qiáo",
+      "tags": [
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_grade1_061",
+      "stageId": "grade1",
+      "rankInStage": 61,
+      "front": "团结",
+      "back": "unite",
+      "phonics": "tuánjié",
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "zh_grade1_062",
+      "stageId": "grade1",
+      "rankInStage": 62,
+      "front": "祖国",
+      "back": "motherland",
+      "phonics": "zǔguó",
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "zh_grade1_063",
+      "stageId": "grade1",
+      "rankInStage": 63,
+      "front": "庆祝",
+      "back": "celebrate",
+      "phonics": "qìngzhù",
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "zh_grade1_064",
+      "stageId": "grade1",
+      "rankInStage": 64,
+      "front": "上课",
+      "back": "attend class",
+      "phonics": "shàngkè",
+      "tags": [
+        "school",
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_grade1_065",
+      "stageId": "grade1",
+      "rankInStage": 65,
+      "front": "下课",
+      "back": "dismiss class",
+      "phonics": "xiàkè",
+      "tags": [
+        "school",
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_grade1_066",
+      "stageId": "grade1",
+      "rankInStage": 66,
+      "front": "读书",
+      "back": "read aloud",
+      "phonics": "dúshū",
+      "tags": [
+        "school",
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_grade1_067",
+      "stageId": "grade1",
+      "rankInStage": 67,
+      "front": "写字",
+      "back": "write characters",
+      "phonics": "xiězì",
+      "tags": [
+        "school",
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_grade1_068",
+      "stageId": "grade1",
+      "rankInStage": 68,
+      "front": "画画",
+      "back": "draw",
+      "phonics": "huàhuà",
+      "tags": [
+        "actions",
+        "school"
+      ]
+    },
+    {
+      "id": "zh_grade1_069",
+      "stageId": "grade1",
+      "rankInStage": 69,
+      "front": "唱歌",
+      "back": "sing",
+      "phonics": "chànggē",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_grade1_070",
+      "stageId": "grade1",
+      "rankInStage": 70,
+      "front": "同学",
+      "back": "classmate",
+      "phonics": "tóngxué",
+      "tags": [
+        "school",
+        "people"
+      ]
+    },
+    {
+      "id": "zh_grade1_071",
+      "stageId": "grade1",
+      "rankInStage": 71,
+      "front": "尺子",
+      "back": "ruler",
+      "phonics": "chǐzi",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_grade1_072",
+      "stageId": "grade1",
+      "rankInStage": 72,
+      "front": "阳光",
+      "back": "sunshine",
+      "phonics": "yángguāng",
+      "tags": [
+        "nature",
+        "weather"
+      ]
+    },
+    {
+      "id": "zh_grade1_073",
+      "stageId": "grade1",
+      "rankInStage": 73,
+      "front": "云朵",
+      "back": "cloud",
+      "phonics": "yúnduǒ",
+      "tags": [
+        "nature",
+        "weather"
+      ]
+    },
+    {
+      "id": "zh_grade1_074",
+      "stageId": "grade1",
+      "rankInStage": 74,
+      "front": "树叶",
+      "back": "tree leaf",
+      "phonics": "shùyè",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "zh_grade1_075",
+      "stageId": "grade1",
+      "rankInStage": 75,
+      "front": "花朵",
+      "back": "flower blossom",
+      "phonics": "huāduǒ",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "zh_grade1_076",
+      "stageId": "grade1",
+      "rankInStage": 76,
+      "front": "小河",
+      "back": "stream",
+      "phonics": "xiǎohé",
+      "tags": [
+        "nature",
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_grade1_077",
+      "stageId": "grade1",
+      "rankInStage": 77,
+      "front": "大海",
+      "back": "ocean",
+      "phonics": "dàhǎi",
+      "tags": [
+        "nature",
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_grade1_078",
+      "stageId": "grade1",
+      "rankInStage": 78,
+      "front": "高山",
+      "back": "tall mountain",
+      "phonics": "gāoshān",
+      "tags": [
+        "nature",
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_grade1_079",
+      "stageId": "grade1",
+      "rankInStage": 79,
+      "front": "田野",
+      "back": "field",
+      "phonics": "tiányě",
+      "tags": [
+        "nature",
+        "locations"
+      ]
+    },
+    {
+      "id": "zh_grade1_080",
+      "stageId": "grade1",
+      "rankInStage": 80,
+      "front": "土地",
+      "back": "land",
+      "phonics": "tǔdì",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "zh_grade1_081",
+      "stageId": "grade1",
+      "rankInStage": 81,
+      "front": "春天",
+      "back": "spring",
+      "phonics": "chūntiān",
+      "tags": [
+        "time",
+        "nature",
+        "weather"
+      ]
+    },
+    {
+      "id": "zh_grade1_082",
+      "stageId": "grade1",
+      "rankInStage": 82,
+      "front": "夏天",
+      "back": "summer",
+      "phonics": "xiàtiān",
+      "tags": [
+        "time",
+        "nature",
+        "weather"
+      ]
+    },
+    {
+      "id": "zh_grade1_083",
+      "stageId": "grade1",
+      "rankInStage": 83,
+      "front": "秋天",
+      "back": "autumn",
+      "phonics": "qiūtiān",
+      "tags": [
+        "time",
+        "nature",
+        "weather"
+      ]
+    },
+    {
+      "id": "zh_grade1_084",
+      "stageId": "grade1",
+      "rankInStage": 84,
+      "front": "冬天",
+      "back": "winter",
+      "phonics": "dōngtiān",
+      "tags": [
+        "time",
+        "nature",
+        "weather"
+      ]
+    },
+    {
+      "id": "zh_grade1_085",
+      "stageId": "grade1",
+      "rankInStage": 85,
+      "front": "美丽",
+      "back": "beautiful",
+      "phonics": "měilì",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_grade1_086",
+      "stageId": "grade1",
+      "rankInStage": 86,
+      "front": "可爱",
+      "back": "cute",
+      "phonics": "kě'ài",
+      "tags": [
+        "descriptors",
+        "emotion"
+      ]
+    },
+    {
+      "id": "zh_grade1_087",
+      "stageId": "grade1",
+      "rankInStage": 87,
+      "front": "快乐",
+      "back": "happy",
+      "phonics": "kuàilè",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "zh_grade1_088",
+      "stageId": "grade1",
+      "rankInStage": 88,
+      "front": "高兴",
+      "back": "glad",
+      "phonics": "gāoxìng",
+      "tags": [
+        "emotion"
+      ]
+    },
+    {
+      "id": "zh_grade1_089",
+      "stageId": "grade1",
+      "rankInStage": 89,
+      "front": "整齐",
+      "back": "tidy",
+      "phonics": "zhěngqí",
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "zh_grade1_090",
+      "stageId": "grade1",
+      "rankInStage": 90,
+      "front": "明亮",
+      "back": "bright",
+      "phonics": "míngliàng",
+      "tags": [
+        "descriptors",
+        "nature"
+      ]
+    },
+    {
+      "id": "zh_grade1_091",
+      "stageId": "grade1",
+      "rankInStage": 91,
+      "front": "办法",
+      "back": "method",
+      "phonics": "bànfǎ",
+      "tags": [
+        "actions",
+        "social"
+      ]
+    },
+    {
+      "id": "zh_grade1_092",
+      "stageId": "grade1",
+      "rankInStage": 92,
+      "front": "国旗",
+      "back": "national flag",
+      "phonics": "guóqí",
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "zh_grade1_093",
+      "stageId": "grade1",
+      "rankInStage": 93,
+      "front": "家乡",
+      "back": "hometown",
+      "phonics": "jiāxiāng",
+      "tags": [
+        "locations",
+        "home"
+      ]
+    },
+    {
+      "id": "zh_grade1_094",
+      "stageId": "grade1",
+      "rankInStage": 94,
+      "front": "身体",
+      "back": "body",
+      "phonics": "shēntǐ",
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "zh_grade1_095",
+      "stageId": "grade1",
+      "rankInStage": 95,
+      "front": "运动",
+      "back": "sports",
+      "phonics": "yùndòng",
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "zh_grade1_096",
+      "stageId": "grade1",
+      "rankInStage": 96,
+      "front": "动物",
+      "back": "animal",
+      "phonics": "dòngwù",
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "zh_grade1_097",
+      "stageId": "grade1",
+      "rankInStage": 97,
+      "front": "植物",
+      "back": "plant",
+      "phonics": "zhíwù",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "zh_grade1_098",
+      "stageId": "grade1",
+      "rankInStage": 98,
+      "front": "游戏",
+      "back": "game",
+      "phonics": "yóuxì",
+      "tags": [
+        "toys_play",
+        "social"
+      ]
+    },
+    {
+      "id": "zh_grade1_099",
+      "stageId": "grade1",
+      "rankInStage": 99,
+      "front": "声音",
+      "back": "sound",
+      "phonics": "shēngyīn",
+      "tags": [
+        "nature",
+        "body"
       ]
     }
   ]
