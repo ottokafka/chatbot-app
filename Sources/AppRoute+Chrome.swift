@@ -15,6 +15,8 @@ enum AppRouteChrome {
             return L10n.flashcards(lang)
         case .chat:
             return L10n.conversations(lang)
+        case .songGen:
+            return L10n.songGenTitle(lang)
         }
     }
 
@@ -28,6 +30,8 @@ enum AppRouteChrome {
             return "rectangle.on.rectangle.angled"
         case .chat:
             return "bubble.left.and.bubble.right"
+        case .songGen:
+            return "music.note.list"
         }
     }
 }

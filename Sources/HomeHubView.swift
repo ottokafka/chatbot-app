@@ -80,6 +80,12 @@ struct HomeHubView: View {
                         systemImage: AppRouteChrome.systemImage(.chat),
                         route: .chat
                     )
+                    featureCard(
+                        title: L10n.songGenTitle(lang),
+                        subtitle: L10n.songGenSubtitle(lang),
+                        systemImage: AppRouteChrome.systemImage(.songGen),
+                        route: .songGen
+                    )
                 }
 
                 restoreLastAppSection

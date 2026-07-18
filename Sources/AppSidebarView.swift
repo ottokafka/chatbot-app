@@ -37,7 +37,7 @@ struct AppSidebarView: View {
                 }
 
                 switch nav.route {
-                case .home, .lifePath:
+                case .home, .lifePath, .songGen:
                     EmptyView()
                 case .flashcards:
                     flashcardsSection

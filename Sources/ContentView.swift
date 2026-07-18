@@ -97,6 +97,12 @@ public struct ContentView: View {
                     logsHeight: $logsHeight,
                     onPreferSidebar: { preferSidebarColumn() }
                 )
+            case .songGen:
+                SongGenView(
+                    nav: nav,
+                    chatVM: viewModel,
+                    onPreferSidebar: { preferSidebarColumn() }
+                )
             }
         }
         .modifier(ContentViewSheets(
@@ -233,6 +239,10 @@ public struct ContentView: View {
 
         case .lifePath:
             viewModel.clearEphemeralAudioCache()
+
+        case .songGen:
+            // Any song-gen specific cleanup would go here
+            break
 
         case .chat, .home:
             break

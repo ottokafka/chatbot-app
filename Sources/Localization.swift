@@ -1835,6 +1835,110 @@ enum L10n {
     static func pronFeedbackTryAgain(_ lang: AppLanguage) -> String {
         lang == .zh ? "再试一次看看。" : "Let's try that word again."
     }
+
+    // MARK: - Song Generation
+
+    static func songGenTitle(_ lang: AppLanguage) -> String {
+        lang == .zh ? "AI 音乐生成" : "Song Generator"
+    }
+
+    static func songGenSubtitle(_ lang: AppLanguage) -> String {
+        lang == .zh ? "用 AI 创建歌词并生成音乐" : "Create lyrics and generate music with AI"
+    }
+
+    static func songTopicLabel(_ lang: AppLanguage) -> String {
+        lang == .zh ? "描述你想要的歌曲" : "Describe the song you want"
+    }
+
+    static func songTopicPlaceholder(_ lang: AppLanguage) -> String {
+        lang == .zh ? "例如：一首关于夏天和朋友的欢快流行歌曲…" : "e.g. A cheerful pop song about summer and friends..."
+    }
+
+    static func generateLyrics(_ lang: AppLanguage) -> String {
+        lang == .zh ? "生成歌词" : "Generate Lyrics"
+    }
+
+    static func generatingLyrics(_ lang: AppLanguage) -> String {
+        lang == .zh ? "正在生成歌词…" : "Generating lyrics..."
+    }
+
+    static func lyricsLabel(_ lang: AppLanguage) -> String {
+        lang == .zh ? "歌词 (LRC 格式)" : "Lyrics (LRC format)"
+    }
+
+    static func lyricsPlaceholder(_ lang: AppLanguage) -> String {
+        lang == .zh ? "歌词将在这里生成，您也可以手动编辑…" : "Lyrics will appear here. You can also edit them manually..."
+    }
+
+    static func generateMusic(_ lang: AppLanguage) -> String {
+        lang == .zh ? "生成音乐" : "Generate Music"
+    }
+
+    static func generatingMusic(_ lang: AppLanguage) -> String {
+        lang == .zh ? "正在生成音乐…（约 20-40 秒）" : "Generating music... (~20-40 seconds)"
+    }
+
+    static func musicSettings(_ lang: AppLanguage) -> String {
+        lang == .zh ? "音乐设置" : "Music Settings"
+    }
+
+    static func songDuration(_ lang: AppLanguage) -> String {
+        lang == .zh ? "时长 (秒)" : "Duration (s)"
+    }
+
+    static func diffusionSteps(_ lang: AppLanguage) -> String {
+        lang == .zh ? "采样步数" : "Steps"
+    }
+
+    static func songGenre(_ lang: AppLanguage) -> String {
+        lang == .zh ? "风格" : "Genre"
+    }
+
+    static func genreAuto(_ lang: AppLanguage) -> String {
+        lang == .zh ? "自动检测" : "Auto-detect"
+    }
+
+    static func musicAPIURL(_ lang: AppLanguage) -> String {
+        lang == .zh ? "音乐生成 API" : "Music API"
+    }
+
+    static func playSong(_ lang: AppLanguage) -> String {
+        lang == .zh ? "播放" : "Play"
+    }
+
+    static func stopPlayback(_ lang: AppLanguage) -> String {
+        lang == .zh ? "停止" : "Stop"
+    }
+
+    static func saveSong(_ lang: AppLanguage) -> String {
+        lang == .zh ? "保存歌曲…" : "Save Song..."
+    }
+
+    static func songReady(_ lang: AppLanguage) -> String {
+        lang == .zh ? "歌曲生成完成！" : "Song ready!"
+    }
+
+    static func noLyricsError(_ lang: AppLanguage) -> String {
+        lang == .zh ? "请先生成或输入歌词" : "Please generate or enter lyrics first"
+    }
+
+    static func noTopicError(_ lang: AppLanguage) -> String {
+        lang == .zh ? "请输入歌曲描述" : "Please enter a song description"
+    }
+
+    static func musicGenerationFailed(_ lang: AppLanguage, detail: String) -> String {
+        if lang == .zh {
+            return "音乐生成失败：\(detail)"
+        }
+        return "Music generation failed: \(detail)"
+    }
+
+    static func lyricsGenerationFailed(_ lang: AppLanguage, detail: String) -> String {
+        if lang == .zh {
+            return "歌词生成失败：\(detail)"
+        }
+        return "Lyrics generation failed: \(detail)"
+    }
 }
 
 // MARK: - Language Toggle

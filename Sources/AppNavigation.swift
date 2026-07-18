@@ -7,6 +7,7 @@ enum AppRoute: String, CaseIterable, Identifiable, Codable {
     case lifePath
     case flashcards
     case chat
+    case songGen
 
     var id: String { rawValue }
 }

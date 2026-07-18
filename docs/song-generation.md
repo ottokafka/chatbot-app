@@ -237,6 +237,23 @@ Times measured on RTX 3060 (12 GB VRAM).
 
 ---
 
+## Architecture
+
+```
+┌─────────────────────┐     ┌──────────────────────┐     ┌──────────────────┐
+│  Your platform       │     │  DiffRhythm API       │     │  RTX 3060 GPU    │
+│  (LLM / UI / manual) │────▶│  song.npro.ai:8765    │────▶│  music.wav       │
+│                      │     │                       │     │                  │
+│  Generate LRC lyrics │     │  • /health            │     │  ~5-7GB VRAM     │
+│  [mm:ss.xx]Lyric...  │     │  • /music/generate    │     │  ~20s per song   │
+│  [mm:ss.xx]Line...   │     │  • /genres            │     │                  │
+└─────────────────────┘     └──────────────────────┘     └──────────────────┘
+```
+
+**Lyrics are handled externally** — you send pre-formatted LRC lyrics. The API focuses on music generation (genre, style, vocals). Use any LLM to write lyrics, then send them here.
+
+---
+
 ## REST API
 
 A FastAPI server keeps the model loaded in GPU memory and exposes a simple REST API.
@@ -305,9 +322,13 @@ curl -X POST http://localhost:8765/music/generate \
 **Request body:**
 | Field | Type | Default | Description |
 |---|---|---|---|
-| `prompt` | string | *(required)* | Text for lyrics + style detection (1-500 chars) |
+| `prompt` | string | "" | Fallback text for auto-generated lyrics. Use `lyrics` instead. |
+| `lyrics` | string | *(recommended)* | Pre-formatted LRC lyrics. Send this for best vocals. |
 | `duration` | float | 10.0 | Output duration in seconds (5-30) |
 | `steps` | int | 32 | Diffusion steps (10-100, fewer = faster) |
+| `genre` | string | auto-detect | Explicit music genre. See `/genres` for list. |
+
+> **You must provide either `lyrics` or `prompt`.** Sending `lyrics` gives you full control over the vocal content. The `prompt` field is a simple fallback.
 
 **Response:** WAV audio file (44100 Hz, 16-bit stereo).
 
@@ -317,14 +338,78 @@ curl -X POST http://localhost:8765/music/generate \
 - `X-Duration-Seconds`: output duration
 - `X-Style-Prompt`: auto-detected style description
 
+### Lyrics Format (LRC)
+
+Send pre-formatted lyrics with timestamps for full control over vocals:
+
+```json
+{
+  "lyrics": "[00:02.00]I woke up this morning with fire in my soul\n[00:07.00]Got my guitar ready, ready to roll\n[00:12.00]The stage is calling, I hear the crowd\n[00:16.00]Gonna turn it up, gonna make it loud",
+  "genre": "rock",
+  "duration": 12
+}
+```
+
+**LRC format rules:**
+- Each line: `[mm:ss.xx]Lyric text here`
+- Timestamps are required — `xx` (hundredths) is optional
+- Lines are automatically spread across the song duration
+- Invalid format returns HTTP 400
+
+**For best results:** Generate lyrics with an LLM. Ask it to produce LRC-formatted lyrics with timestamps, 6-12 lines, in the style matching your genre.
+
 ### Style Detection
-The API auto-detects musical style from keyword in the prompt:
+
+The API auto-detects musical style from keywords in the prompt:
 - "happy", "birthday", "celebrate" → upbeat piano
 - "sad", "melancholy", "rain" → emotional ballad
 - "epic", "hero", "battle" → orchestral cinematic
 - "chill", "relax", "calm" → ambient
 - "dance", "beat", "energy" → electronic
 - "love", "romantic", "sweet" → acoustic romantic
+
+### Explicit Genre Control
+
+Add `"genre"` to the request to override auto-detection. 19 genres available:
+
+```bash
+# List all genres
+curl http://localhost:8765/genres
+curl https://song.npro.ai/genres
+
+
+# Generate with explicit genre
+http://localhost:8765/music/generate
+
+curl -X POST https://song.npro.ai/music/generate \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "milk", "genre": "rock"}' \
+  -o milk_rock.wav
+```
+
+| Genre | Aliases | Style |
+|---|---|---|
+| `rock` | rock n roll | Electric guitar riffs, driving drums, powerful vocals |
+| `rnb` | r&b | Soulful vocals, groovy bass, warm keys, romantic |
+| `jazz` | — | Walking bass, brushed drums, saxophone |
+| `blues` | — | Soulful guitar bends, raw emotion |
+| `pop` | — | Catchy, bright synths, polished |
+| `hip hop` | rap | 808 drums, sampled chops, rhythmic |
+| `country` | — | Acoustic guitar, pedal steel, storytelling |
+| `folk` | — | Fingerpicked guitar, warm harmonies |
+| `electronic` | edm | Four-on-the-floor, synth bass, energetic |
+| `metal` | — | Distorted guitar, thunderous drums |
+| `reggae` | — | Offbeat rhythm, deep bass, laid back |
+| `funk` | — | Slap bass, tight horns, syncopated |
+| `latin` | — | Salsa percussion, nylon guitar |
+| `soul` | — | Warm organ, horn section, groovy |
+| `disco` | — | Four-on-the-floor, funky bass, strings |
+| `lofi` | — | Vinyl crackle, mellow piano, relaxed |
+| `classical` | — | Orchestral strings, grand piano |
+| `ambient` | — | Floating pads, ethereal, peaceful |
+| `cinematic` | — | Sweeping strings, epic brass |
+
+When `genre` is omitted, the API auto-detects style from the prompt text.
 
 ### Python client example
 ```python
