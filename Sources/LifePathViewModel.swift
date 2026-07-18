@@ -2,6 +2,7 @@ import Foundation
 import SwiftUI
 import Combine
 import AVFoundation
+import FSRS
 
 @MainActor
 final class LifePathViewModel: ObservableObject {
@@ -56,6 +57,15 @@ final class LifePathViewModel: ObservableObject {
     static let defaultPronThreshold: Double = 0.51
     static let availableThresholds: [Double] = [0.51, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80]
 
+    /// Toggle pronunciation assessment on/off (persisted).
+    @Published var isPronunciationEnabled: Bool {
+        didSet {
+            guard isPronunciationEnabled != oldValue else { return }
+            UserDefaults.standard.set(isPronunciationEnabled, forKey: Self.pronEnabledKey)
+        }
+    }
+    private static let pronEnabledKey = "pronunciation.enabled"
+
     /// Convenience: last result, or in-flight feedback state.
     var latestPronunciationResult: PronunciationAssessmentResponse? {
         if let last = lastPronunciationResult { return last }
@@ -100,6 +110,7 @@ final class LifePathViewModel: ObservableObject {
         self.flashcardVM = flashcardVM
         let saved = UserDefaults.standard.double(forKey: Self.pronThresholdKey)
         self.pronunciationThreshold = saved > 0 ? saved : Self.defaultPronThreshold
+        self.isPronunciationEnabled = UserDefaults.standard.object(forKey: Self.pronEnabledKey) as? Bool ?? true
         self.pronunciationAPIManager = APIManager()
         self.pronunciationAPIManager?.onLog = { [weak self] msg in self?.onLog?(msg) }
         configurePronunciationRecorder()
@@ -140,9 +151,13 @@ final class LifePathViewModel: ObservableObject {
         return entries.filter { $0.stageId == stageId }.sorted { $0.rankInStage < $1.rankInStage }
     }
 
+    /// Words in the current stage that meet FSRS graduation criteria (stable progress).
     var masteredInCurrentStage: Int {
         guard let stageId = profile?.currentStageId else { return 0 }
-        return listRowsByEntryId.values.filter { $0.stageId == stageId && $0.status == .mastered }.count
+        return LifePathScheduler.stableCount(
+            rows: Array(listRowsByEntryId.values),
+            stageId: stageId
+        )
     }
 
     var totalInCurrentStage: Int {
@@ -154,9 +169,56 @@ final class LifePathViewModel: ObservableObject {
         return Double(masteredInCurrentStage) / Double(totalInCurrentStage)
     }
 
+    /// Due reviews across all unlocked stages (includes carry-over).
+    var dueCount: Int {
+        guard let stageId = profile?.currentStageId else { return 0 }
+        return LifePathScheduler.dueCount(
+            rows: Array(listRowsByEntryId.values),
+            stages: stages,
+            currentStageId: stageId
+        )
+    }
+
+    /// New (never reviewed) words among unlocked stages.
+    var newCount: Int {
+        guard let stageId = profile?.currentStageId else { return 0 }
+        return LifePathScheduler.newCount(
+            rows: Array(listRowsByEntryId.values),
+            stages: stages,
+            currentStageId: stageId
+        )
+    }
+
+    var dueCountByStage: [String: Int] {
+        guard let stageId = profile?.currentStageId else { return [:] }
+        return LifePathScheduler.dueCountByStage(
+            rows: Array(listRowsByEntryId.values),
+            stages: stages,
+            currentStageId: stageId
+        )
+    }
+
+    var nextDueDate: Date? {
+        guard let stageId = profile?.currentStageId else { return nil }
+        return LifePathScheduler.nextDueDate(
+            rows: Array(listRowsByEntryId.values),
+            stages: stages,
+            currentStageId: stageId
+        )
+    }
+
+    var canPlay: Bool {
+        dueCount > 0 || newCount > 0
+    }
+
     var currentCard: LifePathEntry? {
         guard isPlaying, sessionIndex < sessionQueue.count else { return nil }
         return sessionQueue[sessionIndex]
+    }
+
+    /// Cards completed in this play run (informational).
+    var sessionDoneCount: Int {
+        max(0, sessionIndex)
     }
 
     func isStageUnlocked(_ stageId: String) -> Bool {
@@ -242,27 +304,25 @@ final class LifePathViewModel: ObservableObject {
 
     // MARK: - Play
 
-    /// Starts a full-stage session: every unmastered word in the current life stage.
-    /// Words that are not yet mastered are re-queued so the player can finish the stage in one go.
+    /// Starts an unlimited FSRS session: all due (carry-over included) + all new unlocked words.
+    /// Player may exit anytime; no session size cap.
     func startRound() {
         guard let profile, language != nil else { return }
         let stageId = profile.currentStageId
-        let pool = entries.filter { $0.stageId == stageId }
-        let playable = pool.filter { entry in
-            guard let row = listRowsByEntryId[entry.id] else { return false }
-            return row.status == .available || row.status == .learning
-        }
-        let queue = playable.sorted { a, b in
-            let ra = listRowsByEntryId[a.id]
-            let rb = listRowsByEntryId[b.id]
-            let da = ra?.dueAt ?? .distantPast
-            let db = rb?.dueAt ?? .distantPast
-            if da != db { return da < db }
-            if a.rankInStage != b.rankInStage { return a.rankInStage < b.rankInStage }
-            return (ra?.wrongCount ?? 0) > (rb?.wrongCount ?? 0)
-        }
+        let queue = LifePathScheduler.buildSession(
+            rows: Array(listRowsByEntryId.values),
+            entriesById: entriesById,
+            stages: stages,
+            currentStageId: stageId
+        )
         guard !queue.isEmpty else {
-            actionError = "No words left in this stage."
+            if let next = nextDueDate {
+                let formatter = RelativeDateTimeFormatter()
+                formatter.unitsStyle = .full
+                actionError = "All caught up. Next review \(formatter.localizedString(for: next, relativeTo: Date()))."
+            } else {
+                actionError = "All caught up for now."
+            }
             return
         }
         sessionQueue = queue
@@ -272,10 +332,10 @@ final class LifePathViewModel: ObservableObject {
         isAnswerRevealed = false
         sessionFinished = false
         isPlaying = true
-        onLog?("Life Path stage session started (\(queue.count) unmastered cards in \(stageId))")
+        onLog?("Life Path FSRS session started (\(queue.count) cards, stage=\(stageId), due=\(dueCount), new=\(newCount))")
     }
 
-    /// Cards still ahead in the current full-stage session (including current).
+    /// Cards still ahead in the current session (including current).
     var sessionRemainingCount: Int {
         max(0, sessionQueue.count - sessionIndex)
     }
@@ -284,12 +344,18 @@ final class LifePathViewModel: ObservableObject {
         isAnswerRevealed = true
     }
 
+    /// Pronunciation pass → Good.
     func gradeCorrect() {
-        grade(correct: true)
+        grade(rating: .good)
     }
 
+    /// Pronunciation fail / Again.
     func gradeWrong() {
-        grade(correct: false)
+        grade(rating: .again)
+    }
+
+    func grade(rating: Rating) {
+        applyGrade(rating: rating)
     }
 
     func endSession() {
@@ -749,48 +815,53 @@ final class LifePathViewModel: ObservableObject {
 
     // MARK: - Private game logic
 
-    private func grade(correct: Bool) {
+    private func applyGrade(rating: Rating) {
         guard language != nil,
               let entry = currentCard,
               var row = listRowsByEntryId[entry.id],
               var profile else { return }
 
         let now = Date()
-        let wasMastered = row.status == .mastered
+        let wasStable = LifePathScheduler.meetsGraduationCriteria(card: row.fsrsCard)
 
-        if correct {
-            row.correctCount += 1
-            row.correctStreak += 1
-            if row.status != .mastered {
-                row.status = .learning
-            }
-            sessionCorrect += 1
-
-            if !wasMastered && row.correctStreak >= LifePathGame.masteryStreak {
-                row.status = .mastered
-                row.masteredAt = now
-                row.correctStreak = LifePathGame.masteryStreak
-                profile.totalMastered += 1
-            }
-            row.dueAt = now.addingTimeInterval(wasMastered || row.status == .mastered ? 86400 : 3600)
-        } else {
-            row.wrongCount += 1
-            row.correctStreak = 0
-            if row.status != .mastered {
-                row.status = .learning
-            } else {
-                // Drop mastered back to learning on fail (gentle)
-                row.status = .learning
-                row.masteredAt = nil
-                if profile.totalMastered > 0 {
-                    profile.totalMastered -= 1
-                }
-            }
-            sessionWrong += 1
-            row.dueAt = now.addingTimeInterval(300)
+        do {
+            let item = try FSRSManager.shared.review(card: row.fsrsCard, grade: rating, now: now)
+            row.fsrsCard = item.card
+        } catch {
+            onLog?("Life Path FSRS review failed: \(error.localizedDescription)")
+            actionError = "Could not schedule review."
+            return
         }
 
-        row.lastReviewedAt = now
+        switch rating {
+        case .again:
+            row.wrongCount += 1
+            row.correctStreak = 0
+            sessionWrong += 1
+        case .hard, .good, .easy:
+            row.correctCount += 1
+            row.correctStreak += 1
+            sessionCorrect += 1
+        case .manual:
+            break
+        }
+
+        let isStable = LifePathScheduler.meetsGraduationCriteria(card: row.fsrsCard)
+        row.status = LifePathScheduler.deriveStatus(isLocked: false, card: row.fsrsCard)
+        if isStable {
+            if row.masteredAt == nil {
+                row.masteredAt = now
+            }
+            if !wasStable {
+                profile.totalMastered += 1
+            }
+        } else if wasStable && !isStable {
+            row.masteredAt = nil
+            if profile.totalMastered > 0 {
+                profile.totalMastered -= 1
+            }
+        }
+
         row.updatedAt = now
         dbManager.upsertLifePathListRow(row)
         listRowsByEntryId[entry.id] = row
@@ -800,9 +871,8 @@ final class LifePathViewModel: ObservableObject {
         dbManager.upsertLifePathProfile(profile)
         self.profile = profile
 
-        // Re-queue if not mastered so the player can clear the whole stage in one session.
-        let stillNeedsPractice = listRowsByEntryId[entry.id]?.status != .mastered
-        if stillNeedsPractice {
+        // Again with immediate due → append to end of remaining queue (same-run drill).
+        if rating == .again, row.fsrsCard.due <= now {
             let alreadyAhead = sessionQueue[(sessionIndex + 1)..<sessionQueue.count]
                 .contains(where: { $0.id == entry.id })
             if !alreadyAhead {
@@ -810,10 +880,8 @@ final class LifePathViewModel: ObservableObject {
             }
         }
 
-        // Stage clear check before advancing card
-        checkStageClear()
+        checkStageGraduation()
 
-        // Level-up ends the session; do not advance further cards.
         if showLevelUp {
             isAnswerRevealed = false
             return
@@ -825,18 +893,8 @@ final class LifePathViewModel: ObservableObject {
     private func advanceOrFinish() {
         isAnswerRevealed = false
         clearPronunciationResultForNewCard()
-        // Drop mastered cards that were already past the cursor? keep simple: only advance.
         if sessionIndex + 1 < sessionQueue.count {
             sessionIndex += 1
-            // Skip any cards that became mastered while waiting (shouldn't normally happen)
-            while sessionIndex < sessionQueue.count {
-                let id = sessionQueue[sessionIndex].id
-                if listRowsByEntryId[id]?.status == .mastered {
-                    sessionIndex += 1
-                    continue
-                }
-                break
-            }
             if sessionIndex >= sessionQueue.count {
                 finishRound()
             }
@@ -848,10 +906,10 @@ final class LifePathViewModel: ObservableObject {
     private func finishRound() {
         sessionFinished = true
         isPlaying = false
-        onLog?("Life Path stage session finished correct=\(sessionCorrect) wrong=\(sessionWrong)")
+        onLog?("Life Path session finished good=\(sessionCorrect) again=\(sessionWrong)")
     }
 
-    private func checkStageClear() {
+    private func checkStageGraduation() {
         guard let language,
               var profile,
               !profile.stagesCleared.contains(profile.currentStageId) else { return }
@@ -859,8 +917,9 @@ final class LifePathViewModel: ObservableObject {
         let stageId = profile.currentStageId
         let stageEntries = entries.filter { $0.stageId == stageId }
         guard !stageEntries.isEmpty else { return }
-        let allMastered = stageEntries.allSatisfy { listRowsByEntryId[$0.id]?.status == .mastered }
-        guard allMastered else { return }
+        let stageRows = stageEntries.compactMap { listRowsByEntryId[$0.id] }
+        guard stageRows.count == stageEntries.count,
+              LifePathScheduler.stageMeetsGraduation(rowsForStage: stageRows) else { return }
 
         let stageMeta = stages.first { $0.id == stageId }
         let next = LifePathGame.nextStage(after: stageId, available: stages)
@@ -871,8 +930,13 @@ final class LifePathViewModel: ObservableObject {
         let toStageId = next?.id ?? stageId
         if let next {
             dbManager.unlockLifePathStage(language: language.rawValue, stageId: next.id)
+            // Keep highest as farthest unlocked
+            let nextOrder = LifePathGame.stageOrderIndex(next.id, stages: stages)
+            let highestOrder = LifePathGame.stageOrderIndex(profile.highestStageId, stages: stages)
             profile.currentStageId = next.id
-            profile.highestStageId = next.id
+            if nextOrder >= highestOrder {
+                profile.highestStageId = next.id
+            }
         }
 
         let notify = LifePathLevelUpNotify(
@@ -885,11 +949,11 @@ final class LifePathViewModel: ObservableObject {
             ],
             body: [
                 "en": next != nil
-                    ? "\(stageMeta?.title(for: .en) ?? stageId) vocabulary complete. Welcome to \(next?.title(for: .en) ?? toStageId)!"
-                    : "\(stageMeta?.title(for: .en) ?? stageId) vocabulary complete. You've finished the current path!",
+                    ? "You've grown past \(stageMeta?.title(for: .en) ?? stageId) words — \(next?.title(for: .en) ?? toStageId) unlocked. Earlier words will still visit for review."
+                    : "\(stageMeta?.title(for: .en) ?? stageId) vocabulary graduated. You've finished the current path!",
                 "zh": next != nil
-                    ? "\(stageMeta?.title(for: .zh) ?? stageId) 词汇已掌握，欢迎进入\(next?.title(for: .zh) ?? toStageId)！"
-                    : "\(stageMeta?.title(for: .zh) ?? stageId) 词汇已掌握，当前成长之路已全部通关！"
+                    ? "你已稳固 \(stageMeta?.title(for: .zh) ?? stageId) 词汇，欢迎进入\(next?.title(for: .zh) ?? toStageId)！之前的词仍会按复习出现。"
+                    : "\(stageMeta?.title(for: .zh) ?? stageId) 词汇已毕业，当前成长之路已全部通关！"
             ]
         )
         if let data = try? JSONEncoder().encode(notify),
@@ -902,10 +966,9 @@ final class LifePathViewModel: ObservableObject {
         reloadFromDB(language: language)
         pendingLevelUp = notify
         showLevelUp = true
-        // Pause session if mid-round
         isPlaying = false
         sessionFinished = true
-        onLog?("Life Path stage cleared: \(stageId) → \(toStageId)")
+        onLog?("Life Path stage graduated: \(stageId) → \(toStageId)")
     }
 
     private func seedIfNeeded(language: LifePathLanguage, file: LifePathListFile) {
@@ -914,19 +977,19 @@ final class LifePathViewModel: ObservableObject {
             let now = Date()
             let firstStage = file.stages.sorted { $0.order < $1.order }.first?.id ?? "baby"
             for entry in file.entries {
-                let status: LifePathWordStatus = entry.stageId == firstStage ? .available : .locked
+                let unlocked = entry.stageId == firstStage
+                let card = FSRSManager.shared.createEmptyCard(now: now)
                 let row = LifePathListRow(
                     rowId: UUID().uuidString,
                     language: language.rawValue,
                     entryId: entry.id,
                     stageId: entry.stageId,
                     front: entry.front,
-                    status: status,
+                    status: unlocked ? .new : .locked,
                     correctCount: 0,
                     wrongCount: 0,
                     correctStreak: 0,
-                    dueAt: nil,
-                    lastReviewedAt: nil,
+                    fsrsCard: card,
                     masteredAt: nil,
                     flashcardId: nil,
                     createdAt: now,
@@ -987,18 +1050,18 @@ final class LifePathViewModel: ObservableObject {
                 let unlocked = entry.stageId == currentStage
                     || cleared.contains(entry.stageId)
                     || entry.stageId == highest
+                let card = FSRSManager.shared.createEmptyCard(now: now)
                 let row = LifePathListRow(
                     rowId: UUID().uuidString,
                     language: language.rawValue,
                     entryId: entry.id,
                     stageId: entry.stageId,
                     front: entry.front,
-                    status: unlocked ? .available : .locked,
+                    status: unlocked ? .new : .locked,
                     correctCount: 0,
                     wrongCount: 0,
                     correctStreak: 0,
-                    dueAt: nil,
-                    lastReviewedAt: nil,
+                    fsrsCard: card,
                     masteredAt: nil,
                     flashcardId: nil,
                     createdAt: now,
@@ -1012,7 +1075,14 @@ final class LifePathViewModel: ObservableObject {
     private func reloadFromDB(language: LifePathLanguage) {
         profile = dbManager.fetchLifePathProfile(language: language.rawValue)
         let rows = dbManager.fetchLifePathList(language: language.rawValue)
-        listRowsByEntryId = Dictionary(uniqueKeysWithValues: rows.map { ($0.entryId, $0) })
+        // Re-derive cached status from FSRS so UI stays consistent.
+        var mapped: [String: LifePathListRow] = [:]
+        for var row in rows {
+            let locked = row.status == .locked
+            row.status = LifePathScheduler.deriveStatus(isLocked: locked, card: row.fsrsCard)
+            mapped[row.entryId] = row
+        }
+        listRowsByEntryId = mapped
     }
 
     private func restorePendingNotify() {

@@ -4,8 +4,8 @@
 
 | Field | Value |
 |-------|--------|
-| **Status** | Implemented (baby + toddler + preschool; play loop + stage level-up; **no XP/coins**) |
-| **Date** | 2026-07-12 |
+| **Status** | Implemented (baby + toddler + preschool; **FSRS game deck** + stage level-up; **no XP/coins**). Scheduling superseded by `docs/design-life-path-fsrs.md`. |
+| **Date** | 2026-07-12 (FSRS redesign 2026-07-16) |
 | **Supersedes** | Earlier draft that *replaced* Essential Vocab with developmental lists |
 | **App** | DeveloperChatbot (`chatbot-app/`) |
 | **Related** | `docs/design-essential-vocab-list.md` (unchanged), `Sources/EssentialVocab/*` (kept) |

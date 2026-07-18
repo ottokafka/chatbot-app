@@ -1,4 +1,5 @@
 import Foundation
+import FSRS
 
 // MARK: - Language
 
@@ -85,11 +86,23 @@ struct LifePathListFile: Codable, Equatable {
 
 // MARK: - Progress
 
+/// Cached / display status for a Life Path word. Scheduling authority is `fsrsCard`.
 enum LifePathWordStatus: String, Codable, Equatable {
     case locked
-    case available
+    case new
     case learning
-    case mastered
+    case review
+    case stable
+
+    /// Accept legacy DB values from pre-FSRS Life Path.
+    static func parse(_ raw: String) -> LifePathWordStatus? {
+        if let value = LifePathWordStatus(rawValue: raw) { return value }
+        switch raw {
+        case "available": return .new
+        case "mastered": return .stable
+        default: return nil
+        }
+    }
 }
 
 struct LifePathListRow: Equatable, Identifiable {
@@ -100,16 +113,54 @@ struct LifePathListRow: Equatable, Identifiable {
     let entryId: String
     let stageId: String
     let front: String
+    /// Derived/cached from FSRS + lock state (not the scheduler itself).
     var status: LifePathWordStatus
+    /// Analytics counters (not the scheduler).
     var correctCount: Int
     var wrongCount: Int
     var correctStreak: Int
-    var dueAt: Date?
-    var lastReviewedAt: Date?
+    /// Full FSRS state for this game-deck card.
+    var fsrsCard: Card
+    /// When the word first met graduation/stable criteria (analytics).
     var masteredAt: Date?
     var flashcardId: String?
     let createdAt: Date
     var updatedAt: Date
+
+    var dueAt: Date { fsrsCard.due }
+    var lastReviewedAt: Date? { fsrsCard.lastReview }
+
+    init(
+        rowId: String,
+        language: String,
+        entryId: String,
+        stageId: String,
+        front: String,
+        status: LifePathWordStatus,
+        correctCount: Int = 0,
+        wrongCount: Int = 0,
+        correctStreak: Int = 0,
+        fsrsCard: Card? = nil,
+        masteredAt: Date? = nil,
+        flashcardId: String? = nil,
+        createdAt: Date = Date(),
+        updatedAt: Date = Date()
+    ) {
+        self.rowId = rowId
+        self.language = language
+        self.entryId = entryId
+        self.stageId = stageId
+        self.front = front
+        self.status = status
+        self.correctCount = correctCount
+        self.wrongCount = wrongCount
+        self.correctStreak = correctStreak
+        self.fsrsCard = fsrsCard ?? FSRSManager.shared.createEmptyCard(now: createdAt)
+        self.masteredAt = masteredAt
+        self.flashcardId = flashcardId
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+    }
 }
 
 struct LifePathProfile: Equatable {
@@ -123,6 +174,7 @@ struct LifePathProfile: Equatable {
     var streakDays: Int
     var lastPlayDay: String?
     var totalReviews: Int
+    /// Count of words meeting stable / graduation threshold.
     var totalMastered: Int
     var stagesCleared: [String]
     var pendingNotifyJSON: String?
@@ -150,6 +202,8 @@ struct LifePathLevelUpNotify: Codable, Equatable {
 
 enum LifePathPreferences {
     static let languageKey = "lifePath.language"
+    static let fsrsSchemaKey = "lifePath.fsrsSchemaVersion"
+    static let fsrsSchemaVersion = 1
 
     static var language: LifePathLanguage? {
         get {
@@ -169,8 +223,12 @@ enum LifePathPreferences {
 // MARK: - Game constants
 
 enum LifePathGame {
-    /// Correct answers in a row required to master a word (1 = first "Got it" masters).
-    static let masteryStreak = 1
+    /// Minimum successful reviews (reps) before a word can count toward stage graduation.
+    static let graduationMinReps = 2
+    /// Fraction of introduced cards that must be stable for stage graduation (carry-forward for the rest).
+    static let graduationStableRatio: Double = 0.80
+    /// Prefer ordering new cards from the current stage before older-stage backlog.
+    static let preferCurrentStageNew = true
 
     static let stageOrder = ["baby", "toddler", "preschool", "grade1", "grade2", "grade3", "grade4", "grade5", "grade6"]
 
@@ -181,5 +239,11 @@ enum LifePathGame {
         }
         let next = sorted.index(after: idx)
         return next < sorted.endIndex ? sorted[next] : nil
+    }
+
+    static func stageOrderIndex(_ stageId: String, stages: [LifePathStageMeta]) -> Int {
+        stages.first(where: { $0.id == stageId })?.order
+            ?? stageOrder.firstIndex(of: stageId)
+            ?? Int.max
     }
 }

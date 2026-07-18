@@ -1322,8 +1322,8 @@ enum L10n {
 
     static func lifePathStageSessionProgress(_ lang: AppLanguage, mastered: Int, total: Int) -> String {
         lang == .zh
-            ? "本阶段 \(mastered)/\(total) 已掌握"
-            : "Stage \(mastered)/\(total) mastered"
+            ? "本阶段 \(mastered)/\(total) 已稳固"
+            : "Stage \(mastered)/\(total) stable"
     }
 
     static func lifePathSessionRemaining(_ lang: AppLanguage, remaining: Int) -> String {
@@ -1332,20 +1332,45 @@ enum L10n {
             : "\(remaining) card\(remaining == 1 ? "" : "s") left in queue"
     }
 
+    static func lifePathSessionQueueProgress(_ lang: AppLanguage, done: Int, remaining: Int) -> String {
+        lang == .zh
+            ? "已完成 \(done) · 剩余 \(remaining)"
+            : "\(done) done · \(remaining) left"
+    }
+
+    static func lifePathDueSummary(_ lang: AppLanguage, due: Int, newWords: Int) -> String {
+        lang == .zh
+            ? "待复习 \(due) · 新词 \(newWords)"
+            : "\(due) due · \(newWords) new"
+    }
+
+    static func lifePathDueBreakdown(_ lang: AppLanguage, parts: String) -> String {
+        lang == .zh ? "复习分布：\(parts)" : "Due by stage: \(parts)"
+    }
+
+    static func lifePathNextDue(_ lang: AppLanguage, date: Date) -> String {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .full
+        let relative = formatter.localizedString(for: date, relativeTo: Date())
+        return lang == .zh
+            ? "下次复习 \(relative)"
+            : "Next review \(relative)"
+    }
+
     static func lifePathStageProgress(_ lang: AppLanguage) -> String {
         lang == .zh ? "本阶段进度" : "Stage progress"
     }
 
     static func lifePathStageProgressSummary(_ lang: AppLanguage, mastered: Int, total: Int) -> String {
         lang == .zh
-            ? "词汇 \(mastered)/\(total) 已掌握"
-            : "\(mastered)/\(total) words mastered"
+            ? "词汇 \(mastered)/\(total) 已稳固"
+            : "\(mastered)/\(total) words stable"
     }
 
     static func lifePathMasteryHint(_ lang: AppLanguage) -> String {
         lang == .zh
-            ? "答对 1 次即可掌握。一次可刷完整阶段；全部掌握后长大升级！"
-            : "One correct answer masters a word. Play the whole stage in one session; clear it to grow up!"
+            ? "使用 FSRS 间隔复习。稳固本阶段全部词汇后长大升级；之前阶段的词仍会复习。"
+            : "Uses FSRS spaced review. Stabilize every word in this stage to grow up — earlier stages still reappear for review."
     }
 
     static func lifePathWords(_ lang: AppLanguage) -> String {
@@ -1366,6 +1391,14 @@ enum L10n {
 
     static func lifePathStatusMastered(_ lang: AppLanguage) -> String {
         lang == .zh ? "已掌握" : "Mastered"
+    }
+
+    static func lifePathStatusReview(_ lang: AppLanguage) -> String {
+        lang == .zh ? "复习中" : "Review"
+    }
+
+    static func lifePathStatusStable(_ lang: AppLanguage) -> String {
+        lang == .zh ? "已稳固" : "Stable"
     }
 
     static func lifePathShowAnswer(_ lang: AppLanguage) -> String {

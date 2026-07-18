@@ -36,6 +36,7 @@ def main():
         "EssentialVocabViewModel.swift",
         "LifePathCatalog.swift",
         "LifePathModels.swift",
+        "LifePathScheduler.swift",
         "LifePathViewModel.swift",
         "LifePathViews.swift",
         "PronunciationFeedbackView.swift",

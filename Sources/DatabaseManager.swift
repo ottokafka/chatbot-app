@@ -272,6 +272,7 @@ class DatabaseManager {
         execute(sql: Self.createLifePathProfileTableSQL)
         execute(sql: Self.createLifePathRewardsTableSQL)
         execute(sql: Self.createLifePathRewardsIndexSQL)
+        migrateLifePathFSRSSchema()
     }
 
     // MARK: - Life Path schema SQL
@@ -283,7 +284,7 @@ class DatabaseManager {
         entry_id TEXT NOT NULL,
         stage_id TEXT NOT NULL,
         front TEXT NOT NULL,
-        status TEXT NOT NULL CHECK (status IN ('locked', 'available', 'learning', 'mastered')),
+        status TEXT NOT NULL CHECK (status IN ('locked', 'new', 'learning', 'review', 'stable')),
         correct_count INTEGER NOT NULL DEFAULT 0,
         wrong_count INTEGER NOT NULL DEFAULT 0,
         correct_streak INTEGER NOT NULL DEFAULT 0,
@@ -293,10 +294,17 @@ class DatabaseManager {
         flashcard_id TEXT,
         created_at REAL NOT NULL,
         updated_at REAL NOT NULL,
+        stability REAL NOT NULL DEFAULT 0,
+        difficulty REAL NOT NULL DEFAULT 0,
+        elapsed_days REAL NOT NULL DEFAULT 0,
+        scheduled_days REAL NOT NULL DEFAULT 0,
+        learning_steps INTEGER NOT NULL DEFAULT 0,
+        reps INTEGER NOT NULL DEFAULT 0,
+        lapses INTEGER NOT NULL DEFAULT 0,
+        state INTEGER NOT NULL DEFAULT 0,
         UNIQUE (language, entry_id)
     );
     """
-
     private static let createLifePathListIndexSQL = """
     CREATE INDEX IF NOT EXISTS idx_btc_list_lang_stage_status
       ON baby_to_child_list(language, stage_id, status);
@@ -346,6 +354,114 @@ class DatabaseManager {
     CREATE INDEX IF NOT EXISTS idx_btc_rewards_lang_created
       ON baby_to_child_rewards(language, created_at);
     """
+
+    /// Rebuild / extend `baby_to_child_list` for FSRS game-deck scheduling.
+    /// Idempotent: no-ops when `stability` column already exists on a new-schema table.
+    private func migrateLifePathFSRSSchema() {
+        // Table may not exist yet on brand-new installs before CREATE runs; callers create first.
+        guard tableExists("baby_to_child_list") else { return }
+
+        if columnExists(table: "baby_to_child_list", column: "stability") {
+            // Still normalize legacy status strings if any remain.
+            execute(sql: "UPDATE baby_to_child_list SET status = 'new' WHERE status = 'available';")
+            execute(sql: "UPDATE baby_to_child_list SET status = 'stable' WHERE status = 'mastered';")
+            return
+        }
+
+        // Pre-FSRS table: recreate with FSRS columns + expanded status CHECK.
+        execute(sql: """
+        CREATE TABLE baby_to_child_list_fsrs (
+            id TEXT PRIMARY KEY,
+            language TEXT NOT NULL,
+            entry_id TEXT NOT NULL,
+            stage_id TEXT NOT NULL,
+            front TEXT NOT NULL,
+            status TEXT NOT NULL CHECK (status IN ('locked', 'new', 'learning', 'review', 'stable')),
+            correct_count INTEGER NOT NULL DEFAULT 0,
+            wrong_count INTEGER NOT NULL DEFAULT 0,
+            correct_streak INTEGER NOT NULL DEFAULT 0,
+            due_at REAL,
+            last_reviewed_at REAL,
+            mastered_at REAL,
+            flashcard_id TEXT,
+            created_at REAL NOT NULL,
+            updated_at REAL NOT NULL,
+            stability REAL NOT NULL DEFAULT 0,
+            difficulty REAL NOT NULL DEFAULT 0,
+            elapsed_days REAL NOT NULL DEFAULT 0,
+            scheduled_days REAL NOT NULL DEFAULT 0,
+            learning_steps INTEGER NOT NULL DEFAULT 0,
+            reps INTEGER NOT NULL DEFAULT 0,
+            lapses INTEGER NOT NULL DEFAULT 0,
+            state INTEGER NOT NULL DEFAULT 0,
+            UNIQUE (language, entry_id)
+        );
+        """)
+
+        // Copy rows; map legacy statuses. FSRS credit for mastered/learning applied in app layer
+        // (reps/stability defaults here; ViewModel migrate refines if needed).
+        execute(sql: """
+        INSERT INTO baby_to_child_list_fsrs (
+            id, language, entry_id, stage_id, front, status,
+            correct_count, wrong_count, correct_streak,
+            due_at, last_reviewed_at, mastered_at, flashcard_id,
+            created_at, updated_at,
+            stability, difficulty, elapsed_days, scheduled_days,
+            learning_steps, reps, lapses, state
+        )
+        SELECT
+            id, language, entry_id, stage_id, front,
+            CASE status
+                WHEN 'available' THEN 'new'
+                WHEN 'mastered' THEN 'stable'
+                WHEN 'learning' THEN 'learning'
+                WHEN 'locked' THEN 'locked'
+                WHEN 'new' THEN 'new'
+                WHEN 'review' THEN 'review'
+                WHEN 'stable' THEN 'stable'
+                ELSE 'new'
+            END,
+            correct_count, wrong_count, correct_streak,
+            due_at, last_reviewed_at, mastered_at, flashcard_id,
+            created_at, updated_at,
+            CASE WHEN status = 'mastered' THEN 2.5 ELSE 0 END,
+            CASE WHEN status = 'mastered' THEN 5.0 ELSE 0 END,
+            0,
+            CASE WHEN status = 'mastered' THEN 1.0 ELSE 0 END,
+            0,
+            CASE
+                WHEN status = 'mastered' THEN MAX(correct_count, 2)
+                WHEN status = 'learning' THEN MAX(correct_count, 1)
+                ELSE 0
+            END,
+            0,
+            CASE
+                WHEN status = 'mastered' THEN 2
+                WHEN status = 'learning' THEN 1
+                ELSE 0
+            END
+        FROM baby_to_child_list;
+        """)
+
+        execute(sql: "DROP TABLE baby_to_child_list;")
+        execute(sql: "ALTER TABLE baby_to_child_list_fsrs RENAME TO baby_to_child_list;")
+        execute(sql: Self.createLifePathListIndexSQL)
+        execute(sql: Self.createLifePathListDueIndexSQL)
+    }
+
+    private func tableExists(_ table: String) -> Bool {
+        let sql = "SELECT name FROM sqlite_master WHERE type='table' AND name = ? LIMIT 1;"
+        var statement: OpaquePointer?
+        var exists = false
+        if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
+            sqlite3_bind_text(statement, 1, (table as NSString).utf8String, -1, nil)
+            if sqlite3_step(statement) == SQLITE_ROW {
+                exists = true
+            }
+        }
+        sqlite3_finalize(statement)
+        return exists
+    }
 
     private func columnExists(table: String, column: String) -> Bool {
         let sql = "PRAGMA table_info(\(table));"
@@ -1235,7 +1351,9 @@ class DatabaseManager {
         SELECT id, language, entry_id, stage_id, front, status,
                correct_count, wrong_count, correct_streak,
                due_at, last_reviewed_at, mastered_at, flashcard_id,
-               created_at, updated_at
+               created_at, updated_at,
+               stability, difficulty, elapsed_days, scheduled_days,
+               learning_steps, reps, lapses, state
         FROM baby_to_child_list
         WHERE language = ?
         ORDER BY stage_id, front;
@@ -1276,8 +1394,10 @@ class DatabaseManager {
             id, language, entry_id, stage_id, front, status,
             correct_count, wrong_count, correct_streak,
             due_at, last_reviewed_at, mastered_at, flashcard_id,
-            created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            created_at, updated_at,
+            stability, difficulty, elapsed_days, scheduled_days,
+            learning_steps, reps, lapses, state
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
         """
         var statement: OpaquePointer?
         if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
@@ -1297,8 +1417,10 @@ class DatabaseManager {
             id, language, entry_id, stage_id, front, status,
             correct_count, wrong_count, correct_streak,
             due_at, last_reviewed_at, mastered_at, flashcard_id,
-            created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            created_at, updated_at,
+            stability, difficulty, elapsed_days, scheduled_days,
+            learning_steps, reps, lapses, state
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(language, entry_id) DO UPDATE SET
             stage_id = excluded.stage_id,
             front = excluded.front,
@@ -1310,7 +1432,15 @@ class DatabaseManager {
             last_reviewed_at = excluded.last_reviewed_at,
             mastered_at = excluded.mastered_at,
             flashcard_id = excluded.flashcard_id,
-            updated_at = excluded.updated_at;
+            updated_at = excluded.updated_at,
+            stability = excluded.stability,
+            difficulty = excluded.difficulty,
+            elapsed_days = excluded.elapsed_days,
+            scheduled_days = excluded.scheduled_days,
+            learning_steps = excluded.learning_steps,
+            reps = excluded.reps,
+            lapses = excluded.lapses,
+            state = excluded.state;
         """
         var statement: OpaquePointer?
         if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
@@ -1327,14 +1457,26 @@ class DatabaseManager {
     func unlockLifePathStage(language: String, stageId: String, now: Date = Date()) {
         let sql = """
         UPDATE baby_to_child_list
-        SET status = 'available', updated_at = ?
+        SET status = 'new',
+            updated_at = ?,
+            due_at = ?,
+            last_reviewed_at = NULL,
+            stability = 0,
+            difficulty = 0,
+            elapsed_days = 0,
+            scheduled_days = 0,
+            learning_steps = 0,
+            reps = 0,
+            lapses = 0,
+            state = 0
         WHERE language = ? AND stage_id = ? AND status = 'locked';
         """
         var statement: OpaquePointer?
         if sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK {
             sqlite3_bind_double(statement, 1, now.timeIntervalSince1970)
-            sqlite3_bind_text(statement, 2, (language as NSString).utf8String, -1, nil)
-            sqlite3_bind_text(statement, 3, (stageId as NSString).utf8String, -1, nil)
+            sqlite3_bind_double(statement, 2, now.timeIntervalSince1970)
+            sqlite3_bind_text(statement, 3, (language as NSString).utf8String, -1, nil)
+            sqlite3_bind_text(statement, 4, (stageId as NSString).utf8String, -1, nil)
             if sqlite3_step(statement) != SQLITE_DONE {
                 printLifePathDBError("unlockLifePathStage")
             }
@@ -1366,6 +1508,7 @@ class DatabaseManager {
 
     private func bindLifePathListRow(_ statement: OpaquePointer?, row: LifePathListRow) {
         guard let statement else { return }
+        let card = row.fsrsCard
         sqlite3_bind_text(statement, 1, (row.rowId as NSString).utf8String, -1, nil)
         sqlite3_bind_text(statement, 2, (row.language as NSString).utf8String, -1, nil)
         sqlite3_bind_text(statement, 3, (row.entryId as NSString).utf8String, -1, nil)
@@ -1375,12 +1518,8 @@ class DatabaseManager {
         sqlite3_bind_int(statement, 7, Int32(row.correctCount))
         sqlite3_bind_int(statement, 8, Int32(row.wrongCount))
         sqlite3_bind_int(statement, 9, Int32(row.correctStreak))
-        if let due = row.dueAt {
-            sqlite3_bind_double(statement, 10, due.timeIntervalSince1970)
-        } else {
-            sqlite3_bind_null(statement, 10)
-        }
-        if let last = row.lastReviewedAt {
+        sqlite3_bind_double(statement, 10, card.due.timeIntervalSince1970)
+        if let last = card.lastReview {
             sqlite3_bind_double(statement, 11, last.timeIntervalSince1970)
         } else {
             sqlite3_bind_null(statement, 11)
@@ -1397,6 +1536,14 @@ class DatabaseManager {
         }
         sqlite3_bind_double(statement, 14, row.createdAt.timeIntervalSince1970)
         sqlite3_bind_double(statement, 15, row.updatedAt.timeIntervalSince1970)
+        sqlite3_bind_double(statement, 16, card.stability)
+        sqlite3_bind_double(statement, 17, card.difficulty)
+        sqlite3_bind_double(statement, 18, card.elapsedDays)
+        sqlite3_bind_double(statement, 19, card.scheduledDays)
+        sqlite3_bind_int(statement, 20, Int32(card.learningSteps))
+        sqlite3_bind_int(statement, 21, Int32(card.reps))
+        sqlite3_bind_int(statement, 22, Int32(card.lapses))
+        sqlite3_bind_int(statement, 23, Int32(card.state.rawValue))
     }
 
     private func parseLifePathProfile(from statement: OpaquePointer?) -> LifePathProfile? {
@@ -1437,11 +1584,12 @@ class DatabaseManager {
               let stageCol = sqlite3_column_text(statement, 3),
               let frontCol = sqlite3_column_text(statement, 4),
               let statusCol = sqlite3_column_text(statement, 5),
-              let status = LifePathWordStatus(rawValue: String(cString: statusCol)) else {
+              let status = LifePathWordStatus.parse(String(cString: statusCol)) else {
             return nil
         }
-        let dueAt: Date? = sqlite3_column_type(statement, 9) == SQLITE_NULL
-            ? nil
+        let createdAt = Date(timeIntervalSince1970: sqlite3_column_double(statement, 13))
+        let dueAt: Date = sqlite3_column_type(statement, 9) == SQLITE_NULL
+            ? createdAt
             : Date(timeIntervalSince1970: sqlite3_column_double(statement, 9))
         let lastReviewed: Date? = sqlite3_column_type(statement, 10) == SQLITE_NULL
             ? nil
@@ -1450,6 +1598,20 @@ class DatabaseManager {
             ? nil
             : Date(timeIntervalSince1970: sqlite3_column_double(statement, 11))
         let flashcardId = sqlite3_column_text(statement, 12).map { String(cString: $0) }
+
+        let fsrsCard = Card.fromDatabase(
+            due: dueAt,
+            stability: sqlite3_column_double(statement, 15),
+            difficulty: sqlite3_column_double(statement, 16),
+            elapsedDays: sqlite3_column_double(statement, 17),
+            scheduledDays: sqlite3_column_double(statement, 18),
+            learningSteps: Int(sqlite3_column_int(statement, 19)),
+            reps: Int(sqlite3_column_int(statement, 20)),
+            lapses: Int(sqlite3_column_int(statement, 21)),
+            state: CardState(rawValue: Int(sqlite3_column_int(statement, 22))) ?? .new,
+            lastReview: lastReviewed
+        )
+
         return LifePathListRow(
             rowId: String(cString: idCol),
             language: String(cString: langCol),
@@ -1460,11 +1622,10 @@ class DatabaseManager {
             correctCount: Int(sqlite3_column_int(statement, 6)),
             wrongCount: Int(sqlite3_column_int(statement, 7)),
             correctStreak: Int(sqlite3_column_int(statement, 8)),
-            dueAt: dueAt,
-            lastReviewedAt: lastReviewed,
+            fsrsCard: fsrsCard,
             masteredAt: masteredAt,
             flashcardId: flashcardId,
-            createdAt: Date(timeIntervalSince1970: sqlite3_column_double(statement, 13)),
+            createdAt: createdAt,
             updatedAt: Date(timeIntervalSince1970: sqlite3_column_double(statement, 14))
         )
     }

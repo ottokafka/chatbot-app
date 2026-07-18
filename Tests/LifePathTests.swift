@@ -1,4 +1,5 @@
 import XCTest
+import FSRS
 @testable import DeveloperChatbotCore
 
 final class LifePathCatalogTests: XCTestCase {
@@ -67,6 +68,124 @@ final class LifePathCatalogTests: XCTestCase {
     }
 }
 
+final class LifePathSchedulerTests: XCTestCase {
+    private let stages: [LifePathStageMeta] = [
+        LifePathStageMeta(id: "baby", order: 0, title: ["en": "Baby"], subtitle: nil, targetCount: 2),
+        LifePathStageMeta(id: "toddler", order: 1, title: ["en": "Toddler"], subtitle: nil, targetCount: 2)
+    ]
+
+    private func entry(_ id: String, stage: String, rank: Int) -> LifePathEntry {
+        LifePathEntry(id: id, stageId: stage, rankInStage: rank, front: id, back: id, phonics: nil, tags: nil)
+    }
+
+    private func row(
+        entryId: String,
+        stage: String,
+        status: LifePathWordStatus,
+        card: Card
+    ) -> LifePathListRow {
+        LifePathListRow(
+            rowId: UUID().uuidString,
+            language: "en",
+            entryId: entryId,
+            stageId: stage,
+            front: entryId,
+            status: status,
+            fsrsCard: card
+        )
+    }
+
+    func testBuildSessionIncludesCarryOverDueFromEarlierStage() {
+        let now = Date()
+        let babyDue = Card(due: now.addingTimeInterval(-60), reps: 2, state: .review, lastReview: now.addingTimeInterval(-86_400))
+        let toddlerNew = Card(due: now, reps: 0, state: .new)
+        let rows = [
+            row(entryId: "b1", stage: "baby", status: .review, card: babyDue),
+            row(entryId: "t1", stage: "toddler", status: .new, card: toddlerNew)
+        ]
+        let entries = [
+            "b1": entry("b1", stage: "baby", rank: 1),
+            "t1": entry("t1", stage: "toddler", rank: 1)
+        ]
+        let queue = LifePathScheduler.buildSession(
+            rows: rows,
+            entriesById: entries,
+            stages: stages,
+            currentStageId: "toddler",
+            now: now
+        )
+        XCTAssertEqual(queue.map(\.id), ["b1", "t1"])
+    }
+
+    func testBuildSessionUnlimitedIncludesAllNew() {
+        let now = Date()
+        let rows = (1...5).map { i in
+            row(entryId: "n\(i)", stage: "baby", status: .new, card: Card(due: now, reps: 0, state: .new))
+        }
+        var entries: [String: LifePathEntry] = [:]
+        for i in 1...5 {
+            entries["n\(i)"] = entry("n\(i)", stage: "baby", rank: i)
+        }
+        let queue = LifePathScheduler.buildSession(
+            rows: rows,
+            entriesById: entries,
+            stages: stages,
+            currentStageId: "baby",
+            now: now
+        )
+        XCTAssertEqual(queue.count, 5)
+    }
+
+    func testGraduationRequiresMinReps() {
+        let weak = Card(due: Date(), reps: 1, state: .review)
+        let ready = Card(due: Date(), reps: 2, state: .review)
+        XCTAssertFalse(LifePathScheduler.meetsGraduationCriteria(card: weak))
+        XCTAssertTrue(LifePathScheduler.meetsGraduationCriteria(card: ready))
+        XCTAssertFalse(LifePathScheduler.meetsGraduationCriteria(card: Card(due: Date(), reps: 5, state: .relearning)))
+    }
+
+    func testStageMeetsGraduationAllOrNothing() {
+        let a = row(entryId: "a", stage: "baby", status: .stable, card: Card(due: Date(), reps: 2, state: .review))
+        let b = row(entryId: "b", stage: "baby", status: .new, card: Card(due: Date(), reps: 0, state: .new))
+        XCTAssertFalse(LifePathScheduler.stageMeetsGraduation(rowsForStage: [a, b]))
+        let b2 = row(entryId: "b", stage: "baby", status: .stable, card: Card(due: Date(), reps: 3, state: .review))
+        XCTAssertTrue(LifePathScheduler.stageMeetsGraduation(rowsForStage: [a, b2]))
+    }
+
+    func testStageMeetsGraduationRelaxed80Percent() {
+        // 2 cards, 1 stable = 50% → fail (< 80%)
+        let a = row(entryId: "a", stage: "baby", status: .stable, card: Card(due: Date(), reps: 2, state: .review))
+        let b = row(entryId: "b", stage: "baby", status: .learning, card: Card(due: Date(), reps: 1, state: .learning))
+        XCTAssertFalse(LifePathScheduler.stageMeetsGraduation(rowsForStage: [a, b]))
+
+        // 5 cards, 4 stable = 80% → pass
+        let stable = (0..<4).map { i in
+            row(entryId: "s\(i)", stage: "baby", status: .stable, card: Card(due: Date(), reps: 2, state: .review))
+        }
+        let weak = row(entryId: "w", stage: "baby", status: .learning, card: Card(due: Date(), reps: 1, state: .learning))
+        XCTAssertTrue(LifePathScheduler.stageMeetsGraduation(rowsForStage: stable + [weak]))
+
+        // 3 cards, 2 stable, 1 unreviewed (reps=0) → fail (not all introduced)
+        let unreviewed = row(entryId: "u", stage: "baby", status: .new, card: Card(due: Date(), reps: 0, state: .new))
+        let s2 = row(entryId: "s2", stage: "baby", status: .stable, card: Card(due: Date(), reps: 2, state: .review))
+        XCTAssertFalse(LifePathScheduler.stageMeetsGraduation(rowsForStage: [a, s2, unreviewed]))
+    }
+
+    func testDeriveStatus() {
+        XCTAssertEqual(LifePathScheduler.deriveStatus(isLocked: true, card: Card()), .locked)
+        XCTAssertEqual(LifePathScheduler.deriveStatus(isLocked: false, card: Card(reps: 0, state: .new)), .new)
+        XCTAssertEqual(LifePathScheduler.deriveStatus(isLocked: false, card: Card(reps: 1, state: .learning)), .learning)
+        XCTAssertEqual(
+            LifePathScheduler.deriveStatus(isLocked: false, card: Card(reps: 2, state: .review)),
+            .stable
+        )
+        XCTAssertEqual(
+            LifePathScheduler.deriveStatus(isLocked: false, card: Card(reps: 1, state: .review)),
+            .review
+        )
+    }
+}
+
 final class LifePathDBTests: XCTestCase {
     func testProfileListAndUnlockCRUD() throws {
         let path = NSTemporaryDirectory() + "life-path-test-\(UUID().uuidString).sqlite"
@@ -95,23 +214,22 @@ final class LifePathDBTests: XCTestCase {
         let loaded = db.fetchLifePathProfile(language: "en")
         XCTAssertEqual(loaded?.currentStageId, "baby")
         XCTAssertEqual(loaded?.totalReviews, 1)
-        // Economy columns are inert scaffolding — always 0 in product paths.
         XCTAssertEqual(loaded?.xp, 0)
         XCTAssertEqual(loaded?.coins, 0)
 
+        let card = Card(due: now, stability: 1.5, difficulty: 4, reps: 2, state: .review, lastReview: now)
         let row = LifePathListRow(
             rowId: UUID().uuidString,
             language: "en",
             entryId: "en_baby_001",
             stageId: "baby",
             front: "mama",
-            status: .available,
-            correctCount: 0,
+            status: .stable,
+            correctCount: 2,
             wrongCount: 0,
-            correctStreak: 0,
-            dueAt: nil,
-            lastReviewedAt: nil,
-            masteredAt: nil,
+            correctStreak: 1,
+            fsrsCard: card,
+            masteredAt: now,
             flashcardId: nil,
             createdAt: now,
             updatedAt: now
@@ -120,14 +238,15 @@ final class LifePathDBTests: XCTestCase {
         XCTAssertEqual(db.countLifePathList(language: "en"), 1)
 
         var updated = row
-        updated.status = .mastered
-        updated.correctCount = 2
-        updated.correctStreak = 1
-        updated.masteredAt = now
+        updated.status = .review
+        updated.correctCount = 3
+        updated.fsrsCard.reps = 3
         updated.updatedAt = now
         db.upsertLifePathListRow(updated)
         let list = db.fetchLifePathList(language: "en")
-        XCTAssertEqual(list.first?.status, .mastered)
+        XCTAssertEqual(list.first?.status, .review)
+        XCTAssertEqual(list.first?.fsrsCard.reps, 3)
+        XCTAssertEqual(list.first?.fsrsCard.stability ?? -1, 1.5, accuracy: 0.001)
 
         let toddler = LifePathListRow(
             rowId: UUID().uuidString,
@@ -136,30 +255,50 @@ final class LifePathDBTests: XCTestCase {
             stageId: "toddler",
             front: "hello",
             status: .locked,
-            correctCount: 0,
-            wrongCount: 0,
-            correctStreak: 0,
-            dueAt: nil,
-            lastReviewedAt: nil,
-            masteredAt: nil,
-            flashcardId: nil,
+            fsrsCard: FSRSManager.shared.createEmptyCard(now: now),
             createdAt: now,
             updatedAt: now
         )
         db.insertLifePathListRow(toddler)
         db.unlockLifePathStage(language: "en", stageId: "toddler")
         let afterUnlock = db.fetchLifePathList(language: "en").first { $0.entryId == "en_toddler_001" }
-        XCTAssertEqual(afterUnlock?.status, .available)
+        XCTAssertEqual(afterUnlock?.status, .new)
+        XCTAssertEqual(afterUnlock?.fsrsCard.reps, 0)
 
         db.resetLifePathProgress(language: "en")
         XCTAssertEqual(db.countLifePathList(language: "en"), 0)
         XCTAssertNil(db.fetchLifePathProfile(language: "en"))
     }
+
+    func testLifePathReviewsDoNotCreateFlashcards() throws {
+        let path = NSTemporaryDirectory() + "life-path-iso-\(UUID().uuidString).sqlite"
+        defer { try? FileManager.default.removeItem(atPath: path) }
+        let db = DatabaseManager(databasePath: path)
+        let now = Date()
+        let row = LifePathListRow(
+            rowId: UUID().uuidString,
+            language: "en",
+            entryId: "iso_1",
+            stageId: "baby",
+            front: "isolation_word_xyz",
+            status: .new,
+            fsrsCard: FSRSManager.shared.createEmptyCard(now: now),
+            createdAt: now,
+            updatedAt: now
+        )
+        db.insertLifePathListRow(row)
+        var graded = row
+        let item = try FSRSManager.shared.review(card: graded.fsrsCard, grade: .good, now: now)
+        graded.fsrsCard = item.card
+        graded.status = .learning
+        db.upsertLifePathListRow(graded)
+        XCTAssertEqual(db.fetchFlashcards().filter { $0.front == "isolation_word_xyz" }.count, 0)
+    }
 }
 
 @MainActor
 final class LifePathViewModelTests: XCTestCase {
-    func testSeedAndMasteryProgression() throws {
+    func testSeedAndFSRSGrade() throws {
         let path = NSTemporaryDirectory() + "life-path-vm-\(UUID().uuidString).sqlite"
         defer { try? FileManager.default.removeItem(atPath: path) }
 
@@ -173,21 +312,39 @@ final class LifePathViewModelTests: XCTestCase {
         XCTAssertEqual(vm.profile?.currentStageId, "baby")
         XCTAssertGreaterThan(vm.totalInCurrentStage, 0)
         XCTAssertEqual(vm.masteredInCurrentStage, 0)
+        XCTAssertGreaterThan(vm.newCount, 0)
 
-        // One correct = mastered
         vm.startRound()
         XCTAssertTrue(vm.isPlaying)
         guard let first = vm.currentCard else {
             return XCTFail("expected current card")
         }
         vm.revealAnswer()
-        vm.gradeCorrect()
+        vm.grade(rating: .good)
         let afterOne = db.fetchLifePathList(language: "en").first { $0.entryId == first.id }
         XCTAssertEqual(afterOne?.correctCount, 1)
-        XCTAssertEqual(afterOne?.status, .mastered)
-        XCTAssertGreaterThanOrEqual(vm.masteredInCurrentStage, 1)
+        XCTAssertGreaterThanOrEqual(afterOne?.fsrsCard.reps ?? 0, 1)
+        // Single Good does not graduate the whole stage
+        XCTAssertEqual(vm.profile?.currentStageId, "baby")
+        XCTAssertFalse(vm.profile?.stagesCleared.contains("baby") == true)
 
         LifePathPreferences.language = nil
+    }
+
+    func testSingleGoodDoesNotClearStage() throws {
+        let path = NSTemporaryDirectory() + "life-path-one-good-\(UUID().uuidString).sqlite"
+        defer { try? FileManager.default.removeItem(atPath: path) }
+        let db = DatabaseManager(databasePath: path)
+        LifePathPreferences.language = .en
+        defer { LifePathPreferences.language = nil }
+
+        let vm = LifePathViewModel(dbManager: db)
+        vm.load()
+        vm.startRound()
+        vm.revealAnswer()
+        vm.grade(rating: .good)
+        XCTAssertEqual(vm.profile?.currentStageId, "baby")
+        XCTAssertEqual(vm.masteredInCurrentStage, 0) // needs reps >= 2
     }
 
     func testDevResetClearsLanguageAndShowsPicker() throws {
@@ -279,8 +436,6 @@ final class PronunciationAssessmentTests: XCTestCase {
     }
 
     func testDecodeWebSocketResultEnvelope() throws {
-        // Server sends {"type":"result", ...fields}. Extra keys must be ignored.
-        // v2.2+: no phonemes array; word-level feedback only.
         let json = """
         {
           "type": "result",

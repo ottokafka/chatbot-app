@@ -1,4 +1,5 @@
 import SwiftUI
+import FSRS
 
 struct LifePathRootView: View {
     @ObservedObject var nav: AppNavigationModel
@@ -11,6 +12,7 @@ struct LifePathRootView: View {
     @StateObject private var vm = LifePathViewModel()
     @Environment(\.appLanguage) private var lang
     @State private var showResetConfirm = false
+    @FocusState private var isPlayFocused: Bool
     #if os(macOS)
     /// Bottom console (same pattern as ChatShellView) for pronunciation / Life Path debug.
     @State private var isLogsExpanded = true
@@ -109,7 +111,7 @@ struct LifePathRootView: View {
         .onChange(of: vm.sessionIndex) { _, _ in
             autoPlayFrontIfNeeded()
             // Reset any lingering arm when card changes
-            if vm.pronunciationState == .idle {
+            if vm.pronunciationState == .idle, vm.isPronunciationEnabled {
                 vm.armAutoRecord()
             }
         }
@@ -129,7 +131,7 @@ struct LifePathRootView: View {
             guard chatVM.currentlyPlayingEphemeralId == nil else { return }
             let wasPlayingFront = !chatVM.isPlayingEphemeralAudio(id: frontId)
                 && chatVM.isFlashcardAutoPlayEnabled
-            if wasPlayingFront {
+            if wasPlayingFront, vm.isPronunciationEnabled {
                 vm.triggerAutoRecordIfWaiting(for: card.front)
             }
         }
@@ -221,7 +223,9 @@ struct LifePathRootView: View {
         }
 
         // Arm auto-record so it fires once the TTS finishes
-        vm.armAutoRecord()
+        if vm.isPronunciationEnabled {
+            vm.armAutoRecord()
+        }
         chatVM.playEphemeralSpeech(text: front, playbackId: playbackId)
     }
 
@@ -304,7 +308,7 @@ struct LifePathRootView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
-                .disabled(vm.totalInCurrentStage == 0)
+                .disabled(!vm.canPlay)
 
                 // Temporary DEV control — remove before shipping.
                 Button(role: .destructive) {
@@ -346,9 +350,31 @@ struct LifePathRootView: View {
             ))
             .font(.subheadline.weight(.medium))
             .foregroundStyle(.secondary)
+            Text(L10n.lifePathDueSummary(lang, due: vm.dueCount, newWords: vm.newCount))
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            if !vm.dueCountByStage.isEmpty {
+                Text(dueBreakdownText)
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+            }
+            if !vm.canPlay, let next = vm.nextDueDate {
+                Text(L10n.lifePathNextDue(lang, date: next))
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+            }
         }
         .padding(16)
         .background(Color.platformControlBackground, in: RoundedRectangle(cornerRadius: 14))
+    }
+
+    private var dueBreakdownText: String {
+        let parts = vm.stages.compactMap { stage -> String? in
+            guard let count = vm.dueCountByStage[stage.id], count > 0 else { return nil }
+            return "\(stage.title(for: lang)) \(count)"
+        }
+        guard !parts.isEmpty else { return "" }
+        return L10n.lifePathDueBreakdown(lang, parts: parts.joined(separator: " · "))
     }
 
     private var stageRail: some View {
@@ -450,9 +476,13 @@ struct LifePathRootView: View {
                     }
                     ProgressView(value: vm.stageProgress)
                         .tint(.accentColor)
-                    Text(L10n.lifePathSessionRemaining(lang, remaining: vm.sessionRemainingCount))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    Text(L10n.lifePathSessionQueueProgress(
+                        lang,
+                        done: vm.sessionDoneCount,
+                        remaining: vm.sessionRemainingCount
+                    ))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
                 }
                 .padding(.horizontal)
 
@@ -473,6 +503,15 @@ struct LifePathRootView: View {
                     .labelsHidden()
                     .tint(.accentColor)
                     Spacer()
+                    Toggle(isOn: Binding(
+                        get: { vm.isPronunciationEnabled },
+                        set: { vm.isPronunciationEnabled = $0 }
+                    )) {
+                        Text("Pronounce")
+                            .font(.caption)
+                    }
+                    .toggleStyle(.switch)
+                    .controlSize(.small)
                 }
                 .padding(.horizontal)
 
@@ -481,61 +520,58 @@ struct LifePathRootView: View {
                 }
 
                 // Pronunciation mic — listen until correct; results stay on screen after misses
-                if let card = vm.currentCard {
-                    PronunciationMicButton(
-                        pronunciationState: vm.pronunciationState,
-                        isArmed: vm.isWaitingToAutoRecord,
-                        hasStickyResult: vm.lastPronunciationResult.map { $0.overall_score < vm.pronunciationThreshold } ?? false,
-                        threshold: vm.pronunciationThreshold,
-                        onStart: { vm.startPronunciationRecording(for: card.front) },
-                        onStop: { vm.stopPronunciationRecordingAndAssess() },
-                        onCancel: { vm.cancelPronunciationRecording() }
-                    )
-                    .padding(.horizontal)
-                }
+                if vm.isPronunciationEnabled {
+                    if let card = vm.currentCard {
+                        PronunciationMicButton(
+                            pronunciationState: vm.pronunciationState,
+                            isArmed: vm.isWaitingToAutoRecord,
+                            hasStickyResult: vm.lastPronunciationResult.map { $0.overall_score < vm.pronunciationThreshold } ?? false,
+                            threshold: vm.pronunciationThreshold,
+                            onStart: { vm.startPronunciationRecording(for: card.front) },
+                            onStop: { vm.stopPronunciationRecordingAndAssess() },
+                            onCancel: { vm.cancelPronunciationRecording() }
+                        )
+                        .padding(.horizontal)
+                    }
 
-                // Sticky feedback: latest miss stays visible while we keep listening
-                if let result = vm.lastPronunciationResult {
-                    PronunciationFeedbackView(
-                        result: result,
-                        targetWord: vm.pronunciationTargetWord.isEmpty
-                            ? (vm.currentCard?.front ?? "")
-                            : vm.pronunciationTargetWord,
-                        threshold: vm.pronunciationThreshold,
-                        isListeningLoop: !result.isPassing(threshold: vm.pronunciationThreshold)
-                            && vm.pronunciationState != .idle,
-                        showDismiss: !result.isPassing(threshold: vm.pronunciationThreshold),
-                        onDismiss: { vm.cancelPronunciationRecording() }
-                    )
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    // Sticky feedback: latest miss stays visible while we keep listening
+                    if let result = vm.lastPronunciationResult {
+                        PronunciationFeedbackView(
+                            result: result,
+                            targetWord: vm.pronunciationTargetWord.isEmpty
+                                ? (vm.currentCard?.front ?? "")
+                                : vm.pronunciationTargetWord,
+                            threshold: vm.pronunciationThreshold,
+                            isListeningLoop: !result.isPassing(threshold: vm.pronunciationThreshold)
+                                && vm.pronunciationState != .idle,
+                            showDismiss: !result.isPassing(threshold: vm.pronunciationThreshold),
+                            onDismiss: { vm.cancelPronunciationRecording() }
+                        )
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
                 }
 
                 Divider().padding(.horizontal)
 
-                // Manual grade remains as escape hatch (e.g. no mic / offline)
+                // Manual FSRS grades (escape hatch when not using pronunciation loop)
                 if vm.isAnswerRevealed {
-                    HStack(spacing: 16) {
-                        Button {
+                    HStack(spacing: 10) {
+                        lifePathGradeButton(title: L10n.gradeAgain(lang), color: .red) {
                             vm.cancelPronunciationRecording()
-                            vm.gradeWrong()
-                        } label: {
-                            Label(L10n.lifePathAgain(lang), systemImage: "xmark")
-                                .frame(maxWidth: .infinity)
+                            vm.grade(rating: .again)
                         }
-                        .buttonStyle(.bordered)
-                        .tint(.red)
-                        .controlSize(.large)
-
-                        Button {
+                        lifePathGradeButton(title: L10n.gradeHard(lang), color: .orange) {
                             vm.cancelPronunciationRecording()
-                            vm.gradeCorrect()
-                        } label: {
-                            Label(L10n.lifePathGotIt(lang), systemImage: "checkmark")
-                                .frame(maxWidth: .infinity)
+                            vm.grade(rating: .hard)
                         }
-                        .buttonStyle(.borderedProminent)
-                        .tint(.green)
-                        .controlSize(.large)
+                        lifePathGradeButton(title: L10n.gradeGood(lang), color: .green, prominent: true) {
+                            vm.cancelPronunciationRecording()
+                            vm.grade(rating: .good)
+                        }
+                        lifePathGradeButton(title: L10n.gradeEasy(lang), color: .blue) {
+                            vm.cancelPronunciationRecording()
+                            vm.grade(rating: .easy)
+                        }
                     }
                     .padding(.horizontal)
                 } else {
@@ -553,14 +589,61 @@ struct LifePathRootView: View {
             }
             .animation(.spring(response: 0.35), value: vm.pronunciationState == .idle)
             .padding(.top, 16)
+            .focusable()
+            .focused($isPlayFocused)
+            .onKeyPress(.space) {
+                if !vm.isAnswerRevealed {
+                    vm.revealAnswer()
+                    return .handled
+                } else {
+                    vm.cancelPronunciationRecording()
+                    vm.grade(rating: .good)
+                    return .handled
+                }
+            }
+            .onAppear { isPlayFocused = true }
+        }
+    }
+
+    @ViewBuilder
+    private func lifePathGradeButton(
+        title: String,
+        color: Color,
+        prominent: Bool = false,
+        action: @escaping () -> Void
+    ) -> some View {
+        let label = Text(title)
+            .font(.subheadline.weight(.semibold))
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 10)
+        if prominent {
+            Button(action: action) { label }
+                .buttonStyle(.borderedProminent)
+                .tint(color)
+                .controlSize(.large)
+        } else {
+            Button(action: action) { label }
+                .buttonStyle(.bordered)
+                .tint(color)
+                .controlSize(.large)
         }
     }
 
     private func cardFace(_ card: LifePathEntry) -> some View {
         let frontId = frontPlaybackId(for: card)
         let backId = backPlaybackId(for: card)
+        let stageTitle = vm.stages.first(where: { $0.id == card.stageId })?.title(for: lang)
 
         return VStack(spacing: 16) {
+            if let stageTitle {
+                Text(stageTitle)
+                    .font(.caption.weight(.semibold))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(Color.accentColor.opacity(0.15), in: Capsule())
+                    .foregroundStyle(.tint)
+            }
+
             HStack(alignment: .center, spacing: 12) {
                 Group {
                     if let result = vm.lastPronunciationResult {
@@ -689,18 +772,20 @@ struct LifePathRootView: View {
     private func statusLabel(_ status: LifePathWordStatus) -> String {
         switch status {
         case .locked: return L10n.lifePathStatusLocked(lang)
-        case .available: return L10n.lifePathStatusNew(lang)
+        case .new: return L10n.lifePathStatusNew(lang)
         case .learning: return L10n.lifePathStatusLearning(lang)
-        case .mastered: return L10n.lifePathStatusMastered(lang)
+        case .review: return L10n.lifePathStatusReview(lang)
+        case .stable: return L10n.lifePathStatusStable(lang)
         }
     }
 
     private func statusColor(_ status: LifePathWordStatus) -> Color {
         switch status {
         case .locked: return .secondary
-        case .available: return .blue
+        case .new: return .blue
         case .learning: return .orange
-        case .mastered: return .green
+        case .review: return .purple
+        case .stable: return .green
         }
     }
 }

@@ -2,8 +2,8 @@
 
 | Field | Value |
 |-------|--------|
-| **Status** | Draft — planning only |
-| **Date** | 2026-07-13 |
+| **Status** | Implemented (core FSRS game deck, unlimited sessions, carry-over) |
+| **Date** | 2026-07-13 (impl 2026-07-16) |
 | **App** | DeveloperChatbot (`chatbot-app/`) |
 | **Related** | `docs/life-path-vocab-stages.md` (current game; partially superseded for scheduling), `docs/design-library-vs-gym.md`, `Sources/FSRSManager.swift`, `Sources/LifePathViewModel.swift` |
 | **Non-goal this doc** | Implementation code; multi-deck UI for Vocabulary library |
@@ -203,31 +203,24 @@ Optional v1.1: keep a simplified 2-button mode (Wrong → Again, Got it → Good
 
 ### 4.5 Stage graduation (“cleared” under FSRS)
 
-One-shot mastery is removed. Proposed **v1 clear rule** (achievable + honest):
+One-shot mastery is removed. Implemented rule (v1 relaxed, 2026-07-16):
 
-A stage **S** is **cleared** when **all** hold:
+A stage **S** is **cleared** when all hold:
 
-1. **Introduced:** every entry in S has `reps ≥ 1` (seen at least once).
-2. **Not drowning:** no entry in S is in FSRS `relearning` with a huge fail streak (optional soft check; can defer).
-3. **Stability bar (recommended):** every entry in S has either:
-   - `stability ≥ graduationStabilityDays` (e.g. **3.0** days), **or**
-   - `scheduledDays ≥ 1` and last grade was Good/Easy and `reps ≥ 2`
+1. **All introduced:** every entry in S has `reps ≥ 1` (seen at least once) and is unlocked.
+2. **Stability ratio:** at least `graduationStableRatio` (80%) of introduced cards meet `meetsGraduationCriteria` (reps ≥ 2, not in relearning).
 
-Simpler **v1 alternative** (easier to ship/test):
+Non-stable cards **carry forward** as due reviews into future sessions via the existing carry-over mechanism — the player never hits a wall.
 
-> Clear stage S when every word in S has been reviewed at least **2 successful** times (Good or Easy), and none is due with state = relearning.
-
-**Recommendation for first implementation:**  
-
-```
+```swift
+// LifePathGame.graduationStableRatio = 0.80
 cleared(S) =
-  ∀ word in S:
-    reps >= 2
-    AND lapses is free-form (no block)
-    AND last review grade ∈ {Good, Easy} OR stability >= 1.0
+    all cards in S are unlocked
+    AND all cards have reps >= 1
+    AND (stableCount / totalCount) >= 0.80
 ```
 
-Tune after playtest. Document constants in `LifePathGame`.
+Tune `graduationStableRatio` after playtest.
 
 **On clear:**
 
