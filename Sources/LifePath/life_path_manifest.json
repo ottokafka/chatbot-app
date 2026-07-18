@@ -3,24 +3,24 @@
   "lists": [
     {
       "id": "life_path_zh",
-      "version": 2,
+      "version": 3,
       "language": "zh",
       "title": {
         "en": "Life Path Chinese",
         "zh": "成长之路·中文"
       },
-      "entryCount": 508,
+      "entryCount": 607,
       "sourceNote": "Developmental life-path vocabulary for the Baby→Child game"
     },
     {
       "id": "life_path_en",
-      "version": 2,
+      "version": 3,
       "language": "en",
       "title": {
         "en": "Life Path English",
         "zh": "成长之路·英文"
       },
-      "entryCount": 500,
+      "entryCount": 590,
       "sourceNote": "Developmental life-path vocabulary for the Baby→Child game"
     }
   ]

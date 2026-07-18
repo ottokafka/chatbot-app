@@ -54,6 +54,19 @@
         "zh": "开学了"
       },
       "targetCount": 88
+    },
+    {
+      "id": "grade2",
+      "order": 4,
+      "title": {
+        "en": "Grade 2",
+        "zh": "二年级"
+      },
+      "subtitle": {
+        "en": "Growing up",
+        "zh": "成长了"
+      },
+      "targetCount": 90
     }
   ],
   "entries": [
@@ -5651,6 +5664,1014 @@
       "phonics": null,
       "tags": [
         "nature"
+      ]
+    },
+    {
+      "id": "en_grade2_001",
+      "stageId": "grade2",
+      "rankInStage": 1,
+      "front": "planet",
+      "back": "行星",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_grade2_002",
+      "stageId": "grade2",
+      "rankInStage": 2,
+      "front": "energy",
+      "back": "能量",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_grade2_003",
+      "stageId": "grade2",
+      "rankInStage": 3,
+      "front": "magnet",
+      "back": "磁铁",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_grade2_004",
+      "stageId": "grade2",
+      "rankInStage": 4,
+      "front": "gravity",
+      "back": "重力",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_grade2_005",
+      "stageId": "grade2",
+      "rankInStage": 5,
+      "front": "insect",
+      "back": "昆虫",
+      "phonics": null,
+      "tags": [
+        "animals",
+        "nature"
+      ]
+    },
+    {
+      "id": "en_grade2_006",
+      "stageId": "grade2",
+      "rankInStage": 6,
+      "front": "spider",
+      "back": "蜘蛛",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_grade2_007",
+      "stageId": "grade2",
+      "rankInStage": 7,
+      "front": "worm",
+      "back": "虫子",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_grade2_008",
+      "stageId": "grade2",
+      "rankInStage": 8,
+      "front": "nest",
+      "back": "鸟巢",
+      "phonics": null,
+      "tags": [
+        "animals",
+        "nature"
+      ]
+    },
+    {
+      "id": "en_grade2_009",
+      "stageId": "grade2",
+      "rankInStage": 9,
+      "front": "feather",
+      "back": "羽毛",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_grade2_010",
+      "stageId": "grade2",
+      "rankInStage": 10,
+      "front": "shell",
+      "back": "贝壳",
+      "phonics": null,
+      "tags": [
+        "animals",
+        "nature"
+      ]
+    },
+    {
+      "id": "en_grade2_011",
+      "stageId": "grade2",
+      "rankInStage": 11,
+      "front": "seed",
+      "back": "种子",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_grade2_012",
+      "stageId": "grade2",
+      "rankInStage": 12,
+      "front": "root",
+      "back": "根",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_grade2_013",
+      "stageId": "grade2",
+      "rankInStage": 13,
+      "front": "soil",
+      "back": "土壤",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_grade2_014",
+      "stageId": "grade2",
+      "rankInStage": 14,
+      "front": "fossil",
+      "back": "化石",
+      "phonics": null,
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "en_grade2_015",
+      "stageId": "grade2",
+      "rankInStage": 15,
+      "front": "thunder",
+      "back": "雷声",
+      "phonics": null,
+      "tags": [
+        "weather",
+        "nature"
+      ]
+    },
+    {
+      "id": "en_grade2_016",
+      "stageId": "grade2",
+      "rankInStage": 16,
+      "front": "turtle",
+      "back": "乌龟",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_grade2_017",
+      "stageId": "grade2",
+      "rankInStage": 17,
+      "front": "camel",
+      "back": "骆驼",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_grade2_018",
+      "stageId": "grade2",
+      "rankInStage": 18,
+      "front": "dolphin",
+      "back": "海豚",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_grade2_019",
+      "stageId": "grade2",
+      "rankInStage": 19,
+      "front": "penguin",
+      "back": "企鹅",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_grade2_020",
+      "stageId": "grade2",
+      "rankInStage": 20,
+      "front": "parrot",
+      "back": "鹦鹉",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_grade2_021",
+      "stageId": "grade2",
+      "rankInStage": 21,
+      "front": "owl",
+      "back": "猫头鹰",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_grade2_022",
+      "stageId": "grade2",
+      "rankInStage": 22,
+      "front": "squirrel",
+      "back": "松鼠",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_grade2_023",
+      "stageId": "grade2",
+      "rankInStage": 23,
+      "front": "goose",
+      "back": "鹅",
+      "phonics": null,
+      "tags": [
+        "animals"
+      ]
+    },
+    {
+      "id": "en_grade2_024",
+      "stageId": "grade2",
+      "rankInStage": 24,
+      "front": "shoulder",
+      "back": "肩膀",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_grade2_025",
+      "stageId": "grade2",
+      "rankInStage": 25,
+      "front": "elbow",
+      "back": "肘",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_grade2_026",
+      "stageId": "grade2",
+      "rankInStage": 26,
+      "front": "stomach",
+      "back": "肚子",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_grade2_027",
+      "stageId": "grade2",
+      "rankInStage": 27,
+      "front": "tongue",
+      "back": "舌头",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_grade2_028",
+      "stageId": "grade2",
+      "rankInStage": 28,
+      "front": "ankle",
+      "back": "脚踝",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_grade2_029",
+      "stageId": "grade2",
+      "rankInStage": 29,
+      "front": "brain",
+      "back": "大脑",
+      "phonics": null,
+      "tags": [
+        "body"
+      ]
+    },
+    {
+      "id": "en_grade2_030",
+      "stageId": "grade2",
+      "rankInStage": 30,
+      "front": "argue",
+      "back": "争论",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "social"
+      ]
+    },
+    {
+      "id": "en_grade2_031",
+      "stageId": "grade2",
+      "rankInStage": 31,
+      "front": "bounce",
+      "back": "弹跳",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade2_032",
+      "stageId": "grade2",
+      "rankInStage": 32,
+      "front": "breathe",
+      "back": "呼吸",
+      "phonics": null,
+      "tags": [
+        "actions",
+        "body"
+      ]
+    },
+    {
+      "id": "en_grade2_033",
+      "stageId": "grade2",
+      "rankInStage": 33,
+      "front": "crawl",
+      "back": "爬行",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade2_034",
+      "stageId": "grade2",
+      "rankInStage": 34,
+      "front": "divide",
+      "back": "分开",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade2_035",
+      "stageId": "grade2",
+      "rankInStage": 35,
+      "front": "float",
+      "back": "漂浮",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade2_036",
+      "stageId": "grade2",
+      "rankInStage": 36,
+      "front": "gather",
+      "back": "收集",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade2_037",
+      "stageId": "grade2",
+      "rankInStage": 37,
+      "front": "guard",
+      "back": "保护",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade2_038",
+      "stageId": "grade2",
+      "rankInStage": 38,
+      "front": "invent",
+      "back": "发明",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade2_039",
+      "stageId": "grade2",
+      "rankInStage": 39,
+      "front": "measure",
+      "back": "测量",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade2_040",
+      "stageId": "grade2",
+      "rankInStage": 40,
+      "front": "pour",
+      "back": "倒",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade2_041",
+      "stageId": "grade2",
+      "rankInStage": 41,
+      "front": "protect",
+      "back": "保护",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade2_042",
+      "stageId": "grade2",
+      "rankInStage": 42,
+      "front": "rescue",
+      "back": "救援",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade2_043",
+      "stageId": "grade2",
+      "rankInStage": 43,
+      "front": "search",
+      "back": "搜索",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade2_044",
+      "stageId": "grade2",
+      "rankInStage": 44,
+      "front": "shake",
+      "back": "摇晃",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade2_045",
+      "stageId": "grade2",
+      "rankInStage": 45,
+      "front": "skip",
+      "back": "跳",
+      "phonics": null,
+      "tags": [
+        "actions"
+      ]
+    },
+    {
+      "id": "en_grade2_046",
+      "stageId": "grade2",
+      "rankInStage": 46,
+      "front": "mayor",
+      "back": "市长",
+      "phonics": null,
+      "tags": [
+        "people",
+        "social"
+      ]
+    },
+    {
+      "id": "en_grade2_047",
+      "stageId": "grade2",
+      "rankInStage": 47,
+      "front": "vote",
+      "back": "投票",
+      "phonics": null,
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "en_grade2_048",
+      "stageId": "grade2",
+      "rankInStage": 48,
+      "front": "citizen",
+      "back": "公民",
+      "phonics": null,
+      "tags": [
+        "people",
+        "social"
+      ]
+    },
+    {
+      "id": "en_grade2_049",
+      "stageId": "grade2",
+      "rankInStage": 49,
+      "front": "community",
+      "back": "社区",
+      "phonics": null,
+      "tags": [
+        "social",
+        "locations"
+      ]
+    },
+    {
+      "id": "en_grade2_050",
+      "stageId": "grade2",
+      "rankInStage": 50,
+      "front": "tradition",
+      "back": "传统",
+      "phonics": null,
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "en_grade2_051",
+      "stageId": "grade2",
+      "rankInStage": 51,
+      "front": "freedom",
+      "back": "自由",
+      "phonics": null,
+      "tags": [
+        "social"
+      ]
+    },
+    {
+      "id": "en_grade2_052",
+      "stageId": "grade2",
+      "rankInStage": 52,
+      "front": "peace",
+      "back": "和平",
+      "phonics": null,
+      "tags": [
+        "social",
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_grade2_053",
+      "stageId": "grade2",
+      "rankInStage": 53,
+      "front": "respect",
+      "back": "尊重",
+      "phonics": null,
+      "tags": [
+        "social",
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_grade2_054",
+      "stageId": "grade2",
+      "rankInStage": 54,
+      "front": "calm",
+      "back": "平静的",
+      "phonics": null,
+      "tags": [
+        "emotion",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade2_055",
+      "stageId": "grade2",
+      "rankInStage": 55,
+      "front": "curious",
+      "back": "好奇的",
+      "phonics": null,
+      "tags": [
+        "emotion",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade2_056",
+      "stageId": "grade2",
+      "rankInStage": 56,
+      "front": "gentle",
+      "back": "温柔的",
+      "phonics": null,
+      "tags": [
+        "descriptors",
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_grade2_057",
+      "stageId": "grade2",
+      "rankInStage": 57,
+      "front": "rough",
+      "back": "粗糙的",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade2_058",
+      "stageId": "grade2",
+      "rankInStage": 58,
+      "front": "smooth",
+      "back": "光滑的",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade2_059",
+      "stageId": "grade2",
+      "rankInStage": 59,
+      "front": "shiny",
+      "back": "闪亮的",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade2_060",
+      "stageId": "grade2",
+      "rankInStage": 60,
+      "front": "dull",
+      "back": "钝的",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade2_061",
+      "stageId": "grade2",
+      "rankInStage": 61,
+      "front": "thick",
+      "back": "厚的",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade2_062",
+      "stageId": "grade2",
+      "rankInStage": 62,
+      "front": "thin",
+      "back": "薄的",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade2_063",
+      "stageId": "grade2",
+      "rankInStage": 63,
+      "front": "wide",
+      "back": "宽的",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade2_064",
+      "stageId": "grade2",
+      "rankInStage": 64,
+      "front": "narrow",
+      "back": "窄的",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade2_065",
+      "stageId": "grade2",
+      "rankInStage": 65,
+      "front": "strange",
+      "back": "奇怪的",
+      "phonics": null,
+      "tags": [
+        "descriptors",
+        "emotion"
+      ]
+    },
+    {
+      "id": "en_grade2_066",
+      "stageId": "grade2",
+      "rankInStage": 66,
+      "front": "ordinary",
+      "back": "普通的",
+      "phonics": null,
+      "tags": [
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade2_067",
+      "stageId": "grade2",
+      "rankInStage": 67,
+      "front": "fair",
+      "back": "公平的",
+      "phonics": null,
+      "tags": [
+        "social",
+        "descriptors"
+      ]
+    },
+    {
+      "id": "en_grade2_068",
+      "stageId": "grade2",
+      "rankInStage": 68,
+      "front": "cucumber",
+      "back": "黄瓜",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_grade2_069",
+      "stageId": "grade2",
+      "rankInStage": 69,
+      "front": "onion",
+      "back": "洋葱",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_grade2_070",
+      "stageId": "grade2",
+      "rankInStage": 70,
+      "front": "peach",
+      "back": "桃子",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_grade2_071",
+      "stageId": "grade2",
+      "rankInStage": 71,
+      "front": "cherry",
+      "back": "樱桃",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_grade2_072",
+      "stageId": "grade2",
+      "rankInStage": 72,
+      "front": "lemon",
+      "back": "柠檬",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_grade2_073",
+      "stageId": "grade2",
+      "rankInStage": 73,
+      "front": "cabbage",
+      "back": "卷心菜",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_grade2_074",
+      "stageId": "grade2",
+      "rankInStage": 74,
+      "front": "bean",
+      "back": "豆子",
+      "phonics": null,
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "id": "en_grade2_075",
+      "stageId": "grade2",
+      "rankInStage": 75,
+      "front": "alphabet",
+      "back": "字母表",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade2_076",
+      "stageId": "grade2",
+      "rankInStage": 76,
+      "front": "spelling",
+      "back": "拼写",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade2_077",
+      "stageId": "grade2",
+      "rankInStage": 77,
+      "front": "paragraph",
+      "back": "段落",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade2_078",
+      "stageId": "grade2",
+      "rankInStage": 78,
+      "front": "chapter",
+      "back": "章节",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade2_079",
+      "stageId": "grade2",
+      "rankInStage": 79,
+      "front": "poem",
+      "back": "诗",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade2_080",
+      "stageId": "grade2",
+      "rankInStage": 80,
+      "front": "dictionary",
+      "back": "字典",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade2_081",
+      "stageId": "grade2",
+      "rankInStage": 81,
+      "front": "notebook",
+      "back": "笔记本",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade2_082",
+      "stageId": "grade2",
+      "rankInStage": 82,
+      "front": "lesson",
+      "back": "课",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade2_083",
+      "stageId": "grade2",
+      "rankInStage": 83,
+      "front": "hour",
+      "back": "小时",
+      "phonics": null,
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "en_grade2_084",
+      "stageId": "grade2",
+      "rankInStage": 84,
+      "front": "month",
+      "back": "月份",
+      "phonics": null,
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "en_grade2_085",
+      "stageId": "grade2",
+      "rankInStage": 85,
+      "front": "year",
+      "back": "年",
+      "phonics": null,
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "en_grade2_086",
+      "stageId": "grade2",
+      "rankInStage": 86,
+      "front": "calendar",
+      "back": "日历",
+      "phonics": null,
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "en_grade2_087",
+      "stageId": "grade2",
+      "rankInStage": 87,
+      "front": "temperature",
+      "back": "温度",
+      "phonics": null,
+      "tags": [
+        "weather",
+        "nature"
+      ]
+    },
+    {
+      "id": "en_grade2_088",
+      "stageId": "grade2",
+      "rankInStage": 88,
+      "front": "degree",
+      "back": "度",
+      "phonics": null,
+      "tags": [
+        "weather"
+      ]
+    },
+    {
+      "id": "en_grade2_089",
+      "stageId": "grade2",
+      "rankInStage": 89,
+      "front": "length",
+      "back": "长度",
+      "phonics": null,
+      "tags": [
+        "school"
+      ]
+    },
+    {
+      "id": "en_grade2_090",
+      "stageId": "grade2",
+      "rankInStage": 90,
+      "front": "quarter",
+      "back": "四分之一",
+      "phonics": null,
+      "tags": [
+        "time",
+        "numbers_colors"
       ]
     }
   ]
