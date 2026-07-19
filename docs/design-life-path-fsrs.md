@@ -2,8 +2,8 @@
 
 | Field | Value |
 |-------|--------|
-| **Status** | Implemented (core FSRS game deck, unlimited sessions, carry-over) |
-| **Date** | 2026-07-13 (impl 2026-07-16) |
+| **Status** | Implemented (core FSRS game deck, unlimited sessions, carry-over, fast-track) |
+| **Date** | 2026-07-13 (impl 2026-07-16, fast-track 2026-07-19) |
 | **App** | DeveloperChatbot (`chatbot-app/`) |
 | **Related** | `docs/life-path-vocab-stages.md` (current game; partially superseded for scheduling), `docs/design-library-vs-gym.md`, `Sources/FSRSManager.swift`, `Sources/LifePathViewModel.swift` |
 | **Non-goal this doc** | Implementation code; multi-deck UI for Vocabulary library |
@@ -230,6 +230,27 @@ Tune `graduationStableRatio` after playtest.
 4. Show level-up notify
 5. **Do not delete or freeze** stage S rows — they remain fully schedulable forever
 
+#### 4.5.1 Fast-track (silent graduation bump)
+
+**Problem:** An advanced player who already knows every word in a stage can grade everything Easy on first pass, but still can't graduate because `reps == 1` (need `≥ 2`). FSRS schedules the next review ~1 week out — the player is stuck waiting.
+
+**Solution:** After every session ends, `fastTrackIfEligible()` checks whether all stage cards are introduced (`reps ≥ 1`) but the stage hasn't graduated yet. If so, it silently bumps every introduced card to meet `meetsGraduationCriteria` (reps = max(current, 2), state → `.review` if learning), then immediately calls `checkStageGraduation()`. If the bumped stage now meets the 80% stability ratio, the normal level-up fires — no prompt, no button, just "You grew up!"
+
+```swift
+// LifePathScheduler
+stageQualifiesForFastTrack(rowsForStage) → Bool
+    // true when: all unlocked, all reps ≥ 1, NOT yet graduated
+
+fastTrackStage(rows, now) → [LifePathListRow]
+    // bumps reps to ≥ graduationMinReps, moves learning → review
+
+// LifePathViewModel
+fastTrackIfEligible()
+    // called from finishRound(); silently bumps + re-checks graduation
+```
+
+This is a one-way escape hatch — it only triggers when the player has demonstrated they've seen everything. Cards that were never introduced (reps == 0) are left untouched.
+
 ### 4.6 After level-up
 
 - Next stage words become available as **new**.
@@ -428,12 +449,17 @@ else → review
 
 ### 7.3 Graduation check
 
-After each review (and on session end):
+After each review (and on session end via fast-track):
 
 ```
-if current stage not in stagesCleared
-   AND all entries in stage satisfy stable/graduation criteria
-→ performLevelUp()
+on grade:
+  if current stage not in stagesCleared
+     AND all entries in stage satisfy stable/graduation criteria
+  → performLevelUp()
+
+on session end (finishRound):
+  fastTrackIfEligible()
+    → if all introduced but not graduated: silently bump cards → checkStageGraduation()
 ```
 
 ### 7.4 Seed / unlock
@@ -483,6 +509,9 @@ Run once on schema version bump (`life_path_fsrs_schema = 1` in UserDefaults or 
 - Level-up unlocks next stage news  
 - Library flashcard counts unchanged after Life Path reviews  
 - Migration maps old statuses  
+- Fast-track: triggers when all introduced but not graduated; silently bumps reps/state  
+- Fast-track: does not fire when already graduated or some cards unseen  
+- Fast-track: unseen cards (reps=0) left untouched
 
 ---
 
@@ -492,7 +521,7 @@ Run once on schema version bump (`life_path_fsrs_schema = 1` in UserDefaults or 
 |------|--------|
 | `DatabaseManager` | Migrate `baby_to_child_list`; read/write FSRS fields; queries for due across stages |
 | `LifePathModels` | Status enum; row carries `Card`; game constants for graduation (not session caps) |
-| `LifePathViewModel` | Session builder rewrite; grade → FSRS; graduation rewrite; home metrics |
+| `LifePathViewModel` | Session builder rewrite; grade → FSRS; graduation rewrite; fast-track; home metrics |
 | `LifePathViews` | 4-button grades; due/next-due UI; stage pill; progress semantics |
 | `FSRSManager` | Possibly add helper `dueRows` generic or Life Path-specific wrapper; reuse `review` |
 | `FlashcardViewModel` / library | **No change** for core plan |
@@ -506,10 +535,13 @@ LifePathScheduler (new, pure logic, testable)
   - buildSession(rows, stages, profile, now) -> [entryId]  // full queue, no limits
   - deriveStatus(card) -> status
   - stageMeetsGraduation(rowsForStage) -> Bool
+  - stageQualifiesForFastTrack(rowsForStage) -> Bool
+  - fastTrackStage(rows, now) -> [LifePathListRow]
   - migrateLegacyRow(...)
 
 LifePathViewModel
   - orchestration, UI state, pronunciation, persistence
+  - fastTrackIfEligible() → silent bump → checkStageGraduation()
 ```
 
 Keep scheduling pure for unit tests without SwiftUI.
@@ -544,19 +576,20 @@ Keep scheduling pure for unit tests without SwiftUI.
 
 ---
 
-## 11. Open decisions (resolve before / during PR1)
+## 11. Decisions
 
-| # | Question | Options | Suggestion |
-|---|----------|---------|------------|
-| 1 | Graduation criteria strictness | 2× Good vs stability≥3d | Start with **reps≥2 and not relearning**; tune up |
+| # | Question | Options | Decision |
+|---|----------|---------|----------|
+| 1 | Graduation criteria strictness | 2× Good vs stability≥3d | **reps≥2 and not relearning**; tune up |
 | 2 | Grades UI | Always 4-button vs 2-button map | **4-button** for parity; 2-button later if needed |
 | 3 | Pronunciation pass maps to | Good vs Hard | **Good** |
 | 4 | Session size / new caps | — | **None** (locked): unlimited play, exit anytime |
 | 5 | Again after Again in same run | append end / wait next Play | **Append to end** of remaining queue |
 | 6 | Migration | A / B / C | **B credit mastered** |
 | 7 | Show stage pill on cards | yes / no | **yes** (explains baby-in-toddler) |
-| 8 | Auto level-up vs confirm button | auto modal / “Grow up” CTA | Keep **blocking modal** when criteria met |
+| 8 | Auto level-up vs confirm button | auto modal / “Grow up” CTA | **Blocking modal** when criteria met |
 | 9 | Manual add to Vocabulary | later / never | **Later**; not in FSRS core |
+| 10 | Fast-track for advanced users | prompt vs silent bump vs nothing | **Silent bump** (2026-07-19): on session end, if all cards introduced but not graduated, bump to meet criteria → level-up fires immediately |
 
 ---
 
@@ -618,7 +651,9 @@ Planning order; each PR should be shippable/testable.
 7. After level-up, previous stage cards remain reviewable when due.  
 8. “All caught up” shows next due time instead of a dead end.  
 9. Essential / Vocabulary flows unchanged.  
-10. Tests cover scheduler, graduation, migration, isolation, and unlimited queue.  
+10. Tests cover scheduler, graduation, migration, isolation, unlimited queue, and fast-track.  
+11. When all stage cards are introduced (reps ≥ 1) but not graduated, session end silently bumps them → level-up fires immediately.  
+12. Fast-track does not fire when stage is already cleared or some cards are unseen.
 
 ---
 

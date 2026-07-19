@@ -184,6 +184,65 @@ final class LifePathSchedulerTests: XCTestCase {
             .review
         )
     }
+
+    // MARK: - Fast-track
+
+    func testStageQualifiesForFastTrackWhenAllIntroducedButNotGraduated() {
+        // 2 cards, both seen once (reps=1), learning. Not graduated (need reps>=2).
+        // Should qualify for fast-track.
+        let a = row(entryId: "a", stage: "baby", status: .learning,
+                     card: Card(due: Date(), reps: 1, state: .learning))
+        let b = row(entryId: "b", stage: "baby", status: .learning,
+                     card: Card(due: Date(), reps: 1, state: .learning))
+        XCTAssertTrue(LifePathScheduler.stageQualifiesForFastTrack(rowsForStage: [a, b]))
+    }
+
+    func testStageDoesNotQualifyWhenAlreadyGraduated() {
+        // Already meeting graduation criteria → no fast-track needed
+        let a = row(entryId: "a", stage: "baby", status: .stable,
+                     card: Card(due: Date(), reps: 2, state: .review))
+        let b = row(entryId: "b", stage: "baby", status: .stable,
+                     card: Card(due: Date(), reps: 2, state: .review))
+        XCTAssertFalse(LifePathScheduler.stageQualifiesForFastTrack(rowsForStage: [a, b]))
+    }
+
+    func testStageDoesNotQualifyWhenNotAllIntroduced() {
+        // One card never seen (reps=0)
+        let a = row(entryId: "a", stage: "baby", status: .learning,
+                     card: Card(due: Date(), reps: 1, state: .learning))
+        let b = row(entryId: "b", stage: "baby", status: .new,
+                     card: Card(due: Date(), reps: 0, state: .new))
+        XCTAssertFalse(LifePathScheduler.stageQualifiesForFastTrack(rowsForStage: [a, b]))
+    }
+
+    func testFastTrackBumpsRepsAndMovesOutOfLearning() {
+        let now = Date()
+        let a = row(entryId: "a", stage: "baby", status: .learning,
+                     card: Card(due: now, reps: 1, state: .learning))
+        let b = row(entryId: "b", stage: "baby", status: .review,
+                     card: Card(due: now, reps: 1, state: .review))
+
+        let result = LifePathScheduler.fastTrackStage(rows: [a, b], now: now)
+
+        // Both should now meet graduation criteria
+        XCTAssertTrue(LifePathScheduler.meetsGraduationCriteria(card: result[0].fsrsCard))
+        XCTAssertTrue(LifePathScheduler.meetsGraduationCriteria(card: result[1].fsrsCard))
+        // Card a was learning, should now be review
+        XCTAssertEqual(result[0].fsrsCard.state, .review)
+        // Reps bumped to min
+        XCTAssertGreaterThanOrEqual(result[0].fsrsCard.reps, LifePathGame.graduationMinReps)
+        XCTAssertGreaterThanOrEqual(result[1].fsrsCard.reps, LifePathGame.graduationMinReps)
+    }
+
+    func testFastTrackDoesNotTouchUnseenCards() {
+        let now = Date()
+        let a = row(entryId: "a", stage: "baby", status: .new,
+                     card: Card(due: now, reps: 0, state: .new))
+
+        let result = LifePathScheduler.fastTrackStage(rows: [a], now: now)
+        XCTAssertEqual(result[0].fsrsCard.reps, 0)
+        XCTAssertEqual(result[0].fsrsCard.state, .new)
+    }
 }
 
 final class LifePathDBTests: XCTestCase {

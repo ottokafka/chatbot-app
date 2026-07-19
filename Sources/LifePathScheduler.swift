@@ -38,6 +38,43 @@ enum LifePathScheduler {
         return ratio >= LifePathGame.graduationStableRatio
     }
 
+    // MARK: - Fast-track (skip waiting period)
+
+    /// Returns true when every card is unlocked and introduced (reps >= 1)
+    /// but the stage hasn't met full graduation yet.
+    /// This is the trigger for offering a "skip ahead" prompt.
+    static func stageQualifiesForFastTrack(rowsForStage: [LifePathListRow]) -> Bool {
+        guard !rowsForStage.isEmpty else { return false }
+        let unlocked = rowsForStage.filter { $0.status != .locked }
+        guard unlocked.count == rowsForStage.count else { return false }
+        // All cards must have been seen at least once
+        guard unlocked.allSatisfy({ $0.fsrsCard.reps >= 1 }) else { return false }
+        // But stage does NOT yet meet full graduation (otherwise no need to fast-track)
+        return !stageMeetsGraduation(rowsForStage: rowsForStage)
+    }
+
+    /// Bump every introduced card to meet graduation criteria so the stage can clear.
+    /// Returns updated rows (caller must persist to DB).
+    static func fastTrackStage(rows: [LifePathListRow], now: Date = Date()) -> [LifePathListRow] {
+        rows.map { row in
+            var r = row
+            guard r.fsrsCard.reps >= 1 else { return r }
+            // Ensure reps meets the minimum for graduation
+            if r.fsrsCard.reps < LifePathGame.graduationMinReps {
+                r.fsrsCard.reps = LifePathGame.graduationMinReps
+            }
+            // Move out of learning/relearning so meetsGraduationCriteria passes
+            if r.fsrsCard.state == .learning || r.fsrsCard.state == .relearning {
+                r.fsrsCard.state = .review
+            }
+            // Mark as stable for display
+            r.status = meetsGraduationCriteria(card: r.fsrsCard) ? .stable : r.status
+            r.fsrsCard.lastReview = now
+            r.updatedAt = now
+            return r
+        }
+    }
+
     // MARK: - Session queue (unlimited)
 
     /// Build a full unlimited play queue: all due (unlocked stages) then all new.

@@ -907,6 +907,31 @@ final class LifePathViewModel: ObservableObject {
         sessionFinished = true
         isPlaying = false
         onLog?("Life Path session finished good=\(sessionCorrect) again=\(sessionWrong)")
+        fastTrackIfEligible()
+    }
+
+    /// When all stage cards are introduced but not yet graduated, silently bump them
+    /// so the normal level-up fires without a waiting period.
+    private func fastTrackIfEligible() {
+        guard let profile,
+              !profile.stagesCleared.contains(profile.currentStageId) else { return }
+
+        let stageId = profile.currentStageId
+        let stageEntries = entries.filter { $0.stageId == stageId }
+        let stageRows = stageEntries.compactMap { listRowsByEntryId[$0.id] }
+        guard stageRows.count == stageEntries.count,
+              LifePathScheduler.stageQualifiesForFastTrack(rowsForStage: stageRows) else { return }
+
+        let now = Date()
+        let updatedRows = LifePathScheduler.fastTrackStage(rows: stageRows, now: now)
+        for row in updatedRows {
+            dbManager.upsertLifePathListRow(row)
+            listRowsByEntryId[row.entryId] = row
+        }
+        onLog?("Life Path fast-track: \(stageId) — \(updatedRows.count) cards bumped silently")
+
+        // Normal graduation check picks up from here → "You grew up!"
+        checkStageGraduation()
     }
 
     private func checkStageGraduation() {
