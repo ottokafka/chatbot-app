@@ -86,7 +86,13 @@ final class LRCParserTests: XCTestCase {
 final class LyricsAllowlistValidatorTests: XCTestCase {
     private func enBank(fronts: [String]) -> LifePathSongBank.Bank {
         let words = fronts.enumerated().map { i, f in
-            LifePathSongBank.Word(entryId: "e\(i)", front: f, stageId: "baby", tier: .session)
+            LifePathSongBank.Word(
+                entryId: "e\(i)",
+                front: f,
+                back: "译\(i)",
+                stageId: "baby",
+                tier: .session
+            )
         }
         return LifePathSongBank.Bank(
             contentWords: words,
@@ -97,7 +103,13 @@ final class LyricsAllowlistValidatorTests: XCTestCase {
 
     private func zhBank(fronts: [String]) -> LifePathSongBank.Bank {
         let words = fronts.enumerated().map { i, f in
-            LifePathSongBank.Word(entryId: "z\(i)", front: f, stageId: "baby", tier: .session)
+            LifePathSongBank.Word(
+                entryId: "z\(i)",
+                front: f,
+                back: "en\(i)",
+                stageId: "baby",
+                tier: .session
+            )
         }
         return LifePathSongBank.Bank(
             contentWords: words,
@@ -284,5 +296,82 @@ final class MusicAPIClientTests: XCTestCase {
         data.append(contentsOf: [0, 0, 0, 0])
         XCTAssertTrue(MusicAPIClient.isWAVData(data))
         XCTAssertFalse(MusicAPIClient.isWAVData(Data([0x00, 0x01])))
+    }
+}
+
+final class LyricsGlossBuilderTests: XCTestCase {
+    func testEnglishPhraseGlossUnderLine() {
+        let bank = LifePathSongBank.Bank(
+            contentWords: [
+                .init(entryId: "1", front: "good morning", back: "早上好", stageId: "baby", tier: .session),
+                .init(entryId: "2", front: "mama", back: "妈妈", stageId: "baby", tier: .session),
+            ],
+            glueWords: LifePathSongConfig.englishClosedClassGlue,
+            language: .en
+        )
+        let map = LyricsGlossBuilder.translationMap(from: bank)
+        let gloss = LyricsGlossBuilder.glossForLine(
+            "good morning mama",
+            language: .en,
+            translationMap: map,
+            glueKeys: Set(bank.glueWords.map { PracticeScaffolding.normalizeFrontKey($0) })
+        )
+        XCTAssertEqual(gloss, "早上好 妈妈")
+    }
+
+    func testEnglishSkipsGlue() {
+        let bank = LifePathSongBank.Bank(
+            contentWords: [
+                .init(entryId: "1", front: "mama", back: "妈妈", stageId: "baby", tier: .session),
+                .init(entryId: "2", front: "baby", back: "宝宝", stageId: "baby", tier: .session),
+            ],
+            glueWords: LifePathSongConfig.englishClosedClassGlue,
+            language: .en
+        )
+        let map = LyricsGlossBuilder.translationMap(from: bank)
+        let gloss = LyricsGlossBuilder.glossForLine(
+            "the mama and baby",
+            language: .en,
+            translationMap: map,
+            glueKeys: Set(bank.glueWords.map { PracticeScaffolding.normalizeFrontKey($0) })
+        )
+        XCTAssertEqual(gloss, "妈妈 宝宝")
+    }
+
+    func testChineseGlossUnderLine() {
+        let bank = LifePathSongBank.Bank(
+            contentWords: [
+                .init(entryId: "1", front: "妈妈", back: "mama", stageId: "baby", tier: .session),
+                .init(entryId: "2", front: "宝宝", back: "baby", stageId: "baby", tier: .session),
+            ],
+            glueWords: LifePathSongConfig.chineseClosedClassGlue,
+            language: .zh
+        )
+        let map = LyricsGlossBuilder.translationMap(from: bank)
+        let gloss = LyricsGlossBuilder.glossForLine(
+            "妈妈宝宝",
+            language: .zh,
+            translationMap: map,
+            glueKeys: Set(bank.glueWords.map { PracticeScaffolding.normalizeFrontKey($0) })
+        )
+        XCTAssertEqual(gloss, "mama baby")
+    }
+
+    func testGlossLinesAlignWithLRC() {
+        let bank = LifePathSongBank.Bank(
+            contentWords: [
+                .init(entryId: "1", front: "mama", back: "妈妈", stageId: "baby", tier: .session),
+            ],
+            glueWords: [],
+            language: .en
+        )
+        let lines = [
+            LRCLine(index: 0, time: 2, text: "mama mama"),
+            LRCLine(index: 1, time: 4, text: "la la"),
+        ]
+        let gloss = LyricsGlossBuilder.glossLines(for: lines, bank: bank)
+        XCTAssertEqual(gloss.count, 2)
+        XCTAssertEqual(gloss[0].translation, "妈妈 妈妈")
+        XCTAssertEqual(gloss[1].translation, "")
     }
 }

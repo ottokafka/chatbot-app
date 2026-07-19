@@ -6,9 +6,20 @@ enum LifePathSongBank {
 
     struct Word: Hashable {
         let entryId: String
+        /// Study form (e.g. English on EN path, Chinese on ZH path).
         let front: String
+        /// Translation / gloss (e.g. Chinese under English vocab on EN path).
+        let back: String
         let stageId: String
         let tier: Tier
+    }
+
+    /// Chip shown during the song break (front + translation).
+    struct DisplayWord: Hashable, Identifiable {
+        var id: String { entryId }
+        let entryId: String
+        let front: String
+        let translation: String
     }
 
     enum Tier: Int, Comparable, Hashable {
@@ -33,6 +44,18 @@ enum LifePathSongBank {
 
         var sessionFronts: [String] {
             contentWords.filter { $0.tier == .session }.map(\.front)
+        }
+
+        var sessionDisplayWords: [DisplayWord] {
+            contentWords
+                .filter { $0.tier == .session }
+                .map { DisplayWord(entryId: $0.entryId, front: $0.front, translation: $0.back) }
+        }
+
+        var contentDisplayWords: [DisplayWord] {
+            contentWords.map {
+                DisplayWord(entryId: $0.entryId, front: $0.front, translation: $0.back)
+            }
         }
 
         /// Keys for validation: normalized whole fronts + EN sub-tokens + glue.
@@ -85,6 +108,7 @@ enum LifePathSongBank {
             content.append(Word(
                 entryId: entry.id,
                 front: entry.front,
+                back: entry.back,
                 stageId: entry.stageId,
                 tier: tier
             ))

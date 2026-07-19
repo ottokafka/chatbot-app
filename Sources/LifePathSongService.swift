@@ -8,6 +8,8 @@ struct LifePathSongArtifact: Identifiable, Equatable {
     let id: UUID
     let lyrics: String
     let lines: [LRCLine]
+    /// Under-lyric translations built from the vocab bank (aligned by line index).
+    let glossLines: [LyricsGlossBuilder.GlossLine]
     let audioData: Data
     let duration: Double
     let usedFallbackLyrics: Bool
@@ -310,6 +312,21 @@ final class LifePathSongService: ObservableObject {
         return linesForHighlight
     }
 
+    /// Karaoke lines with under-lyric translations (preferred for UI).
+    var currentGlossLines: [LyricsGlossBuilder.GlossLine] {
+        if let art = cachedArtifact { return art.glossLines }
+        if case .ready(let art) = phase { return art.glossLines }
+        // Fallback: bare lyrics, no gloss (still building)
+        return linesForHighlight.map {
+            LyricsGlossBuilder.GlossLine(
+                index: $0.index,
+                time: $0.time,
+                text: $0.text,
+                translation: ""
+            )
+        }
+    }
+
     var isKaraokePlaying: Bool { karaoke.isPlaying }
 
     var karaokeCurrentTime: TimeInterval { karaoke.currentTime }
@@ -430,10 +447,12 @@ final class LifePathSongService: ObservableObject {
             let response = try await musicClient.generate(request)
             guard !Task.isCancelled, activeGenerationId == generationId else { return nil }
 
+            let glossLines = LyricsGlossBuilder.glossLines(for: lines, bank: bank)
             let artifact = LifePathSongArtifact(
                 id: UUID(),
                 lyrics: lrc,
                 lines: lines,
+                glossLines: glossLines,
                 audioData: response.audioData,
                 duration: LifePathSongConfig.songDurationSeconds,
                 usedFallbackLyrics: usedFallback,

@@ -4,7 +4,7 @@ import SwiftUI
 struct LifePathSongBreakView: View {
     @ObservedObject var service: LifePathSongService
     let lang: AppLanguage
-    let wordChips: [String]
+    let wordChips: [LifePathSongBank.DisplayWord]
     var onSkip: () -> Void
     var onFinished: () -> Void
     var onEndSession: () -> Void
@@ -122,18 +122,33 @@ struct LifePathSongBreakView: View {
 
             ScrollViewReader { proxy in
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 12) {
-                        ForEach(service.currentLines) { line in
-                            Text(line.text)
-                                .font(line.index == service.activeLineIndex
-                                      ? .title3.weight(.bold)
-                                      : .body)
-                                .foregroundStyle(line.index == service.activeLineIndex
-                                                 ? Color.accentColor
-                                                 : Color.primary.opacity(0.75))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .id(line.index)
-                                .animation(.easeInOut(duration: 0.15), value: service.activeLineIndex)
+                    VStack(alignment: .leading, spacing: 16) {
+                        ForEach(service.currentGlossLines) { line in
+                            let isActive = line.index == service.activeLineIndex
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(line.text)
+                                    .font(isActive ? .title3.weight(.bold) : .body)
+                                    .foregroundStyle(isActive
+                                                     ? Color.accentColor
+                                                     : Color.primary.opacity(0.8))
+                                if !line.translation.isEmpty {
+                                    Text(line.translation)
+                                        .font(isActive ? .body.weight(.medium) : .subheadline)
+                                        .foregroundStyle(isActive
+                                                         ? Color.accentColor.opacity(0.85)
+                                                         : Color.secondary)
+                                }
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.vertical, 4)
+                            .id(line.index)
+                            .animation(.easeInOut(duration: 0.15), value: service.activeLineIndex)
+                            .accessibilityElement(children: .combine)
+                            .accessibilityLabel(
+                                line.translation.isEmpty
+                                    ? line.text
+                                    : "\(line.text). \(line.translation)"
+                            )
                         }
                     }
                     .padding(.horizontal, 24)
@@ -147,6 +162,7 @@ struct LifePathSongBreakView: View {
                 }
             }
 
+            // Optional reference strip (front + translation); primary gloss is under lyrics.
             wordChipsView
                 .padding(.horizontal, 16)
 
@@ -253,36 +269,36 @@ struct LifePathSongBreakView: View {
     }
 }
 
-/// Simple wrapping chip row without extra dependencies.
+/// Wrapping chip row: study word on top, translation (e.g. Chinese) underneath.
 private struct FlowWordChips: View {
-    let words: [String]
+    let words: [LifePathSongBank.DisplayWord]
 
     var body: some View {
-        // Cap chips for layout
         let shown = Array(words.prefix(12))
-        FlexibleChipWrap(items: shown)
-            .frame(maxWidth: .infinity, alignment: .center)
-    }
-}
-
-private struct FlexibleChipWrap: View {
-    let items: [String]
-
-    var body: some View {
-        // Use a simple LazyVGrid for predictable layout
         LazyVGrid(
-            columns: [GridItem(.adaptive(minimum: 72), spacing: 8)],
+            columns: [GridItem(.adaptive(minimum: 88), spacing: 8)],
             spacing: 8
         ) {
-            ForEach(Array(items.enumerated()), id: \.offset) { _, word in
-                Text(word)
-                    .font(.caption.weight(.medium))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(Color.accentColor.opacity(0.12))
-                    .clipShape(Capsule())
+            ForEach(shown) { word in
+                VStack(spacing: 2) {
+                    Text(word.front)
+                        .font(.caption.weight(.semibold))
+                        .multilineTextAlignment(.center)
+                    if !word.translation.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        Text(word.translation)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 8)
+                .frame(maxWidth: .infinity)
+                .background(Color.accentColor.opacity(0.12))
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             }
         }
         .padding(.horizontal, 8)
+        .frame(maxWidth: .infinity, alignment: .center)
     }
 }

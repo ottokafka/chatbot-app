@@ -16,7 +16,8 @@ enum LifePathSongConfig {
     static let maxSessionHighlightWords = 10
     static let songDurationSeconds: Double = 12
     static let diffusionSteps = 24
-    static let defaultGenre = "pop"
+    /// Country is easier to understand (clear vocals, simple melody) for all learners.
+    static let defaultGenre = "country"
     static let lyricsLineTargetMin = 6
     static let lyricsLineTargetMax = 10
     static let lyricsMaxRetries = 1
@@ -30,9 +31,9 @@ enum LifePathSongConfig {
     static let strictStandaloneUnigrams = false
 
     static let stylePromptEN =
-        "gentle children's nursery pop song, soft vocals, warm and simple, educational"
+        "gentle country song for kids, acoustic guitar, clear simple vocals, warm storytelling, easy to understand"
     static let stylePromptZH =
-        "温和的儿童流行歌, 简单温柔人声, 适合幼儿学词"
+        "温和的儿童乡村歌曲, 原声吉他, 吐字清晰简单人声, 温暖好懂, 适合学词"
 
     // MARK: - Runtime (DEBUG) overrides
 

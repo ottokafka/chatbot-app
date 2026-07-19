@@ -420,12 +420,12 @@ final class LifePathViewModel: ObservableObject {
         advanceOrFinish()
     }
 
-    /// Word chips for the break UI (session + content sample).
-    var songBreakWordChips: [String] {
+    /// Word chips for the break UI: study form + translation (e.g. Chinese under English).
+    var songBreakWordChips: [LifePathSongBank.DisplayWord] {
         if let bank = lastSongBankSnapshot {
-            let session = bank.sessionFronts
+            let session = bank.sessionDisplayWords
             if !session.isEmpty { return Array(session.prefix(12)) }
-            return Array(bank.contentFronts.prefix(12))
+            return Array(bank.contentDisplayWords.prefix(12))
         }
         return []
     }

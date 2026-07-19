@@ -89,7 +89,7 @@ The pipeline reuses the existing DiffRhythm music API (`https://song.npro.ai`) a
 | K4 | Minimum bank size | **≥ 6 content words** (glue never counts) | Below this, skip break silently. |
 | K5 | Lyrics strategy | LLM LRC + **phrase-aware allowlist** + 1 retry + template fallback | Reuse Practice tokenizer patterns; one retry then deterministic fallback. |
 | K6 | Music client | Extract **`MusicAPIClient`** only; Life Path does **not** own `SongGenViewModel` | Free-form editor/history stay in Song Gen. |
-| K7 | Song duration / genre | **12s**, steps **24**, genre **`pop`** | Short break; reliable on DiffRhythm. |
+| K7 | Song duration / genre | **12s**, steps **24**, genre **`country`** | Clear vocals / simple melody; easier to understand for all learners. |
 | K8 | Karaoke tracking | **New `KaraokePlayer`** (do **not** extend shared `AudioPlayer` in v1) | Chat TTS and song karaoke have different session categories and position needs; keep `AudioPlayer` simple. |
 | K9 | UI placement | **`fullScreenCover`** while session stays `isPlaying == true` | Immersive; level-up remains `.sheet` and **ends** session. |
 | K10 | Prefetch | Start when `sessionGradedCount % everyN == (everyN - 2)` (default **8**); present at multiple of **10** | Hides latency; full cancel lifecycle (§Prefetch). |
@@ -395,7 +395,7 @@ enum LifePathSongConfig {
     static let maxSessionHighlightWords = 10
     static let songDurationSeconds: Double = 12
     static let diffusionSteps = 24
-    static let defaultGenre = "pop"
+    static let defaultGenre = "country"
     static let lyricsLineTargetMin = 6
     static let lyricsLineTargetMax = 10
     static let lyricsMaxRetries = 1
