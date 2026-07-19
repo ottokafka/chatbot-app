@@ -12,6 +12,7 @@ struct LifePathRootView: View {
     @StateObject private var vm = LifePathViewModel()
     @Environment(\.appLanguage) private var lang
     @State private var showResetConfirm = false
+    @State private var songBreakEnabled = LifePathPreferences.songBreakEnabled
     @FocusState private var isPlayFocused: Bool
     #if os(macOS)
     /// Bottom console (same pattern as ChatShellView) for pronunciation / Life Path debug.
@@ -95,10 +96,23 @@ struct LifePathRootView: View {
                 PronunciationEndpoint.resolvedAssessURL(chatVM?.pronunciationURL)
             }
             vm.sttURLProvider = { [weak chatVM] in chatVM?.sttURL ?? "" }
+            vm.onStopPlayback = { [weak chatVM] in chatVM?.stopPlayback() }
+            vm.songService.llmURL = chatVM.llmURL
+            vm.songService.llmModel = chatVM.llmModel
+            vm.songService.onLog = { [weak chatVM] message in
+                chatVM?.log(message, tag: Self.logTag(for: message))
+            }
+            songBreakEnabled = LifePathPreferences.songBreakEnabled
             vm.load()
             #if os(macOS)
             chatVM.log("Life Path: console ready (pronunciation logs use [PRON])", tag: "LIFE")
             #endif
+        }
+        .onChange(of: chatVM.llmURL) { _, url in
+            vm.songService.llmURL = url
+        }
+        .onChange(of: chatVM.llmModel) { _, model in
+            vm.songService.llmModel = model
         }
         .onChange(of: vm.isPlaying) { _, playing in
             if playing {
@@ -108,13 +122,39 @@ struct LifePathRootView: View {
                 vm.cancelPronunciationRecording()
             }
         }
+        .onChange(of: vm.songBreakPhase) { _, phase in
+            if phase == .presenting {
+                chatVM.stopPlayback()
+            }
+        }
         .onChange(of: vm.sessionIndex) { _, _ in
+            guard vm.songBreakPhase == .idle else { return }
             autoPlayFrontIfNeeded()
             // Reset any lingering arm when card changes
             if vm.pronunciationState == .idle, vm.isPronunciationEnabled {
                 vm.armAutoRecord()
             }
         }
+        .modifier(LifePathSongBreakPresenter(
+            isPresented: Binding(
+                get: { vm.songBreakPhase == .presenting },
+                set: { newValue in
+                    if !newValue {
+                        vm.dismissSongBreak(continueSession: true)
+                    }
+                }
+            ),
+            breakContent: {
+                LifePathSongBreakView(
+                    service: vm.songService,
+                    lang: lang,
+                    wordChips: vm.songBreakWordChips,
+                    onSkip: { vm.dismissSongBreak(continueSession: true) },
+                    onFinished: { vm.dismissSongBreak(continueSession: true) },
+                    onEndSession: { vm.dismissSongBreak(continueSession: false) }
+                )
+            }
+        ))
         .onChange(of: chatVM.isFlashcardAutoPlayEnabled) { _, enabled in
             if enabled {
                 autoPlayFrontIfNeeded()
@@ -178,10 +218,16 @@ struct LifePathRootView: View {
     /// Maps log message content to console tags (PRON / LIFE / AUDIO / ERROR).
     private static func logTag(for message: String) -> String {
         let lower = message.lowercased()
+        if lower.contains("[song]") || lower.hasPrefix("[song") || lower.contains("lp_song") {
+            return "SONG"
+        }
         if lower.contains("error") || lower.contains("failed") || lower.contains("fail:") {
             // Keep pronunciation errors under PRON so the feature stream stays readable.
             if lower.contains("pronunciation") || lower.contains("phoneme") || lower.contains("assess") {
                 return "PRON"
+            }
+            if lower.contains("[song]") {
+                return "SONG"
             }
             return "ERROR"
         }
@@ -211,6 +257,7 @@ struct LifePathRootView: View {
     private func autoPlayFrontIfNeeded() {
         guard chatVM.isFlashcardAutoPlayEnabled else { return }
         guard vm.isPlaying, !vm.sessionFinished else { return }
+        guard vm.songBreakPhase == .idle else { return }
         guard let card = vm.currentCard else { return }
 
         let front = card.front.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -309,6 +356,19 @@ struct LifePathRootView: View {
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
                 .disabled(!vm.canPlay)
+
+                Toggle(isOn: $songBreakEnabled) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(L10n.lifePathSongBreakToggle(lang))
+                        Text(L10n.lifePathSongBreakToggleHint(lang))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .onChange(of: songBreakEnabled) { _, enabled in
+                    LifePathPreferences.songBreakEnabled = enabled
+                }
+                .padding(.vertical, 4)
 
                 // Temporary DEV control — remove before shipping.
                 Button(role: .destructive) {
@@ -483,6 +543,16 @@ struct LifePathRootView: View {
                     ))
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                    if LifePathPreferences.songBreakEnabled {
+                        Text(L10n.lifePathSongWordsUntilBreak(
+                            lang,
+                            remaining: vm.wordsUntilSongBreak,
+                            seen: vm.sessionWordsSeenCount,
+                            everyN: LifePathSongConfig.effectiveBreakEveryN
+                        ))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    }
                 }
                 .padding(.horizontal)
 
@@ -827,6 +897,22 @@ struct LifePathLevelUpView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         #else
         .frame(minWidth: 400, minHeight: 480)
+        #endif
+    }
+}
+
+// MARK: - Song break presentation (fullScreenCover iOS / sheet macOS)
+
+/// `fullScreenCover` is unavailable on macOS — use sheet there instead.
+private struct LifePathSongBreakPresenter<BreakContent: View>: ViewModifier {
+    @Binding var isPresented: Bool
+    @ViewBuilder var breakContent: () -> BreakContent
+
+    func body(content: Content) -> some View {
+        #if os(iOS)
+        content.fullScreenCover(isPresented: $isPresented, content: breakContent)
+        #else
+        content.sheet(isPresented: $isPresented, content: breakContent)
         #endif
     }
 }

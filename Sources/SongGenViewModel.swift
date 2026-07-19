@@ -2,16 +2,6 @@ import Foundation
 import AVFoundation
 import SwiftUI
 
-// MARK: - Music API Models
-
-struct MusicGenerateRequest: Codable {
-    let lyrics: String?
-    let prompt: String?
-    let duration: Double
-    let steps: Int
-    let genre: String?
-}
-
 // MARK: - Song History
 
 struct SongHistoryItem: Identifiable, Codable, Equatable {
@@ -67,9 +57,12 @@ final class SongGenViewModel: ObservableObject {
     /// Generation history
     @Published var history: [SongHistoryItem] = []
 
-    /// Music generation API endpoint
+    /// Music generation API endpoint (persisted via MusicAPIClient)
     @Published var musicAPIURL: String {
-        didSet { UserDefaults.standard.set(musicAPIURL, forKey: Self.musicURLKey) }
+        didSet {
+            UserDefaults.standard.set(musicAPIURL, forKey: MusicAPIClient.musicURLKey)
+            Task { await musicClient.setBaseURL(musicAPIURL) }
+        }
     }
 
     /// LLM endpoint (injected from ChatViewModel, not persisted here)
@@ -81,10 +74,10 @@ final class SongGenViewModel: ObservableObject {
 
     // MARK: - Private
 
+    private let musicClient = MusicAPIClient()
     private var audioPlayer: AVAudioPlayer?
     private var playerDelegate: SongAudioPlayerDelegate?
     private static let topicKey = "songGen.topic.v1"
-    private static let musicURLKey = "songGen.musicURL.v1"
 
     /// Available genres for the picker
     static let genres: [String] = [
@@ -95,8 +88,8 @@ final class SongGenViewModel: ObservableObject {
     ]
 
     init() {
-        self.musicAPIURL = UserDefaults.standard.string(forKey: Self.musicURLKey)
-            ?? "https://song.npro.ai"
+        self.musicAPIURL = UserDefaults.standard.string(forKey: MusicAPIClient.musicURLKey)
+            ?? MusicAPIClient.defaultBaseURL
         self.songTopic = UserDefaults.standard.string(forKey: Self.topicKey) ?? ""
         loadHistory()
     }
@@ -301,42 +294,14 @@ final class SongGenViewModel: ObservableObject {
         )
 
         do {
-            guard let url = URL(string: "\(musicAPIURL)/music/generate") else {
-                throw NSError(domain: "SongGen", code: 400,
-                    userInfo: [NSLocalizedDescriptionKey: "Invalid Music API URL"])
-            }
-
-            var urlRequest = URLRequest(url: url)
-            urlRequest.httpMethod = "POST"
-            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            urlRequest.httpBody = try JSONEncoder().encode(request)
-            urlRequest.timeoutInterval = 120
-
+            await musicClient.setBaseURL(musicAPIURL)
             onLog?("[SongGen] Requesting music: \(musicAPIURL)/music/generate " +
                    "(duration: \(duration)s, steps: \(steps))")
 
-            let (data, response) = try await URLSession.shared.data(for: urlRequest)
-
-            guard let httpResponse = response as? HTTPURLResponse else {
-                throw NSError(domain: "SongGen", code: 500,
-                    userInfo: [NSLocalizedDescriptionKey: "Invalid HTTP response"])
-            }
-
-            guard httpResponse.statusCode == 200 else {
-                let body = String(data: data, encoding: .utf8) ?? ""
-                throw NSError(domain: "SongGen", code: httpResponse.statusCode,
-                    userInfo: [NSLocalizedDescriptionKey: "HTTP \(httpResponse.statusCode): \(body)"])
-            }
-
-            // Validate WAV header
-            guard data.count > 44, isWAVData(data) else {
-                throw NSError(domain: "SongGen", code: 500,
-                    userInfo: [NSLocalizedDescriptionKey: "Response is not valid WAV audio"])
-            }
-
-            generatedAudioData = data
-            let genTime = httpResponse.value(forHTTPHeaderField: "X-Generation-Time") ?? "?"
-            onLog?("[SongGen] Music generated: \(data.count) bytes, gen time: \(genTime)s")
+            let response = try await musicClient.generate(request)
+            generatedAudioData = response.audioData
+            let genTime = response.generationTimeHeader ?? "?"
+            onLog?("[SongGen] Music generated: \(response.audioData.count) bytes, gen time: \(genTime)s")
 
             // Save to history
             let item = SongHistoryItem(
@@ -349,7 +314,7 @@ final class SongGenViewModel: ObservableObject {
                 genre: genre,
                 audioFilename: "song_\(Int(Date().timeIntervalSince1970)).wav"
             )
-            try? data.write(to: wavURL(for: item))
+            try? response.audioData.write(to: wavURL(for: item))
             history.insert(item, at: 0)
             saveHistory()
             onLog?("[SongGen] Saved to history (\(history.count) items)")
@@ -360,12 +325,6 @@ final class SongGenViewModel: ObservableObject {
         }
 
         isGeneratingMusic = false
-    }
-
-    /// Quick check for RIFF WAV header
-    private func isWAVData(_ data: Data) -> Bool {
-        guard data.count >= 4 else { return false }
-        return data.prefix(4) == Data([0x52, 0x49, 0x46, 0x46])  // "RIFF"
     }
 
     // MARK: - Playback

@@ -415,7 +415,9 @@ enum PracticeScaffoldValidator {
     }
 
     /// Walk one CJK run left-to-right; return count of covered characters.
-    private static func greedyLongestMatchCoveredCount(
+    /// Package-visible for Life Path song allowlist validation (design K17).
+    /// Prefer calling `cjkGreedyCoveredCount` for multi-run text.
+    static func greedyLongestMatchCoveredCount(
         run: String,
         keysLongestFirst: [String]
     ) -> Int {
@@ -439,6 +441,19 @@ enum PracticeScaffoldValidator {
             }
         }
         return covered
+    }
+
+    /// Total CJK characters covered by greedy longest-match over all CJK runs in `text`.
+    static func cjkGreedyCoveredCount(text: String, allowlistKeys: Set<String>) -> (covered: Int, totalCJK: Int) {
+        let runs = cjkRuns(from: text)
+        let totalCJK = runs.reduce(0) { $0 + $1.count }
+        guard totalCJK > 0 else { return (0, 0) }
+        let sortedKeys = allowlistKeys.sorted { $0.count > $1.count }
+        var covered = 0
+        for run in runs {
+            covered += greedyLongestMatchCoveredCount(run: run, keysLongestFirst: sortedKeys)
+        }
+        return (covered, totalCJK)
     }
 
     private static func truncatedForLog(_ sentence: String, maxChars: Int = 48) -> String {

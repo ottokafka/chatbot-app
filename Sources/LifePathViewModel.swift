@@ -24,6 +24,25 @@ final class LifePathViewModel: ObservableObject {
     @Published private(set) var sessionWrong = 0
     @Published private(set) var sessionFinished = false
 
+    /// Total grade events this run (Again/Hard/Good/Easy). Chrome / stats only — **not** song cadence.
+    @Published private(set) var sessionGradedCount: Int = 0
+    /// Unique entry ids **seen** this run (first grade of each card, order preserved).
+    /// Song break fires every 10 of these — **seen, not mastered**.
+    private(set) var sessionSeenEntryIds: [String] = []
+    /// Unique vocabulary seen this session (alias for song UI).
+    var sessionWordsSeenCount: Int { sessionSeenEntryIds.count }
+    /// Breaks whose cover was shown this run (includes Skip during loading).
+    @Published private(set) var songBreaksPresentedThisSession = 0
+    /// Last bank used for prefetch/present/Retry.
+    private(set) var lastSongBankSnapshot: LifePathSongBank.Bank?
+    @Published var songBreakPhase: LifePathSongBreakPhase = .idle
+
+    /// Host sets this to `chatVM.stopPlayback` — VM has no ChatViewModel reference.
+    var onStopPlayback: (() -> Void)?
+
+    /// Owned by VM; break view observes the same instance (not a second @StateObject).
+    let songService = LifePathSongService()
+
     // Level-up
     @Published var pendingLevelUp: LifePathLevelUpNotify?
     @Published var showLevelUp = false
@@ -114,6 +133,7 @@ final class LifePathViewModel: ObservableObject {
         self.pronunciationAPIManager = APIManager()
         self.pronunciationAPIManager?.onLog = { [weak self] msg in self?.onLog?(msg) }
         configurePronunciationRecorder()
+        songService.onLog = { [weak self] msg in self?.onLog?(msg) }
     }
 
     private func configurePronunciationRecorder() {
@@ -329,10 +349,17 @@ final class LifePathViewModel: ObservableObject {
         sessionIndex = 0
         sessionCorrect = 0
         sessionWrong = 0
+        sessionGradedCount = 0
+        sessionSeenEntryIds = []
+        songBreaksPresentedThisSession = 0
+        lastSongBankSnapshot = nil
+        songService.cancelAll(reason: .newSession)
+        songService.clearInMemoryCache(reason: .newSession)
+        songBreakPhase = .idle
         isAnswerRevealed = false
         sessionFinished = false
         isPlaying = true
-        onLog?("Life Path FSRS session started (\(queue.count) cards, stage=\(stageId), due=\(dueCount), new=\(newCount))")
+        onLog?("Life Path FSRS session started (\(queue.count) cards, stage=\(stageId), due=\(dueCount), new=\(newCount)) songBreak=\(LifePathPreferences.songBreakEnabled)")
     }
 
     /// Cards still ahead in the current session (including current).
@@ -360,11 +387,52 @@ final class LifePathViewModel: ObservableObject {
 
     func endSession() {
         cancelPronunciationRecording()
+        songService.cancelAll(reason: .endSession)
+        songService.clearInMemoryCache(reason: .endSession)
+        songService.restoreAudioSessionAfterSong()
+        songBreakPhase = .idle
         isPlaying = false
         sessionQueue = []
         sessionIndex = 0
         isAnswerRevealed = false
         sessionFinished = false
+        sessionGradedCount = 0
+        sessionSeenEntryIds = []
+        songBreaksPresentedThisSession = 0
+        lastSongBankSnapshot = nil
+    }
+
+    /// Dismiss song break. Idempotent when `songBreakPhase == .idle`.
+    func dismissSongBreak(continueSession: Bool) {
+        guard songBreakPhase != .idle else { return }
+        songService.stopPlayback()
+        songService.clearInMemoryCache(reason: .breakDismissed)
+        songService.restoreAudioSessionAfterSong()
+        if !continueSession {
+            songService.cancelAll(reason: .userEndedSession)
+            songBreakPhase = .idle
+            endSession()
+            return
+        }
+        songService.cancelAll(reason: .breakDismissed)
+        songBreakPhase = .idle
+        songBreaksPresentedThisSession += 1
+        advanceOrFinish()
+    }
+
+    /// Word chips for the break UI (session + content sample).
+    var songBreakWordChips: [String] {
+        if let bank = lastSongBankSnapshot {
+            let session = bank.sessionFronts
+            if !session.isEmpty { return Array(session.prefix(12)) }
+            return Array(bank.contentFronts.prefix(12))
+        }
+        return []
+    }
+
+    /// Unique words left to **see** before the next song break (when feature is on).
+    var wordsUntilSongBreak: Int {
+        LifePathSongConfig.wordsUntilSongBreak(wordsSeenCount: sessionWordsSeenCount)
     }
 
     func dismissLevelUp() {
@@ -880,14 +948,96 @@ final class LifePathViewModel: ObservableObject {
             }
         }
 
+        // Track grades + unique **words seen** (first encounter only — not mastery).
+        sessionGradedCount += 1
+        let isFirstSighting = !sessionSeenEntryIds.contains(entry.id)
+        if isFirstSighting {
+            sessionSeenEntryIds.append(entry.id)
+        }
+        let wordsSeen = sessionSeenEntryIds.count
+
         checkStageGraduation()
 
         if showLevelUp {
+            songService.cancelAll(reason: .levelUp)
+            songService.clearInMemoryCache(reason: .levelUp)
+            songBreakPhase = .idle
             isAnswerRevealed = false
             return
         }
 
+        let everyN = LifePathSongConfig.effectiveBreakEveryN
+        let flagOn = LifePathPreferences.songBreakEnabled
+        let stageId = profile.currentStageId
+
+        // Song cadence uses unique words **seen**, not total grades and not stable/mastered.
+        // Only evaluate when this grade was a first sighting of a word (re-grades don't advance the counter).
+        if isFirstSighting {
+            // Prefetch (non-blocking) at 8, 18, …
+            if flagOn,
+               LifePathSongConfig.shouldPrefetchSong(wordsSeenCount: wordsSeen, everyN: everyN) {
+                let bank = buildSongBank()
+                if bank.contentWords.count >= LifePathSongConfig.minContentWordsForSong {
+                    let decade = LifePathSongConfig.breakDecade(wordsSeen, everyN: everyN)
+                    let genId = songService.generationIdForDecade(decade)
+                    lastSongBankSnapshot = bank
+                    songService.prefetch(bank: bank, stageId: stageId, decade: decade, generationId: genId)
+                    onLog?("[SONG] prefetch decade=\(decade) wordsSeen=\(wordsSeen) content=\(bank.contentWords.count)")
+                }
+            }
+
+            // Offer break at 10, 20, … unique words seen
+            if LifePathSongConfig.shouldOfferSongBreak(wordsSeenCount: wordsSeen, everyN: everyN) {
+                if !flagOn {
+                    onLog?("[SONG] would offer break at wordsSeen=\(wordsSeen) but songBreakEnabled=false")
+                    advanceOrFinish()
+                    return
+                }
+                let bank = buildSongBank()
+                // Session-seen words alone are enough; require min content (usually met at 10).
+                if bank.contentWords.count < LifePathSongConfig.minContentWordsForSong {
+                    onLog?("[SONG] song_break_skipped_sparse wordsSeen=\(wordsSeen) content=\(bank.contentWords.count)")
+                    advanceOrFinish()
+                    return
+                }
+                cancelPronunciationRecording()
+                onStopPlayback?()
+                lastSongBankSnapshot = bank
+                let decade = LifePathSongConfig.breakDecade(wordsSeen, everyN: everyN)
+                let genId = songService.generationIdForDecade(decade)
+                songBreakPhase = .presenting
+                onLog?("[SONG] present break decade=\(decade) wordsSeen=\(wordsSeen) (seen, not mastered)")
+                Task {
+                    _ = await songService.ensureReady(
+                        bank: bank,
+                        stageId: stageId,
+                        decade: decade,
+                        generationId: genId
+                    )
+                }
+                return
+            }
+        }
+
         advanceOrFinish()
+    }
+
+    private func buildSongBank() -> LifePathSongBank.Bank {
+        guard let language, let profile else {
+            return LifePathSongBank.Bank(
+                contentWords: [],
+                glueWords: LifePathSongConfig.closedClassGlue(for: .en),
+                language: .en
+            )
+        }
+        return LifePathSongBank.buildBank(
+            language: language,
+            rows: listRowsByEntryId,
+            entriesById: entriesById,
+            sessionGradedIds: sessionSeenEntryIds,
+            stages: stages,
+            currentStageId: profile.currentStageId
+        )
     }
 
     private func advanceOrFinish() {

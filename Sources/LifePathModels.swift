@@ -204,6 +204,7 @@ enum LifePathPreferences {
     static let languageKey = "lifePath.language"
     static let fsrsSchemaKey = "lifePath.fsrsSchemaVersion"
     static let fsrsSchemaVersion = 1
+    static let songBreakEnabledKey = "lifePath.songBreakEnabled"
 
     static var language: LifePathLanguage? {
         get {
@@ -216,6 +217,17 @@ enum LifePathPreferences {
             } else {
                 UserDefaults.standard.removeObject(forKey: languageKey)
             }
+        }
+    }
+
+    /// Vocab song mini-game break after N **seen** (studied) words in a session — not mastered.
+    /// Default **true** so new players get the break without digging for a toggle.
+    static var songBreakEnabled: Bool {
+        get {
+            UserDefaults.standard.object(forKey: songBreakEnabledKey) as? Bool ?? true
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: songBreakEnabledKey)
         }
     }
 }

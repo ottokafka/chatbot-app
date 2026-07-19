@@ -1441,6 +1441,65 @@ enum L10n {
         lang == .zh ? "继续" : "Continue"
     }
 
+    // MARK: Life Path song mini-game
+
+    static func lifePathSongTitle(_ lang: AppLanguage) -> String {
+        lang == .zh ? "词汇小歌" : "Vocab song"
+    }
+
+    static func lifePathSongMaking(_ lang: AppLanguage) -> String {
+        lang == .zh ? "正在用你学过的词做歌…" : "Making a song from your words…"
+    }
+
+    static func lifePathSongStillWorking(_ lang: AppLanguage) -> String {
+        lang == .zh ? "还在生成，可以跳过继续学。" : "Still working — you can skip and keep studying."
+    }
+
+    static func lifePathSongSkip(_ lang: AppLanguage) -> String {
+        lang == .zh ? "跳过" : "Skip"
+    }
+
+    static func lifePathSongContinue(_ lang: AppLanguage) -> String {
+        lang == .zh ? "继续学习" : "Continue studying"
+    }
+
+    static func lifePathSongReplay(_ lang: AppLanguage) -> String {
+        lang == .zh ? "重播" : "Replay"
+    }
+
+    static func lifePathSongPlay(_ lang: AppLanguage) -> String {
+        lang == .zh ? "播放" : "Play"
+    }
+
+    static func lifePathSongPause(_ lang: AppLanguage) -> String {
+        lang == .zh ? "暂停" : "Pause"
+    }
+
+    static func lifePathSongRetry(_ lang: AppLanguage) -> String {
+        lang == .zh ? "重试" : "Retry"
+    }
+
+    static func lifePathSongErrorTitle(_ lang: AppLanguage) -> String {
+        lang == .zh ? "这首歌没做成" : "Couldn’t make this song"
+    }
+
+    static func lifePathSongBreakToggle(_ lang: AppLanguage) -> String {
+        lang == .zh ? "每看过 10 个词唱一首歌" : "Song break after 10 words seen"
+    }
+
+    static func lifePathSongBreakToggleHint(_ lang: AppLanguage) -> String {
+        lang == .zh
+            ? "本局每学到 10 个词（见过即可，不必掌握）生成短歌并高亮歌词（需网络）。"
+            : "Every 10 unique words you see this session (not mastered) → a short song with karaoke lyrics (needs network)."
+    }
+
+    static func lifePathSongWordsUntilBreak(_ lang: AppLanguage, remaining: Int, seen: Int, everyN: Int) -> String {
+        if lang == .zh {
+            return "已见 \(seen) 词 · 再学 \(remaining) 词唱歌（每 \(everyN) 词）"
+        }
+        return "\(seen) seen · song in \(remaining) more (every \(everyN) seen)"
+    }
+
     // MARK: Life Path DEV / testing (temporary)
 
     static func lifePathDevReset(_ lang: AppLanguage) -> String {
