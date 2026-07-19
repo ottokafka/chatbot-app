@@ -1,13 +1,13 @@
 import SwiftUI
 
 /// Full-screen Life Path song mini-game break (loading / karaoke / error).
+/// Controls: **Play/Pause** + **Continue studying** only.
 struct LifePathSongBreakView: View {
     @ObservedObject var service: LifePathSongService
     let lang: AppLanguage
     let wordChips: [LifePathSongBank.DisplayWord]
-    var onSkip: () -> Void
-    var onFinished: () -> Void
-    var onEndSession: () -> Void
+    /// Leave the break and resume the Life Path session.
+    var onContinue: () -> Void
 
     @Environment(\.scenePhase) private var scenePhase
     @State private var showSlowHint = false
@@ -24,39 +24,22 @@ struct LifePathSongBreakView: View {
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(L10n.lifePathSongSkip(lang)) {
-                        onSkip()
-                    }
-                }
-                ToolbarItem(placement: .primaryAction) {
-                    Button(L10n.lifePathEndRound(lang)) {
-                        onEndSession()
-                    }
-                }
-            }
         }
         .onAppear {
             startSlowHintTimer()
-            // Auto-play only when audio is already ready on first present.
             if case .ready = service.phase {
                 service.play()
             }
         }
         .onChange(of: service.phase) { oldPhase, newPhase in
-            switch newPhase {
-            case .ready:
-                // Auto-start only after generation completes — not when a play-through ends.
-                // Never auto-dismiss: leave only on user Skip / Continue / End round.
+            // Auto-start only after generation — never auto-dismiss.
+            if case .ready = newPhase {
                 switch oldPhase {
                 case .generatingLyrics, .generatingMusic, .idle:
                     service.play()
                 default:
                     break
                 }
-            default:
-                break
             }
         }
         .onChange(of: scenePhase) { _, phase in
@@ -99,11 +82,8 @@ struct LifePathSongBreakView: View {
             }
             wordChipsView
             Spacer()
-            Button(L10n.lifePathSongSkip(lang)) {
-                onSkip()
-            }
-            .buttonStyle(.bordered)
-            .padding(.bottom, 24)
+            continueButton
+                .padding(.bottom, 24)
         }
         .padding(.horizontal, 24)
     }
@@ -158,41 +138,14 @@ struct LifePathSongBreakView: View {
                 }
             }
 
-            // Optional reference strip (front + translation); primary gloss is under lyrics.
             wordChipsView
                 .padding(.horizontal, 16)
 
             HStack(spacing: 16) {
-                Button {
-                    service.replay()
-                } label: {
-                    Label(L10n.lifePathSongReplay(lang), systemImage: "arrow.counterclockwise")
-                }
-                .buttonStyle(.bordered)
-
-                if service.isKaraokePlaying {
-                    Button {
-                        service.pause()
-                    } label: {
-                        Label(L10n.lifePathSongPause(lang), systemImage: "pause.fill")
-                    }
-                    .buttonStyle(.bordered)
-                } else {
-                    Button {
-                        service.play()
-                    } label: {
-                        Label(L10n.lifePathSongPlay(lang), systemImage: "play.fill")
-                    }
-                    .buttonStyle(.borderedProminent)
-                }
-
-                Button {
-                    onFinished()
-                } label: {
-                    Text(L10n.lifePathSongContinue(lang))
-                }
-                .buttonStyle(.borderedProminent)
+                playPauseButton
+                continueButton
             }
+            .padding(.horizontal, 24)
             .padding(.bottom, 24)
         }
     }
@@ -213,27 +166,54 @@ struct LifePathSongBreakView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
             Spacer()
-            VStack(spacing: 12) {
-                Button {
-                    Task {
-                        _ = await service.retryGenerate()
-                    }
-                } label: {
-                    Text(L10n.lifePathSongRetry(lang))
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.bordered)
+            // Generation failed — only way out is continue (no Retry clutter).
+            continueButton
+                .padding(.horizontal, 24)
+                .padding(.bottom, 24)
+        }
+    }
 
-                Button {
-                    onFinished()
-                } label: {
-                    Text(L10n.lifePathSongContinue(lang))
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-            }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 24)
+    // MARK: - Controls (exactly two actions in the play state)
+
+    private var playPauseButton: some View {
+        Button {
+            togglePlayPause()
+        } label: {
+            Label(
+                service.isKaraokePlaying
+                    ? L10n.lifePathSongPause(lang)
+                    : L10n.lifePathSongPlay(lang),
+                systemImage: service.isKaraokePlaying ? "pause.fill" : "play.fill"
+            )
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.borderedProminent)
+        .controlSize(.large)
+        .accessibilityLabel(
+            service.isKaraokePlaying
+                ? L10n.lifePathSongPause(lang)
+                : L10n.lifePathSongPlay(lang)
+        )
+    }
+
+    private var continueButton: some View {
+        Button {
+            onContinue()
+        } label: {
+            Text(L10n.lifePathSongContinue(lang))
+                .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.large)
+    }
+
+    /// Play when stopped/paused/ended; pause when playing.
+    private func togglePlayPause() {
+        if service.isKaraokePlaying {
+            service.pause()
+        } else {
+            // Resume mid-song, or restart from the beginning if finished / ready.
+            service.play()
         }
     }
 
@@ -255,7 +235,7 @@ struct LifePathSongBreakView: View {
     }
 }
 
-/// Wrapping chip row: study word on top, translation (e.g. Chinese) underneath.
+/// Wrapping chip row: study word on top, translation underneath.
 private struct FlowWordChips: View {
     let words: [LifePathSongBank.DisplayWord]
 

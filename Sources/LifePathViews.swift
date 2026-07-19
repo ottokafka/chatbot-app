@@ -149,9 +149,7 @@ struct LifePathRootView: View {
                     service: vm.songService,
                     lang: lang,
                     wordChips: vm.songBreakWordChips,
-                    onSkip: { vm.dismissSongBreak(continueSession: true) },
-                    onFinished: { vm.dismissSongBreak(continueSession: true) },
-                    onEndSession: { vm.dismissSongBreak(continueSession: false) }
+                    onContinue: { vm.dismissSongBreak(continueSession: true) }
                 )
             }
         ))
