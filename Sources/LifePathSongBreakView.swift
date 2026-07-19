@@ -10,7 +10,6 @@ struct LifePathSongBreakView: View {
     var onEndSession: () -> Void
 
     @Environment(\.scenePhase) private var scenePhase
-    @State private var autoContinueTask: Task<Void, Never>?
     @State private var showSlowHint = false
     @State private var slowHintTask: Task<Void, Never>?
 
@@ -28,13 +27,11 @@ struct LifePathSongBreakView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(L10n.lifePathSongSkip(lang)) {
-                        autoContinueTask?.cancel()
                         onSkip()
                     }
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Button(L10n.lifePathEndRound(lang)) {
-                        autoContinueTask?.cancel()
                         onEndSession()
                     }
                 }
@@ -42,24 +39,24 @@ struct LifePathSongBreakView: View {
         }
         .onAppear {
             startSlowHintTimer()
-            // Auto-play when already ready
+            // Auto-play only when audio is already ready on first present.
             if case .ready = service.phase {
                 service.play()
             }
         }
-        .onChange(of: service.phase) { _, newPhase in
+        .onChange(of: service.phase) { oldPhase, newPhase in
             switch newPhase {
             case .ready:
-                service.play()
-            case .playing:
-                break
+                // Auto-start only after generation completes — not when a play-through ends.
+                // Never auto-dismiss: leave only on user Skip / Continue / End round.
+                switch oldPhase {
+                case .generatingLyrics, .generatingMusic, .idle:
+                    service.play()
+                default:
+                    break
+                }
             default:
-                autoContinueTask?.cancel()
-            }
-        }
-        .onChange(of: service.isKaraokePlaying) { _, playing in
-            if !playing, case .ready = service.phase, service.playbackProgress >= 0.98 {
-                scheduleAutoContinue()
+                break
             }
         }
         .onChange(of: scenePhase) { _, phase in
@@ -68,7 +65,6 @@ struct LifePathSongBreakView: View {
             }
         }
         .onDisappear {
-            autoContinueTask?.cancel()
             slowHintTask?.cancel()
         }
     }
@@ -191,7 +187,6 @@ struct LifePathSongBreakView: View {
                 }
 
                 Button {
-                    autoContinueTask?.cancel()
                     onFinished()
                 } label: {
                     Text(L10n.lifePathSongContinue(lang))
@@ -246,15 +241,6 @@ struct LifePathSongBreakView: View {
 
     private var wordChipsView: some View {
         FlowWordChips(words: wordChips)
-    }
-
-    private func scheduleAutoContinue() {
-        autoContinueTask?.cancel()
-        autoContinueTask = Task {
-            try? await Task.sleep(nanoseconds: 800_000_000)
-            guard !Task.isCancelled else { return }
-            onFinished()
-        }
     }
 
     private func startSlowHintTimer() {

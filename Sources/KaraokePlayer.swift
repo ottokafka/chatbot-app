@@ -50,10 +50,21 @@ final class KaraokePlayer: ObservableObject {
 
     func play() {
         guard let player else { return }
+        // If we already reached the end, restart from 0 so highlight/time re-sync.
+        if player.currentTime >= max(0, player.duration - 0.05) || player.currentTime < 0 {
+            player.currentTime = 0
+            currentTime = 0
+        }
         player.play()
         isPlaying = true
         startTicker()
-        onLog?("[SONG] Karaoke playback started")
+        onLog?("[SONG] Karaoke playback started t=\(String(format: "%.2f", player.currentTime))")
+    }
+
+    /// Seek to start without releasing the player (used by explicit replay paths).
+    func seekToStart() {
+        player?.currentTime = 0
+        currentTime = 0
     }
 
     func pause() {

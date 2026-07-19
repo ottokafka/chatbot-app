@@ -266,14 +266,18 @@ final class LifePathSongService: ObservableObject {
 
     // MARK: - Playback
 
+    /// Start (or restart from the beginning). Resets karaoke highlight — do not keep
+    /// a monotonic high-water index from a previous play-through.
     func play() {
         guard case .ready(let art) = phase else {
             if case .playing = phase {
+                // Resume from pause without seeking; highlight continues from current time.
                 karaoke.play()
             }
             return
         }
         do {
+            resetHighlightState()
             try karaoke.load(data: art.audioData)
             linesForHighlight = art.lines
             phase = .playing
@@ -294,16 +298,21 @@ final class LifePathSongService: ObservableObject {
         if case .playing = phase, let art = cachedArtifact {
             phase = .ready(art)
         }
-        activeLineIndex = -1
-        playbackProgress = 0
+        resetHighlightState()
     }
 
+    /// Explicit restart from t=0 (Replay control).
     func replay() {
-        stopPlayback()
-        if let art = cachedArtifact {
-            phase = .ready(art)
-        }
+        guard let art = cachedArtifact else { return }
+        karaoke.stop()
+        phase = .ready(art)
+        // play() resets highlight and reloads from the start
         play()
+    }
+
+    private func resetHighlightState() {
+        activeLineIndex = -1
+        playbackProgress = 0
     }
 
     var currentLines: [LRCLine] {
@@ -623,21 +632,23 @@ final class LifePathSongService: ObservableObject {
         let t = karaoke.currentTime
         let d = max(karaoke.duration, 0.001)
         playbackProgress = min(1, max(0, t / d))
-        let idx = karaoke.activeLineIndex(in: linesForHighlight.isEmpty ? currentLines : linesForHighlight)
-        // Monotonic: never decrease while playing
-        if karaoke.isPlaying {
-            activeLineIndex = max(activeLineIndex, idx)
-        } else {
-            activeLineIndex = idx
-        }
+        let lines = linesForHighlight.isEmpty ? currentLines : linesForHighlight
+        let idx = karaoke.activeLineIndex(in: lines, at: t)
+        // Track time directly. Do **not** use a high-water max across play-throughs:
+        // that stuck the highlight on the last line after replay / auto-restart.
+        // Within a single play, LRC times are ordered so idx only advances with t.
+        activeLineIndex = idx
     }
 
     private func handleKaraokeFinished() {
         onLog?("[SONG] lp_song_played_to_end")
+        // Leave highlight on last sung line; progress at 100%.
+        // Phase → ready so UI shows Play again — BreakView must NOT auto-play on this
+        // transition (that re-triggered play without a clean highlight reset).
+        playbackProgress = 1
         if let art = cachedArtifact {
             phase = .ready(art)
         }
-        playbackProgress = 1
     }
 
     // MARK: - History (life_path_songs/)
