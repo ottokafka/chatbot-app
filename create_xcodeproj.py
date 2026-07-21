@@ -45,6 +45,7 @@ def main():
         "LifePathSongBreakView.swift",
         "LRCParser.swift",
         "LyricsAllowlistValidator.swift",
+        "LyricsGlossBuilder.swift",
         "KaraokePlayer.swift",
         "MusicAPIClient.swift",
         "SongGenView.swift",
