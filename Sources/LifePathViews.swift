@@ -28,8 +28,6 @@ struct LifePathRootView: View {
                         languagePicker
                     } else if let error = vm.loadError {
                         errorState(error)
-                    } else if vm.sessionFinished && !vm.showLevelUp && !vm.isPlaying {
-                        sessionSummary
                     } else if vm.isPlaying {
                         playView
                     } else {
@@ -180,6 +178,10 @@ struct LifePathRootView: View {
             if let notify = vm.pendingLevelUp {
                 LifePathLevelUpView(notify: notify, lang: lang) {
                     vm.dismissLevelUp()
+                } onNextLevel: {
+                    vm.dismissLevelUp()
+                    vm.endSession()
+                    vm.startRound()
                 }
             }
         }
@@ -785,31 +787,6 @@ struct LifePathRootView: View {
         }
     }
 
-    // MARK: - Summary
-
-    private var sessionSummary: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "flag.checkered")
-                .font(.system(size: 44))
-                .foregroundStyle(.tint)
-            Text(L10n.lifePathRoundComplete(lang))
-                .font(.title2.weight(.bold))
-            Text(L10n.lifePathRoundStats(lang, correct: vm.sessionCorrect, wrong: vm.sessionWrong))
-                .foregroundStyle(.secondary)
-            Button {
-                // Advance into the next stage's full session (or continue current if still open).
-                vm.endSession()
-                vm.startRound()
-            } label: {
-                Text(L10n.lifePathNextLevel(lang))
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
-        }
-        .padding(32)
-    }
-
     private func errorState(_ message: String) -> some View {
         VStack(spacing: 16) {
             Text(L10n.lifePathErrorTitle(lang))
@@ -864,6 +841,7 @@ struct LifePathLevelUpView: View {
     let notify: LifePathLevelUpNotify
     let lang: AppLanguage
     let onContinue: () -> Void
+    let onNextLevel: () -> Void
 
     var body: some View {
         VStack(spacing: 24) {
@@ -887,6 +865,16 @@ struct LifePathLevelUpView: View {
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .padding(.horizontal, 32)
+
+            Button {
+                onNextLevel()
+            } label: {
+                Text(L10n.lifePathNextLevel(lang))
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
             .controlSize(.large)
             .padding(.horizontal, 32)
             Spacer()

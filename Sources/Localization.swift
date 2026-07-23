@@ -1421,14 +1421,6 @@ enum L10n {
         lang == .zh ? "第 \(current)/\(total) 张" : "Card \(current) of \(total)"
     }
 
-    static func lifePathRoundComplete(_ lang: AppLanguage) -> String {
-        lang == .zh ? "本阶段会话完成" : "Stage session complete"
-    }
-
-    static func lifePathRoundStats(_ lang: AppLanguage, correct: Int, wrong: Int) -> String {
-        lang == .zh ? "正确 \(correct) · 错误 \(wrong)" : "\(correct) correct · \(wrong) wrong"
-    }
-
     static func lifePathNextLevel(_ lang: AppLanguage) -> String {
         lang == .zh ? "下一关" : "Next level"
     }
